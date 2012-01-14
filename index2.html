@@ -1,0 +1,2345 @@
+<!--
+Copyright (c)  2012   John King
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta name="google-site-verification" content="urlI98uR-E1CxkgmtiHXUTowCXbv8VdQUiA1PkeetNk" />
+
+<title>Canvas Draw</title>
+<style>
+div {
+	position: absolute;
+}
+
+
+img.marker {
+	position:absolute;
+	}
+	
+#background {
+	top:0;
+	left:0;
+	width: 100%;
+	height:100%;
+	overflow:auto;
+	background-color:#999999;
+	visibility:hidden;
+
+}
+
+#drawarea {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+	visibility:hidden;
+}
+
+#canvasarea {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+	background-color:white;
+	border:solid black 1px;
+	z-index:1;
+	visibility:hidden;
+}
+
+#canvasframe {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:80%;
+	border:solid black 1px;
+	visibility:hidden;
+}
+
+#bodydiv {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+
+	z-index:20000002;
+	overflow:auto;
+}
+
+#filmbodydiv {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+	visibility:hidden;
+	z-index:20000002;
+}
+
+#filmdivhandle {
+	width:49px;
+	height:46px;
+	filter:alpha(opacity=50);
+	opacity:0.5;
+	visibility:hidden;
+	background-image:url(assets/filmove.png);
+	z-index:25000000;
+}
+
+#animationdiv {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+	z-index:20000000;
+	visibility:hidden;
+}
+
+#canvasdiv {
+	top:52px;
+	left:0px;
+	width: 100%;
+	height:85%;
+	background-color:transparent;
+}
+
+#hidecanvas {
+	top:0px;
+	left:0px;
+	width: 10px;
+	height:10px;
+	background-color:transparent;
+	visibility:hidden;
+}
+
+#heading {
+	top: 0px;
+	left:0px;
+	width: 100%;
+	height:50px;
+	background-color:#66FFFF;
+	
+}
+
+
+#logo {
+	top: 1px;
+	left: 400px;
+}
+	
+
+#toolbar {
+	top: 60px;
+	left:10px;
+	width: 95px;
+	height:515px;
+	z-index:20000011;
+	border:solid 1px #000000;
+	background-color:#66FFFF;
+	visibility:hidden;
+}
+
+#tlbrhead {
+	top: 0px;
+	left:0px;
+	width: 95px;
+	height:25px;
+
+	border-bottom:solid 1px #000000;
+	background-color:#000099;
+	color:#FFFFFF;
+}
+
+#filmsbar {
+	top: 60px;
+	left:10px;
+	width: 115px;
+	height:515px;
+	z-index:20000011;
+	border:solid 1px #000000;
+	background-color:#66FFFF;
+	visibility:hidden;
+	text-align:center;
+}
+
+#filmsbrhead {
+	top: 0px;
+	left:0px;
+	width: 115px;
+	height:25px;
+	border-bottom:solid 1px #000000;
+	background-color:#000099;
+	color:#FFFFFF;
+}
+
+#filmsholder {
+	top: 26px;
+	left:0px;
+	width: 115px;
+	height:450px;
+	color:#000000;
+	overflow:auto;
+}
+
+#filmsmove {
+	top: 484px;
+	left:0px;
+	width: 115px;
+	height:25px;
+}
+
+div.bar {
+	background-color:#66FFFF;
+	top: 0px;
+	left:0px;
+	height:29px;
+	width:107px;
+}
+
+#anibar {
+	top: 60px;
+	left:5px;
+	width: 115px;
+	height:520px;
+	z-index:20000011;
+	border:solid 1px #000000;
+	background-color:#66FFFF;
+	visibility:hidden;
+}
+
+#anibarhd {
+	top: 0px;
+	left:0px;
+	width: 115px;
+	height:25px;
+
+	border-bottom:solid 1px #000000;
+	background-color:#000099;
+	color:#FFFFFF;
+}
+
+#anigroup {
+	top:260px;
+	left:5px;
+	width:107px;
+	height:480px;
+	clip:rect(0, 107, 250, 0);
+}
+
+#msggroup {
+	top:2px;
+	left:0px;
+	width:97px;
+	height:110px;
+	font-size:12px;
+	padding:4px 4px 4px 4px;
+	border:solid 1px #000000;
+	background-color:#66FFFF;
+	visibility:hidden;
+	z-index:100;
+}
+
+#msgblank {
+	top:0px;
+	left:0px;
+	width:107px;
+	height:250px;
+	background-color:#66FFFF;
+	visibility:hidden;
+	z-index:100;
+}
+
+#buildgroup {
+	top: 30px;
+	left:5px;
+	width: 107px;
+	height:220px;
+	background-color:#66FFFF;
+}
+
+#anibuild {
+	top: 0px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#FFFFFF;
+	background-color:#000099;
+	color:#FFFFFF;
+	border:solid 1px black;
+}
+
+#scenegroup{
+	top: 0px;
+	left:0px;
+	width: 107px;
+	height:130px;
+}
+
+#aniscene {
+	top: 4px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#000099;
+	color:#FFFFFF;
+	border:solid 1px black;
+}
+
+#spritegroup{
+	top: 130px;
+	left:0px;
+	width: 107px;
+	height:130px;
+}
+
+#anisprite {
+	top: 4px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#000099;
+	color:#FFFFFF;
+	border:solid 1px black;
+}
+
+#tweengroup{
+	top: 335px;
+	left:0px;
+	width: 107px;
+	height:345px;
+}
+
+
+#anitween {
+	top: 4px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#000099;
+	color:#FFFFFF;
+	filter:alpha(opacity=60);
+	opacity:0.6;
+	border:solid 1px black;
+}
+
+#trackgroup{
+	top: 395px;
+	left:0px;
+	width: 107px;
+	height:130px;
+}
+
+#anitrack {
+	top: 4px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#000099;
+	color:#FFFFFF;
+	filter:alpha(opacity=60);
+	opacity:0.6;
+	border:solid 1px black;
+}
+
+#filmgroup{
+	top: 395px;
+	left:0px;
+	width: 107px;
+	height:345px;
+}
+
+#anifilm {
+	top: 4px;
+	left:0px;
+	width: 105px;
+	height:25px;
+	background-color:#000099;
+	color:#FFFFFF;
+	filter:alpha(opacity=60);
+	opacity:0.6;
+	border:solid 1px black;
+}
+
+#filmhold {
+	top: 31px;
+	left:0px;
+	width: 105px;
+	height:97px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+	overflow:auto;
+}
+#trackhold {
+	top:31px;
+	left:0px;
+	width: 105px;
+	height:97px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+	overflow:auto;
+}
+
+#spritehold {
+	top: 31px;
+	left:0px;
+	width: 105px;
+	height:97px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+	overflow:auto;
+}
+
+#tweenhold {
+	top: 31px;
+	left:0px;
+	width: 105px;
+	height:97px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+	overflow:auto;
+}
+
+#scenehold {
+	top: 31px;
+	left:0px;
+	width: 105px;
+	height:97px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+	overflow:auto;
+}
+
+#buildhold {
+	top: 26px;
+	left:0px;
+	width: 105px;
+	height:190px;
+	background-color:#FFFFFF;
+	border:solid 1px black;
+}
+
+#gradcanvas {
+	position:absolute;
+	top:52px;
+	left:0px;
+	z-index:20000001;
+}
+
+#colorcont {
+	height:391px;
+	width:531px;
+	clip:rect(0,550px,410px,0);
+	
+	visibility:hidden;
+}
+
+#colorhead {
+	height:25px;
+	width:531px;
+	border:1px solid black;
+	background-color:#000000;
+	color:#FFFFFF;
+}
+
+#colXD {
+	top:0px;
+	left:506px;
+	height:25px;
+	border-left:#FFFFFF medium solid;
+}
+
+
+#colupD {
+	top:0px;
+	left:481px;
+	height:25px;
+	border-left:#FFFFFF medium solid;
+}
+
+#colorpick {
+	top:25px;
+	left:0px;
+	height:366px;
+	width:531px;
+	border:1px solid black;
+	background-color:#FFFFFF;
+}
+
+#gradientbox {
+	cursor:crosshair;
+	top:15px;
+	left:15px;
+	width:256px;
+	height:256px;
+}
+
+#gradientImg {
+	display:block;
+	width:256px;
+	height:256px;
+}
+
+#transpbox {
+	height:50px;
+	width:256px;
+	top:280px;
+	left:15px;
+}
+
+#transpslider {
+	height:17px;
+	width:256px;
+	top:9px;
+	left:0px;
+	border:1px solid black;
+	filter:alpha(opacity=60);
+	opacity:0.6;
+}
+
+#transpimg {
+	height:17px;
+	width:256px;
+	top:9px;
+	left:0px;
+	border:1px solid black;
+
+}
+
+#transpcover {
+	height:17px;
+	width:256px;
+	top:9px;
+	left:0px;
+	border:1px solid black;
+}
+
+#transptext {
+	top:40px;
+	left:0px;
+}
+
+#colform {
+	top:330px;
+	left:350px;
+}
+#varrows {
+	width:9px;
+	height:35px;
+	left:0px;
+	top:0px;	
+}
+
+#circle {
+	height:11px;
+	width:11px;
+}
+
+#hueBarDiv {
+	left:310px;
+	width:35px;
+	height:256px;
+	top:15px;
+}
+
+#colorbar {
+	height:256px;
+	width:19px;
+	left:8px;
+}
+#arrows {
+	height:9px;
+	width:35px;
+	left:0px;
+}
+
+div.choice {
+	left: 5px;
+	top:5px;
+	filter:alpha(opacity=60);
+    opacity:0.6;
+	visibility:hidden;
+	cursor:pointer;
+}
+
+
+#quickColor {
+	height:50px;
+	width:73px;
+	top:0px;
+	left:0px;	
+}
+
+#staticColor {
+	height:50px;
+	width:72px;
+	top:0px;
+	left:73px;
+}
+
+
+#nick {
+	visibility:hidden;
+}
+
+#fopts {
+	left:110px;
+	top:50px;
+	padding:2px 2px 2px 2px;
+	border:solid #000000 1px;
+	background-color:#FFFFFF;
+	visibility:hidden;
+}
+
+#vecdiv {
+	left:500px;
+	top:300px;
+	width:220px;
+	height:220px;
+	z-index:20000011;
+	visibility:hidden;
+}
+
+#vecrotate {
+	left:210px;
+	top:105px;
+	width:10px;
+	height:10px;
+	font-size:0;
+}
+
+#spritecentre {
+	left:500px;
+	top:300px;
+	width:20px;
+	height:20px;
+	z-index:20000011;
+	font-size:0;
+	visibility:hidden;
+}
+
+</style>
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/dragdrop/dragdrop-min.js"></script> 
+<script type="text/javascript" src = "scripts/boundary.js" ></script>
+<script type="text/javascript" src = "scripts/corner.js" ></script>
+<script type="text/javascript" src = "scripts/bottomhandle.js" ></script>
+<script type="text/javascript" src = "scripts/righthandle.js" ></script>
+<script type="text/javascript" src = "scripts/canvas.js" ></script>
+<script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
+<script type="text/javascript" src = "scripts/linesmenu.js" ></script>
+<script type="text/javascript" src = "scripts/colorpicker.js" ></script>
+<script type="text/javascript" src = "scripts/sizeform.js" ></script>
+<script type="text/javascript" src = "scripts/export.js" ></script>
+<script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
+<script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
+<script type="text/javascript" src = "scripts/drawshapes.js" ></script>
+<script type="text/javascript" src = "scripts/shapemenu.js" ></script>
+<script type="text/javascript" src = "scripts/linemarker.js" ></script>
+<script type="text/javascript" src = "scripts/grouping.js" ></script>
+<script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
+<script type="text/javascript" src = "scripts/gradmenu.js" ></script>
+<script type="text/javascript" src = "scripts/rotate.js" ></script>
+<script type="text/javascript" src = "scripts/grid.js" ></script>
+<script type="text/javascript" src = "scripts/reflect.js" ></script>
+<script type="text/javascript" src = "scripts/shadowmenu.js" ></script>
+<script type="text/javascript" src = "scripts/canvashtml.js" ></script>
+<script type="text/javascript" src = "scripts/idmenu.js" ></script>
+<script type="text/javascript" src = "scripts/totext.js" ></script>
+<script type="text/javascript" src = "scripts/fromtext.js" ></script>
+<script type="text/javascript" src = "scripts/alongpath.js" ></script>
+<script type="text/javascript" src = "scripts/buildmenu.js" ></script>
+<script type="text/javascript" src = "scripts/animations.js" ></script>
+<script type="text/javascript" src = "scripts/filmpropmenu.js" ></script>
+<!--[IF IE]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
+<script type="text/javascript">
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}
+ieb=navigator.appName=='Microsoft Internet Explorer';
+iop=navigator.appName=='Opera';
+var blocknum=0;
+var numblocks=0;
+squote="'";
+dquote='"';
+var parentselected=null;
+var zpos=10000001;
+var zneg=10000000;
+var lnmrks=0;
+var gdmrks=0;
+var rdmrks=0;
+var rtmrks=0;
+var bndries=0;
+var hidnum=0;
+var gpnum=0;
+var inln=false;
+var selected=[];
+var gp=[];
+var firstclick=false;
+var endpoint=false;
+var curcanv='empty';
+var currentColor = Colors.ColorFromRGB(64,128,128);
+var alphaperct=0;
+var coltype='F';
+var xgrid=1;
+var ygrid=1;
+var grdon=false;
+var showgrd=false;
+var shapestarted=false;
+var coldir='up';
+var masterwidth;
+var masterheight;
+var storedw=0;
+var storedh;
+var magscale=100;
+var actualwidth;
+var actualheight;
+var activewidth;
+var activeheight;
+var shapejustcreated=false;
+var editjustcreated=false;
+var undo=[];
+var worksaved=false;
+var flname='';
+var fstar='';
+var logurl='';
+var filecount=0;
+var file=[];
+var filenum=0;
+var canvases=0
+var subcount=0;
+var subfile=[];
+var subfilenum=0;
+var stf=[];
+var piccount=0;
+var picfile=[];
+var picfilenum=0;
+var pctf=[];
+var aniselect=[];
+var minivect;
+var vector={xs:0, xe:0,ys:0, ye:0};
+var vecanv;
+var vecphi;
+var midx={x:0,y:0};
+var spritecentre;
+var aniobj='scene';
+var doingani=false;
+var tracktarg;
+var anitarg;
+var ani;
+var scenecount=0;
+var trackcount=0;
+var spritecount=0;
+var tweencount=0;
+var filmcount=0;
+var stopchecking=false;
+var canvases;
+var elmsadded;
+var editcheck=false;
+var trackcheck=false;
+var flmovetop;
+var flmoveleft;
+var SHAPES={};  // list of shapes;
+SHAPES.counter=0;
+temptrack={};
+tracks = {};
+scenes = {};
+sprites = {};
+tweens = {};
+films = {};
+
+if(!Array.indexOf){
+	    Array.prototype.indexOf = function(obj){
+	        for(var i=0; i<this.length; i++){
+	            if(this[i]==obj){
+	                return i;
+	            }
+	        }
+	        return -1;
+	    }
+	}
+
+
+function $(id)
+{
+      return document.getElementById(id);
+}
+
+for( var i=0; i<3; i++)
+{
+	stf[i]=false;
+}
+
+for( var i=0; i<3; i++)
+{
+	pctf[i]=false;
+}
+
+function str_rep(n) 
+{
+   var s = "", t = this.toString();
+   while (--n >= 0) 
+   {
+     s += t
+   }
+   return s;
+}
+
+String.prototype.repeat = str_rep;
+
+function eventcap(e)
+{
+	if (!e) var e = window.event;
+	return e;
+}
+
+function noBubble(e)
+{
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+}
+
+function cancelEvent(e) 
+{
+	if (!e) e = window.event;
+	if (e.preventDefault) 
+	{
+		e.preventDefault();
+	} 
+	else 
+	{
+		e.returnValue = false;
+	}
+}
+
+function createScanvas(n, m)
+{	
+
+	shapestarted=true;
+	
+	if (curcanv !='empty') {drawline(curcanv)};
+	var temp=[];
+	temp[0]=shapes[m][0];
+	temp[1]=shapes[m][1];
+	temp[2]=shapes[m][2];
+	
+	while (lnmrks >0)
+	{
+		if($('lnm'+(--lnmrks))) {$('lnm'+lnmrks).parentNode.removeChild($('lnm'+lnmrks))};
+	}
+	var bd=$('bodydiv');
+	var bdc=$('bodydiv').childNodes;
+	while(bdc.length>0)
+	{
+		bd.firstChild.canvas.boundary='empty';
+		bd.firstChild.parentNode.removeChild(bd.firstChild);
+		bdc=$('bodydiv').childNodes;
+	}
+	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
+	$('editlines').style.visibility='hidden';
+	$('shapemenu').style.visibility='hidden';
+	$('bodydiv').style.cursor='crosshair';
+	ncanvas=new Canvasdiv(n,temp);
+	curcanv=ncanvas;
+	if (shapes[m][2]=='square')
+	{
+		$('bodydiv').onmousedown=function(e){createSqu(getPosition(e),ncanvas)};
+	}
+	if (shapes[m][2]=='rounded_square')
+	{
+		editjustcreated=true;
+		$('bodydiv').onmousedown=function(e){createRndSqu(getPosition(e),ncanvas)};
+	}	
+	if (shapes[m][2]=='triangle')
+	{
+		$('bodydiv').onmousedown=function(e){createTri(getPosition(e),ncanvas)};
+	}
+	if (shapes[m][2]=='right_triangle')
+	{
+		$('bodydiv').onmousedown=function(e){createRgtTri(getPosition(e),ncanvas)};
+	}		
+	else if (shapes[m][2]=='line')
+	{
+		editjustcreated=true;
+		$('bodydiv').onmousedown=function(e){createLine(getPosition(e),ncanvas)};
+	}
+	else if (shapes[m][2]=='circle')
+	{
+		$('bodydiv').onmousedown=function(e){createCircle(getPosition(e),ncanvas)};
+	}		
+	else if (shapes[m][2]=='arc')
+	{
+		editjustcreated=true;
+		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
+	}
+	else if (shapes[m][2]=='sector')
+	{
+		editjustcreated=true;
+		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
+	}
+	else if (shapes[m][2]=='segment')
+	{
+		editjustcreated=true;
+		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
+	}			
+	else if (shapes[m][2]=='curve' || shapes[m][2]=='freeform')
+	{
+		$('bodydiv').onclick=function(e){createBez(getPosition(e),ncanvas,shapes[m][2])};
+	}
+}
+
+function setfilenames()
+{
+
+}
+
+
+function aligntop()
+{
+	var sl=selected.length;
+	var mnt=100000000;
+	var dmnt;
+	for (var i=0; i<sl; i++)
+	{
+		if (selected[i].btop<mnt) {mnt=selected[i].btop}
+	}
+	for (var i=0; i<sl; i++)
+	{
+		dmnt=mnt-selected[i].btop;
+		selected[i].btop=mnt;
+		for (var j=3; j<selected[i].path.length; j++)
+		{
+			for(var k=2; k<selected[i].path[j].length;k+=2)
+			{
+				selected[i].path[j][k]+=dmnt;
+			}
+		}
+		selected[i].boundary.style.top=mnt;
+		selected[i].boundary.otop=mnt;
+		selected[i].sctop=selected[i].btop;
+		selected[i].lineGrad[1] +=dmnt;
+		selected[i].lineGrad[3] +=dmnt;
+		selected[i].radGrad[1] +=dmnt;
+		selected[i].radGrad[4] +=dmnt;
+		selected[i].cy +=dmnt;
+		drawline(selected[i]);
+	}
+}
+
+function alignleft()
+{
+	var sl=selected.length;
+	var mnl=100000000;
+	var dmnl;
+	for (var i=0; i<sl; i++)
+	{
+		if (selected[i].bleft<mnl) {mnl=selected[i].bleft}
+	}
+	for (var i=0; i<sl; i++)
+	{
+		dmnl=mnl-selected[i].bleft;
+		selected[i].bleft=mnl;
+		for (var j=3; j<selected[i].path.length; j++)
+		{
+			for(var k=1; k<selected[i].path[j].length;k+=2)
+			{
+				selected[i].path[j][k]+=dmnl;
+			}
+		}
+		selected[i].boundary.style.left=mnl;
+		selected[i].boundary.oleft=mnl;
+		selected[i].scleft=selected[i].bleft;
+		selected[i].lineGrad[0] +=dmnl;
+		selected[i].lineGrad[2] +=dmnl;
+		selected[i].radGrad[0] +=dmnl;
+		selected[i].radGrad[3] +=dmnl;
+		selected[i].cx +=dmnl;
+		drawline(selected[i]);
+	}
+}
+
+function alignright()
+{
+	var sl=selected.length;
+	var mxl=-100000000;
+	var dmxl;
+	for (var i=0; i<sl; i++)
+	{
+		if (selected[i].bleft+selected[i].bwidth>mxl) {mxl=selected[i].bleft+selected[i].bwidth}
+	}
+	for (var i=0; i<sl; i++)
+	{
+		dmxl=mxl-(selected[i].bleft+selected[i].bwidth);
+		for (var j=3; j<selected[i].path.length; j++)
+		{
+			for(var k=1; k<selected[i].path[j].length;k+=2)
+			{
+				selected[i].path[j][k]+=dmxl;
+			}
+		}
+		selected[i].boundary.style.left=mxl-parseInt(selected[i].boundary.style.width);
+		selected[i].bleft=parseInt(selected[i].boundary.style.left);
+		selected[i].boundary.oleft=parseInt(selected[i].boundary.style.left);
+		selected[i].scleft=selected[i].bleft;
+		selected[i].lineGrad[0] +=dmxl;
+		selected[i].lineGrad[2] +=dmxl;
+		selected[i].radGrad[0] +=dmxl;
+		selected[i].radGrad[3] +=dmxl;
+		selected[i].cx +=dmxl;
+		drawline(selected[i]);
+	}
+}
+
+function alignbot()
+{
+	var sl=selected.length;
+	var mxt=-100000000;
+	var dmxt;
+	for (var i=0; i<sl; i++)
+	{
+		if (selected[i].btop+selected[i].bheight>mxt) {mxt=selected[i].btop+selected[i].bheight}
+	}
+	for (var i=0; i<sl; i++)
+	{
+		dmxt=mxt-(selected[i].btop+selected[i].bheight);
+		for (var j=3; j<selected[i].path.length; j++)
+		{
+			for(var k=2; k<selected[i].path[j].length;k+=2)
+			{
+				selected[i].path[j][k]+=dmxt;
+			}
+		}
+		selected[i].boundary.style.top=mxt-parseInt(selected[i].boundary.style.height);
+		selected[i].btop=parseInt(selected[i].boundary.style.top);
+		selected[i].boundary.otop=parseInt(selected[i].boundary.style.top);
+		selected[i].sctop=selected[i].btop;
+		selected[i].lineGrad[1] +=dmxt;
+		selected[i].lineGrad[3] +=dmxt;
+		selected[i].radGrad[1] +=dmxt;
+		selected[i].radGrad[4] +=dmxt;
+		selected[i].cy +=dmxt;
+		drawline(selected[i]);
+	}
+}
+
+function openhelp()
+{
+	window.open('https://sites.google.com/site/canvimationhelp/');
+}
+
+function visitgallery()
+{
+	window.open('gallery/vector continuous.html');
+}
+
+
+function shapedelete()
+{
+	$('shapemenu').style.visibility='hidden';
+	$('group').style.visibility='hidden';
+	$('ungroup').style.visibility='hidden';
+	$('stylelines').style.visibility='hidden';
+	$('collines').style.visibility='hidden';	
+	$('colfill').style.visibility='hidden';
+	$('gradfill').style.visibility='hidden';
+	$('rotate').style.visibility='hidden';
+	$('front').style.visibility='hidden';
+	$('back').style.visibility='hidden';
+	$('del').style.visibility='hidden';
+	$('copy').style.visibility='hidden';
+	$('editlines').style.visibility='hidden';
+	$('vert').style.visibility='hidden';
+	$('horz').style.visibility='hidden';
+	$('alntop').style.visibility='hidden';
+	$('alnbot').style.visibility='hidden';
+	$('alnleft').style.visibility='hidden';
+	$('alnright').style.visibility='hidden';
+	$('shadow').style.visibility='hidden';
+	$('sname').style.visibility='hidden';
+	closeColor();
+	removeGradLine();
+	removeRotate();	
+	var bd=$('bodydiv');
+	var bdc=$('bodydiv').childNodes;
+	while(bdc.length>0)
+	{
+		bd.firstChild.canvas.boundary='empty';
+		bd.firstChild.parentNode.removeChild(bd.firstChild);
+		bdc=$('bodydiv').childNodes;
+	}
+	var canv;
+	undo.push('bottom');
+	while (selected.length>0)
+	{
+		canv=selected.pop();
+		undo.push(canv);
+		canv.parentNode.removeChild(canv);
+		
+	}
+	$('lundo').style.visibility='visible';
+}
+
+
+function shapecopy(showcopy,asset,type)
+{
+	var tempsel=[];
+	var disp=0; //displacement;
+	if (showcopy) {disp=10};
+	var gpl=gp.length;
+	var ncanvnum=blocknum;
+	var sgl;
+	var minz=20005000;
+	for (var i=0; i<selected.length;i++)
+	{
+		if (selected[i].zIndex<minz) {minz=selected[i].zIndex}
+	}
+	var nczpos=zpos-minz;
+	for (var i=0; i<selected.length;i++)
+	{
+		ncanvas=new Canvasdiv(blocknum++,[selected[i].path[0],selected[i].path[1]]);
+		if (!showcopy)
+		{
+			ncanvas.parentNode.removeChild(ncanvas);
+			switch(type)
+			{
+				case "scene":
+					asset.cars.push(ncanvas);
+				break;
+				case "sprite":
+
+				break;
+				case "tween":
+			
+				break;
+				case "track":
+					asset.line=ncanvas;
+				break
+				case "film":
+			
+				break
+			
+			}
+		}
+		ncanvas.path[2]=selected[i].path[2];
+		for (j=3;j<selected[i].path.length;j++)
+		{
+			ncanvas.path[j]=[];
+			ncanvas.path[j][0]=selected[i].path[j][0]
+			for (k=1; k<selected[i].path[j].length;k++)
+			{
+				ncanvas.path[j][k]=selected[i].path[j][k]+ disp;
+			}
+		}
+		ncanvas.bleft =   selected[i].bleft+ disp;
+   		ncanvas.btop =   selected[i].btop+ disp;
+   		ncanvas.bwidth =   selected[i].bwidth;
+   		ncanvas.bheight =   selected[i].bheight;
+   		ncanvas.scleft =   selected[i].scleft+ disp;
+   		ncanvas.sctop =   selected[i].sctop+ disp;
+   		ncanvas.scx =   selected[i].scx;
+   		ncanvas.scy =   selected[i].scy;
+   		ncanvas.sox =   selected[i].sox+ disp;
+   		ncanvas.soy =   selected[i].soy+ disp;
+   		ncanvas.ox =   selected[i].ox+ disp;
+   		ncanvas.oy =   selected[i].oy+ disp;
+   		ncanvas.cx =   selected[i].cx+ disp;
+   		ncanvas.cy =   selected[i].cy+ disp;
+   		ncanvas.rr =   selected[i].rr;
+   		ncanvas.phi =   selected[i].phi;
+   		ncanvas.rotated =   selected[i].rotated;
+   		ncanvas.ratio =   selected[i].ratio;
+		for (var j=0; j<selected[i].strokeStyle.length;j++)
+		{
+   			ncanvas.strokeStyle[j]=   selected[i].strokeStyle[j];
+		}
+   		for (var j=0;j<selected[i].fillStyle.length;j++)
+		{
+			ncanvas.fillStyle[j]=   selected[i].fillStyle[j];
+		}
+   		ncanvas.lineWidth  =   selected[i].lineWidth ;
+   		ncanvas.lineCap  =   selected[i].lineCap ;
+   		ncanvas.lineJoin  =   selected[i].lineJoin ;
+   		ncanvas.justfill =   selected[i].justfill;
+   		ncanvas.linearfill =   selected[i].linearfill;
+		for (var j=0; j<selected[i].lineGrad.length; j++)
+		{
+   			ncanvas.lineGrad[j] =   selected[i].lineGrad[j]+ disp;
+		}
+		for (var j=0; j<selected[i].radGrad.length;j++)
+   		{
+			ncanvas.radGrad[j] =   selected[i].radGrad[j];
+		}
+		ncanvas.radGrad[0]+=10;
+		ncanvas.radGrad[1]+=10;
+		ncanvas.radGrad[3]+=10;
+		ncanvas.radGrad[4]+=10;
+		for (var j=0; j<selected[i].colorStops.length; j++)
+		{
+			for (var k=0; k<selected[i].colorStops[j].length;k++)
+			{
+				ncanvas.colorStops[j][k] =   selected[i].colorStops[j][k];
+			}
+		}
+   		ncanvas.stopn =   selected[i].stopn;
+   		ncanvas.shadow =   selected[i].shadow;
+   		ncanvas.shadowOffsetX  =   selected[i].shadowOffsetX ;
+   		ncanvas.shadowOffsetY  =   selected[i].shadowOffsetY ;
+   		ncanvas.shadowBlur  =   selected[i].shadowBlur ;
+		for (var j=0; j<selected[i].shadowColor.length;j++)
+   		{
+			ncanvas.shadowColor[j]  =   selected[i].shadowColor[j] ;
+		}
+   		ncanvas.ScaleX =   selected[i].ScaleX;
+   		ncanvas.ScaleY =   selected[i].ScaleY;
+   		ncanvas.zIndex =   selected[i].zIndex+nczpos;
+   		ncanvas.style.zIndex =   ncanvas.zIndex;
+		zpos++;
+   		ncanvas.rotate =   selected[i].rotate;
+   		ncanvas.clockw =   selected[i].clockw;
+   		ncanvas.complete =   selected[i].complete;
+		for (var j=0;j<selected[i].group.length;j++)
+		{
+   			ncanvas.group[j] =   selected[i].group[j]+gpl;
+		}
+		for (var j=0;j<selected[i].beztypes.length;j++)
+		{
+   			ncanvas.beztypes =   selected[i].beztypes;
+		}
+
+		sgl=selected[i].group.length;
+		for (var s=0; s<sgl; s++)
+		{
+			ncindex=selected[i].group[s]+gpl;
+			if (!(ncindex in gp)) {gp[ncindex]=[]};
+			if(gp[ncindex].indexOf(ncanvas)==-1) {gp[ncindex].push(ncanvas)};
+		} 
+		tempsel.push(ncanvas);
+		if (showcopy) {drawline(ncanvas)};
+	}
+	var bd=$('bodydiv');
+	var bdc=$('bodydiv').childNodes;
+	while(bdc.length>0)
+	{
+		if (bd.firstChild.id.substr(0,8)=='boundary')
+		{
+			bd.firstChild.canvas.boundary='empty';
+		}
+		bd.firstChild.parentNode.removeChild(bd.firstChild);
+		bdc=$('bodydiv').childNodes;
+	}
+	selected=tempsel;
+
+	sl=selected.length;
+	gpinxlist=[];
+	for (var i=0;i<sl;i++)
+	{
+		g=getmaxmin(selected[i].path);
+		selected[i].bleft=g.mnx;
+		selected[i].bwidth=g.mxx-g.mnx;
+		selected[i].btop=g.mny;
+		selected[i].bheight=g.mxy-g.mny;
+		sg=selected[i].group;
+		if (gpinxlist.indexOf(sg[sg.length-1])==-1)
+		{
+			gpinxlist.push(sg[sg.length-1])
+		}		
+	} 
+	if (showcopy)
+	{
+		if (gpinxlist.length==0)
+		{
+			for (var i=0;i<sl;i++)
+			{
+				selected[i].createBoundary();
+			} 
+		}
+		else
+		{
+			gpinxlist.sort(asnum);
+			for (var i=0; i<gpinxlist.length; i++)
+			{
+				reboundary(gpinxlist[i]);
+			} 
+		}
+	}	
+}
+
+
+function bringfront()
+{
+	var slist=[];
+	var sl=selected.length;
+	var temps
+	for (var i=0; i<sl; i++)
+	{
+		temps=[];
+		temps[0]=selected[i].id;
+		temps[1]=selected[i].style.zIndex;
+		slist.push(temps);
+	}
+	slist.sort(zindp);
+	
+	for (var i=0; i<slist.length;i++)
+	{
+		$(slist[i][0]).zIndex=zpos++;
+		$(slist[i][0]).style.zIndex=$(slist[i][0]).zIndex;
+	}
+	
+	function zindp(a,b)
+	{
+		return a[1]-b[1]
+	}
+}
+
+function sendback()
+{
+	var slist=[];
+	var sl=selected.length;
+	var temps
+	for (var i=0; i<sl; i++)
+	{
+		temps=[];
+		temps[0]=selected[i].id;
+		temps[1]=selected[i].style.zIndex;
+		slist.push(temps);
+	}
+	slist.sort(zindn);
+	
+	for (var i=0; i<slist.length;i++)
+	{
+		$(slist[i][0]).zIndex=zneg--;
+		$(slist[i][0]).style.zIndex=$(slist[i][0]).zIndex;
+	}
+	
+	function zindn(a,b)
+	{
+		return b[1]-a[1]
+	}
+}
+
+function colopcl()
+{
+	if (coldir=='up')
+	{
+		coldir='down';
+		$('colup').src='assets/down.png';
+		setTimeout(function () {colclosediv()},50);
+	}
+	else
+	{
+		coldir='up';
+		$('colup').src='assets/up.png';
+		setTimeout(function () {colopendiv()},50);
+	};
+	
+	function colclosediv()
+	{
+		var lbody=$('colorpick');
+		if (parseInt(lbody.style.top)+parseInt(lbody.style.height)>25)
+		{
+			lbody.style.top = parseInt(lbody.style.top)-10;
+			$('colorcont').style.height=parseInt($('colorcont').style.height)-10
+			setTimeout(function () {colclosediv()},10)
+		}
+	}
+	
+	function colopendiv()
+	{
+		var lbody=$('colorpick'); 
+		if (parseInt(lbody.style.top)<25)
+		{
+			lbody.style.top = parseInt(lbody.style.top)+10;
+			$('colorcont').style.height=parseInt($('colorcont').style.height)+10
+			setTimeout(function () {colopendiv()},10)
+		}
+	}
+}
+
+function undolast()
+{
+	var canv=undo.pop();
+	while (canv!='bottom')
+	{
+		$('canvasdiv').appendChild(canv);
+		drawline(canv);
+		canv=undo.pop();
+	}
+	if (undo.length==0) {$('lundo').style.visibility='hidden'};
+}
+
+function showmenu()
+{
+	if (!shapestarted)
+	{
+		if (parseInt($('toolbar').style.left)>0.85*maxwidth)
+		{
+			$('shapemenu').style.left=-65;
+		}
+		$('shapemenu').style.visibility='visible';
+		$('group').style.visibility='hidden';
+		$('ungroup').style.visibility='hidden';
+		$('stylelines').style.visibility='hidden';
+		$('collines').style.visibility='hidden';	
+		$('colfill').style.visibility='hidden';
+		$('gradfill').style.visibility='hidden';
+		$('rotate').style.visibility='hidden';
+		$('front').style.visibility='hidden';
+		$('back').style.visibility='hidden';
+		$('del').style.visibility='hidden';
+		$('copy').style.visibility='hidden';
+		$('editlines').style.visibility='hidden';
+		$('vert').style.visibility='hidden';
+		$('horz').style.visibility='hidden';
+		$('alntop').style.visibility='hidden';
+		$('alnbot').style.visibility='hidden';
+		$('alnleft').style.visibility='hidden';
+		$('alnright').style.visibility='hidden';
+		$('shadow').style.visibility='hidden';
+		$('sname').style.visibility='hidden';
+		$('fopts').style.visibility='hidden';
+		closeColor();
+		removeGradLine();
+		removeRotate();
+		var bd=$('bodydiv');
+		var bdc=$('bodydiv').childNodes;
+		while(bdc.length>0)
+		{
+			if (bd.firstChild.id.substr(0,8)=='boundary')
+			{
+				bd.firstChild.canvas.boundary='empty';
+			}
+			bd.firstChild.parentNode.removeChild(bd.firstChild);
+			bdc=$('bodydiv').childNodes;
+		}
+		selected=[];
+		if (curcanv !='empty') {drawline(curcanv)};
+	}
+}
+
+function animenuset(id)
+{
+	$('aniscene').style.opacity=0.6;
+	$('anisprite').style.opacity=0.6;
+	$('anitween').style.opacity=0.6;
+	$('anitrack').style.opacity=0.6;
+	$('anifilm').style.opacity=0.6;
+	if (ieb)
+	{
+		$('aniscene').filters.alpha.opacity=60;
+		$('anisprite').filters.alpha.opacity=60;
+		$('anitween').filters.alpha.opacity=60;
+		$('anitrack').filters.alpha.opacity=60;
+		$('anifilm').filters.alpha.opacity=60;
+	}
+	$('aniscene').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('aniscene').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};	
+	$('anisprite').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('anisprite').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
+	$('anitween').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('anitween').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
+	$('anitrack').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('anitrack').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
+	$('anifilm').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('anifilm').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
+	$('ani'+id).style.opacity=1;
+	if (ieb) {$('ani'+id).filters.alpha.opacity=100};
+	$('ani'+id).onmouseover=function() {};
+	$('ani'+id).onmouseout=function() {};
+	switch(id)
+	{
+		case "scene":
+			movenotscene();
+		break;
+		case "sprite":
+			movenotsprite();
+		break;
+		case "tween":
+			movenottween()
+		break;
+		case "track":
+			movenottrack()
+		break
+		case "film":
+			movenotfilm()
+		break
+	} 
+
+}
+
+function movenotscene()
+{
+		var finishedfilm=false;
+		var finishedtrack=false;
+		var finishedtween=false;
+		var finishedsprite=false;
+		if (parseInt($('trackgroup').style.top)<220)
+		{
+			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
+		}
+		else
+		{
+			$('trackgroup').style.top=220;
+			finishedtrack=true;
+		}
+		if (parseInt($('filmgroup').style.top)<190)
+		{
+			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
+		}
+		else
+		{
+			$('filmgroup').style.top=190;
+			finishedfilm=true;
+		}
+
+		if (parseInt($('tweengroup').style.top)<160)
+		{
+			$('tweengroup').style.top=parseInt($('tweengroup').style.top)+10
+		}
+		else
+		{
+			$('tweengroup').style.top=160;
+			finishedtween=true;
+		}
+		if (parseInt($('spritegroup').style.top)<130)
+		{
+			$('spritegroup').style.top=parseInt($('spritegroup').style.top)+10
+		}
+		else
+		{
+			$('spritegroup').style.top=130;
+			finishedsprite=true;
+		}		
+		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotscene()},10)}			
+}
+
+function movenotsprite()
+{
+		var finishedfilm=false;
+		var finishedtrack=false;
+		var finishedtween=false;
+		var finishedsprite=false;
+		if (parseInt($('trackgroup').style.top)<220)
+		{
+			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
+		}
+		else
+		{
+			$('trackgroup').style.top=220;
+			finishedtrack=true;
+		}
+		if (parseInt($('filmgroup').style.top)<190)
+		{
+			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
+		}
+		else
+		{
+			$('filmgroup').style.top=190;
+			finishedfilm=true;
+		}
+		
+		if (parseInt($('tweengroup').style.top)<160)
+		{
+			$('tweengroup').style.top=parseInt($('tweengroup').style.top)+10
+		}
+		else
+		{
+			$('tweengroup').style.top=160;
+			finishedtween=true;
+		}
+		if (parseInt($('spritegroup').style.top)>30)
+		{
+			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
+		}
+		else
+		{
+			$('spritegroup').style.top=30;
+			finishedsprite=true;
+		}		
+		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotsprite()},10)}			
+}
+
+function movenottween()
+{
+		var finishedfilm=false;
+		var finishedtrack=false;
+		var finishedtween=false;
+		var finishedsprite=false;
+		if (parseInt($('trackgroup').style.top)<220)
+		{
+			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
+		}
+		else
+		{
+			$('trackgroup').style.top=220;
+			finishedtrack=true;
+		}
+		if (parseInt($('filmgroup').style.top)<190)
+		{
+			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
+		}
+		else
+		{
+			$('filmgroup').style.top=190;
+			finishedfilm=true;
+		}
+		
+		if (parseInt($('tweengroup').style.top)>60)
+		{
+			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
+		}
+		else
+		{
+			$('tweengroup').style.top=60;
+			finishedtween=true;
+		}
+		if (parseInt($('spritegroup').style.top)>30)
+		{
+			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
+		}
+		else
+		{
+			$('spritegroup').style.top=30;
+			finishedsprite=true;
+		}		
+		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenottween()},10)}			
+}
+
+function movenottrack()
+{
+		var finishedfilm=false;
+		var finishedtrack=false;
+		var finishedtween=false;
+		var finishedsprite=false;
+		if (parseInt($('trackgroup').style.top)>120)
+		{
+			$('trackgroup').style.top=parseInt($('trackgroup').style.top)-10
+		}
+		else
+		{
+			$('trackgroup').style.top=120;
+			finishedtrack=true;
+		}
+		if (parseInt($('filmgroup').style.top)<90)
+		{
+			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
+		}
+		else
+		{
+			$('filmgroup').style.top=90;
+			finishedfilm=true;
+		}
+		
+		if (parseInt($('tweengroup').style.top)>60)
+		{
+			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
+		}
+		else
+		{
+			$('tweengroup').style.top=60;
+			finishedtween=true;
+		}
+		if (parseInt($('spritegroup').style.top)>30)
+		{
+			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
+		}
+		else
+		{
+			$('spritegroup').style.top=30;
+			finishedsprite=true;
+		}
+		if (!(finishedfilm && finishedtween && finishedtrack  && finishedsprite)) {setTimeout(function() {movenottrack()},10)}			
+}
+
+function movenotfilm()
+{
+		var finishedfilm=false;
+		var finishedtrack=false;
+		var finishedtween=false;
+		var finishedsprite=false;
+		if (parseInt($('trackgroup').style.top)>220)
+		{
+			$('trackgroup').style.top=parseInt($('trackgroup').style.top)-10
+		}
+		else
+		{
+			$('trackgroup').style.top=220;
+			finishedtrack=true;
+		}
+		if (parseInt($('filmgroup').style.top)>90)
+		{
+			$('filmgroup').style.top=parseInt($('filmgroup').style.top)-10
+		}
+		else
+		{
+			$('filmgroup').style.top=90;
+			finishedfilm=true;
+		}
+		
+		if (parseInt($('tweengroup').style.top)>60)
+		{
+			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
+		}
+		else
+		{
+			$('tweengroup').style.top=60;
+			finishedtween=true;
+		}
+		if (parseInt($('spritegroup').style.top)>30)
+		{
+			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
+		}
+		else
+		{
+			$('spritegroup').style.top=30;
+			finishedsprite=true;
+		}
+		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotfilm()},10)}
+}
+
+function main()
+{	
+	canvwidth=0.98*screen.availWidth;
+	canvheight=0.785*screen.availHeight;
+	maxwidth=canvwidth;
+	maxheight=canvheight;
+	masterwidth=0.80*maxwidth;
+	masterheight=0.80*maxheight;
+	gradcanv=$('gradcanvas');
+	gridcanv=$('gridcanvas');
+	$('filmdivhandle').style.top=masterheight/2-25;
+	$('filmdivhandle').style.left=masterwidth/2-25;
+	fhtfix=masterheight/2-25;
+	fhlfix=masterwidth/2-25;
+	sizebox();
+	sizechange('w');
+	adjust();
+	
+	if (!ieb)
+	{
+		document.getElementsByTagName('body')[0].addEventListener('dragover', handleDragOver, false);
+		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
+	}
+	
+	DDcbxadj=new YAHOO.util.DD('canvasadjust');
+	DDcbxadj.onDrag=function () {
+									var cbxadj=$('canvasadjust');
+									if ($('shportrait').checked)
+									{
+										cbxadj.style.top=cbxadj.top;
+										var p=parseFloat($('WsizeofP').innerHTML);
+										if (parseInt(cbxadj.style.left)>cbxadj.left)
+										{
+											if (p<1)
+											{
+												$('canvasbox').style.width = parseInt($('canvasbox').style.width) + 1;
+												cbxadj.style.left =cbxadj.left+1;
+												p=parseFloat($('canvasbox').style.width)/100;
+												$('requdsizewidth').value= Math.round(masterheight*p);
+											}
+											else
+											{
+												cbxadj.style.left=cbxadj.left;
+											}	
+										}
+										else
+										{
+											if (p>0.01)
+											{
+												$('canvasbox').style.width =parseInt($('canvasbox').style.width) - 1;
+												cbxadj.style.left =cbxadj.left-1;
+												p=parseFloat($('canvasbox').style.width)/100;
+												$('requdsizewidth').value =Math.round(masterheight*p);
+											}
+											else
+											{
+												cbxadj.style.left=cbxadj.left;
+											}
+										}
+										
+										cbxadj.left=parseInt(cbxadj.style.left);
+										$('WsizeofP').innerHTML=p+' ';
+						
+									}
+									else
+									{
+										cbxadj.style.left=cbxadj.left;
+										var p=parseFloat($('HsizeofP').innerHTML);
+										if (parseInt(cbxadj.style.top)>cbxadj.top)
+										{
+											if (p<1)
+											{
+												$('canvasbox').style.height = parseInt($('canvasbox').style.height) + 1;
+												cbxadj.style.top =cbxadj.top+1;
+												p=parseFloat($('canvasbox').style.height)/100;
+												$('requdsizeheight').value =Math.round(masterwidth*p);
+											}
+											else
+											{
+												cbxadj.style.top=cbxadj.top;
+											}	
+										}
+										else
+										{
+											if (p>0.01)
+											{
+												$('canvasbox').style.height =parseInt($('canvasbox').style.height) - 1;
+												cbxadj.style.top =cbxadj.top-1;
+												p=parseFloat($('canvasbox').style.height)/100;
+												$('requdsizeheight').value =Math.round(masterwidth*p);
+											}
+											else
+											{
+												cbxadj.style.top=cbxadj.top;
+											}
+										}
+										cbxadj.top=parseInt(cbxadj.style.top);
+										$('HsizeofP').innerHTML=p+' ';
+									}
+								}
+	
+	$('toolbar').style.left=10;
+	$('toolbar').style.top=60;
+	$('filmsbar').style.left=10;
+	$('filmsbar').style.top=60;
+	$('anibar').style.left=screen.availWidth-125;
+	$('anibar').style.top=60;
+	$('canvasdiv').style.height=maxheight-52;
+	$('canvasdiv').style.width=maxwidth;
+	$('canvasdiv').style.zIndex=2;
+	$('animationdiv').style.height=maxheight-52;
+	$('animationdiv').style.width=maxwidth;
+	$('heading').style.zIndex=20000003;
+	$('colorcont').style.left= (canvwidth-525);
+	$('colorcont').style.top= (canvheight-361)/2;
+	$('colorcont').style.height=391;
+	$('colorcont').style.zIndex=20000004;
+	
+	$('export').style.left=110;
+	$('export').style.visibility='visible';
+	$('grid').style.top=30;
+	$('menushape').style.left=50;
+	$('menushape').style.top=30;
+	$('del').style.top=80;
+	$('copy').style.left=50;
+	$('copy').style.top=80;
+	$('front').style.top=130;
+	$('back').style.left=25;
+	$('back').style.top=130;
+	$('editlines').style.left=50;
+	$('editlines').style.top=130;
+	$('group').style.left=50;
+	$('group').style.top=130;
+	$('ungroup').style.left=50;
+	$('ungroup').style.top=130;
+	$('rotate').style.left=50;
+	$('rotate').style.top=180;
+	$('vert').style.top=196;
+	$('horz').style.top=180;
+	$('stylelines').style.top=230;
+	$('collines').style.left=50;
+	$('collines').style.top=230;
+	$('colfill').style.top=280;
+	$('gradfill').style.left=50;
+	$('gradfill').style.top=280;
+	$('shadow').style.top=330;
+	$('sname').style.top=330;
+	$('sname').style.left=50;
+	$('lundo').style.top=430;
+	$('alntop').style.left=50;
+	$('alnbot').style.left=50;
+	$('alnright').style.left=25;
+	
+	$('colorpick').style.top=25;
+	$('colorpick').style.height=366;	
+	
+	
+	$('visit').style.visibility='visible';
+	$('visit').style.left=60;
+	
+	$('help').style.visibility='visible';
+	$('help').style.left=10;
+	
+	$('filmgroup').style.top=190;	
+	$('trackgroup').style.top=220;	
+	$('tweengroup').style.top=160;
+	$('spritegroup').style.top=130;	
+	$('scenegroup').style.top=0;
+	
+	$('anibuild').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
+	$('anibuild').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};		
+	
+	DDtlbr=new YAHOO.util.DD('toolbar');
+	DDtlbr.setHandleElId('tlbrhead');	
+	
+	DDtlbr=new YAHOO.util.DD('filmsbar');
+	DDtlbr.setHandleElId('filmsbrhead');
+
+	DDanibr=new YAHOO.util.DD('anibar');
+	DDanibr.setHandleElId('anibarhd');
+	
+	DDcircle=new YAHOO.util.DD('circle');
+	DDcircle.onDrag = function () {
+									if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5}
+									if (parseInt($('circle').style.left)>250) {$('circle').style.left=250}
+									if (parseInt($('circle').style.top)<-5) {$('circle').style.top=-5}
+									if (parseInt($('circle').style.top)>250) {$('circle').style.top=251}
+									currentColor.SetHSV(currentColor.Hue(), 1-(parseInt($('circle').style.top)+5)/255.0, 
+									  (parseInt($('circle').style.left)+5)/255.0);
+  									colorChanged("circle");
+								  }
+	DDarrows=new YAHOO.util.DD('arrows');
+	DDarrows.onDrag = function () {
+										$('arrows').style.left=0;
+										if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4}
+										if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251}
+  										currentColor.SetHSV((256 - parseInt($('arrows').style.top)+4)*359.99/255, 
+										  currentColor.Saturation(), currentColor.Value());
+  										colorChanged("arrows");
+								};
+
+									
+	$('varrows').style.left=-4;
+	DDvarrows=new YAHOO.util.DD('varrows');
+	DDvarrows.setHandleElId("transpbox");
+	DDvarrows.onDrag = function () {
+										$('varrows').style.top=0;
+										if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4}
+										if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252}
+										alphaperct=Math.ceil(100*(parseInt($('varrows').style.left)+4)/256);
+										$('transptext').innerHTML ='Transparency '+alphaperct+'%';
+										if (ieb)
+										{
+											$('transpslider').filters.alpha.opacity=100-alphaperct;
+										}
+										else
+										{
+											$('transpslider').style.opacity=1-alphaperct/100;
+										}
+											
+  
+								};
+																			
+	DDcc=new YAHOO.util.DD('colorcont');
+	DDcc.setHandleElId('colorhead');
+
+	$('colXD').onclick=function() {
+	   														$('colorcont').style.visibility='hidden';
+														
+														};
+	fixGradientImg();
+	
+	colorChanged('box');
+													  
+	var su = new shapeMenu();
+		
+	$("redBox").value=255;
+	redBoxChanged();
+	$("greenBox").value=255;
+	greenBoxChanged();
+	$("blueBox").value=255;
+	blueBoxChanged();
+	alphaperct = 0;
+	$('varrows').style.left=256*alphaperct/100-4;
+	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
+	if (ieb)
+	{
+		$('transpslider').filters.alpha.opacity=100-alphaperct;
+	}
+	else
+	{
+		$('transpslider').style.opacity=1-alphaperct/100;
+	}
+	$("transpslider").style.backgroundColor = currentColor.HexString();
+	$('colorheadtext').innerHTML='\u00A0 Background Colour';
+
+	$('gradientBox').onclick=function(e) {
+																	moveCircleTo(getPosition(e))
+																};
+	
+	$('transpbox').onclick=function(e) {
+																	movetransarrwTo(getPosition(e))
+																};
+	$('hueBarDiv').onclick=function(e) {
+																	HueBarmoveTo(getPosition(e))
+																};															
+
+	
+    if (gradcanv.getContext)
+	{
+        gradcanv.ctx = gradcanv.getContext('2d');
+    }
+	
+	
+    if (gridcanv.getContext)
+	{
+        gridcanv.ctx = gridcanv.getContext('2d');
+    }
+	gridcanv.style.position='absolute';
+	gridcanv.style.left=0;
+	gridcanv.style.top=52;
+	gridcanv.style.zIndex=2;
+	
+	$('vecdiv').style.left=500;
+	$('vecdiv').style.top=200;
+	
+	vecanv=$('vecanv')
+    if (vecanv.getContext)
+	{
+        vecanv.ctx = vecanv.getContext('2d');
+    }
+	vecanv.width=220;
+   	vecanv.height=220;
+	vecanv.ctx.translate(110,110);
+	vecanv.ctx.save();
+	vecanv.ctx.beginPath();
+	vecanv.ctx.moveTo(0,0);	
+	vecanv.ctx.lineTo(100,0);
+	vecanv.ctx.moveTo(90,-10);
+	vecanv.ctx.lineTo(100,0);
+	vecanv.ctx.lineTo(90,10);
+	vecanv.ctx.stroke();
+	minivect={xs:0, xe:100,ys:0, ye:0};
+	
+	DDvecdiv=new YAHOO.util.DD('vecdiv');
+	
+	vecirc=$('vecircdiv')
+    if (vecirc.getContext)
+	{
+        vecirc.ctx = vecirc.getContext('2d');
+    }
+	vecirc.width=10;
+   	vecirc.height=10;
+	vecirc.ctx.translate(5,5);
+	
+	vecirc.ctx.beginPath();
+	vecirc.ctx.arc(0,0,5,0,2*Math.PI, false);
+	vecirc.ctx.stroke();
+	vecphi=0;
+	
+	DDvecrotate=new YAHOO.util.DD('vecrotate');
+	DDvecrotate.onDrag = function()
+						 {
+						 		var phi=arctan(parseInt($('vecrotate').style.left)-105,parseInt($('vecrotate').style.top)-105);
+								$('vecrotate').style.left=105+105*Math.cos(phi);
+								$('vecrotate').style.top=105+105*Math.sin(phi);
+								minivect.xe=100*Math.cos(phi);
+								minivect.ye=100*Math.sin(phi);
+								vecanv.ctx.rotate(-vecphi);
+								vecanv.ctx.clearRect(-220,-220,440,440);
+								
+								vecphi =phi;
+								
+								vecanv.ctx.beginPath();
+								vecanv.ctx.rotate(phi);
+								vecanv.ctx.moveTo(0,0);	
+								vecanv.ctx.lineTo(100,0);
+								vecanv.ctx.moveTo(90,-10);
+								vecanv.ctx.lineTo(100,0);
+								vecanv.ctx.lineTo(90,10);
+								vecanv.ctx.stroke();
+						 }
+
+	spritemid=$('spritemidiv')
+    if (spritemid.getContext)
+	{
+        spritemid.ctx = spritemid.getContext('2d');
+    }
+	spritemid.width=20;
+   	spritemid.height=20;
+	spritemid.ctx.translate(10,10);
+	
+	spritemid.ctx.beginPath();
+	spritemid.ctx.arc(0,0,10,0,2*Math.PI, false);
+	spritemid.ctx.moveTo(0,10);
+	spritemid.ctx.lineTo(0,-10);
+	spritemid.ctx.moveTo(-10,0);
+	spritemid.ctx.lineTo(10,0);
+	spritemid.ctx.stroke();
+
+	$('spritecentre').style.left=500;
+	$('spritecentre').style.top=200;
+	DDspritecentre=new YAHOO.util.DD('spritecentre');
+
+	$('startdiv').parentNode.removeChild($('startdiv'));
+	$('background').style.visibility='visible';
+	$('drawarea').style.visibility='visible';
+	$('canvasarea').style.visibility='visible';
+	$('canvasframe').style.visibility='visible';
+
+	$('msg').innerHTML=flname+fstar;
+	$('sceneradio').checked='checked';
+	$('scenehold').innerHTML='';
+	
+	if (window.File && window.FileReader && window.FileList && window.Blob && !iop) 
+	{
+		$('ifas').innerHTML='Open Files';
+	}
+}
+
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23932681-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body onLoad="main()">
+<div id='startdiv' 	style='width:100%; height:100%; top:52px; background-color:#FFFFFF; font-size:18px'>
+      <div style='top:200px;left:400px '><img src='assets/3d_cd.gif'/> Please wait while the application finishes loading.....</div>
+</div>
+<div id='background'></div>
+<div id='drawarea'></div>
+<div id='canvasarea'></div>
+<canvas id='gridcanvas'> </canvas>
+<div id='canvasframe'></div>
+<div id="canvasdiv"></div>
+<div id="hidecanvas"></div>
+<div id='animationdiv'></div>
+<div id="bodydiv"></div>
+<div id="filmbodydiv"></div>
+<div id="filmdivhandle"></div>
+<div id='colorcont'>
+  <div id='colorpick' >
+    <div id='colform' >
+      <input type="button" id="OKbut" value="OK" onClick="setColor();closeColor()">
+	  <input type="button" id="Applybut" value="Apply" onClick="setColor()">
+      <input type="button" id="Cancel" value="Cancel" onClick="closeColor()">
+    </div>
+    <div id ='transpbox' >
+      <div id='transptext'>Transparency 0%</div>
+      <div id='transpimg'><img class='marker' id="check" src="assets/check.png" /> </div>
+      <div id='transpslider'> </div>
+      <div id='transpcover'> </div>
+      <img class='marker' id="varrows" src="assets/transp_arrows.gif" /> </div>
+    <div id="gradientBox" style=""> <img id="gradientImg" src="assets/color_picker_gradient.png" /> <img class='marker' id="circle" src="assets/color_picker_circle.gif" /> </div>
+    <div id="hueBarDiv" style=""> <img class='marker' id='colorbar' src="assets/color_picker_bar.png" /> <img class='marker' id="arrows" src="assets/color_picker_arrows.gif" /> <br />
+    </div>
+    <div style="left:370px;width:145px;height:256px;top:15px;">
+      <div style="border: 1px solid black;height:50px;width:145px;top:0px;left:0px;">
+        <div id="quickColor"></div>
+        <div id="staticColor"></div>
+      </div>
+      <br />
+      <table width="100%" style="position:absolute;top:55px;">
+        <tr>
+          <td>Hex: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="hexBox" onChange="hexBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Red: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="redBox" onChange="redBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Green: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="greenBox" onChange="greenBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Blue: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="blueBox" onChange="blueBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Hue: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="hueBox" onChange="hueBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Saturation: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="saturationBox" onChange="saturationBoxChanged();" />
+          </td>
+        </tr>
+        <tr>
+          <td>Value: </td>
+          <td><input style="margin:0.3em;" size="8" type="text" id="valueBox" onChange="valueBoxChanged();" />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  </center>
+  <div id='colorhead'>
+    <div id='colorheadtext'> Line Colour </div>
+    <div id='colupD' onclick='colopcl()'> <img id='colup' src='assets/up.png' /> </div>
+    <div id='colXD'> <img id='colX' src='assets/x.png' /> </div>
+  </div>
+</div>
+
+<div id='anibar'>
+  <div id='anibarhd'> &nbsp; Animation </div>
+  
+   <div id='anigroup'>	
+
+	<div id='scenegroup'>
+		<div class="bar"></div>	
+		<div id='aniscene' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('scene')">&nbsp; Scenery </div>
+		<div id='scenehold'></div>
+	</div>
+	<div id='spritegroup'>
+		<div class="bar"></div>	
+		<div id='anisprite' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('sprite')">&nbsp; Sprites </div>
+		<div id='spritehold'></div>
+	</div>
+	<div id='tweengroup'>
+		<div class="bar"></div>		
+		<div id='anitween' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('tween')">&nbsp; Tweens </div>
+		<div id='tweenhold'></div>
+	</div>
+	<div id='filmgroup'>
+		<div class="bar"></div>	
+		<div id='anifilm' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('film')">&nbsp; Films </div>
+		<div id='filmhold'></div>
+	</div>
+	<div id='trackgroup'>
+		<div class="bar"></div>	
+		<div id='anitrack' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('track')">&nbsp; Tracks </div>
+		<div id='trackhold'></div>
+	</div>
+	
+		
+   </div>
+   <div id='msggroup'> </div>
+   <div id='msgblank'> </div>
+	<div id='buildgroup'>
+		<div id='anibuild' alt="build animation element" title="build animation element">&nbsp; Creator</div>	
+		<div id='buildhold'>
+		    <p>
+			<input type="radio" id="sceneradio" name="buildradio" onChange="aniobj='scene'" checked="checked"> Scenery<br> 
+			<input type="radio" name="buildradio" onChange="aniobj='sprite'"> Sprite<br>
+			<input type="radio"name="buildradio" onChange="aniobj='tween'"> Tween<br>
+			<input type="radio"name="buildradio" onChange="aniobj='track'"> Track<br>
+			<input type="radio" name="buildradio" onChange="aniobj='film'"> Film<br><p>
+			&nbsp;&nbsp;&nbsp;<input type="button" onClick="buildobj()" value="Build">
+		</div> 
+	</div>	
+</div>
+
+<div id='filmsbar'>
+  <div id='filmsbrhead'> Film Elements </div>
+  <div id='filmsholder'>
+Film Elements from back to front.<br>
+<ul id="anielmorder" style="list-style-type:none;padding:2px;text-align:left"></ul>
+</div>
+<div id='filmsmove'> <img src="assets/uparw.png" onClick="moveliup()">&nbsp; &nbsp;&nbsp;<img src="assets/downarw.png" onClick="movelidown()"></div>
+ </div>
+
+<div id='toolbar'>
+  <div id='tlbrhead'> &nbsp; Tools </div>
+  <div class="choice" id='menushape'  alt="insert shapes" title="insert shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="showmenu()"> <img src="assets/menushapes.png"> </div>
+  <div class="choice" id='editlines'  alt="edit lines" title="edit lines" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="markLine(selected[0])"> <img src="assets/editlines.png"> </div>
+  <div class="choice" id='group'  alt="group shapes" title="group shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="group()"> <img src="assets/group.png"> </div>
+  <div class="choice" id='ungroup'  alt="ungroup shapes" title="ungroup shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="ungroup()"> <img src="assets/ungroup.png"> </div>
+  <div class="choice" id='stylelines'  alt="line styles" title="line styles" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="linestyles()"> <img src="assets/stylelines.png"> </div>
+  <div class="choice" id='collines'  alt="line colour" title="line colour" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="linecolor()"> <img src="assets/collines.png"> </div>
+  <div class="choice" id='colfill'  alt="fill colour" title="fill colour" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="fillcolor()"> <img id='colimg' src="assets/colfill.png"> </div>
+  <div class="choice" id='gradfill'  alt="gradient fill" title="gradient fill" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="gradfill()"> <img id='gradimg' src="assets/gradfilloff.png"> </div>
+  <div class="choice" id='rotate'  alt="rotate" title="rotate" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="canvrotate()"> <img src="assets/rotate.png"> </div>
+  <div class="choice" id='front'  alt="bring to front" title="bring to front" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="bringfront()"> <img src="assets/front.png"> </div>
+  <div class="choice" id='back'  alt="send to back" title="send to back" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="sendback()"> <img src="assets/back.png"> </div>
+  <div class="choice" id='grid'  alt="set grid" title="set grid" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="setgrid()"> <img src="assets/grid.png"> </div>
+  <div class="choice" id='del'  alt="delete" title="delete" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="shapedelete()"> <img src="assets/delete.png"> </div>
+  <div class="choice" id='copy'  alt="copy" title="copy" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="shapecopy(true)"> <img src="assets/copy.png"> </div>
+  <div class="choice" id='vert'  alt="flip vertical" title="flip vertical" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="flipvert()"> <img src="assets/vert.png"> </div>
+  <div class="choice" id='horz'  alt="flip horizontal" title="flip horizontal" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="fliphorz()"> <img src="assets/horz.png"> </div>
+  <div class="choice" id='alntop'  alt="align top" title="align top" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="aligntop()"> <img src="assets/alntop.png"> </div>
+  <div class="choice" id='alnbot'  alt="align bottom" title="align bottom" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="alignbot()"> <img src="assets/alnbot.png"> </div>
+  <div class="choice" id='alnleft'  alt="align left" title="align left" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="alignleft()"> <img src="assets/alnleft.png"> </div>
+  <div class="choice" id='alnright'  alt="align right" title="align right" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="alignright()"> <img src="assets/alnright.png"> </div>
+  <div class="choice" id='lundo'  alt="undo delete" title="undo delete" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="undolast()"> <img src="assets/undo.png"> </div>	
+  <div class="choice" id='shadow'  alt="shadow" title="shadow" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="shadow()"> <img src="assets/shadow.png"> </div>
+  <div class="choice" id='sname'  alt="shape name" title="shape name" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="shapename()"> <img src="assets/shapename.png"> </div>
+	
+</div>
+
+
+<canvas id='gradcanvas'> </canvas>
+<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px;z-index=200000020 '> </div>
+ <div id='logo'><img src="assets/logo.png"></div>
+  
+  <div class="choice" id='export'  alt="To HTML" title="To HTML" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
+	onclick="$('fopts').style.visibility='visible'"> <img src="assets/export.png"> </div>
+  <div id='nick'> </div>
+
+  <div class='choice' id='visit' alt="Visit Gallery" title="Visit Gallery" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60;" onclick='visitgallery()'> <img src='assets/visit.png'> </div>
+  <div class='choice' id='help' alt="help" title="help" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
+	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60;" onclick='openhelp()'> <img src='assets/help.png'> </div>	
+	
+  <div id='fopts'><a href='#' onClick="writeCanvas();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="totext();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromtext(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
+</div>
+<div id='vecdiv'>
+  
+  <canvas id='vecanv'></canvas>
+  <div id='vecrotate' ><canvas id='vecircdiv'></canvas></div>
+</div>
+<div id='spritecentre'>
+	<canvas id='spritemidiv'></canvas>
+</div> 
+</body>
+</html>

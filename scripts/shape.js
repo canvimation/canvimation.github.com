@@ -4,76 +4,126 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function Shape() 
+
+function Point()
 {
-   this.elmRef = document.createElement('canvas');
-   this.elmRef.type = path[0];
-   this.elmRef.subtype = path[1];
-   this.elmRef.id  = path[1]+n; 
-   this.elmRef.path=path;
-   this.elmRef.psuid=this.elmRef.id;
-   this.elmRef.style.position='absolute';
-   this.elmRef.style.left=0; 
-   this.elmRef.style.top= 0;
-   this.elmRef.width=parseInt($('bodydiv').style.width);
-   this.elmRef.height=parseInt($('bodydiv').style.height);
-   this.elmRef.bleft=90; 
-   this.elmRef.btop= 90;
-   this.elmRef.bwidth=50;
-   this.elmRef.bheight=50;
-   this.elmRef.scleft=90;
-   this.elmRef.sctop=90;
-   this.elmRef.scx=1;
-   this.elmRef.scy=1;
-   this.elmRef.sox=0;
-   this.elmRef.soy=0;
-   this.elmRef.ox=0;
-   this.elmRef.oy=0;
-   this.elmRef.cx=0;
-   this.elmRef.cy=0;
-   this.elmRef.rr=100;
-   this.elmRef.phi=0;
-   this.elmRef.rotated=false;
-   this.elmRef.ratio=this.elmRef.bheight/this.elmRef.bwidth;
-   this.elmRef.strokeStyle=[0,0,0,1];
-   this.elmRef.fillStyle=[255,255,255,1];
-   this.elmRef.lineWidth = 1;
-   this.elmRef.lineCap = "butt";
-   this.elmRef.lineJoin = "miter"
-   this.elmRef.justfill=true;
-   this.elmRef.linearfill=true;
-   this.elmRef.lineGrad=[0,0,0,0];
-   this.elmRef.radGrad=[0,0,0,0,10,10];
-   this.elmRef.colorStops=[[0,0,0,0,0],[1,0,0,0,0]];
-   this.elmRef.stopn=0;
-   this.elmRef.shadow=false;
-   this.elmRef.shadowOffsetX = 15;   
-   this.elmRef.shadowOffsetY = 15;   
-   this.elmRef.shadowBlur = 0;   
-   this.elmRef.shadowColor = [0, 0, 0, 0];
-   this.elmRef.ScaleX=1;
-   this.elmRef.ScaleY=1;
-   this.elmRef.zIndex=zpos++;
-   this.elmRef.style.zIndex=this.elmRef.zIndex;
-   this.elmRef.rotate=0;
-   this.elmRef.clockw=true;
-   this.elmRef.complete=false;
-   this.elmRef.group=[];
-   this.elmRef.boundary='empty';
-   this.elmRef.createBoundary=createBoundary;
-   this.elmRef.removeBoundary=removeBoundary;
-   this.elmRef.beztypes=[];
-   this.elmRef.radius=10;
-   $('canvasdiv').appendChild(this.elmRef);
+	this.x=0;
+	this.y=0;
+}
 
-   if (ieb) {this.elmRef=G_vmlCanvasManager.initElement(this.elmRef)}
-   if (this.elmRef.getContext)
+function Path()
+{
+	this.type="M";
+	this.points=[];
+}
+function Shape(name,open,editable,type) 
+{
+   	this.name=name;
+   	this.open=open;
+   	this.editable=editable;
+   	this.type=type; 
+   	this.path=new Path();
+   	this.psuid=this.id;
+   	this.style.position='absolute';
+   	this.bleft=90; 
+   	this.btop= 90;
+   	this.bwidth=50;
+   	this.bheight=50;
+   	this.scleft=90;
+   	this.sctop=90;
+   	this.scx=1;
+   	this.scy=1;
+   	this.sox=0;
+   	this.soy=0;
+   	this.ox=0;
+   	this.oy=0;
+   	this.cx=0;
+   	this.cy=0;
+   	this.rr=100;
+   	this.phi=0;
+   	this.rotated=false;
+   	this.ratio=this.bheight/this.bwidth;
+   	this.strokeStyle=[0,0,0,1];
+   	this.fillStyle=[255,255,255,1];
+   	this.lineWidth = 1;
+   	this.lineCap = "butt";
+   	this.lineJoin = "miter"
+   	this.justfill=true;
+   	this.linearfill=true;
+   	this.lineGrad=[0,0,0,0];
+   	this.radGrad=[0,0,0,0,10,10];
+   	this.colorStops=[[0,0,0,0,0],[1,0,0,0,0]];
+   	this.stopn=0;
+   	this.shadow=false;
+   	this.shadowOffsetX = 15;   
+   	this.shadowOffsetY = 15;   
+   	this.shadowBlur = 0;   
+   	this.shadowColor = [0, 0, 0, 0];
+   	this.ScaleX=1;
+   	this.ScaleY=1;
+   	this.zIndex=zpos++;
+   	this.style.zIndex=this.zIndex;
+   	this.rotate=0;
+   	this.clockw=true;
+   	this.complete=false;
+   	this.group=[];
+   	this.boundary='empty';
+   	this.beztypes=[];
+   	this.radius=10;
+   	this.Canvas = document.createElement('canvas');
+   	this.Canvas.style.left=0; 
+   	this.Canvas.style.top= 0;
+   	this.Canvas.width=parseInt($('bodydiv').style.width);
+   	this.Canvas.height=parseInt($('bodydiv').style.height);
+   	$('canvasdiv').appendChild(this.Canvas);
+
+   	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
+   	if (this.Canvas.getContext)
 	{
-        this.elmRef.ctx = this.elmRef.getContext('2d');
+        this.Canvas.ctx = this.Canvas.getContext('2d');
     }
-   return this.elmRef;
-  }
+   	SHAPE[this.name]=this;
+   	
+   	//methods
+   	this.createBoundary=createBoundary;
+   	this.removeBoundary=removeBoundary;
+   	
+   	this.setPath=setPath;
+   	
+   	return this;
+   	
+}
 
+
+function setPath()
+{
+	switch (this.type)
+	{
+		case "line":
+		break
+		case "arc":
+		break
+		case "curve":
+		break 
+		case "freeform":
+		break
+		case "square":
+		break
+		case "circle":
+		break
+		case "rounded_square":
+		break
+		case "triangle":
+		break
+		case "sector":
+		break
+		case "segment":
+		break
+		case "right_triangle":
+		break
+	}
+	
+}
 function createLine(cur,canv)
 {
 	cur.x=Math.round(cur.x/xgrid)*xgrid;
