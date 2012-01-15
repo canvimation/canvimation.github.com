@@ -105,6 +105,42 @@ img.marker {
 	background-color:transparent;
 }
 
+.theatre_elm {
+	top:0px;
+	left:0px;
+	width: 100%;
+	height:100%;
+	background-color:transparent;
+}
+
+#shapestage {
+	visibility:visible;
+}
+
+#scenestage {
+	visibility:hidden;
+}
+
+#spritestage {
+	visibility:visible;
+}
+
+#trackstage {
+	visibility:hidden;
+}
+
+#tweenstage {
+	visibility:hidden;
+}
+
+#filmstage {
+	visibility:hidden;
+}
+
+#markerdrop {
+	visibility:visible;
+}
+
 #hidecanvas {
 	top:0px;
 	left:0px;
@@ -744,6 +780,8 @@ var flmovetop;
 var flmoveleft;
 var SHAPES={};  // list of shapes;
 SHAPES.counter=0;
+var SCRW; //actual screen width
+var SCRH; //actual screen height
 temptrack={};
 tracks = {};
 scenes = {};
@@ -1702,6 +1740,9 @@ function movenotfilm()
 
 function main()
 {	
+	SCRW=screen.availWidth;
+	SCRH=screen.availHeight;
+	BODY=document.getElementsByTagName("body")[0];
 	canvwidth=0.98*screen.availWidth;
 	canvheight=0.785*screen.availHeight;
 	maxwidth=canvwidth;
@@ -2104,6 +2145,13 @@ function main()
 <div id='canvasarea'></div>
 <canvas id='gridcanvas'> </canvas>
 <div id='canvasframe'></div>
+<div id ="shapestage" class="theatre_elm"></div>
+<div id ="scenestage" class="theatre_elm"></div>
+<div id ="spritestage" class="theatre_elm"></div>
+<div id ="trackstage" class="theatre_elm"></div>
+<div id ="tweenstage" class="theatre_elm"></div>
+<div id ="filmstage" class="theatre_elm"></div>
+<div id ="markerdrop" class="theatre_elm"></div>
 <div id="canvasdiv"></div>
 <div id="hidecanvas"></div>
 <div id='animationdiv'></div>

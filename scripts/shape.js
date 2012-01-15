@@ -7,9 +7,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 function Point(t,x,y)
 {
-	this.type=t;
 	this.x=x;
 	this.y=y;
+	
+	//methods
+	this.addMark;
 }
 
 function Path()
@@ -71,37 +73,54 @@ function Shape(name,open,editable,type)
    	this.boundary='empty';
    	this.beztypes=[];
    	this.radius=10;
-   	this.Canvas = document.createElement('canvas');
-   	this.Canvas.style.left=0; 
-   	this.Canvas.style.top= 0;
-   	this.Canvas.width=parseInt($('bodydiv').style.width);
-   	this.Canvas.height=parseInt($('bodydiv').style.height);
-   	$('canvasdiv').appendChild(this.Canvas);
-
-   	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
-   	if (this.Canvas.getContext)
-	{
-        this.Canvas.ctx = this.Canvas.getContext('2d');
-    }
+   	
    	SHAPE[this.name]=this;
    	
    	//methods
    	this.createBoundary=createBoundary;
    	this.removeBoundary=removeBoundary;
-   	
+   	this.addTo=addTo;
+   	this.getTop=getTop;
+   	this.getLeft=getLeft;
    	this.setPath=setPath;
+   	this.setPoint=setPoint;
    	
    	return this;
    	
 }
 
+function addTo(theatre)
+{
+	this.Canvas = document.createElement('canvas');
+   	this.Canvas.style.left=0; 
+   	this.Canvas.style.top= 0;
+   	theatre.appendChild(this.Canvas);
+   	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
+   	if (this.Canvas.getContext)
+	{
+        this.Canvas.ctx = this.Canvas.getContext('2d');
+    }	
+}
+
+
+function getTop()
+{
+	return parseInt(this.style.top);
+}
+
+function getLeft()
+{
+	return parseInt(this.style.left);
+}
 
 function setPath(cursor)
 {
-	var p=new Point("M",Math.round(cur.x/xgrid)*xgrid,Math.round((cur.y)/ygrid)*ygrid);
+	
+	var p=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 	switch (this.type)
 	{
 		case "line":
+			p.type="M";
 			this.Path.push(p);
 			p.type="L";
 			this.Path.push(p);
@@ -127,7 +146,12 @@ function setPath(cursor)
 		case "right_triangle":
 		break
 	}
-	
+}
+
+function setPoint(n,point)
+{
+	this.Path[n].x=point.x;
+	this.Path[n].y=point.y;
 }
 function createLine(cur,canv)
 {
