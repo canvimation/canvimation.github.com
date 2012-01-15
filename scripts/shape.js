@@ -11,7 +11,8 @@ function Point(t,x,y)
 	this.y=y;
 	
 	//methods
-	this.addMark;
+	this.addMark=addMark;
+	this.remMark=remMark; //remove marks;
 }
 
 function Path()
@@ -26,6 +27,7 @@ function Shape(name,open,editable,type)
    	this.editable=editable;
    	this.type=type; 
    	this.path=new Path();
+   	this.path.shape=this;
    	this.psuid=this.id;
    	this.style.position='absolute';
    	this.bleft=90; 
@@ -115,15 +117,26 @@ function getLeft()
 
 function setPath(cursor)
 {
-	
 	var p=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
-	switch (this.type)
+	p.shape=this;
+	p.type="M";
+	this.path.points.push(p);
+	p.addMark("set");
+	DDm=new YAHOO.util.DD(p.mark.id);
+	DDm.onDrag=function(){updatepoints(this)};
+	BODY.onmousemove=function(e) {drawguide(getposition(e),this)};
+
+}
+
+function drawguide(cursor,shape)
+{
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	switch (shape.type)
 	{
 		case "line":
-			p.type="M";
-			this.Path.push(p);
-			p.type="L";
-			this.Path.push(p);
+			this.setPoint(1,cursor)
+			drawshape(this);
 		break
 		case "arc":
 		break
@@ -150,8 +163,8 @@ function setPath(cursor)
 
 function setPoint(n,point)
 {
-	this.Path[n].x=point.x;
-	this.Path[n].y=point.y;
+	this.path.points[n].x=point.x;
+	this.path.points[n].y=point.y;
 }
 function createLine(cur,canv)
 {

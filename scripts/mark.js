@@ -4,27 +4,31 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function linemarker(n,cursor,col) 
+function addMark(type) 
 {
-    this.elmRef = document.createElement('div');
-   this.elmRef.id  = 'lnm'+n;
-   this.elmRef.style.left= cursor.x-4; 
-   this.elmRef.style.top= cursor.y-4;
-   this.elmRef.style.fontSize=0;
-   this.elmRef.style.width=8;
-   this.elmRef.style.height=8;
-   this.elmRef.style.visibility='visible';
-   this.elmRef.style.backgroundColor=col;
-   this.elmRef.backgroundColor=this.elmRef.style.backgroundColor;
-   this.elmRef.style.border="solid black 1px";
-   this.elmRef.style.cursor='move';
-   this.elmRef.onmouseover=function(){
+   this.mark.type=type;
+   this.mark.point=this;
+   this.mark = document.createElement('div');
+   this.mark.id="mark"+(MCOUNT++);
+   this.mark.style.left= this.x-4; 
+   this.mark.style.top= this.y-4;
+   this.mark.style.fontSize=0;
+   this.mark.style.width=8;
+   this.mark.style.height=8;
+   this.mark.style.visibility='visible';
+   if (this.mark.type=="bez")
+   {
+   		this.mark.style.backgroundColor="red";
+   } 
+   this.mark.style.border="solid black 1px";
+   this.mark.style.cursor='move';
+   this.mark.onmouseover=function(){
 										inln=true;
 									};
-   this.elmRef.onmouseout=function(){
+   this.mark.onmouseout=function(){
 	   									inln=false;
 									};
-	this.elmRef.onclick	=function(){
+	this.mark.onclick	=function(){
 										if ((this.style.backgroundColor!='white')&& (curcanv.complete) )
 										{
 										    shade(this,'#FEFEFE');
@@ -36,8 +40,8 @@ function linemarker(n,cursor,col)
 											}
 										}							
 									};							
-   $('bodydiv').appendChild(this.elmRef);
-   return this.elmRef;
+   $("markerdrop").appendChild(this.mark);
+  }
    
    function shade(mrk,col)
    {
