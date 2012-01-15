@@ -5,17 +5,18 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-function Point()
+function Point(t,x,y)
 {
-	this.x=0;
-	this.y=0;
+	this.type=t;
+	this.x=x;
+	this.y=y;
 }
 
 function Path()
 {
-	this.type="M";
 	this.points=[];
 }
+
 function Shape(name,open,editable,type) 
 {
    	this.name=name;
@@ -95,11 +96,15 @@ function Shape(name,open,editable,type)
 }
 
 
-function setPath()
+function setPath(cursor)
 {
+	var p=new Point("M",Math.round(cur.x/xgrid)*xgrid,Math.round((cur.y)/ygrid)*ygrid);
 	switch (this.type)
 	{
 		case "line":
+			this.Path.push(p);
+			p.type="L";
+			this.Path.push(p);
 		break
 		case "arc":
 		break
