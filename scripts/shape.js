@@ -1,4 +1,4 @@
-/*
+/*ursor.xodsg...ode.
 Copyright (c)  2012   John King
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -150,7 +150,7 @@ function getLeft()
 function setPath(cursor)
 {
 	
-	$("markerdrop").style.visibility="hidden";
+	//$("markerdrop").style.visibility="hidden";
 	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
 	var node=new Node(point);
 	node.next=this.path;
@@ -197,6 +197,12 @@ function setPath(cursor)
 		case "rounded_rectangle":
 		break
 		case "triangle":
+			for(var i=0;i<2;i++)
+			{
+				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				node=new Node(point);alert(node.point.x)
+				this.addNode(node);
+			}
 		break
 		case "sector":
 		break
@@ -283,6 +289,13 @@ function drawGuide(cursor,node)
 		case "rounded_rectangle":
 		break
 		case "triangle":
+			node=node.next;  $("msg").innerHTML=this.path.point.x+".."+node.point.x;
+			p=new Point(cursor.x,cursor.y);
+			this.setNode(node,p);   
+			var dx=cursor.x-this.path.point.x;
+			p.x=this.path.point.x-dx; 
+			node=node.next;
+			this.setNode(node,p);
 		break
 		case "sector":
 		break
@@ -740,161 +753,6 @@ function drawEndRgtTri(cur,canv)
 	showtools(canv);
 }
 
-function createCircle(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	canv.bleft=cur.x;
-	canv.btop=cur.y;
-	canv.bwidth=50;
-	canv.bheight=50;
-	var tempary=[];
-	tempary.push('M');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	drawline(canv);
-	$('bodydiv').onmouseup=function(e){drawEndCircle(getPosition(e),canv)};
-	$('bodydiv').onmousemove=function(e) {drawGuideCircle(getPosition(e),canv)};
-}
-
-function drawGuideCircle(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	if (cur.x>cur.y)
-	{
-		var nx=(cur.x-canv.bleft)/2;
-	}
-	else
-	{
-		var nx=(cur.y-canv.btop)/2;
-	}	
-	var k=4*(Math.SQRT2-1)/3;
-	var cx=canv.bleft;
-	var cy=canv.btop;
-	canv.path[3][1]=cx+nx;
-	canv.path[3][2]=cy;
-	canv.path[4][1]=cx+nx*(1+k);
-	canv.path[4][2]=cy;
-	canv.path[4][3]=cx+2*nx;
-	canv.path[4][4]=cy+nx*(1-k);
-	canv.path[4][5]=cx+2*nx;
-	canv.path[4][6]=cy+nx;
-	canv.path[5][1]=cx+2*nx;
-	canv.path[5][2]=cy+nx*(1+k);
-	canv.path[5][3]=cx+nx*(1+k);
-	canv.path[5][4]=cy+2*nx;
-	canv.path[5][5]=cx+nx;
-	canv.path[5][6]=cy+2*nx;
-	canv.path[6][1]=cx+nx*(1-k);
-	canv.path[6][2]=cy+2*nx;
-	canv.path[6][3]=cx;
-	canv.path[6][4]=cy+nx*(1+k)
-	canv.path[6][5]=cx;
-	canv.path[6][6]=cy+nx;
-	canv.path[7][1]=cx;
-	canv.path[7][2]=cy+nx*(1-k);
-	canv.path[7][3]=cx+nx*(1-k);
-	canv.path[7][4]=cy;
-	canv.path[7][5]=cx+nx;
-	canv.path[7][6]=cy;	
-	drawline(canv);
-}
-
-function drawEndCircle(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onmouseup=function() {};
-	$('bodydiv').onmousedown=function() {};
-	shapejustcreated=true;
-	if (cur.x>cur.y)
-	{
-		var nx=(cur.x-canv.bleft)/2;
-	}
-	else
-	{
-		var nx=(cur.y-canv.btop)/2;
-	}
-	var k=4*(Math.SQRT2-1)/3;
-	var cx=canv.bleft;
-	var cy=canv.btop;
-	canv.path[3][1]=cx+nx;
-	canv.path[3][2]=cy;
-	canv.path[4][1]=cx+nx*(1+k);
-	canv.path[4][2]=cy;
-	canv.path[4][3]=cx+2*nx;
-	canv.path[4][4]=cy+nx*(1-k);
-	canv.path[4][5]=cx+2*nx;
-	canv.path[4][6]=cy+nx;
-	canv.path[5][1]=cx+2*nx;
-	canv.path[5][2]=cy+nx*(1+k);
-	canv.path[5][3]=cx+nx*(1+k);
-	canv.path[5][4]=cy+2*nx;
-	canv.path[5][5]=cx+nx;
-	canv.path[5][6]=cy+2*nx;
-	canv.path[6][1]=cx+nx*(1-k);
-	canv.path[6][2]=cy+2*nx;
-	canv.path[6][3]=cx;
-	canv.path[6][4]=cy+nx*(1+k)
-	canv.path[6][5]=cx;
-	canv.path[6][6]=cy+nx;
-	canv.path[7][1]=cx;
-	canv.path[7][2]=cy+nx*(1-k);
-	canv.path[7][3]=cx+nx*(1-k);
-	canv.path[7][4]=cy;
-	canv.path[7][5]=cx+nx;
-	canv.path[7][6]=cy;		
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);	
-	canv.createBoundary();
-	selected.push(canv);
-	showtools(canv);
-}
 
 
 function createArc(cur,canv)
