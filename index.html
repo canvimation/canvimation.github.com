@@ -138,7 +138,7 @@ img.marker {
 
 #markerdrop {
 	visibility:hidden;
-	z-index:30000003;
+	z-index:20000003;
 }
 
 #hidecanvas {
@@ -1415,6 +1415,14 @@ function undolast()
 	if (undo.length==0) {$('lundo').style.visibility='hidden'};
 }
 
+function clear(stage)
+{
+	while(stage.childNodes.length>0)
+	{
+		stage.removeChild(stage.firstChild)
+	}
+}
+
 function showmenu()
 {
 	if (!shapestarted)
@@ -1424,6 +1432,9 @@ function showmenu()
 			$('shapemenu').style.left=-65;
 		}
 		$('shapemenu').style.visibility='visible';
+		$('markerdrop').style.visibility='hidden';
+		clear($("markerdrop"));
+		MCOUNT=0;
 		$('group').style.visibility='hidden';
 		$('ungroup').style.visibility='hidden';
 		$('stylelines').style.visibility='hidden';

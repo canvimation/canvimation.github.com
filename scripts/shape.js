@@ -143,14 +143,18 @@ function getLeft()
 function setPath(cursor)
 {
 	
-	$("markerdrop").style.visibility="visible";
+	$("markerdrop").style.visibility="hidden";
 	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
 	var node=new Node(point);
 	node.next=this.path;
 	this.path=node;
 	this.pathptr=node;
 	node.shape=this;
-	node.addMarks();
+	if (this.editable) 
+	{
+		$("markerdrop").style.visibility="visible";
+		node.addMarks()
+	};
 	var curshape=this;
 	
 	switch (this.type)
@@ -167,6 +171,12 @@ function setPath(cursor)
 		case "freeform":
 		break
 		case "square":
+			for(var i=0;i<3;i++)
+			{
+				var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				var node=new Node(point);
+				this.addNode(node);
+			}
 		break
 		case "circle":
 		break
@@ -202,6 +212,16 @@ function drawGuide(cursor,node)
 		case "freeform":
 		break
 		case "square":
+			node=this.path.next;
+			var p=new Point(cursor.x,node.point.y);
+			this.setNode(node,p);
+			node=node.next;
+			this.setNode(node,cursor);
+			node=node.next;
+			p.x=node.point.x;
+			p.y=cursor.y;
+			this.setNode(node,p );
+			this.draw();
 		break
 		case "circle":
 		break
@@ -225,13 +245,9 @@ function drawEnd(cursor,node)
 	switch (this.type)
 	{
 		case "line":
-			this.setNode(node,cursor);
+			//this.setNode(node,cursor);
 			node.addMarks();
-			this.draw();
-			BODY.style.cursor="default";
-			BODY.onmousedown=function() {};
-			BODY.onmousemove=function() {};
-			BODY.onmouseup=function() {};
+			//this.draw();
 		break
 		case "arc":
 		break
@@ -254,6 +270,10 @@ function drawEnd(cursor,node)
 		case "right_triangle":
 		break
 	}
+	BODY.style.cursor="default";
+	BODY.onmousedown=function() {};
+	BODY.onmousemove=function() {};
+	BODY.onmouseup=function() {};
 }
 
 function createLine(cur,canv)

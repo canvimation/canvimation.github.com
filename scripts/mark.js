@@ -16,7 +16,6 @@ function addMarks(type)
    		this.mark.style.fontSize=0;
    		this.mark.style.width=8;
    		this.mark.style.height=8;
-   		this.mark.style.visibility='visible';
    		this.mark.style.border="solid black 1px";
    		this.mark.style.cursor='move';
 

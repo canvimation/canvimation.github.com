@@ -13,6 +13,6 @@ shapes[4]=[false,false,'square'];
 shapes[5]=[false,false,'circle'];
 shapes[6]=[false,true,'rounded_square'];
 shapes[7]=[false,false,'triangle'];
-shapes[8]=[false,false,'sector'];
+shapes[8]=[false,true,'sector'];
 shapes[9]=[false,true,'segment'];
 shapes[10]=[false,false,'right_triangle'];
