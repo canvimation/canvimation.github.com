@@ -5,19 +5,24 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-function Point(t,x,y)
+function Point(x,y)
 {
 	this.x=x;
 	this.y=y;
-	
-	//methods
-	this.addMark=addMark;
-	this.remMark=remMark; //remove marks;
 }
 
-function Path()
+function Node(point,ctrl1,ctrl2) 
 {
-	this.points=[];
+	this.point=point;
+	this.ctrl1=ctrl1 || "non";
+	this.ctrl2=ctrl2 || "non";
+	this.next="";
+	this.shape;
+	
+	//methods
+	this.addMarks=addMarks;
+	this.updateNode=updateNode;
+	//this.remMark=remMark; //remove marks;
 }
 
 function Shape(name,open,editable,type) 
@@ -25,11 +30,8 @@ function Shape(name,open,editable,type)
    	this.name=name;
    	this.open=open;
    	this.editable=editable;
-   	this.type=type; 
-   	this.path=new Path();
-   	this.path.shape=this;
+   	this.type=type;
    	this.psuid=this.id;
-   	this.style.position='absolute';
    	this.bleft=90; 
    	this.btop= 90;
    	this.bwidth=50;
@@ -67,7 +69,6 @@ function Shape(name,open,editable,type)
    	this.ScaleX=1;
    	this.ScaleY=1;
    	this.zIndex=zpos++;
-   	this.style.zIndex=this.zIndex;
    	this.rotate=0;
    	this.clockw=true;
    	this.complete=false;
@@ -76,7 +77,9 @@ function Shape(name,open,editable,type)
    	this.beztypes=[];
    	this.radius=10;
    	
-   	SHAPE[this.name]=this;
+ 	this.path="end";
+   	
+   	SHAPES[this.name]=this;
    	
    	//methods
    	this.createBoundary=createBoundary;
@@ -85,23 +88,45 @@ function Shape(name,open,editable,type)
    	this.getTop=getTop;
    	this.getLeft=getLeft;
    	this.setPath=setPath;
-   	this.setPoint=setPoint;
+   	this.addNode=addNode;
+   	this.setNode=setNode;
+   	this.draw=draw;
+   	this.drawGuide=drawGuide;
+   	this.drawEnd=drawEnd;
    	
    	return this;
    	
 }
 
+function addNode(node)
+{
+	node.next=this.pathptr.next;
+	this.pathptr.next=node;
+	this.pathptr=node;
+	node.shape=this;
+}
+
+function setNode(node,cursor)
+{
+	node.point.x=cursor.x;
+	node.point.y=cursor.y;
+}
+
 function addTo(theatre)
 {
 	this.Canvas = document.createElement('canvas');
+   	this.Canvas.style.position='absolute';
    	this.Canvas.style.left=0; 
    	this.Canvas.style.top= 0;
+   	this.Canvas.width=SCRW;
+   	this.Canvas.height=SCRH;
+   	this.Canvas.style.zIndex=this.zIndex;
    	theatre.appendChild(this.Canvas);
    	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
    	if (this.Canvas.getContext)
 	{
         this.Canvas.ctx = this.Canvas.getContext('2d');
-    }	
+    }
 }
 
 
@@ -117,26 +142,58 @@ function getLeft()
 
 function setPath(cursor)
 {
-	var p=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
-	p.shape=this;
-	p.type="M";
-	this.path.points.push(p);
-	p.addMark("set");
-	DDm=new YAHOO.util.DD(p.mark.id);
-	DDm.onDrag=function(){updatepoints(this)};
-	BODY.onmousemove=function(e) {drawguide(getposition(e),this)};
-
+	
+	$("markerdrop").style.visibility="visible";
+	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
+	var node=new Node(point);
+	node.next=this.path;
+	this.path=node;
+	this.pathptr=node;
+	node.shape=this;
+	node.addMarks();
+	var curshape=this;
+	
+	switch (this.type)
+	{
+		case "line":
+			var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			var node=new Node(point);
+			this.addNode(node);
+		break
+		case "arc":
+		break
+		case "curve":
+		break 
+		case "freeform":
+		break
+		case "square":
+		break
+		case "circle":
+		break
+		case "rounded_square":
+		break
+		case "triangle":
+		break
+		case "sector":
+		break
+		case "segment":
+		break
+		case "right_triangle":
+		break
+	}
+	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e),node)};
+	BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e),node)};
 }
 
-function drawguide(cursor,shape)
+function drawGuide(cursor,node)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
-	switch (shape.type)
+	switch (this.type)
 	{
 		case "line":
-			this.setPoint(1,cursor)
-			drawshape(this);
+			this.setNode(node,cursor);
+			this.draw();
 		break
 		case "arc":
 		break
@@ -161,11 +218,44 @@ function drawguide(cursor,shape)
 	}
 }
 
-function setPoint(n,point)
+function drawEnd(cursor,node)
 {
-	this.path.points[n].x=point.x;
-	this.path.points[n].y=point.y;
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	switch (this.type)
+	{
+		case "line":
+			this.setNode(node,cursor);
+			node.addMarks();
+			this.draw();
+			BODY.style.cursor="default";
+			BODY.onmousedown=function() {};
+			BODY.onmousemove=function() {};
+			BODY.onmouseup=function() {};
+		break
+		case "arc":
+		break
+		case "curve":
+		break 
+		case "freeform":
+		break
+		case "square":
+		break
+		case "circle":
+		break
+		case "rounded_square":
+		break
+		case "triangle":
+		break
+		case "sector":
+		break
+		case "segment":
+		break
+		case "right_triangle":
+		break
+	}
 }
+
 function createLine(cur,canv)
 {
 	cur.x=Math.round(cur.x/xgrid)*xgrid;
@@ -193,14 +283,6 @@ function createLine(cur,canv)
 	$('bodydiv').onmousemove=function(e) {drawGuide(getPosition(e),canv)};
 }
 
-function drawGuide(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	canv.path[4][1]=cur.x;
-	canv.path[4][2]=cur.y;
-	drawline(canv);
-}
 
 function drawEndPoint(cur,canv)
 {

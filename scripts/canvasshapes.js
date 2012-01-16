@@ -5,14 +5,14 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 var shapes = new Array(); 
-shapes[0]=['open','edit','line'];
-shapes[1]=['open','edit','arc'];
-shapes[2]=['open','edit','curve'];
-shapes[3]=['closed','edit','freeform'];
-shapes[4]=['closed','shape','square'];
-shapes[5]=['closed','shape','circle'];
-shapes[6]=['closed','edit','rounded_square'];
-shapes[7]=['closed','shape','triangle'];
-shapes[8]=['closed','edit','sector'];
-shapes[9]=['closed','edit','segment'];
-shapes[10]=['closed','shape','right_triangle'];
+shapes[0]=[true,true,'line'];
+shapes[1]=[true,true,'arc'];
+shapes[2]=[true,true,'curve'];
+shapes[3]=[false,true,'freeform'];
+shapes[4]=[false,false,'square'];
+shapes[5]=[false,false,'circle'];
+shapes[6]=[false,true,'rounded_square'];
+shapes[7]=[false,false,'triangle'];
+shapes[8]=[false,false,'sector'];
+shapes[9]=[false,true,'segment'];
+shapes[10]=[false,false,'right_triangle'];

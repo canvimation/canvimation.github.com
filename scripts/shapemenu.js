@@ -34,7 +34,16 @@ function shapeMenu()
 	   this.img.title=shapes[i][2];
 	   this.img.onmouseover=function(e){noBubble(e);this.src=this.srcin};
 	   this.img.onmouseout=function(){this.src=this.srcout};
-	   this.img.onclick=function(){createScanvas(blocknum++,this.i);numblocks+=1;$('shapemenu').style.visibility='hidden';};
+	   this.img.onclick=function(e) 
+	   					{
+	   							$("shapemenu").style.visibility="hidden";
+	   							noBubble(e);
+	   							var shape=new Shape(Shape+(SHAPES.counter++),true,true,this.title);
+	   							shape.addTo($("shapestage"));
+	   							BODY.onmouseover=BODY.style.cursor="crosshair";
+	   							BODY.onmousedown=function(e){shape.setPath(getPosition(e))}
+	   					}
+	   //this.img.onclick=function(){createScanvas(blocknum++,this.i);numblocks+=1;$('shapemenu').style.visibility='hidden';};
 	   this.elmRef.appendChild(this.img);
    }
 }
