@@ -6,7 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function addMarks(type) 
 {
-   	if (this.ctrl1=="non")
+   	if (this.ctrl1.x=="non")
    	{
    		this.mark = document.createElement('div');
    		this.mark.node=this;
@@ -18,13 +18,10 @@ function addMarks(type)
    		this.mark.style.height=8;
    		this.mark.style.border="solid black 1px";
    		this.mark.style.cursor='move';
-
-   		
    	}
    	else
    	{
-   		
-   		
+   		   		
    	}
  
    

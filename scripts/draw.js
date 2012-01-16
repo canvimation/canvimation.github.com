@@ -23,17 +23,17 @@ function draw()
 	this.Canvas.ctx.lineJoin = this.lineJoin;
 	
 	this.Canvas.ctx.beginPath();
-	var node=this.path;
+	var node=this.path;$("msg").innerHTML="    start    ";
 	this.Canvas.ctx.moveTo(node.point.x,node.point.y);
 	while (node.next !="end")
 	{
 	   	node=node.next
-	   	if (node.ctrl1=="non")
-	   	{ 
+	   	if (node.ctrl1.x=="non")
+	   	{ $("msg").innerHTML+="non ";
 		    this.Canvas.ctx.lineTo(node.point.x,node.point.y)
 	   	}
 	   	else 
-	   	{
+	   	{$("msg").innerHTML+="bez ";
 			this.Canvas.ctx.bezierCurveTo(node.ctrl1.x,node.ctrl1.y,node.ctrl2.x,node.ctrl2.y,node.point.x,node.point.y)
 	   	}
 	} 
