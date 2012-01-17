@@ -4,25 +4,19 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function addMarks(type) 
-{
-   	if (this.ctrl1.x=="non")
-   	{
-   		this.mark = document.createElement('div');
-   		this.mark.node=this;
-   		this.mark.id="mark"+(MCOUNT++);
-   		this.mark.style.left= this.point.x-4; 
-   		this.mark.style.top= this.point.y-4;
-   		this.mark.style.fontSize=0;
-   		this.mark.style.width=8;
-   		this.mark.style.height=8;
-   		this.mark.style.border="solid black 1px";
-   		this.mark.style.cursor='move';
-   	}
-   	else
-   	{
-   		   		
-   	}
+function addMarks() 
+{ 
+   	this.mark = document.createElement('div');
+   	this.mark.node=this;
+   	this.mark.id="mark"+(MCOUNT++);
+   	this.mark.style.left= this.point.x-4; 
+   	this.mark.style.top= this.point.y-4;
+   	this.mark.style.fontSize=0;
+   	this.mark.style.width=8;
+   	this.mark.style.height=8;
+   	this.mark.style.border="solid black 1px";
+   	this.mark.style.cursor='move';
+   	
  
    
    this.mark.onmouseover=function(){
@@ -81,6 +75,8 @@ function updateNode(cursor)
 			this.shape.draw();
 		break
 		case "arc":
+			this.shape.setNode(this,cursor);
+			this.shape.draw();
 		break
 		case "curve":
 		break 

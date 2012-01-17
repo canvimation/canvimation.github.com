@@ -23,11 +23,11 @@ function draw()
 	this.Canvas.ctx.lineJoin = this.lineJoin;
 	
 	this.Canvas.ctx.beginPath();
-	var node=this.path;
+	var node=this.path.next;
 	this.Canvas.ctx.moveTo(node.point.x,node.point.y);
-	while (node.next !="end")
+	while (node.next.point.x !="end")
 	{
-	   	node=node.next
+	   	node=node.next;
 	   	if (node.ctrl1.x=="non")
 	   	{ 
 		    this.Canvas.ctx.lineTo(node.point.x,node.point.y)
@@ -43,7 +43,8 @@ function draw()
 		this.Canvas.ctx.closePath()
 	}
 	this.Canvas.ctx.stroke();
-	if (!this.open)	 
+	if (!this.open)
+	{	 
 		this.Canvas.ctx.shadowOffsetX = this.shadowOffsetX;   
    		this.Canvas.ctx.shadowOffsetY = this.shadowOffsetY;   
    		this.Canvas.ctx.shadowBlur = this.shadowBlur; 
@@ -90,6 +91,7 @@ function draw()
 			this.Canvas.ctx.fillStyle=grad;
 		}
 		this.Canvas.ctx.fill();
+	}
 }
 
 

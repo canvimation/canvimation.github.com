@@ -43,7 +43,7 @@ function shapeMenu()
 	   							noBubble(e);
 	   							var shape=new Shape("Shape"+(SHAPES.counter++),this.open,this.edit,this.title);
 	   							shape.addTo($("shapestage"));
-	   							BODY.onmouseover=BODY.style.cursor="crosshair";
+	   							BODY.style.cursor="crosshair";
 	   							BODY.onmousedown=function(e){shape.setPath(getPosition(e))}
 	   					}
 	   //this.img.onclick=function(){createScanvas(blocknum++,this.i);numblocks+=1;$('shapemenu').style.visibility='hidden';};

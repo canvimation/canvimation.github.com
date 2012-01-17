@@ -17,6 +17,7 @@ function Node(point)
 	this.ctrl1=new Point("non","non");
 	this.ctrl2=new Point("non","non");
 	this.next="";
+	this.prev=""
 	this.shape;
 	
 	//methods
@@ -32,8 +33,7 @@ function Shape(name,open,editable,type)
    	this.editable=editable;
    	this.type=type;
    	this.psuid=this.id;
-   	this.bleft=90; 
-   	this.btop= 90;
+   	this.startpoint; //coordinates of top left of boundary box;
    	this.bwidth=50;
    	this.bheight=50;
    	this.scleft=90;
@@ -76,8 +76,11 @@ function Shape(name,open,editable,type)
    	this.boundary='empty';
    	this.beztypes=[];
    	this.radius=10;
-   	
- 	this.path="end";
+   	var p=new Point("end","end");
+   	this.path=new Node(p);
+   	this.path.next=this.path;
+   	this.path.prev=this.path;
+ 	//this.path=this.head;
    	
    	SHAPES[this.name]=this;
    	
@@ -100,9 +103,11 @@ function Shape(name,open,editable,type)
 
 function addNode(node)
 {
-	node.next=this.pathptr.next;
-	this.pathptr.next=node;
-	this.pathptr=node;
+	var path=this.path;
+	node.next=path;
+	node.prev=path.prev;
+	path.prev.next=node;
+	path.prev=node;
 	node.shape=this;
 }
 
@@ -149,19 +154,10 @@ function getLeft()
 
 function setPath(cursor)
 {
-	
-	//$("markerdrop").style.visibility="hidden";
 	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
 	var node=new Node(point);
-	node.next=this.path;
-	this.path=node;
-	this.pathptr=node;
-	node.shape=this;
-	if (this.editable) 
-	{
-		$("markerdrop").style.visibility="visible";
-		node.addMarks()
-	};
+	this.addNode(node);
+	this.startpoint=new Point(node.point.x,node.point.y);
 	var curshape=this;
 	
 	switch (this.type)
@@ -172,6 +168,9 @@ function setPath(cursor)
 			this.addNode(node);
 		break
 		case "arc":
+			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			node=new Node(point);
+			this.addNode(node);
 		break
 		case "curve":
 		break 
@@ -186,7 +185,6 @@ function setPath(cursor)
 			}
 		break
 		case "ellipse":
-			this.startpoint=new Point(node.point.x,node.point.y);
 			for(var i=0;i<4;i++)
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
@@ -195,12 +193,18 @@ function setPath(cursor)
 			}
 		break
 		case "rounded_rectangle":
+			for(var i=0;i<8;i++)
+			{
+				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				node=new Node(point);
+				this.addNode(node);
+			}
 		break
 		case "triangle":
 			for(var i=0;i<2;i++)
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
-				node=new Node(point);alert(node.point.x)
+				node=new Node(point);
 				this.addNode(node);
 			}
 		break
@@ -209,6 +213,12 @@ function setPath(cursor)
 		case "segment":
 		break
 		case "right_triangle":
+			for(var i=0;i<2;i++)
+			{
+				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				node=new Node(point);
+				this.addNode(node);
+			}
 		break
 	}
 	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e),node)};
@@ -225,31 +235,38 @@ function drawGuide(cursor,node)
 			this.setNode(node,cursor);
 		break
 		case "arc":
+			var start=this.path.next.point;
+			var lx=cursor.x-start.x;
+			var ly=cursor.y-start.y;
+			var c1=new Point(start.x+lx*K,start.y);
+			var c2=new Point(node.point.x,node.point.y-ly*K);
+			this.setNode(node,cursor,c1,c2);
 		break
 		case "curve":
 		break 
 		case "freeform":
 		break
 		case "rectangle":
-			node=this.path.next;
-			var p=new Point(cursor.x,node.point.y);
+			var start=this.path.next;
+			var p=new Point(cursor.x,start.point.y);
+			node=start.next;
 			this.setNode(node,p);
 			node=node.next;
 			this.setNode(node,cursor);
 			node=node.next;
-			p.x=node.point.x;
+			p.x=start.point.x;
 			p.y=cursor.y;
-			this.setNode(node,p );
+			this.setNode(node,p);
 		break
 		case "ellipse":
-			var lx=((cursor.x-this.startpoint.x)/2);
-			var ly=((cursor.y-this.startpoint.y)/2);
+			var lx=(cursor.x-this.startpoint.x)/2;
+			var ly=(cursor.y-this.startpoint.y)/2;
 			var midx=this.startpoint.x+lx;
 			var midy=this.startpoint.y+ly;
 			
 			p=new Point(midx,this.startpoint.y);
 			var c1=new Point(p.x+lx*K,p.y);
-			node=this.path;//top
+			node=this.path.next;//top
 			this.setNode(node,p); //top point
 			node=node.next;//right
 			
@@ -287,13 +304,65 @@ function drawGuide(cursor,node)
 			this.setNode(node,p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
+			var dx=cursor.x-this.startpoint.x;
+			var dy=cursor.y-this.startpoint.y;
+			dx=dx/Math.abs(dx);
+			dy=dy/Math.abs(dy);
+			var start=this.path.next;
+			p=new Point(this.startpoint.x+this.radius*dx,this.startpoint.y);
+			this.setNode(start,p);// top left
+			node=start.next;
+			p.x=cursor.x-this.radius*dx;
+			p.y=start.point.y;
+			this.setNode(node,p);// top right
+			var c1=new Point(p.x+this.radius*dx*K,p.y);
+			
+			p.x=cursor.x;
+			p.y+=this.radius*dy;
+			var c2=new Point(p.x,p.y-this.radius*dy*K);
+			node=node.next;
+			this.setNode(node,p,c1,c2);//right top
+			p.y=cursor.y-this.radius*dy;
+			node=node.next;
+			this.setNode(node,p);//right bottom
+			c1.x=p.x;
+			c1.y=p.y+this.radius*dy*K;
+			p.x=cursor.x-this.radius*dx;
+			p.y=cursor.y;
+			c2.x=p.x+this.radius*dx*K;
+			c2.y=p.y;
+			node=node.next;
+			this.setNode(node,p,c1,c2);//bottom right
+			p.x=start.point.x;
+			node=node.next;
+			this.setNode(node,p);//bottom left
+			c1.x=p.x-this.radius*dx*K;
+			c1.y=p.y;
+			p.x=this.startpoint.x
+			p.y=p.y-this.radius*dy;
+			c2.x=p.x;
+			c2.y=p.y+this.radius*dy*K;
+			node=node.next;
+			this.setNode(node,p,c1,c2);//left bottom
+			p.y=start.point.y+this.radius*dy;
+			node=node.next;
+			this.setNode(node,p);//left top
+			c1.x=p.x;
+			c1.y=p.y-this.radius*dy*K;
+			p.x=start.point.x;
+			p.y=start.point.y;
+			c2.x=p.x-this.radius*dx*K;
+			c2.y=p.y;
+			node=node.next;
+			this.setNode(node,p,c1,c2);//top left again
 		break
 		case "triangle":
-			node=node.next;  $("msg").innerHTML=this.path.point.x+".."+node.point.x;
+			var start=this.path.next;  
 			p=new Point(cursor.x,cursor.y);
+			node=start.next;
 			this.setNode(node,p);   
-			var dx=cursor.x-this.path.point.x;
-			p.x=this.path.point.x-dx; 
+			var dx=cursor.x-start.point.x;
+			p.x=start.point.x-dx; 
 			node=node.next;
 			this.setNode(node,p);
 		break
@@ -302,6 +371,13 @@ function drawGuide(cursor,node)
 		case "segment":
 		break
 		case "right_triangle":
+			var start=this.path.next;  
+			p=new Point(cursor.x,cursor.y);
+			node=start.next;
+			this.setNode(node,p);   
+			p.x=start.point.x; 
+			node=node.next;
+			this.setNode(node,p);
 		break
 	}
 	this.draw();
@@ -311,12 +387,18 @@ function drawEnd(cursor,node)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	if (this.editable) 
+	{
+		$("markerdrop").style.visibility="visible";
+		this.path.next.addMarks()
+	};
 	switch (this.type)
 	{
 		case "line":
 			node.addMarks();
 		break
 		case "arc":
+			node.addMarks();
 		break
 		case "curve":
 		break 
@@ -595,163 +677,7 @@ function updateRnSquRadius(canv,mrk)
 }
 
 
-function createTri(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid
-	canv.bleft=cur.x;
-	canv.btop=cur.y;
-	canv.bwidth=50;
-	canv.bheight=50;
-	var tempary=[];
-	tempary.push('M');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	$('bodydiv').onmouseup=function(e){drawEndTri(getPosition(e),canv)};
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	drawline(canv);
-	$('bodydiv').onmousemove=function(e) {drawGuideTri(getPosition(e),canv)};
-}
 
-function drawGuideTri(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	var nx=Math.max(cur.x-canv.bleft,cur.y-canv.btop);
-	canv.path[3][1]=canv.bleft+nx/2;
-	canv.path[3][2]=canv.btop;
-	canv.path[4][1]=canv.bleft+nx;
-	canv.path[4][2]=canv.btop+nx;
-	canv.path[5][1]=canv.bleft;
-	canv.path[5][2]=canv.btop+nx;
-	canv.path[6][1]=canv.path[3][1];
-	canv.path[6][2]=canv.path[3][2];
-	drawline(canv);
-}
-
-function drawEndTri(cur,canv)
-{
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onmouseup=function() {};
-	$('bodydiv').onmousedown=function() {};
-	shapejustcreated=true;
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	var nx=Math.max(cur.x-canv.bleft,cur.y-canv.btop);
-	canv.path[3][1]=canv.bleft+nx/2;
-	canv.path[3][2]=canv.btop;
-	canv.path[4][1]=canv.bleft+nx;
-	canv.path[4][2]=canv.btop+nx;
-	canv.path[5][1]=canv.bleft;
-	canv.path[5][2]=canv.btop+nx;
-	canv.path[6][1]=canv.path[3][1];
-	canv.path[6][2]=canv.path[3][2];
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);	
-	canv.createBoundary();
-	selected.push(canv);
-	showtools(canv);
-}
-
-function createRgtTri(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	canv.bleft=cur.x;
-	canv.btop=cur.y;
-	canv.bwidth=50;
-	canv.bheight=50;
-	var tempary=[];
-	tempary.push('M');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	$('bodydiv').onmouseup=function(e){drawEndRgtTri(getPosition(e),canv)};
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	drawline(canv);
-	$('bodydiv').onmousemove=function(e) {drawGuideRgtTri(getPosition(e),canv)};
-}
-
-function drawGuideRgtTri(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	var nx=Math.max(cur.x-canv.bleft,cur.y-canv.btop);
-	canv.path[3][1]=canv.bleft+nx/2;
-	canv.path[3][2]=canv.btop;
-	canv.path[4][1]=canv.bleft+nx/2;
-	canv.path[4][2]=canv.btop+nx;
-	canv.path[5][1]=canv.bleft;
-	canv.path[5][2]=canv.btop+nx;
-	canv.path[6][1]=canv.path[3][1];
-	canv.path[6][2]=canv.path[3][2];
-	drawline(canv);
-}
-
-function drawEndRgtTri(cur,canv)
-{
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onmouseup=function() {};
-	$('bodydiv').onmousedown=function() {};
-	shapejustcreated=true;
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	var nx=Math.max(cur.x-canv.bleft,cur.y-canv.btop);
-	canv.path[3][1]=canv.bleft+nx/2;
-	canv.path[3][2]=canv.btop;
-	canv.path[4][1]=canv.bleft+nx/2;
-	canv.path[4][2]=canv.btop+nx;
-	canv.path[5][1]=canv.bleft;
-	canv.path[5][2]=canv.btop+nx;
-	canv.path[6][1]=canv.path[3][1];
-	canv.path[6][2]=canv.path[3][2];
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);
-	canv.createBoundary();
-	selected.push(canv);
-	showtools(canv);
-}
 
 
 
