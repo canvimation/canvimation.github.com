@@ -23,7 +23,23 @@ function Node(point)
 	//methods
 	this.addMarks=addMarks;
 	this.updateNode=updateNode;
+	this.insertNodeBefore=insertNodeBefore;
+	this.removeNode=removeNode;
 	//this.remMark=remMark; //remove marks;
+}
+
+function insertNodeBefore(node)
+{
+	node.prev=this.prev;
+	node.next=this;
+	this.prev.next=node;
+	this.prev=node;
+}
+
+function removeNode()
+{
+	this.prev.next=this.next;
+	this.next.prev=this.prev;
 }
 
 function Shape(name,open,editable,type) 
@@ -33,9 +49,8 @@ function Shape(name,open,editable,type)
    	this.editable=editable;
    	this.type=type;
    	this.psuid=this.id;
-   	this.startpoint; //coordinates of top left of boundary box;
-   	this.bwidth=50;
-   	this.bheight=50;
+   	this.tplftcrnr; //coordinates of top left of boundary box;
+   	this.btmrgtcrnr; //coordinates of bottom right of boundary box;
    	this.scleft=90;
    	this.sctop=90;
    	this.scx=1;
@@ -96,6 +111,7 @@ function Shape(name,open,editable,type)
    	this.draw=draw;
    	this.drawGuide=drawGuide;
    	this.drawEnd=drawEnd;
+   	this.orientate=orientate ; // sets path so always starts with node with min x and y
    	
    	return this;
    	
@@ -110,6 +126,7 @@ function addNode(node)
 	path.prev=node;
 	node.shape=this;
 }
+
 
 function setNode(node,point,ctrl1,ctrl2)
 {
@@ -157,7 +174,8 @@ function setPath(cursor)
 	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
 	var node=new Node(point);
 	this.addNode(node);
-	this.startpoint=new Point(node.point.x,node.point.y);
+	this.tplftcrnr=new Point(node.point.x,node.point.y);
+	this.btmrgtcrnr=new Point(node.point.x,node.point.y);
 	var curshape=this;
 	
 	switch (this.type)
@@ -222,13 +240,15 @@ function setPath(cursor)
 		break
 	}
 	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e),node)};
-	BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e),node)};
+	BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e))};
 }
 
 function drawGuide(cursor,node)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	this.btmrgtcrnr.x=cursor.x;
+	this.btmrgtcrnr.y=cursor.y; 
 	switch (this.type)
 	{
 		case "line":
@@ -259,12 +279,12 @@ function drawGuide(cursor,node)
 			this.setNode(node,p);
 		break
 		case "ellipse":
-			var lx=(cursor.x-this.startpoint.x)/2;
-			var ly=(cursor.y-this.startpoint.y)/2;
-			var midx=this.startpoint.x+lx;
-			var midy=this.startpoint.y+ly;
+			var lx=(cursor.x-this.tplftcrnr.x)/2;
+			var ly=(cursor.y-this.tplftcrnr.y)/2;
+			var midx=this.tplftcrnr.x+lx;
+			var midy=this.tplftcrnr.y+ly;
 			
-			p=new Point(midx,this.startpoint.y);
+			p=new Point(midx,this.tplftcrnr.y);
 			var c1=new Point(p.x+lx*K,p.y);
 			node=this.path.next;//top
 			this.setNode(node,p); //top point
@@ -286,7 +306,7 @@ function drawGuide(cursor,node)
 			c1.x=p.x-lx*K;
 			c1.y=p.y;
 			
-			p.x=this.startpoint.x;
+			p.x=this.tplftcrnr.x;
 			p.y=midy;
 			c2.x=p.x;
 			c2.y=p.y+ly*K;
@@ -297,64 +317,16 @@ function drawGuide(cursor,node)
 			
 			
 			p.x=midx
-			p.y=this.startpoint.y;
+			p.y=this.tplftcrnr.y;
 			c2.x=p.x-lx*K;
 			c2.y=p.y;
 			node=node.next;//top
 			this.setNode(node,p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
-			var dx=cursor.x-this.startpoint.x;
-			var dy=cursor.y-this.startpoint.y;
-			dx=dx/Math.abs(dx);
-			dy=dy/Math.abs(dy);
-			var start=this.path.next;
-			p=new Point(this.startpoint.x+this.radius*dx,this.startpoint.y);
-			this.setNode(start,p);// top left
-			node=start.next;
-			p.x=cursor.x-this.radius*dx;
-			p.y=start.point.y;
-			this.setNode(node,p);// top right
-			var c1=new Point(p.x+this.radius*dx*K,p.y);
 			
-			p.x=cursor.x;
-			p.y+=this.radius*dy;
-			var c2=new Point(p.x,p.y-this.radius*dy*K);
-			node=node.next;
-			this.setNode(node,p,c1,c2);//right top
-			p.y=cursor.y-this.radius*dy;
-			node=node.next;
-			this.setNode(node,p);//right bottom
-			c1.x=p.x;
-			c1.y=p.y+this.radius*dy*K;
-			p.x=cursor.x-this.radius*dx;
-			p.y=cursor.y;
-			c2.x=p.x+this.radius*dx*K;
-			c2.y=p.y;
-			node=node.next;
-			this.setNode(node,p,c1,c2);//bottom right
-			p.x=start.point.x;
-			node=node.next;
-			this.setNode(node,p);//bottom left
-			c1.x=p.x-this.radius*dx*K;
-			c1.y=p.y;
-			p.x=this.startpoint.x
-			p.y=p.y-this.radius*dy;
-			c2.x=p.x;
-			c2.y=p.y+this.radius*dy*K;
-			node=node.next;
-			this.setNode(node,p,c1,c2);//left bottom
-			p.y=start.point.y+this.radius*dy;
-			node=node.next;
-			this.setNode(node,p);//left top
-			c1.x=p.x;
-			c1.y=p.y-this.radius*dy*K;
-			p.x=start.point.x;
-			p.y=start.point.y;
-			c2.x=p.x-this.radius*dx*K;
-			c2.y=p.y;
-			node=node.next;
-			this.setNode(node,p,c1,c2);//top left again
+			this.setRndRect=setRndRect;
+			this.setRndRect();
 		break
 		case "triangle":
 			var start=this.path.next;  
@@ -383,14 +355,18 @@ function drawGuide(cursor,node)
 	this.draw();
 }
 
-function drawEnd(cursor,node)
+function drawEnd(cursor)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	this.btmrgtcrnr=cursor;
+	//this.orientate();
 	if (this.editable) 
 	{
 		$("markerdrop").style.visibility="visible";
-		this.path.next.addMarks()
+		node=this.path.next;
+		node.addMarks();
+		node=node.next;
 	};
 	switch (this.type)
 	{
@@ -408,9 +384,10 @@ function drawEnd(cursor,node)
 		break
 		case "ellipse":
 		break
-		case "rounded_rectangle":
+		case "rounded_rectangle": 
 		break
 		case "triangle":
+			this.tplftcrnr.x -= cursor.x-this.tplftcrnr.x;
 		break
 		case "sector":
 		break
@@ -425,262 +402,110 @@ function drawEnd(cursor,node)
 	BODY.onmouseup=function() {};
 }
 
-
-
-function createRndSqu(cur,canv)
+function setRndRect() //bottom right corner
 {
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid
-	canv.bleft=cur.x;
-	canv.btop=cur.y;
-	canv.bwidth=50;
-	canv.bheight=50;
-	$('bodydiv').onmouseup=function(e){drawEndRndSqu(getPosition(e),canv)};
-	var tempary=[];
-	tempary.push('M');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	//top
-	tempary=[];   
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	//right
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	//bottom
-	tempary=[];   
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	//left
-	tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	drawline(canv);
-	$('bodydiv').onmousemove=function(e) {drawGuideRndSqu(getPosition(e),canv)};
+	var bwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+	var bheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	var dx=bwidth/Math.abs(bwidth);
+	var dy=bheight/Math.abs(bheight);
+	if (Math.abs(bwidth)<20)
+	{
+		this.btmrgtcrnr.x=this.tplftcrnr.x+20*dx;
+		bwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+	}
+	if (Math.abs(bheight)<20)
+	{
+		this.btmrgtcrnr.y=this.tplftcrnr.y+20 *dy;
+		bheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	}
+	var brc=this.btmrgtcrnr;
+	var start=this.path.next;
+	p=new Point(this.tplftcrnr.x+this.radius*dx,this.tplftcrnr.y);
+	this.setNode(start,p);// top left
+	node=start.next;
+	p.x=brc.x-this.radius*dx;
+	p.y=start.point.y;
+	this.setNode(node,p);// top right
+	var c1=new Point(p.x+this.radius*dx*K,p.y);
+	p.x=brc.x;
+	p.y+=this.radius*dy;
+	var c2=new Point(p.x,p.y-this.radius*dy*K);
+	node=node.next;
+	this.setNode(node,p,c1,c2);//right top
+	p.y=brc.y-this.radius*dy;
+	node=node.next;
+	this.setNode(node,p);//right bottom
+	c1.x=p.x;
+	c1.y=p.y+this.radius*dy*K;
+	p.x=brc.x-this.radius*dx;
+	p.y=brc.y;
+	c2.x=p.x+this.radius*dx*K;
+	c2.y=p.y;
+	node=node.next;
+	this.setNode(node,p,c1,c2);//bottom right
+	p.x=start.point.x;
+	node=node.next;
+	this.setNode(node,p);//bottom left
+	c1.x=p.x-this.radius*dx*K;
+	c1.y=p.y;
+	p.x=this.tplftcrnr.x
+	p.y=p.y-this.radius*dy;
+	c2.x=p.x;
+	c2.y=p.y+this.radius*dy*K;
+	node=node.next;
+	this.setNode(node,p,c1,c2);//left bottom
+	p.y=start.point.y+this.radius*dy;
+	node=node.next;
+	this.setNode(node,p);//left top
+	c1.x=p.x;
+	c1.y=p.y-this.radius*dy*K;
+	p.x=start.point.x;
+	p.y=start.point.y;
+	c2.x=p.x-this.radius*dx*K;
+	c2.y=p.y;
+	node=node.next;
+	this.setNode(node,p,c1,c2);//top left again	
 }
 
-function drawGuideRndSqu(cur,canv)
+function orientate()
 {
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid
-	if (cur.x>cur.y)
+	var swap=false;
+	if (this.tplftcrnr.x>this.btmrgtcrnr.x)
 	{
-		var dx=cur.x-canv.bleft;
+		swap=true;
+		var t=this.tplftcrnr.x;
+		this.tplftcrnr.x=this.btmrgtcrnr.x;
+		this.btmrgtcrnr.x=t;
 	}
-	else
+	if (this.tplftcrnr.y>this.btmrgtcrnr.y)
 	{
-		var dx=cur.y-canv.btop;
-	}	
-	if (dx<20)
-	{
-		canv.radius=dx/4;
+		swap=true;
+		var t=this.tplftcrnr.y;
+		this.tplftcrnr.y=this.btmrgtcrnr.y;
+		this.btmrgtcrnr.y=t;
 	}
-	else
+	if (swap)
 	{
-		canv.radius=10;
-	}
-	canv.bwidth=dx;
-	canv.bheight=dx;
-	canv.inwidth=canv.bwidth-2*canv.radius;
-	canv.inheight=canv.inwidth;
-	var k=4*(Math.SQRT2-1)/3;
-	canv.path[3][1]=canv.bleft;
-	canv.path[3][2]=canv.btop+canv.radius
-	canv.path[4][1]=canv.path[3][1];
-	canv.path[4][2]=canv.path[3][2]-canv.radius*k;
-	canv.path[4][3]=canv.path[3][1]+canv.radius*(1-k);
-	canv.path[4][4]=canv.btop;
-	canv.path[4][5]=canv.bleft+canv.radius;
-	canv.path[4][6]=canv.path[4][4];
-	//top
-	canv.path[5][1]=canv.path[4][5]+canv.inwidth
-	canv.path[5][2]=canv.path[4][6];
-	canv.path[6][1]=canv.path[5][1]+canv.radius*k;
-	canv.path[6][2]=canv.path[5][2];
-	canv.path[6][3]=canv.path[5][1]+canv.radius;
-	canv.path[6][4]=canv.path[5][2]+canv.radius*(1-k);
-	canv.path[6][5]=canv.path[5][1]+canv.radius;
-	canv.path[6][6]=canv.path[5][2]+canv.radius;
-	//right
-	canv.path[7][1]=canv.path[6][5];
-	canv.path[7][2]=canv.path[6][6]+canv.inwidth	
-	canv.path[8][1]=canv.path[7][1];
-	canv.path[8][2]=canv.path[7][2]+canv.radius*k;
-	canv.path[8][3]=canv.path[7][1]-canv.radius*(1-k);
-	canv.path[8][4]=canv.path[7][2]+canv.radius;
-	canv.path[8][5]=canv.path[7][1]-canv.radius;
-	canv.path[8][6]=canv.path[7][2]+canv.radius;
-	//bottom
-	canv.path[9][1]=canv.path[8][5]-canv.inwidth;
-	canv.path[9][2]=canv.path[8][6];
-	canv.path[10][1]=canv.path[9][1]-canv.radius*(1-k);
-	canv.path[10][2]=canv.path[9][2];
-	canv.path[10][3]=canv.path[3][1];
-	canv.path[10][4]=canv.path[9][2]-canv.radius*(1-k);
-	canv.path[10][5]=canv.path[3][1];
-	canv.path[10][6]=canv.path[9][2]-canv.radius;
-	//left
-	canv.path[11][1]=canv.path[3][1];
-	canv.path[11][2]=canv.path[3][2];
-	drawline(canv);
-}
+		var head=this.path;
+		var node=this.path.next;
+		var minnode=node;
+		var minx=node.point.x;
+		var miny=node.point.y; 
+		while (node.next.point.x !="end")
+		{
+			if(node.point.x<minnode.point.x || node.point.y<minnode.point.y)
+			{
+				minnode=node;
+			}
+			node=node.next;
+		}
+		head.removeNode();
+		minnode.insertNodeBefore(head)
 
-function drawEndRndSqu(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onmouseup=function() {};
-	$('bodydiv').onmousedown=function() {};
-	if (cur.x>cur.y)
-	{
-		var dx=cur.x-canv.bleft;
-	}
-	else
-	{
-		var dx=cur.y-canv.btop;
-	}	
-	if (dx<20)
-	{
-		canv.radius=dx/4;
-	}
-	else
-	{
-		canv.radius=10;
-	}
-	if (dx<20)
-	{
-		canv.radius=dx/2;
-	}
-	else
-	{
-		canv.radius=10;
-	}
-	canv.bwidth=dx;
-	canv.bheight=dx;
-	drawrndsq(canv);
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-	markLine(canv);
-}
-
-function drawrndsq(canv)
-{
-	var k=4*(Math.SQRT2-1)/3;
-	canv.inwidth=canv.bwidth-2*canv.radius;
-	canv.inheight=canv.bheight-2*canv.radius;
-	canv.path[3][1]=canv.bleft;
-	canv.path[3][2]=canv.btop+canv.radius
-	canv.path[4][1]=canv.path[3][1];
-	canv.path[4][2]=canv.path[3][2]-canv.radius*k;
-	canv.path[4][3]=canv.path[3][1]+canv.radius*(1-k);
-	canv.path[4][4]=canv.btop;
-	canv.path[4][5]=canv.bleft+canv.radius;
-	canv.path[4][6]=canv.path[4][4];
-	//top
-	canv.path[5][1]=canv.path[4][5]+canv.inwidth
-	canv.path[5][2]=canv.path[4][6];
-	canv.path[6][1]=canv.path[5][1]+canv.radius*k;
-	canv.path[6][2]=canv.path[5][2];
-	canv.path[6][3]=canv.path[5][1]+canv.radius;
-	canv.path[6][4]=canv.path[5][2]+canv.radius*(1-k);
-	canv.path[6][5]=canv.path[5][1]+canv.radius;
-	canv.path[6][6]=canv.path[5][2]+canv.radius;
-	//right
-	canv.path[7][1]=canv.path[6][5];
-	canv.path[7][2]=canv.path[6][6]+canv.inheight	
-	canv.path[8][1]=canv.path[7][1];
-	canv.path[8][2]=canv.path[7][2]+canv.radius*k;
-	canv.path[8][3]=canv.path[7][1]-canv.radius*(1-k);
-	canv.path[8][4]=canv.path[7][2]+canv.radius;
-	canv.path[8][5]=canv.path[7][1]-canv.radius;
-	canv.path[8][6]=canv.path[7][2]+canv.radius;
-	//bottom
-	canv.path[9][1]=canv.path[8][5]-canv.inwidth;
-	canv.path[9][2]=canv.path[8][6];
-	canv.path[10][1]=canv.path[9][1]-canv.radius*(1-k);
-	canv.path[10][2]=canv.path[9][2];
-	canv.path[10][3]=canv.path[3][1];
-	canv.path[10][4]=canv.path[9][2]-canv.radius*(1-k);
-	canv.path[10][5]=canv.path[3][1];
-	canv.path[10][6]=canv.path[9][2]-canv.radius;
-	//left
-	canv.path[11][1]=canv.path[3][1];
-	canv.path[11][2]=canv.path[3][2];
-	drawline(canv);
-}
-
-function updateRnSquRadius(canv,mrk)
-{
-	$(mrk.id).style.top=canv.btop-4;
-	var lf=parseInt($(mrk.id).style.left);
-	var newradius=lf+4-canv.bleft;
-	var newinlength=canv.bwidth-2*newradius;
-	var newinheight=canv.bheight-2*newradius;
-	if (newradius<10 || newinlength<2 || newinheight<2)
-	{
-		$(mrk.id).style.left=canv.path[4][5]-4;
-	}
-	else
-	{
-		canv.radius=newradius;
-		canv.inwidth=newinlength;
-		canv.inheight=newinheight;
-		drawrndsq(canv);
 	}
 }
 
-
-
-
-
-
+//old functions  
 function createArc(cur,canv)
 {
 	cur.x=Math.round(cur.x/xgrid)*xgrid;

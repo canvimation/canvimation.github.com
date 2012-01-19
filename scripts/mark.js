@@ -86,7 +86,33 @@ function updateNode(cursor)
 		break
 		case "circle":
 		break
-		case "rounded_square":
+		case "rounded_rectangle":
+			var start=this.shape.path.next; 
+			//var p=new Point(cursor.x,start.point.y);
+			
+			this.mark.style.top=start.point.y-4;
+			var w=(this.shape.btmrgtcrnr.x-this.shape.tplftcrnr.x)/2;
+			var h=(this.shape.btmrgtcrnr.y-this.shape.tplftcrnr.y)/2;
+			var d=w*h/Math.abs(w*h); //corrects for height direction;
+			if(Math.abs(h)<Math.abs(w))
+			{
+				var m=this.shape.tplftcrnr.x+h*d;
+			}
+			else
+			{
+				var m=this.shape.tplftcrnr.x+w;
+			}
+			$("msg").innerHTML=this.shape.tplftcrnr.x+"..."+cursor.x +"..."+ m+"..br.."+this.shape.btmrgtcrnr.x+"..w.."+w+"..h.."+h;
+			if((this.shape.tplftcrnr.x<cursor.x && cursor.x<m) || (this.shape.tplftcrnr.x>cursor.x && cursor.x>m))
+			{
+				this.shape.radius=Math.abs(cursor.x-this.shape.tplftcrnr.x);
+			}
+			else
+			{
+				this.mark.style.left=start.point.x-4;
+			}
+			this.shape.setRndRect();
+			this.shape.draw();
 		break
 		case "triangle":
 		break
