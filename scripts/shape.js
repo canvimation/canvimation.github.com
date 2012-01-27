@@ -11,21 +11,47 @@ function Point(x,y)
 	this.y=y;
 }
 
-function Node(point) 
+function Node(point,ctrl1,ctrl2) 
 {
 	this.point=point;
-	this.ctrl1=new Point("non","non");
-	this.ctrl2=new Point("non","non");
+	if (arguments.length>1)
+	{
+		this.ctrl1=ctrl1;
+		this.ctrl2=ctrl2;
+	}
+	else
+	{
+		this.ctrl1=new Point("non","non");
+		this.ctrl2=new Point("non","non");
+	}
 	this.next="";
 	this.prev=""
 	this.shape;
 	
 	//methods
-	this.addMarks=addMarks;
+	this.addMark=addMark;
+	this.removeMark=removeMark;
 	this.updateNode=updateNode;
 	this.insertNodeBefore=insertNodeBefore;
 	this.removeNode=removeNode;
+	this.getAngle=getAngle;
+	this.getAngleTo=getAngleTo;
+	this.rotate=rotate;
+	this.scaleY=scaleY;
+	this.translate=translate;
+	this.copyNodeTo=copyNodeTo;
 	//this.remMark=remMark; //remove marks;
+}
+
+function copyNodeTo(node)
+{
+	node.point.x=this.point.x;
+	node.point.y=this.point.y;
+	node.ctrl1.x=this.ctrl1.x;
+	node.ctrl1.y=this.ctrl1.y;
+	node.ctrl2.x=this.ctrl2.x;
+	node.ctrl2.y=this.ctrl2.y;
+	node.shape=this.shape;
 }
 
 function insertNodeBefore(node)
@@ -40,6 +66,72 @@ function removeNode()
 {
 	this.prev.next=this.next;
 	this.next.prev=this.prev;
+}
+
+function restoreNode()
+{
+	this.prev.next=this;
+	this.next.prev=this;
+}
+
+function getAngle() //angle from current centre
+{
+	return arctan(this.point.y,this.point.x);
+	//$("msg").innerHTML=theta;
+	
+}
+
+function getAngleTo(node)  //relative to current centre
+{
+	var theta = node.getAngle()-this.getAngle();
+	if(theta<0)
+	{
+		theta+=2*Math.PI;
+	}
+	return theta;
+}
+
+function rotate(theta) //about centre
+{
+	
+	var px=this.point.x*Math.cos(theta)-this.point.y*Math.sin(theta);
+	var py=this.point.x*Math.sin(theta)+this.point.y*Math.cos(theta);
+	this.point.x=px;
+	this.point.y=py;
+	if(this.ctrl1.x!="non")
+	{
+		var c1x=this.ctrl1.x*Math.cos(theta)-this.ctrl1.y*Math.sin(theta);
+		var c1y=this.ctrl1.x*Math.sin(theta)+this.ctrl1.y*Math.cos(theta);
+		var c2x=this.ctrl2.x*Math.cos(theta)-this.ctrl2.y*Math.sin(theta);
+		var c2y=this.ctrl2.x*Math.sin(theta)+this.ctrl2.y*Math.cos(theta);
+		this.ctrl1.x=c1x;
+		this.ctrl1.y=c1y;
+		this.ctrl2.x=c2x;
+		this.ctrl2.y=c2y;
+	}
+}
+
+function scaleY(s)
+{
+	this.point.y=s*this.point.y;
+	if(this.ctrl1.x!="non")
+	{
+		this.ctrl1.y=s*this.ctrl1.y;
+		this.ctrl2.y=s*this.ctrl2.y;
+	}
+}
+
+function translate(x,y)
+{
+	this.point.x-=x;
+	this.point.y-=y;
+	if(this.ctrl1.x!="non")
+	{
+		this.ctrl1.x-=x;
+		this.ctrl1.y-=y;
+		this.ctrl2.x-=x;
+		this.ctrl2.y-=y;
+	}
 }
 
 function Shape(name,open,editable,type) 
@@ -90,7 +182,7 @@ function Shape(name,open,editable,type)
    	this.group=[];
    	this.boundary='empty';
    	this.beztypes=[];
-   	this.radius=10;
+   	this.crnradius=10;
    	var p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
@@ -111,10 +203,16 @@ function Shape(name,open,editable,type)
    	this.draw=draw;
    	this.drawGuide=drawGuide;
    	this.drawEnd=drawEnd;
-   	this.orientate=orientate ; // sets path so always starts with node with min x and y
-   	
+  	this.swapCrnr=swapCrnr;
    	return this;
    	
+}
+
+function swapCrnr(c)
+{
+	var t=this.tplftcrnr[c];
+	this.tplftcrnr[c]=this.btmrgtcrnr[c];
+	this.btmrgtcrnr[c]=t;
 }
 
 function addNode(node)
@@ -187,8 +285,21 @@ function setPath(cursor)
 		break
 		case "arc":
 			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
-			node=new Node(point);
-			this.addNode(node);
+			this.rnode=new Node(point);
+			node=this.rnode;
+			this.addNode(this.rnode);
+			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			this.bnode=new Node(point);
+			this.addNode(this.bnode);
+			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			this.lnode=new Node(point);
+			this.addNode(this.lnode);
+			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			this.tnode=new Node(point);
+			this.addNode(this.tnode);
+			this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
+			this.lnode.removeNode();
+			this.tnode.removeNode();
 		break
 		case "curve":
 		break 
@@ -259,8 +370,8 @@ function drawGuide(cursor,node)
 			var lx=cursor.x-start.x;
 			var ly=cursor.y-start.y;
 			var c1=new Point(start.x+lx*K,start.y);
-			var c2=new Point(node.point.x,node.point.y-ly*K);
-			this.setNode(node,cursor,c1,c2);
+			var c2=new Point(this.rnode.point.x,this.rnode.point.y-ly*K);
+			this.setNode(this.rnode,cursor,c1,c2);
 		break
 		case "curve":
 		break 
@@ -360,21 +471,50 @@ function drawEnd(cursor)
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	this.btmrgtcrnr=cursor;
-	//this.orientate();
+
 	if (this.editable) 
 	{
 		$("markerdrop").style.visibility="visible";
-		node=this.path.next;
-		node.addMarks();
+		var node=this.path.next;
+		node.addMark();
 		node=node.next;
 	};
 	switch (this.type)
 	{
 		case "line":
-			node.addMarks();
+			node.addMark();
 		break
 		case "arc":
-			node.addMarks();
+			node.addMark();
+			this.arcwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+			this.archeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+			
+			if(this.arcwidth*this.archeight<0)//swap nodes so that going clockwise start node is before last node
+			{
+				this.arcwidth=Math.abs(this.arcwidth);
+				this.archeight=Math.abs(this.archeight);
+				var start=this.path.next;
+				var sp=new Point(start.next.point.x,start.next.point.y);
+				var ep=new Point(start.point.x,start.point.y);
+				var cs1=new Point(start.next.ctrl2.x,start.next.ctrl2.y);
+				var cs2=new Point(start.next.ctrl1.x,start.next.ctrl1.y);
+				var snode=new Node(sp);
+				var enode=new Node(ep,cs1,cs2);				
+				start.removeMark();//alert(["s..",start.point.x,start.ctrl1.x]);alert(["ln..",lnode.point.x,lnode.ctrl1.x]);
+				start.removeNode();
+				start.next.removeMark();//alert(["sx..",start.next.point.x,start.next.ctrl1.x]);alert(["sn..",snode.point.x,snode.ctrl1.x]);
+				start.next.removeNode();
+				this.addNode(snode);
+				this.addNode(enode);
+				snode.addMark();
+				enode.addMark(); 
+			}
+			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
+			this.archeight=Math.abs(this.archeight);
+			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
+			node=this.path.next;
+			
+			
 		break
 		case "curve":
 		break 
@@ -420,89 +560,68 @@ function setRndRect() //bottom right corner
 	}
 	var brc=this.btmrgtcrnr;
 	var start=this.path.next;
-	p=new Point(this.tplftcrnr.x+this.radius*dx,this.tplftcrnr.y);
+	p=new Point(this.tplftcrnr.x+this.crnradius*dx,this.tplftcrnr.y);
 	this.setNode(start,p);// top left
 	node=start.next;
-	p.x=brc.x-this.radius*dx;
+	p.x=brc.x-this.crnradius*dx;
 	p.y=start.point.y;
 	this.setNode(node,p);// top right
-	var c1=new Point(p.x+this.radius*dx*K,p.y);
+	var c1=new Point(p.x+this.crnradius*dx*K,p.y);
 	p.x=brc.x;
-	p.y+=this.radius*dy;
-	var c2=new Point(p.x,p.y-this.radius*dy*K);
+	p.y+=this.crnradius*dy;
+	var c2=new Point(p.x,p.y-this.crnradius*dy*K);
 	node=node.next;
 	this.setNode(node,p,c1,c2);//right top
-	p.y=brc.y-this.radius*dy;
+	p.y=brc.y-this.crnradius*dy;
 	node=node.next;
 	this.setNode(node,p);//right bottom
 	c1.x=p.x;
-	c1.y=p.y+this.radius*dy*K;
-	p.x=brc.x-this.radius*dx;
+	c1.y=p.y+this.crnradius*dy*K;
+	p.x=brc.x-this.crnradius*dx;
 	p.y=brc.y;
-	c2.x=p.x+this.radius*dx*K;
+	c2.x=p.x+this.crnradius*dx*K;
 	c2.y=p.y;
 	node=node.next;
 	this.setNode(node,p,c1,c2);//bottom right
 	p.x=start.point.x;
 	node=node.next;
 	this.setNode(node,p);//bottom left
-	c1.x=p.x-this.radius*dx*K;
+	c1.x=p.x-this.crnradius*dx*K;
 	c1.y=p.y;
 	p.x=this.tplftcrnr.x
-	p.y=p.y-this.radius*dy;
+	p.y=p.y-this.crnradius*dy;
 	c2.x=p.x;
-	c2.y=p.y+this.radius*dy*K;
+	c2.y=p.y+this.crnradius*dy*K;
 	node=node.next;
 	this.setNode(node,p,c1,c2);//left bottom
-	p.y=start.point.y+this.radius*dy;
+	p.y=start.point.y+this.crnradius*dy;
 	node=node.next;
 	this.setNode(node,p);//left top
 	c1.x=p.x;
-	c1.y=p.y-this.radius*dy*K;
+	c1.y=p.y-this.crnradius*dy*K;
 	p.x=start.point.x;
 	p.y=start.point.y;
-	c2.x=p.x-this.radius*dx*K;
+	c2.x=p.x-this.crnradius*dx*K;
 	c2.y=p.y;
 	node=node.next;
 	this.setNode(node,p,c1,c2);//top left again	
 }
 
-function orientate()
+function baseArcBez(radius,theta) // theta half angle subtending arc <90 degrees  ref http://www.tinaja.com/glib/bezcirc2.pdf
 {
-	var swap=false;
-	if (this.tplftcrnr.x>this.btmrgtcrnr.x)
-	{
-		swap=true;
-		var t=this.tplftcrnr.x;
-		this.tplftcrnr.x=this.btmrgtcrnr.x;
-		this.btmrgtcrnr.x=t;
-	}
-	if (this.tplftcrnr.y>this.btmrgtcrnr.y)
-	{
-		swap=true;
-		var t=this.tplftcrnr.y;
-		this.tplftcrnr.y=this.btmrgtcrnr.y;
-		this.btmrgtcrnr.y=t;
-	}
-	if (swap)
-	{
-		var head=this.path;
-		var node=this.path.next;
-		var minnode=node;
-		var minx=node.point.x;
-		var miny=node.point.y; 
-		while (node.next.point.x !="end")
-		{
-			if(node.point.x<minnode.point.x || node.point.y<minnode.point.y)
-			{
-				minnode=node;
-			}
-			node=node.next;
-		}
-		head.removeNode();
-		minnode.insertNodeBefore(head)
-
-	}
+	var x1=Math.cos(theta);
+	var y1=-Math.sin(theta);
+	var x2=x1;
+	var y2=-y1;
+	var cx1=radius*(4-x1)/3;
+	var cy1=radius*(1-x1)*(3-x1)/(3*y1);
+	var cx2=cx1;
+	var cy2=-cy1;
+	var p1=new Point(x1*radius,y1*radius);
+	var p2=new Point(x2*radius,y2*radius);
+	var c1=new Point(cx1,cy1);
+	var c2=new Point(cx2,cy2);
+	return {p1:p1,p2:p2,c1:c1,c2:c2}
 }
 
 //old functions  
@@ -1117,9 +1236,10 @@ if (3*Math.PI/2<psi && psi<2*Math.PI)
 	drawline(canv);
 }
 
-function arctan(x,y)
+function arctan(y,x)
 {
 	var theta = Math.atan(Math.abs(y/x));
+	
 	if (x>=0)
 	{
 		if (y<0) {theta = 2*Math.PI-theta};
@@ -1138,19 +1258,8 @@ function arctan(x,y)
 	return theta;
 }
 
-function rotate(a,x,y,d) //a angle, d direction
-{
-	
-	if (d=='C')
-	{
-		d=1	
-	}
-	else
-	{
-		d=-1
-	}
-	return {x:x*Math.cos(a)-d*y*Math.sin(a),y:d*x*Math.sin(a)+y*Math.cos(a)}
-}
+
+
 xxddff=0;
 function createBez(cur,canv)
 {

@@ -601,7 +601,7 @@ function setvector()
 		vector.xe = minivect.xe+parseInt($('vecdiv').style.left)+110;
 		vector.ys = minivect.ys+parseInt($('vecdiv').style.top)+58;
 		vector.ye = minivect.ye+parseInt($('vecdiv').style.top)+58;
-		var psi = arctan(vector.xe - vector.xs,vector.ye - vector.ys);
+		var psi = arctan(vector.ye - vector.ys,vector.xe - vector.xs);
 	}
 	else
 	{

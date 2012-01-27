@@ -38,6 +38,35 @@ function draw()
 	   	}
 	} 
 
+
+var node=this.path.next;
+while (node.point.x !="end")
+	{
+	   	
+	   	if (node.ctrl1.x=="non")
+	   	{ 
+		    //this.Canvas.ctx.lineTo(node.point.x,node.point.y)
+	   	}
+	   	else 
+	   	{
+			this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+			this.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
+			if(node.prev.point.x=="end")
+			{
+				this.Canvas.ctx.moveTo(node.prev.prev.point.x,node.prev.prev.point.y);
+			
+			}
+			else
+			{
+				this.Canvas.ctx.moveTo(node.prev.point.x,node.prev.point.y);
+			}
+			this.Canvas.ctx.lineTo(node.ctrl1.x,node.ctrl1.y);
+	   	}
+	   	node=node.next;
+	}
+
+
+
 	if (!this.open) 
 	{
 		this.Canvas.ctx.closePath()
@@ -91,7 +120,7 @@ function draw()
 			this.Canvas.ctx.fillStyle=grad;
 		}
 		this.Canvas.ctx.fill();
-	}
+	 }
 }
 
 

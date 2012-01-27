@@ -4,7 +4,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function addMarks() 
+function addMark() 
 { 
    	this.mark = document.createElement('div');
    	this.mark.node=this;
@@ -64,6 +64,11 @@ function addMarks()
 	}
 }
 
+function removeMark()
+{
+	$(this.mark.id).parentNode.removeChild($(this.mark.id));
+}
+
 function updateNode(cursor)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
@@ -75,8 +80,70 @@ function updateNode(cursor)
 			this.shape.draw();
 		break
 		case "arc":
-			this.shape.setNode(this,cursor);
+			//this.shape.setNode(this,cursor) all angles to be measured clockwise about centre from +ve x axis;
+			var phi=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);//angle cursor makes
+			
+			var radius = this.shape.arcwidth;//set radius for cicle C centre arccentre
+			var p=new Point(radius*Math.cos(phi),radius*Math.sin(phi));//point cursor would be at on C
+		//$("msg").innerHTML=phi*180/Math.PI+".."+p.x+","+p.y;
+			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
+			var node=this.shape.path.next;
+			while(node.point.x!="end")
+			{
+				node.translate(this.shape.arccentre.x,this.shape.arccentre.y);  //put origin at arccentre
+				node.scaleY(1/sY); //scale ellipse to circle
+				node=node.next;
+			} 
+			this.shape.setNode(this,p);  //put current node on circle C using point found from cursor
+			var psi=this.shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
+			if(this.prev.point.x=="end") //find angle from first to last point in list between 0 and 2PI
+			{
+				var theta=this.getAngleTo(this.prev.prev);
+			}
+			else
+			{
+				var theta=2*Math.PI-this.getAngleTo(this.shape.path.next);
+			}$("msg").innerHTML="centre.."+this.shape.arccentre.x+","+this.shape.arccentre.y+"..psi..theta.."+psi*180/Math.PI+"..."+theta*180/Math.PI;
+			if(theta<=Math.PI/2)
+			{
+				this.shape.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
+				this.shape.lnode.removeNode();
+				this.shape.tnode.removeNode();
+				var b=baseArcBez(radius,theta/2); //find new points and control points
+				node=this.shape.path.next;
+				this.shape.setNode(node,b.p1);
+				this.shape.setNode(node.next,b.p2,b.c1,b.c2);//rotate back into correct position
+				node.rotate(psi+theta/2);
+				node.next.rotate(psi+theta/2);
+			}
+
+
+var i=1;
+node=this.shape.path.next;
+			m="";
+			while(node.point.x!="end")
+			{
+				m+="<br>"+(i++)+"----"+node.point.x+".."+node.point.y+".."+node.ctrl1.x+".."+node.ctrl1.y+".."+node.ctrl2.x+".."+node.ctrl2.y;
+				node=node.next;
+			}
+//$("msg").innerHTML=m;
+
+
+
+		
+			var node=this.shape.path.next;
+			while(node.point.x!="end")  //scale and translate back to correct position;
+			{
+				node.scaleY(sY);
+				node.translate(-this.shape.arccentre.x,-this.shape.arccentre.y);
+				node=node.next;
+			}
+
+			
+						
 			this.shape.draw();
+			$(this.mark.id).style.left=this.point.x-4;
+			$(this.mark.id).style.top=this.point.y-4;
 		break
 		case "curve":
 		break 
@@ -102,10 +169,9 @@ function updateNode(cursor)
 			{
 				var m=this.shape.tplftcrnr.x+w;
 			}
-			$("msg").innerHTML=this.shape.tplftcrnr.x+"..."+cursor.x +"..."+ m+"..br.."+this.shape.btmrgtcrnr.x+"..w.."+w+"..h.."+h;
 			if((this.shape.tplftcrnr.x<cursor.x && cursor.x<m) || (this.shape.tplftcrnr.x>cursor.x && cursor.x>m))
 			{
-				this.shape.radius=Math.abs(cursor.x-this.shape.tplftcrnr.x);
+				this.shape.crnradius=Math.abs(cursor.x-this.shape.tplftcrnr.x);
 			}
 			else
 			{
