@@ -1238,15 +1238,39 @@ if (3*Math.PI/2<psi && psi<2*Math.PI)
 
 function arctan(y,x)
 {
+	if(x==0)
+	{
+		if(y>0) 
+		{
+			return Math.PI/2;
+		}
+		else
+		{
+			return 3*Math.PI/2;
+		}
+	}
+	
+	if(y==0)
+	{
+		if(x>0)
+		{
+			return 0;
+		}
+		else
+		{
+			return Math.PI;
+		}
+	}
+		
 	var theta = Math.atan(Math.abs(y/x));
 	
-	if (x>=0)
+	if (x>0)
 	{
 		if (y<0) {theta = 2*Math.PI-theta};
 	}
 	else
 	{
-		if (y>=0)
+		if (y>0)
 		{
 			theta = Math.PI-theta;
 		}
@@ -1257,7 +1281,6 @@ function arctan(y,x)
 	}
 	return theta;
 }
-
 
 
 xxddff=0;

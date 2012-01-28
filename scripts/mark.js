@@ -81,30 +81,32 @@ function updateNode(cursor)
 		break
 		case "arc":
 			//this.shape.setNode(this,cursor) all angles to be measured clockwise about centre from +ve x axis;
-			var phi=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);//angle cursor makes
-			
 			var radius = this.shape.arcwidth;//set radius for cicle C centre arccentre
-			var p=new Point(radius*Math.cos(phi),radius*Math.sin(phi));//point cursor would be at on C
-		//$("msg").innerHTML=phi*180/Math.PI+".."+p.x+","+p.y;
-			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
-			var node=this.shape.path.next;
-			while(node.point.x!="end")
+			var startpt = this.shape.path.next;
+			var endpt = this.shape.path.prev;
+			if(this.prev.point.x=="end") // cursor at start point
 			{
-				node.translate(this.shape.arccentre.x,this.shape.arccentre.y);  //put origin at arccentre
-				node.scaleY(1/sY); //scale ellipse to circle
-				node=node.next;
+				var startAngle=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);
+				var endAngle=arctan(endpt.point.y-this.shape.arccentre.y,endpt.point.x-this.shape.arccentre.x);
 			} 
-			this.shape.setNode(this,p);  //put current node on circle C using point found from cursor
-			var psi=this.shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
-			if(this.prev.point.x=="end") //find angle from first to last point in list between 0 and 2PI
+			else
 			{
-				var theta=this.getAngleTo(this.prev.prev);
+				var endAngle=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);
+				var startAngle=arctan(startpt.point.y-this.shape.arccentre.y,startpt.point.x-this.shape.arccentre.x);
+			}
+			if (endAngle>startAngle)
+			{
+				var theta=endAngle-startAngle;
 			}
 			else
 			{
-				var theta=2*Math.PI-this.getAngleTo(this.shape.path.next);
-			}$("msg").innerHTML="centre.."+this.shape.arccentre.x+","+this.shape.arccentre.y+"..psi..theta.."+psi*180/Math.PI+"..."+theta*180/Math.PI;
-			if(theta<=Math.PI/2)
+				var theta =2*Math.PI-(startAngle-endAngle);
+			}
+//$("msg").innerHTML=radius+"....."+(startpt.point.x-this.shape.arccentre.x)+"...."+(startpt.point.y-this.shape.arccentre.y)+"....."+(endpt.point.x-this.shape.arccentre.x)+"...."+(endpt.point.y-this.shape.arccentre.y);			
+$("msg").innerHTML=startAngle*180/Math.PI+"....."+endAngle*180/Math.PI+"...."+theta*180/Math.PI;
+			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
+
+			if(theta<Math.PI/2)
 			{
 				this.shape.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
 				this.shape.lnode.removeNode();
@@ -113,8 +115,8 @@ function updateNode(cursor)
 				node=this.shape.path.next;
 				this.shape.setNode(node,b.p1);
 				this.shape.setNode(node.next,b.p2,b.c1,b.c2);//rotate back into correct position
-				node.rotate(psi+theta/2);
-				node.next.rotate(psi+theta/2);
+				node.rotate(startAngle+theta/2);
+				node.next.rotate(startAngle+theta/2);
 			}
 
 
