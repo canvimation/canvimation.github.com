@@ -76,76 +76,71 @@ function updateNode(cursor)
 	switch (this.shape.type)
 	{
 		case "line":
-			this.shape.setNode(this,cursor);
+			this.setNode(cursor);
 			this.shape.draw();
 		break
 		case "arc":
-			//this.shape.setNode(this,cursor) all angles to be measured clockwise about centre from +ve x axis;
-			var radius = this.shape.arcwidth;//set radius for cicle C centre arccentre
-			var startpt = this.shape.path.next;
-			var endpt = this.shape.path.prev;
-			if(this.prev.point.x=="end") // cursor at start point
-			{
-				var startAngle=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);
-				var endAngle=arctan(endpt.point.y-this.shape.arccentre.y,endpt.point.x-this.shape.arccentre.x);
-			} 
-			else
-			{
-				var endAngle=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);
-				var startAngle=arctan(startpt.point.y-this.shape.arccentre.y,startpt.point.x-this.shape.arccentre.x);
-			}
-			if (endAngle>startAngle)
-			{
-				var theta=endAngle-startAngle;
-			}
-			else
-			{
-				var theta =2*Math.PI-(startAngle-endAngle);
-			}
-//$("msg").innerHTML=radius+"....."+(startpt.point.x-this.shape.arccentre.x)+"...."+(startpt.point.y-this.shape.arccentre.y)+"....."+(endpt.point.x-this.shape.arccentre.x)+"...."+(endpt.point.y-this.shape.arccentre.y);			
-$("msg").innerHTML=startAngle*180/Math.PI+"....."+endAngle*180/Math.PI+"...."+theta*180/Math.PI;
-			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
+			//all angles to be measured clockwise about centre from +ve x axis;
+			var phi=arctan(cursor.y-this.shape.arccentre.y,cursor.x-this.shape.arccentre.x);//angle cursor makes
 
-			if(theta<Math.PI/2)
+			var radius = this.shape.arcwidth;//set radius for cicle C centre arccentre
+			var p=new Point(radius*Math.cos(phi),radius*Math.sin(phi));//point cursor would be at on C
+			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
+			var node=this.shape.path.next;
+			while(node.point.x!="end")
 			{
-				this.shape.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
+				node.translate(this.shape.arccentre.x,this.shape.arccentre.y); //put origin at arccentre
+				node.scaleY(1/sY); //scale ellipse to circle
+				node=node.next;
+			}
+			this.setNode(p); //put current node on circle C using point found from cursor
+			
+			var startAngle=this.shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
+			var endAngle=this.shape.path.prev.getAngle();//find angle of last node in list between 0 and 2PI
+			if(this.prev.point.x=="end") //find angle from first to last point in list between 0 and 2PI
+			{
+				var theta=this.getAngleTo(this.prev.prev);
+			}
+			else
+			{
+				var theta=2*Math.PI-this.getAngleTo(this.shape.path.next);
+			}
+			if(theta<=Math.PI/2)
+			{
+				this.shape.rnode.removeNode();//remove right, bottom and left node as first arc is between 0 an 90 degrees
+				this.shape.bnode.removeNode();
 				this.shape.lnode.removeNode();
-				this.shape.tnode.removeNode();
 				var b=baseArcBez(radius,theta/2); //find new points and control points
 				node=this.shape.path.next;
-				this.shape.setNode(node,b.p1);
-				this.shape.setNode(node.next,b.p2,b.c1,b.c2);//rotate back into correct position
+				node.setNode(b.p1);
+				node.next.setNode(b.p2,b.c1,b.c2);//rotate back into correct position
 				node.rotate(startAngle+theta/2);
 				node.next.rotate(startAngle+theta/2);
 			}
-
-
-var i=1;
-node=this.shape.path.next;
-			m="";
-			while(node.point.x!="end")
+			else if(theta<=Math.PI)
 			{
-				m+="<br>"+(i++)+"----"+node.point.x+".."+node.point.y+".."+node.ctrl1.x+".."+node.ctrl1.y+".."+node.ctrl2.x+".."+node.ctrl2.y;
-				node=node.next;
+				this.shape.rnode.restoreNode();
+				this.shape.bnode.removeNode();//remove bottom and left node as first arc is between 0 an 180 degrees
+				this.shape.lnode.removeNode();
+				if(phi<Math.PI/2)
+				{
+					var alpha=0;
+				}
+				
 			}
-//$("msg").innerHTML=m;
-
-
-
-		
 			var node=this.shape.path.next;
-			while(node.point.x!="end")  //scale and translate back to correct position;
+			while(node.point.x!="end") //scale and translate back to correct position;
 			{
 				node.scaleY(sY);
 				node.translate(-this.shape.arccentre.x,-this.shape.arccentre.y);
 				node=node.next;
 			}
 
-			
-						
+
+
 			this.shape.draw();
 			$(this.mark.id).style.left=this.point.x-4;
-			$(this.mark.id).style.top=this.point.y-4;
+			 $(this.mark.id).style.top=this.point.y-4;
 		break
 		case "curve":
 		break 
