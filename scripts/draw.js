@@ -38,7 +38,7 @@ function draw()
 	   	}
 	} 
 
-
+/* draw bezier lines
 var node=this.path.next;
 while (node.point.x !="end")
 	{
@@ -65,7 +65,7 @@ while (node.point.x !="end")
 	   	node=node.next;
 	}
 
-
+*/
 
 	if (!this.open) 
 	{
