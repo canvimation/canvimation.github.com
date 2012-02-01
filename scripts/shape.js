@@ -284,10 +284,17 @@ function setPath(cursor)
 			this.addNode(node);
 		break
 		case "arc":
+		case "segment":
+		case "sector":
 			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 			node=new Node(point);
 			this.addNode(node);
-		break
+			if(this.type=="sector")
+			{
+				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				node=new Node(point);
+				this.addNode(node);
+			}
 		case "curve":
 		break 
 		case "freeform":
@@ -324,10 +331,6 @@ function setPath(cursor)
 				this.addNode(node);
 			}
 		break
-		case "sector":
-		break
-		case "segment":
-		break
 		case "right_triangle":
 			for(var i=0;i<2;i++)
 			{
@@ -353,12 +356,19 @@ function drawGuide(cursor,node)
 			node.setNode(cursor);
 		break
 		case "arc":
+		case "segment":
+		case "sector":
 			var start=this.path.next;
 			var lx=cursor.x-start.point.x;
 			var ly=cursor.y-start.point.y;
 			var c1=new Point(start.point.x+lx*K,start.point.y);
 			var c2=new Point(start.next.point.x,start.next.point.y-ly*K);
 			start.next.setNode(cursor,c1,c2);
+			if(this.type=="sector")
+			{
+				var p=new Point(start.point.x,start.next.point.y);
+				start.next.next.setNode(p);
+			}
 		break
 		case "curve":
 		break 
@@ -438,8 +448,6 @@ function drawGuide(cursor,node)
 		break
 		case "sector":
 		break
-		case "segment":
-		break
 		case "right_triangle":
 			var start=this.path.next;  
 			p=new Point(cursor.x,cursor.y);
@@ -472,49 +480,49 @@ function drawEnd(cursor)
 			node.addMark();
 		break
 		case "arc":
+		case "segment":
+		case "sector":
 			node.addMark();
 			this.arcwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
 			this.archeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
-			 
+			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
+			var start=this.path.next;
+			var last=this.path.prev;
+			if(this.type=="sector")
+			{
+				last.setNode(this.arccentre);
+				last=last.prev;
+			}
 			if(this.arcwidth*this.archeight<0)//swap nodes so that going clockwise start node is before last node
 			{
 				this.arcwidth=Math.abs(this.arcwidth);
 				this.archeight=Math.abs(this.archeight);
-				var start=this.path.next;
-				var sp=new Point(start.next.point.x,start.next.point.y);
-				var ep=new Point(start.point.x,start.point.y);
-				var cs1=new Point(start.next.ctrl2.x,start.next.ctrl2.y);
-				var cs2=new Point(start.next.ctrl1.x,start.next.ctrl1.y);
-				var snode=new Node(sp);
-				var enode=new Node(ep,cs1,cs2);				
-				start.removeMark();//remove original first mark and node
-				start.removeNode();
-				start.next.removeMark();//remove original last node and mark;
-				start.next.removeNode();
-				this.addNode(snode);
-				this.addNode(enode);
-				snode.addMark();
-				enode.addMark();
+				
+				var sp=new Point(last.point.x,last.point.y);
+				var lp=new Point(start.point.x,start.point.y);
+				var cs1=new Point(last.ctrl2.x,last.ctrl2.y);
+				var cs2=new Point(last.ctrl1.x,last.ctrl1.y);
+				start.setNode(sp);
+				last.setNode(lp,cs1,cs2);
+				start.removeMark();
+				last.removeMark(0);
+				start.addMark();
+				last.addMark();				
 			}
-			node=this.path.prev; //current last node
 			point=new Point(0,0);
-			this.rnode=new Node(point);//node for 90 degrees
-			node.insertNodeBefore(this.rnode);
+			this.bnode=new Node(point);//node for 90 degrees
+			last.insertNodeBefore(this.bnode);
 			point=new Point(0,0);
-			this.bnode=new Node(point);//node for 180 degrees
-			node.insertNodeBefore(this.bnode);
+			this.lnode=new Node(point);//node for 180 degrees
+			last.insertNodeBefore(this.lnode);
 			point=new Point(0,0);
-			this.lnode=new Node(point);//node for 270 degrees
-			node.insertNodeBefore(this.lnode);
-			this.rnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
-			this.bnode.removeNode();//will be restored as and when needed
-			this.lnode.removeNode();
+			this.tnode=new Node(point);//node for 270 degrees
+			last.insertNodeBefore(this.tnode);
+			this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
+			this.lnode.removeNode();//will be restored as and when needed
+			this.tnode.removeNode();
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
-			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
-			
-			
-			
 		break
 		case "curve":
 		break 
@@ -530,8 +538,6 @@ function drawEnd(cursor)
 			this.tplftcrnr.x -= cursor.x-this.tplftcrnr.x;
 		break
 		case "sector":
-		break
-		case "segment":
 		break
 		case "right_triangle":
 		break
