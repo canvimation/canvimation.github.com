@@ -30,9 +30,14 @@ function Node(point,ctrl1,ctrl2)
 	
 	//methods
 	this.setNode=setNode;
-	this.addMark=addMark;
+	this.addPointMark=addPointMark;
+	this.addCtrl1Mark=addCtrl1Mark;
+	this.addCtrl2Mark=addCtrl2Mark;
+	this.addFullMarks=addFullMarks;
 	this.removeMark=removeMark;
-	this.updateNode=updateNode;
+	this.updatePointNode=updatePointNode;
+	this.updateCtrl1Node=updateCtrl1Node;
+	this.updateCtrl2Node=updateCtrl2Node;
 	this.insertNodeBefore=insertNodeBefore;
 	this.removeNode=removeNode;
 	this.restoreNode=restoreNode;
@@ -217,16 +222,10 @@ function Shape(name,open,editable,type)
    	this.draw=draw;
    	this.drawGuide=drawGuide;
    	this.drawEnd=drawEnd;
-  	this.swapCrnr=swapCrnr;
+   	this.drawNext=drawNext;
+   	this.drawBezGuides=drawBezGuides;
    	return this;
    	
-}
-
-function swapCrnr(c)
-{
-	var t=this.tplftcrnr[c];
-	this.tplftcrnr[c]=this.btmrgtcrnr[c];
-	this.btmrgtcrnr[c]=t;
 }
 
 function addNode(node)
@@ -270,12 +269,17 @@ function getLeft()
 function setPath(cursor)
 {
 	var point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round(cursor.y/ygrid)*ygrid);
-	var node=new Node(point);
+	var node=new Node(point); 
 	this.addNode(node);
 	this.tplftcrnr=new Point(node.point.x,node.point.y);
 	this.btmrgtcrnr=new Point(node.point.x,node.point.y);
 	var curshape=this;
-	
+	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e))};
+	BODY.onmousedown=function() {};
+	if (!(this.type=="curve" || this.type=="freeform"))
+	{
+		BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e))};
+	}	
 	switch (this.type)
 	{
 		case "line":
@@ -295,9 +299,18 @@ function setPath(cursor)
 				node=new Node(point);
 				this.addNode(node);
 			}
+		break	
 		case "curve":
-		break 
 		case "freeform":
+			var start=this.path.next;
+			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+			var ctrl1=new Point(start.point.x+(point.x-start.point.x)/4, start.point.y+(point.y-start.point.y)/4);
+			var ctrl2=new Point(point.x+(start.point.x-point.x)/4, point.y+(start.point.y-point.y)/4);
+			node=new Node(point,ctrl1,ctrl2);
+			this.addNode(node);
+			BODY.onmousedown=function(e) {if(shiftdown(e)){curshape.drawEnd(getPosition(e))} else{curshape.drawNext(getPosition(e))}};
+			//BODY.onmouseup=function(e) {};
+			//BODY.ondblclick=function(e) {curshape.drawEnd(getPosition(e))};
 		break
 		case "rectangle":
 			for(var i=0;i<3;i++)
@@ -340,11 +353,10 @@ function setPath(cursor)
 			}
 		break
 	}
-	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e),node)};
-	BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e))};
+	
 }
 
-function drawGuide(cursor,node)
+function drawGuide(cursor)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
@@ -353,6 +365,7 @@ function drawGuide(cursor,node)
 	switch (this.type)
 	{
 		case "line":
+			node=this.path.prev;
 			node.setNode(cursor);
 		break
 		case "arc":
@@ -370,9 +383,14 @@ function drawGuide(cursor,node)
 				start.next.next.setNode(p);
 			}
 		break
-		case "curve":
-		break 
+		case "curve": 
 		case "freeform":
+			node=this.path.prev;
+			node.setNode(cursor);
+			var prev=node.prev;
+			var ctrl1=new Point(prev.point.x+(node.point.x-prev.point.x)/4, prev.point.y+(node.point.y-prev.point.y)/4);
+			var ctrl2=new Point(node.point.x+(prev.point.x-node.point.x)/4, node.point.y+(prev.point.y-node.point.y)/4);
+			node.setNode(cursor,ctrl1,ctrl2);
 		break
 		case "rectangle":
 			var start=this.path.next;
@@ -432,7 +450,6 @@ function drawGuide(cursor,node)
 			node.setNode(p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
-			
 			this.setRndRect=setRndRect;
 			this.setRndRect();
 		break
@@ -445,8 +462,6 @@ function drawGuide(cursor,node)
 			p.x=start.point.x-dx; 
 			node=node.next;
 			node.setNode(p);
-		break
-		case "sector":
 		break
 		case "right_triangle":
 			var start=this.path.next;  
@@ -461,6 +476,17 @@ function drawGuide(cursor,node)
 	this.draw();
 }
 
+function drawNext(cursor)
+{$("markerdrop").style.visibility="visible";
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid; 
+	this.path.prev.setNode(cursor);
+	//this.path.prev.addFullMarks();
+	var node=new Node(cursor);
+	this.addNode(node);
+}
+
+
 function drawEnd(cursor)
 {
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
@@ -471,18 +497,21 @@ function drawEnd(cursor)
 	{
 		$("markerdrop").style.visibility="visible";
 		var node=this.path.next;
-		node.addMark();
+		node.addPointMark();
 		node=node.next;
 	};
+	BODY.style.cursor="default";
+	BODY.onmousemove=function() {};
+	BODY.onmouseup=function() {};
 	switch (this.type)
 	{
 		case "line":
-			node.addMark();
+			node.addPointMark();
 		break
 		case "arc":
 		case "segment":
 		case "sector":
-			node.addMark();
+			node.addPointMark();
 			this.arcwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
 			this.archeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
 			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
@@ -506,8 +535,8 @@ function drawEnd(cursor)
 				last.setNode(lp,cs1,cs2);
 				start.removeMark();
 				last.removeMark(0);
-				start.addMark();
-				last.addMark();				
+				start.addPointMark();
+				last.addPointMark();				
 			}
 			point=new Point(0,0);
 			this.bnode=new Node(point);//node for 90 degrees
@@ -524,28 +553,36 @@ function drawEnd(cursor)
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
 		break
-		case "curve":
-		break 
 		case "freeform":
+			var last=this.path.prev;
+			node=this.path.next;
+			var ctrl2=new Point(node.point.x+(last.point.x-node.point.x)/4, node.point.y+(last.point.y-node.point.y)/4);
+			var ctrl1=new Point(last.point.x+(node.point.x-last.point.x)/4, last.point.y+(node.point.y-last.point.y)/4);
+			var closenode= new Node(node.point,ctrl1,ctrl2);
+			this.addNode(closenode);
+			node.removeMark();
+			node=node.next;
+			while(node.point.x != "end")
+			{
+				node.addFullMarks();
+				node=node.next;  
+			}this.draw();
+			this.drawBezGuides();
 		break
-		case "rectangle":
-		break
-		case "ellipse":
-		break
-		case "rounded_rectangle": 
+		case "curve": 
+			node=this.path.next;
+			node.removeMark();
+			while(node.point.x != "end")
+			{
+				node.addFullMarks();
+				node=node.next;  
+			}this.draw();
+			this.drawBezGuides();
 		break
 		case "triangle":
 			this.tplftcrnr.x -= cursor.x-this.tplftcrnr.x;
 		break
-		case "sector":
-		break
-		case "right_triangle":
-		break
 	}
-	BODY.style.cursor="default";
-	BODY.onmousedown=function() {};
-	BODY.onmousemove=function() {};
-	BODY.onmouseup=function() {};
 }
 
 function setRndRect() //bottom right corner
@@ -630,617 +667,8 @@ function baseArcBez(radius,theta) // theta half angle subtending arc <90 degrees
 	return {p1:p1,p2:p2,c1:c1,c2:c2}
 }
 
-//old functions  
-function createArc(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	canv.bleft=cur.x;
-	canv.btop=cur.y;
-	canv.scleft=canv.bleft;
-	canv.sctop=canv.btop;
-	canv.bwidth=50;
-	canv.bheight=50;
-	ln=new linemarker(lnmrks++,cur,'white');
-	ln.style.zIndex=zpos++;
-	DDln=new YAHOO.util.DD(ln.id);
-	DDln.onDrag=function(){updateArcPoints(canv,this)};
-	var tempary=[];
-	tempary.push('M');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	tempary=[];
-	tempary.push('B');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	if (canv.path[2]=='segment')
-	{
-		tempary=[];
-		tempary.push('L');
-		tempary.push(cur.x);
-		tempary.push(cur.y);
-		canv.path.push(tempary);
-	}
-	if (canv.path[2]=='sector')
-	{
-		tempary=[];
-		tempary.push('L');
-		tempary.push(cur.x);
-		tempary.push(cur.y);
-		canv.path.push(tempary);
-		tempary=[];
-		tempary.push('L');
-		tempary.push(cur.x);
-		tempary.push(cur.y);
-		canv.path.push(tempary);		
-	}
-	drawline(canv);
-	$('bodydiv').onmouseup=function(e){drawEndArc(getPosition(e),canv)};
-	$('bodydiv').onmousemove=function(e) {drawGuideArc(getPosition(e),canv)};
-}
+ 
 
-function drawGuideArc(cur,canv)
-{
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	if (cur.x>cur.y)
-	{
-		var nx=(cur.x-canv.bleft)/2;
-	}
-	else
-	{
-		var nx=(cur.y-canv.btop)/2;
-	}
-	var k=4*(Math.SQRT2-1)/3;
-	var cx=canv.bleft;
-	var cy=canv.btop;	
-	canv.path[4][1]=cx+nx*k;
-	canv.path[4][2]=cy;
-	canv.path[4][3]=cx+nx;
-	canv.path[4][4]=cy+nx*(1-k);
-	canv.path[4][5]=cx+nx;
-	canv.path[4][6]=cy+nx;
-	if (canv.path[2]=='segment')
-	{
-		canv.path[5][1]=canv.path[3][1];
-		canv.path[5][2]=canv.path[3][2];
-	}
-	if (canv.path[2]=='sector')
-	{
-		canv.path[5][1]=canv.path[4][5]-nx;
-		canv.path[5][2]=canv.path[4][6];
-		canv.path[6][1]=canv.path[3][1];
-		canv.path[6][2]=canv.path[3][2];		
-	}	
-	drawline(canv);
-}
-
-function drawEndArc(cur,canv)
-{
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onmouseup=function() {};
-	$('bodydiv').onmousedown=function() {};
-	shapejustcreated=true;
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	if (cur.x>cur.y)
-	{
-		var nx=(cur.x-canv.bleft)/2;
-	}
-	else
-	{
-		var nx=(cur.y-canv.btop)/2;
-	}
-	var cx=canv.bleft;
-	var cy=canv.btop;
-	var k=4*(Math.SQRT2-1)/3;
-	canv.path[4][1]=cx+nx*k;
-	canv.path[4][2]=cy;
-	canv.path[4][3]=cx+nx;
-	canv.path[4][4]=cy+nx*(1-k);
-	canv.path[4][5]=cx+nx;
-	canv.path[4][6]=cy+nx;	
-	canv.radius=Math.abs(nx);
-	canv.ox=cx;
-	canv.oy=cy+nx;
-	canv.sox=canv.ox;
-	canv.soy=canv.oy;
-	var ep={x:canv.path[4][5],y:canv.path[4][6]};
-	ln=new linemarker(lnmrks++,ep, 'white');
-	ln.style.zIndex=zpos++;
-	DDln=new YAHOO.util.DD(ln.id);
-	DDln.onDrag=function(){updateArcPoints(canv,this)};	
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-	if (canv.path[2]=='segment')
-	{
-		canv.path[5][1]=canv.path[3][1];
-		canv.path[5][2]=canv.path[3][2];
-	}
-	if (canv.path[2]=='sector')
-	{
-		canv.path[5][1]=canv.ox;
-		canv.path[5][2]=canv.oy;
-		canv.path[6][1]=canv.path[3][1];
-		canv.path[6][2]=canv.path[3][2];		
-	}
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);
-}
-
-function updateArcPoints(canv,mrk)
-{
-	canv.clockw=true;
-	var i= parseInt(mrk.id.substr(3));
-	var tp=parseInt($(mrk.id).style.top);
-	var lf=parseInt($(mrk.id).style.left);
-	var xc = canv.ox;
-	var yc = canv.oy;
-	var sx = canv.scx;
-	var sy = canv.scy;
-	var r = canv.radius;
-	if (i==0)
-	{
-		var xs = lf+4;
-		var ys = tp+4;
-		var last=canv.path.length;
-		var xe=parseInt($('lnm1').style.left)+4;
-		var ye=parseInt($('lnm1').style.top)+4;
-		xs = canv.scleft + (xs-canv.scleft)/sx -xc;
-		xe = canv.scleft + (xe-canv.scleft)/sx - xc;
-		ys = canv.sctop + (ys-canv.sctop)/sy - yc;
-		ye = canv.sctop + (ye-canv.sctop)/sy - yc;
-		var phi = arctan(xs,ys);
-		xs = canv.radius*Math.cos(phi);
-		ys = canv.radius*Math.sin(phi);
-		
-	}
-	else
-	{
-		var xs = parseInt($('lnm0').style.left)+4;
-		var ys = parseInt($('lnm0').style.top)+4;
-		var xe = lf+4;
-		var ye = tp+4;
-		xs = canv.scleft + (xs-canv.scleft)/sx -xc;
-		xe = canv.scleft + (xe-canv.scleft)/sx - xc;
-		ys = canv.sctop + (ys-canv.sctop)/sy - yc;
-		ye = canv.sctop + (ye-canv.sctop)/sy - yc;
-		var alpha = arctan(xe,ye);
-		xe = canv.radius*Math.cos(alpha);
-		ye = canv.radius*Math.sin(alpha);
-		var phi = arctan(xs,ys);
-		
-	}
-	// rotate anti-clockwise so that (xs,ys) now on x axis
-	var rote1 = rotate(phi,xe,ye, "A");
-	var psi = arctan(rote1.x,rote1.y);
-	if (0<=psi && psi<=Math.PI/2)
-	{
-		var xsb = (4-Math.cos(psi/2))*canv.radius/3;
-		var ysb = (1-Math.cos(psi/2))*(Math.cos(psi/2)-3)*canv.radius/(3*Math.sin(psi/2));
-		var xeb = xsb;
-		var yeb = -ysb;
-		var rotsb = rotate(phi+psi/2,xsb,ysb,"C");
-		var roteb = rotate(phi+psi/2,xeb,yeb,"C");
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;
-		xs = (xs +xc - canv.scleft)*sx+canv.scleft;
-		xe = (xe +xc - canv.scleft)*sx+canv.scleft;
-		ys = (ys +yc - canv.sctop)*sy+canv.sctop;
-		ye = (ye +yc - canv.sctop)*sy+canv.sctop;
-		xsb = (xsb +xc - canv.scleft)*sx+canv.scleft;
-		xeb = (xeb +xc - canv.scleft)*sx+canv.scleft;
-		ysb = (ysb +yc - canv.sctop)*sy+canv.sctop;
-		yeb = (yeb +yc - canv.sctop)*sy+canv.sctop;
-		var coro=canv.path[0];
-		var atype=canv.path[2];
-		canv.path=[];
-		canv.path[0]=coro;
-		canv.path[1]='edit';
-		canv.path[2]=atype;
-		canv.path[3]=[];
-		canv.path[3][0]='M';
-		canv.path[3][1]=xs;
-		canv.path[3][2]=ys;
-		canv.path[4]=[];
-		canv.path[4][0]='B';
-		canv.path[4][1]=xsb;
-		canv.path[4][2]=ysb;
-		canv.path[4][3]=xeb;
-		canv.path[4][4]=yeb;
-		canv.path[4][5]=xe;
-		canv.path[4][6]=ye;	
-	}
-
-	if (Math.PI/2<psi && psi<=Math.PI)
-	{
-		psi -=Math.PI/2;
-		var k=4*(Math.SQRT2-1)/3;
-		var x0=canv.radius;
-		var y0=0;
-		var x0b= x0;
-		var y0b=canv.radius*k;
-		var x1=0;
-		var y1=canv.radius;
-		var x1b=canv.radius*k;
-		var y1b=y1;
-		var xsb = (4-Math.cos(psi/2))*canv.radius/3;
-		var ysb = (1-Math.cos(psi/2))*(Math.cos(psi/2)-3)*canv.radius/(3*Math.sin(psi/2));
-		var xeb = xsb;
-		var yeb = -ysb;
-		var rotsb = rotate(Math.PI/2+psi/2,xsb,ysb,"C");
-		var roteb = rotate(Math.PI/2+psi/2,xeb,yeb,"C");
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;		
-		var rot0 = rotate(phi,x0,y0,"C");
-		var rot0b = rotate(phi,x0b,y0b,"C");
-		var rot1 = rotate(phi,x1,y1,"C");
-		var rot1b = rotate(phi,x1b,y1b,"C");
-		var rotsb = rotate(phi,xsb,ysb,"C");
-		var roteb = rotate(phi,xeb,yeb,"C");
-		x0= rot0.x;
-		y0= rot0.y;
-		x0b= rot0b.x;
-		y0b= rot0b.y;
-		x1= rot1.x;
-		y1= rot1.y;
-		x1b= rot1b.x;
-		y1b= rot1b.y;		
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;
-		xs = (xs +xc - canv.scleft)*sx+canv.scleft;
-		xe = (xe +xc - canv.scleft)*sx+canv.scleft;
-		ys = (ys +yc - canv.sctop)*sy+canv.sctop;
-		ye = (ye +yc - canv.sctop)*sy+canv.sctop;
-		xsb = (xsb +xc - canv.scleft)*sx+canv.scleft;
-		xeb = (xeb +xc - canv.scleft)*sx+canv.scleft;
-		ysb = (ysb +yc - canv.sctop)*sy+canv.sctop;
-		yeb = (yeb +yc - canv.sctop)*sy+canv.sctop;
-		x0 = (x0 +xc - canv.scleft)*sx+canv.scleft;
-		x1 = (x1 +xc - canv.scleft)*sx+canv.scleft;
-		y0 = (y0 +yc - canv.sctop)*sy+canv.sctop;
-		y1 = (y1 +yc - canv.sctop)*sy+canv.sctop;
-		x0b = (x0b +xc - canv.scleft)*sx+canv.scleft;
-		x1b = (x1b +xc - canv.scleft)*sx+canv.scleft;
-		y0b = (y0b +yc - canv.sctop)*sy+canv.sctop;
-		y1b = (y1b +yc - canv.sctop)*sy+canv.sctop;		
-		var coro=canv.path[0];
-		var atype=canv.path[2];
-		canv.path=[];
-		canv.path[0]=coro;
-		canv.path[1]='edit';
-		canv.path[2]=atype;
-		canv.path[3]=[];
-		canv.path[3][0]='M';
-		canv.path[3][1]=x0;
-		canv.path[3][2]=y0;
-		canv.path[4]=[];
-		canv.path[4][0]='B';
-		canv.path[4][1]=x0b;
-		canv.path[4][2]=y0b;
-		canv.path[4][3]=x1b;
-		canv.path[4][4]=y1b;
-		canv.path[4][5]=x1;
-		canv.path[4][6]=y1;
-		canv.path[5]=[];
-		canv.path[5][0]='B';
-		canv.path[5][1]=xsb;
-		canv.path[5][2]=ysb;
-		canv.path[5][3]=xeb;
-		canv.path[5][4]=yeb;
-		canv.path[5][5]=xe;
-		canv.path[5][6]=ye;
-	}
-	
-	if (Math.PI<psi && psi<=3*Math.PI/2)
-	{
-		psi -=Math.PI;
-		var k=4*(Math.SQRT2-1)/3;
-		var x0=canv.radius;
-		var y0=0;
-		var x0b= x0;
-		var y0b=canv.radius*k;
-		var x1=0;
-		var y1=canv.radius;
-		var x1b=canv.radius*k;
-		var y1b=y1;
-		var x2=-canv.radius;
-		var y2=0;
-		var x2bs=-canv.radius*k;
-		var y2bs=y1;
-		var x2be=-canv.radius;
-		var y2be=canv.radius*k;		
-		var xsb = (4-Math.cos(psi/2))*canv.radius/3;
-		var ysb = (1-Math.cos(psi/2))*(Math.cos(psi/2)-3)*canv.radius/(3*Math.sin(psi/2));
-		var xeb = xsb;
-		var yeb = -ysb;
-		var rotsb = rotate(Math.PI+psi/2,xsb,ysb,"C");
-		var roteb = rotate(Math.PI+psi/2,xeb,yeb,"C");
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;		
-		var rot0 = rotate(phi,x0,y0,"C");
-		var rot0b = rotate(phi,x0b,y0b,"C");
-		var rot1 = rotate(phi,x1,y1,"C");
-		var rot1b = rotate(phi,x1b,y1b,"C");
-		var rot2 = rotate(phi,x2,y2,"C");
-		var rot2bs = rotate(phi,x2bs,y2bs,"C");
-		var rot2be = rotate(phi,x2be,y2be,"C");
-		var rotsb = rotate(phi,xsb,ysb,"C");
-		var roteb = rotate(phi,xeb,yeb,"C");
-		x0= rot0.x;
-		y0= rot0.y;
-		x0b= rot0b.x;
-		y0b= rot0b.y;
-		x1= rot1.x;
-		y1= rot1.y;
-		x1b= rot1b.x;
-		y1b= rot1b.y;
-		x2= rot2.x;
-		y2= rot2.y;
-		x2bs= rot2bs.x;
-		y2bs= rot2bs.y;
-		x2be= rot2be.x;
-		y2be= rot2be.y;		
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;
-		xs = (xs +xc - canv.scleft)*sx+canv.scleft;
-		xe = (xe +xc - canv.scleft)*sx+canv.scleft;
-		ys = (ys +yc - canv.sctop)*sy+canv.sctop;
-		ye = (ye +yc - canv.sctop)*sy+canv.sctop;
-		xsb = (xsb +xc - canv.scleft)*sx+canv.scleft;
-		xeb = (xeb +xc - canv.scleft)*sx+canv.scleft;
-		ysb = (ysb +yc - canv.sctop)*sy+canv.sctop;
-		yeb = (yeb +yc - canv.sctop)*sy+canv.sctop;
-		x0 = (x0 +xc - canv.scleft)*sx+canv.scleft;
-		x1 = (x1 +xc - canv.scleft)*sx+canv.scleft;
-		y0 = (y0 +yc - canv.sctop)*sy+canv.sctop;
-		y1 = (y1 +yc - canv.sctop)*sy+canv.sctop;
-		x0b = (x0b +xc - canv.scleft)*sx+canv.scleft;
-		x1b = (x1b +xc - canv.scleft)*sx+canv.scleft;
-		y0b = (y0b +yc - canv.sctop)*sy+canv.sctop;
-		y1b = (y1b +yc - canv.sctop)*sy+canv.sctop;
-		x2 = (x2 +xc - canv.scleft)*sx+canv.scleft;
-		x2bs = (x2bs +xc - canv.scleft)*sx+canv.scleft;
-		x2be = (x2be +xc - canv.scleft)*sx+canv.scleft;
-		y2 = (y2 +yc - canv.sctop)*sy+canv.sctop;
-		y2bs = (y2bs +yc - canv.sctop)*sy+canv.sctop;	
-		y2be = (y2be +yc - canv.sctop)*sy+canv.sctop;	
-		var coro=canv.path[0];
-		var atype=canv.path[2];
-		canv.path=[];
-		canv.path[0]=coro;
-		canv.path[1]='edit';
-		canv.path[2]=atype;
-		canv.path[3]=[];
-		canv.path[3][0]='M';
-		canv.path[3][1]=x0;
-		canv.path[3][2]=y0;
-		canv.path[4]=[];
-		canv.path[4][0]='B';
-		canv.path[4][1]=x0b;
-		canv.path[4][2]=y0b;
-		canv.path[4][3]=x1b;
-		canv.path[4][4]=y1b;
-		canv.path[4][5]=x1;
-		canv.path[4][6]=y1;
-		canv.path[5]=[];
-		canv.path[5][0]='B';
-		canv.path[5][1]=x2bs;
-		canv.path[5][2]=y2bs;
-		canv.path[5][3]=x2be;
-		canv.path[5][4]=y2be;
-		canv.path[5][5]=x2;
-		canv.path[5][6]=y2;
-		canv.path[6]=[];
-		canv.path[6][0]='B';
-		canv.path[6][1]=xsb;
-		canv.path[6][2]=ysb;
-		canv.path[6][3]=xeb;
-		canv.path[6][4]=yeb;
-		canv.path[6][5]=xe;
-		canv.path[6][6]=ye;
-	}	
-if (3*Math.PI/2<psi && psi<2*Math.PI)
-	{
-		psi -=3*Math.PI/2;
-		var k=4*(Math.SQRT2-1)/3;
-		var x0=canv.radius;
-		var y0=0;
-		var x0b= x0;
-		var y0b=canv.radius*k;
-		var x1=0;
-		var y1=canv.radius;
-		var x1b=canv.radius*k;
-		var y1b=y1;
-		var x2=-canv.radius;
-		var y2=0;
-		var x2bs=-canv.radius*k;
-		var y2bs=y1;
-		var x2be=-canv.radius;
-		var y2be=canv.radius*k;	
-		var x3=0;
-		var y3=-canv.radius;
-		var x3bs=-canv.radius;
-		var y3bs=-canv.radius*k;
-		var x3be=-canv.radius*k;
-		var y3be=-canv.radius;			
-		var xsb = (4-Math.cos(psi/2))*canv.radius/3;
-		var ysb = (1-Math.cos(psi/2))*(Math.cos(psi/2)-3)*canv.radius/(3*Math.sin(psi/2));
-		var xeb = xsb;
-		var yeb = -ysb;
-		var rotsb = rotate(3*Math.PI/2+psi/2,xsb,ysb,"C");
-		var roteb = rotate(3*Math.PI/2+psi/2,xeb,yeb,"C");
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;		
-		var rot0 = rotate(phi,x0,y0,"C");
-		var rot0b = rotate(phi,x0b,y0b,"C");
-		var rot1 = rotate(phi,x1,y1,"C");
-		var rot1b = rotate(phi,x1b,y1b,"C");
-		var rot2 = rotate(phi,x2,y2,"C");
-		var rot2bs = rotate(phi,x2bs,y2bs,"C");
-		var rot2be = rotate(phi,x2be,y2be,"C");
-		var rot3 = rotate(phi,x3,y3,"C");
-		var rot3bs = rotate(phi,x3bs,y3bs,"C");
-		var rot3be = rotate(phi,x3be,y3be,"C");		
-		var rotsb = rotate(phi,xsb,ysb,"C");
-		var roteb = rotate(phi,xeb,yeb,"C");
-		x0= rot0.x;
-		y0= rot0.y;
-		x0b= rot0b.x;
-		y0b= rot0b.y;
-		x1= rot1.x;
-		y1= rot1.y;
-		x1b= rot1b.x;
-		y1b= rot1b.y;
-		x2= rot2.x;
-		y2= rot2.y;
-		x2bs= rot2bs.x;
-		y2bs= rot2bs.y;
-		x2be= rot2be.x;
-		y2be= rot2be.y;	
-		x3= rot3.x;
-		y3= rot3.y;
-		x3bs= rot3bs.x;
-		y3bs= rot3bs.y;
-		x3be= rot3be.x;
-		y3be= rot3be.y;
-		xsb=rotsb.x;
-		ysb=rotsb.y;
-		xeb=roteb.x;
-		yeb=roteb.y;
-		xs = (xs +xc - canv.scleft)*sx+canv.scleft;
-		xe = (xe +xc - canv.scleft)*sx+canv.scleft;
-		ys = (ys +yc - canv.sctop)*sy+canv.sctop;
-		ye = (ye +yc - canv.sctop)*sy+canv.sctop;
-		xsb = (xsb +xc - canv.scleft)*sx+canv.scleft;
-		xeb = (xeb +xc - canv.scleft)*sx+canv.scleft;
-		ysb = (ysb +yc - canv.sctop)*sy+canv.sctop;
-		yeb = (yeb +yc - canv.sctop)*sy+canv.sctop;
-		x0 = (x0 +xc - canv.scleft)*sx+canv.scleft;
-		x1 = (x1 +xc - canv.scleft)*sx+canv.scleft;
-		y0 = (y0 +yc - canv.sctop)*sy+canv.sctop;
-		y1 = (y1 +yc - canv.sctop)*sy+canv.sctop;
-		x0b = (x0b +xc - canv.scleft)*sx+canv.scleft;
-		x1b = (x1b +xc - canv.scleft)*sx+canv.scleft;
-		y0b = (y0b +yc - canv.sctop)*sy+canv.sctop;
-		y1b = (y1b +yc - canv.sctop)*sy+canv.sctop;
-		x2 = (x2 +xc - canv.scleft)*sx+canv.scleft;
-		x2bs = (x2bs +xc - canv.scleft)*sx+canv.scleft;
-		x2be = (x2be +xc - canv.scleft)*sx+canv.scleft;
-		y2 = (y2 +yc - canv.sctop)*sy+canv.sctop;
-		y2bs = (y2bs +yc - canv.sctop)*sy+canv.sctop;	
-		y2be = (y2be +yc - canv.sctop)*sy+canv.sctop;
-		x3 = (x3 +xc - canv.scleft)*sx+canv.scleft;
-		x3bs = (x3bs +xc - canv.scleft)*sx+canv.scleft;
-		x3be = (x3be +xc - canv.scleft)*sx+canv.scleft;
-		y3 = (y3 +yc - canv.sctop)*sy+canv.sctop;
-		y3bs = (y3bs +yc - canv.sctop)*sy+canv.sctop;	
-		y3be = (y3be +yc - canv.sctop)*sy+canv.sctop;
-		var coro=canv.path[0];
-		var atype=canv.path[2];
-		canv.path=[];
-		canv.path[0]=coro;
-		canv.path[1]='edit';
-		canv.path[2]=atype;
-		canv.path[3]=[];
-		canv.path[3][0]='M';
-		canv.path[3][1]=x0;
-		canv.path[3][2]=y0;
-		canv.path[4]=[];
-		canv.path[4][0]='B';
-		canv.path[4][1]=x0b;
-		canv.path[4][2]=y0b;
-		canv.path[4][3]=x1b;
-		canv.path[4][4]=y1b;
-		canv.path[4][5]=x1;
-		canv.path[4][6]=y1;
-		canv.path[5]=[];
-		canv.path[5][0]='B';
-		canv.path[5][1]=x2bs;
-		canv.path[5][2]=y2bs;
-		canv.path[5][3]=x2be;
-		canv.path[5][4]=y2be;
-		canv.path[5][5]=x2;
-		canv.path[5][6]=y2;
-		canv.path[6]=[];
-		canv.path[6][0]='B';
-		canv.path[6][1]=x3bs;
-		canv.path[6][2]=y3bs;
-		canv.path[6][3]=x3be;
-		canv.path[6][4]=y3be;
-		canv.path[6][5]=x3;
-		canv.path[6][6]=y3;
-		canv.path[7]=[];
-		canv.path[7][0]='B';
-		canv.path[7][1]=xsb;
-		canv.path[7][2]=ysb;
-		canv.path[7][3]=xeb;
-		canv.path[7][4]=yeb;
-		canv.path[7][5]=xe;
-		canv.path[7][6]=ye;		
-	}	
-		
-	if (i==0)
-	{
-		$(mrk.id).style.top=canv.path[3][2]-4;
-		$(mrk.id).style.left=canv.path[3][1]-4;
-	}
-	else
-	{
-		last=canv.path.length;
-		$(mrk.id).style.top=canv.path[last-1][6]-4;
-		$(mrk.id).style.left=canv.path[last-1][5]-4;		
-	}
-	if (canv.path[2]=='segment')
-	{
-		tempary=[];
-		tempary.push('L');
-		tempary.push(canv.path[3][1]);
-		tempary.push(canv.path[3][2]);
-		canv.path.push(tempary);
-	}
-	if (canv.path[2]=='sector')
-	{
-		tempary=[];
-		tempary.push('L');
-		tempary.push(canv.sox);
-		tempary.push(canv.soy);
-		canv.path.push(tempary);
-		tempary=[];
-		tempary.push('L');
-		tempary.push(canv.path[3][1]);
-		tempary.push(canv.path[3][2]);
-		canv.path.push(tempary);		
-	}		
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;	
-	drawline(canv);
-}
 
 function arctan(y,x)
 {
@@ -1288,338 +716,7 @@ function arctan(y,x)
 	return theta;
 }
 
-
-xxddff=0;
-function createBez(cur,canv)
-{
-
-			firstmove=true;
-			$('editlines').style.visibility='hidden';
-			$('shapemenu').style.visibility='hidden';
-			cur.x=Math.round(cur.x/xgrid)*xgrid;
-			cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-			var tempary=[];
-			tempary.push('M');
-			tempary.push(cur.x);
-			tempary.push(cur.y);
-			canv.path.push(tempary);
-			ln=new linemarker(lnmrks++,cur,'#FEFEFE');
-			ln.style.zIndex=zpos++;
-			ln.type='corner';
-			canv.beztypes.push(ln.type);
-			alreadyclicked=false;
-			$('bodydiv').onclick=function(e){addBezPoint(getPosition(e),canv)};
-			$('bodydiv').ondblclick=function(e){lastBezPoint(getPosition(e),canv);canv.complete=true};
-			$('bodydiv').onmousemove=function(e) {drawBezGuide(getPosition(e),canv)};
-}
-
-function drawBezGuide(cur,canv)
-{
-	if (!firstmove)
-	{
-		canv.path.pop();
-	}
-	else
-	{
-		firstmove=false;
-	}
-	cur.x=Math.round(cur.x/xgrid)*xgrid;
-	cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-	var newpos=canv.path.length;
-	var prevpos=newpos-1;
-	var tempary=[];
-	tempary.push('L');
-	tempary.push(cur.x);
-	tempary.push(cur.y);
-	canv.path.push(tempary);
-	drawline(canv);
-}
-
-function addBezPoint(cur,canv)
-{
-	if (!alreadyclicked)
-	{
-		alreadyclicked=true;
-		timed=setTimeout(function() {alreadyclicked=false},500);
-		firstmove=true;
-		canv.path.pop();
-		var newpos=canv.path.length;
-		var prevpos=newpos-1;
-		if (prevpos==3)
-		{
-			var sx = canv.path[prevpos][1];
-			var sy = canv.path[prevpos][2];
-		}
-		else
-		{
-			var sx = canv.path[prevpos][5];
-			var sy = canv.path[prevpos][6];
-		}
-		cur.x=Math.round(cur.x/xgrid)*xgrid;
-		cur.y=Math.round((cur.y-52)/ygrid)*ygrid;
-		var ex = cur.x;
-		var ey = cur.y;
-		var dx = (ex-sx)/4;
-		var dy = (ey-sy)/4;
-		var ccur={x:sx+dx,y:sy+dy};
-		var tempary=[];
-		tempary.push('B');
-		tempary.push(ccur.x);
-		tempary.push(ccur.y);
-
-		var ccur={x:ex-dx,y:ey-dy};
-		tempary.push(ccur.x);
-		tempary.push(ccur.y);	
-
-		tempary.push(ex);
-		tempary.push(ey);
-		ln=new linemarker(lnmrks++,cur,'#FEFEFE');
-		ln.style.zIndex=zpos++;
-		ln.type='corner';
-		canv.beztypes.push(ln.type);
-		canv.path.push(tempary);
-		g=getmaxmin(canv.path);
-		canv.bleft=g.mnx;
-		canv.bwidth=g.mxx-g.mnx;
-		canv.btop=g.mny;
-		canv.bheight=g.mxy-g.mny;
-		drawline(canv);
-	}
-}
-
-function lastBezPoint(cur,canv)
-{
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').ondblclick=function(){};
-	$('bodydiv').onmousemove=function(){};
-	$('bodydiv').style.cursor='default';
-	if (canv.path[0]=='closed')
-	{
-		var l=canv.path.length-1;
-		var sx = canv.path[l][5];
-		var sy = canv.path[l][6];
-		var ex =canv.path[3][1];
-		var ey =canv.path[3][2]
-		var dx = (ex-sx)/4;
-		var dy = (ey-sy)/4;
-		var ccur={x:sx+dx,y:sy+dy};
-		var tempary=[];
-		tempary.push('B');
-		tempary.push(ccur.x);
-		tempary.push(ccur.y);
-
-		var ccur={x:ex-dx,y:ey-dy};
-		tempary.push(ccur.x);
-		tempary.push(ccur.y);	
-
-		tempary.push(ex);
-		tempary.push(ey);
-		canv.path.push(tempary);
-		canv.complete=true;
-		g=getmaxmin(canv.path);
-		canv.bleft=g.mnx;
-		canv.bwidth=g.mxx-g.mnx;
-		canv.btop=g.mny;
-		canv.bheight=g.mxy-g.mny;
-	}
-	drawline(canv);
-	markLine(canv);
-}
-
-
-function updateBezPoints(canv,mrk)
-{
-	var i= parseInt(mrk.id.substr(3))+2;
-	i = Math.floor(i/3)+3;
-	var tp=parseInt($(mrk.id).style.top);
-	var lf=parseInt($(mrk.id).style.left);
-	tp=Math.round(tp/ygrid)*ygrid-4;
-	lf=Math.round(lf/xgrid)*xgrid-4;
-	$(mrk.id).style.top=tp;
-	$(mrk.id).style.left=lf;
-	if (i==3)
-	{
-		
-		if (canv.path[2]=='curve' || canv.path[2]=='freeform')
-		{
-			canv.path[i+1][1]+=lf+4-canv.path[i][1];
-			canv.path[i+1][2]+=tp+4-canv.path[i][2];
-		}
-		canv.path[i][1]=lf+4;
-		canv.path[i][2]=tp+4;
-		if (canv.path[2]=='freeform')
-		{
-			var l=canv.path.length-1;
-			canv.path[l][1]+=lf+4-canv.path[l][5];
-			canv.path[l][2]+=tp+4-canv.path[l][6];
-			canv.path[l][5]=lf+4;
-			canv.path[l][6]=tp+4;
-			
-		}
-	}
-	else if (i==canv.path.length-1 && canv.path[2]=='curve' && canv.path[i][0]=='B')
-	{
-		canv.path[i][5]=lf+4;
-		canv.path[i][6]=tp+4;		
-	}
-	else if (canv.path[i][0]=='L')
-	{
-		canv.path[i][1]=lf+4;
-		canv.path[i][2]=tp+4;
-	} 
-	else
-	{
-		canv.path[i+1][1]+=lf+4-canv.path[i][5];
-		canv.path[i+1][2]+=tp+4-canv.path[i][6];
-		canv.path[i][3]+=lf+4-canv.path[i][5];
-		canv.path[i][4]+=tp+4-canv.path[i][6];		
-		canv.path[i][5]=lf+4;
-		canv.path[i][6]=tp+4;		
-	}
-	g=getmaxmin(canv.path);
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);
-	markLine(canv);
-}
-
-function updateCtrlBezPoints(canv,mrk)
-{	
-	var i= parseInt(mrk.id.substr(3));
-	j = Math.floor((i+3)/3)+3;
-	var tp=parseInt($(mrk.id).style.top);
-	var lf=parseInt($(mrk.id).style.left);
-	if (i%3==2)
-	{
-		var t=i+1;
-		if (i+1==lnmrks) {t=0};
-	}
-	else
-	{
-		var t =i-1;
-	}
-	canv.path[j][1+2*((i-1)%3)]=lf+4;
-	canv.path[j][2+2*((i-1)%3)]=tp+4;
-	if ($('lnm'+t).type=='smooth')
-	{
-		if (i%3==2)
-		{
-			if(i+1==lnmrks)
-			{
-				var nj=3;
-			}
-			else
-			{
-				var nj=j;
-			}			
-			var x0=canv.path[j][5];
-			var y0=canv.path[j][6];
-			canv.path[nj+1][1]=2*x0-canv.path[j][1+2*((i-1)%3)];
-			canv.path[nj+1][2]=2*y0-canv.path[j][2+2*((i-1)%3)];
-			if (i+1==lnmrks)
-			{
-				$('lnm1').style.left=canv.path[nj+1][1]-4;
-				$('lnm1').style.top=canv.path[nj+1][2]-4;
-			}
-			else
-			{
-				$('lnm'+(i+2)).style.left=canv.path[nj+1][1]-4;
-				$('lnm'+(i+2)).style.top=canv.path[nj+1][2]-4;
-			}
-		}
-		else
-		{
-			if(i==1)
-			{
-				var nj=canv.path.length;
-			}
-			else
-			{
-				var nj=j;
-			}
-			var x0=canv.path[nj-1][5];
-			var y0=canv.path[nj-1][6];
-			canv.path[nj-1][3]=2*x0-canv.path[j][1+2*((i-1)%3)];
-			canv.path[nj-1][4]=2*y0-canv.path[j][2+2*((i-1)%3)];
-			if (i==1)
-			{
-				$('lnm'+(lnmrks-1)).style.left=canv.path[nj-1][3]-4;
-				$('lnm'+(lnmrks-1)).style.top=canv.path[nj-1][4]-4;
-			}
-			else
-			{
-				$('lnm'+(i-2)).style.left=canv.path[nj-1][3]-4;
-				$('lnm'+(i-2)).style.top=canv.path[nj-1][4]-4;
-			}
-		}
-	}
-	if ($('lnm'+t).type=='in-line')
-	{
-		if (i%3==2)
-		{
-			if(i+1==lnmrks)
-			{
-				var nj=3;
-			}
-			else
-			{
-				var nj=j;
-			}			
-			var x0=canv.path[j][5];
-			var y0=canv.path[j][6];
-			var r = Math.sqrt((x0-canv.path[nj+1][1])*(x0-canv.path[nj+1][1])+(y0-canv.path[nj+1][2])*(y0-canv.path[nj+1][2]));
-			var theta =arctan(x0-canv.path[j][1+2*((i-1)%3)],y0-canv.path[j][2+2*((i-1)%3)])
-			canv.path[nj+1][1]=x0+r*Math.cos(theta);
-			canv.path[nj+1][2]=y0+r*Math.sin(theta);
-			if (i+1==lnmrks)
-			{
-				$('lnm1').style.left=canv.path[nj+1][1]-4;
-				$('lnm1').style.top=canv.path[nj+1][2]-4;
-			}
-			else
-			{
-				$('lnm'+(i+2)).style.left=canv.path[nj+1][1]-4;
-				$('lnm'+(i+2)).style.top=canv.path[nj+1][2]-4;
-			}
-		}
-		else
-		{
-			if(i==1)
-			{
-				var nj=canv.path.length;
-			}
-			else
-			{
-				var nj=j;
-			}
-			var x0=canv.path[nj-1][5];
-			var y0=canv.path[nj-1][6];
-			var r = Math.sqrt((x0-canv.path[nj-1][3])*(x0-canv.path[nj-1][3])+(y0-canv.path[nj-1][4])*(y0-canv.path[nj-1][4]));
-			var theta =arctan(x0-canv.path[j][1+2*((i-1)%3)],y0-canv.path[j][2+2*((i-1)%3)]);
-			canv.path[nj-1][3]=x0+r*Math.cos(theta);
-			canv.path[nj-1][4]=y0+r*Math.sin(theta);			
-			if (i==1)
-			{
-				$('lnm'+(lnmrks-1)).style.left=canv.path[nj-1][3]-4;
-				$('lnm'+(lnmrks-1)).style.top=canv.path[nj-1][4]-4;
-			}
-			else
-			{
-				$('lnm'+(i-2)).style.left=canv.path[nj-1][3]-4;
-				$('lnm'+(i-2)).style.top=canv.path[nj-1][4]-4;
-			}
-		}		
-	}
-	g=getmaxmin(canv.path);	
-	canv.bleft=g.mnx;
-	canv.bwidth=g.mxx-g.mnx;
-	canv.btop=g.mny;
-	canv.bheight=g.mxy-g.mny;
-	drawline(canv);
-	drawbezguides(canv);
-}
+//old functions 
 
 
 function getmaxmin(C)//C a canvas path

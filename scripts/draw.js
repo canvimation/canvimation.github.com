@@ -38,35 +38,6 @@ function draw()
 	   	}
 	} 
 
-/* draw bezier lines
-var node=this.path.next;
-while (node.point.x !="end")
-	{
-	   	
-	   	if (node.ctrl1.x=="non")
-	   	{ 
-		    //this.Canvas.ctx.lineTo(node.point.x,node.point.y)
-	   	}
-	   	else 
-	   	{
-			this.Canvas.ctx.moveTo(node.point.x,node.point.y);
-			this.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
-			if(node.prev.point.x=="end")
-			{
-				this.Canvas.ctx.moveTo(node.prev.prev.point.x,node.prev.prev.point.y);
-			
-			}
-			else
-			{
-				this.Canvas.ctx.moveTo(node.prev.point.x,node.prev.point.y);
-			}
-			this.Canvas.ctx.lineTo(node.ctrl1.x,node.ctrl1.y);
-	   	}
-	   	node=node.next;
-	}
-
-*/
-
 	if (!this.open) 
 	{
 		this.Canvas.ctx.closePath()
@@ -124,60 +95,22 @@ while (node.point.x !="end")
 }
 
 
-function drawbezguides(Canvas)
+function drawBezGuides()
 {
 	this.Canvas.ctx.beginPath();
-	var l=this.Canvas.path.length;
-	this.Canvas.ctx.strokeStyle='rgb(0,0,0)';
-	this.Canvas.ctx.lineWidth=2;
-	this.Canvas.ctx.shadowColor='rgba(0,0,0,0)';
-	this.Canvas.ctx.moveTo(this.Canvas.path[3][1],this.Canvas.path[3][2]);
-	if (this.Canvas.path[4][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[4][1],this.Canvas.path[4][2])};		
-	for (var i=4;i<l-1;i++)
+	var node=this.path.next;
+	node=node.next;
+	while (node.point.x !="end")
 	{
-		if (this.Canvas.path[i][0]=='B')
-		{
-			this.Canvas.ctx.moveTo(this.Canvas.path[i][3],this.Canvas.path[i][4]);
-			this.Canvas.ctx.lineTo(this.Canvas.path[i][5],this.Canvas.path[i][6]);
-			if (this.Canvas.path[i+1][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[i+1][1],this.Canvas.path[i+1][2])};
-		}
-		if (this.Canvas.path[i][0]=='L' || this.Canvas.path[i][0]=='M' )
-		{
-			this.Canvas.ctx.moveTo(this.Canvas.path[i][1],this.Canvas.path[i][2]);
-			if (this.Canvas.path[i+1][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[i+1][1],this.Canvas.path[i+1][2])};
-		}
-	}
-	if (this.Canvas.path[i][0]=='B')
-	{
-		this.Canvas.ctx.moveTo(this.Canvas.path[i][3],this.Canvas.path[i][4]);
-		this.Canvas.ctx.lineTo(this.Canvas.path[i][5],this.Canvas.path[i][6]);
-	}
-	this.Canvas.ctx.stroke(); 
-	this.Canvas.ctx.beginPath();
-	var l=this.Canvas.path.length;
-	this.Canvas.ctx.strokeStyle='rgb(255,0,0)';
-	this.Canvas.ctx.lineWidth=1;
-	this.Canvas.ctx.shadowColor='rgba(0,0,0,0)';
-	this.Canvas.ctx.moveTo(this.Canvas.path[3][1],this.Canvas.path[3][2]);
-	if (this.Canvas.path[4][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[4][1],this.Canvas.path[4][2])};		
-	for (var i=4;i<l-1;i++)
-	{
-		if (this.Canvas.path[i][0]=='B')
-		{
-			this.Canvas.ctx.moveTo(this.Canvas.path[i][3],this.Canvas.path[i][4]);
-			this.Canvas.ctx.lineTo(this.Canvas.path[i][5],this.Canvas.path[i][6]);
-			if (this.Canvas.path[i+1][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[i+1][1],this.Canvas.path[i+1][2])};
-		}
-		if (this.Canvas.path[i][0]=='L' || this.Canvas.path[i][0]=='M' )
-		{
-			this.Canvas.ctx.moveTo(this.Canvas.path[i][1],this.Canvas.path[i][2]);
-			if (this.Canvas.path[i+1][0]=='B') {this.Canvas.ctx.lineTo(this.Canvas.path[i+1][1],this.Canvas.path[i+1][2])};
-		}
-	}
-	if (this.Canvas.path[i][0]=='B')
-	{
-		this.Canvas.ctx.moveTo(this.Canvas.path[i][3],this.Canvas.path[i][4]);
-		this.Canvas.ctx.lineTo(this.Canvas.path[i][5],this.Canvas.path[i][6]);
-	}
-	this.Canvas.ctx.stroke(); 
+	  	if (node.ctrl1.x!="non")
+	  	{
+			this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+			this.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
+			this.Canvas.ctx.moveTo(node.prev.point.x,node.prev.point.y);
+			this.Canvas.ctx.lineTo(node.ctrl1.x,node.ctrl1.y);
+	  	}
+	   	node=node.next;
+	  }
+	  this.Canvas.ctx.strokeStyle='rgb(255,0,0)';
+	  this.Canvas.ctx.stroke();
 }

@@ -4,7 +4,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function addMark() 
+
+
+function addPointMark() 
 { 
    	this.mark = document.createElement('div');
    	this.mark.node=this;
@@ -16,7 +18,7 @@ function addMark()
    	this.mark.style.height=8;
    	this.mark.style.border="solid black 1px";
    	this.mark.style.cursor='move';
-   	
+   	this.mark.innerHTML=MCOUNT-1;
  
    
    this.mark.onmouseover=function(){
@@ -38,30 +40,8 @@ function addMark()
 										}							
 									};
 	this.dragm=new YAHOO.util.DD(this.mark.id);
-	this.dragm.onDrag=function(e){$(this.id).node.updateNode(getPosition(e))};							
+	this.dragm.onDrag=function(e){$(this.id).node.updatePointNode(getPosition(e))};							
    	$("markerdrop").appendChild(this.mark);
- 
-   
-   function shade(mrk,col)
-   {
-	  	var id=parseInt(mrk.id.substr(3));
-		if (id%3==0)
-		{
-	  		for (var i=0;i<lnmrks;i+=3)
-			{
-				$('lnm'+ i).style.backgroundColor='#FEFEFE';
-				$('lnm'+ i).backgroundColor='#FEFEFE';
-			}	
-			$('lnm'+id).style.backgroundColor='#FFFF00';
-			$('lnm'+id).backgroundColor='#FFFF00';
-			mod=lnmrks+100;
-			if (curcanv.path[2]=='freeform') {mod=lnmrks};
-			if ($('lnm'+(id+3)%mod)) {
-															$('lnm'+(id+3)%mod).style.backgroundColor='#95B3D7';
-															$('lnm'+(id+3)%mod).backgroundColor='#95B3D7'
-															};
-		}
-	}
 }
 
 function removeMark()
@@ -69,8 +49,8 @@ function removeMark()
 	$(this.mark.id).parentNode.removeChild($(this.mark.id));
 }
 
-function updateNode(cursor)
-{
+function updatePointNode(cursor)
+{ 
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	switch (this.shape.type)
@@ -169,17 +149,21 @@ function updateNode(cursor)
 			$(this.mark.id).style.top=this.point.y-4;
 		break
 		case "curve":
-		break 
+			this.setNode(cursor);
+			this.shape.draw();
+			this.shape.drawBezGuides();
+		break
 		case "freeform":
-		break
-		case "square":
-		break
-		case "circle":
+			this.setNode(cursor);
+			if(this.next.point.x=="end")
+			{
+				this.shape.path.next.setNode(cursor);
+			}
+			this.shape.draw();
+			this.shape.drawBezGuides();
 		break
 		case "rounded_rectangle":
-			var start=this.shape.path.next; 
-			//var p=new Point(cursor.x,start.point.y);
-			
+			var start=this.shape.path.next; 			
 			this.mark.style.top=start.point.y-4;
 			var w=(this.shape.btmrgtcrnr.x-this.shape.tplftcrnr.x)/2;
 			var h=(this.shape.btmrgtcrnr.y-this.shape.tplftcrnr.y)/2;
@@ -203,16 +187,94 @@ function updateNode(cursor)
 			this.shape.setRndRect();
 			this.shape.draw();
 		break
-		case "triangle":
-		break
-		case "right_triangle":
-		break
 	}
 }
 
+function addCtrl1Mark() 
+{ 
+   	if(this.ctrl1.x=="non") {return}
+   	this.c1mark = document.createElement('div');
+   	this.c1mark.node=this;
+   	this.c1mark.id="mark"+(MCOUNT++);
+   	this.c1mark.style.left= this.ctrl1.x-4; 
+   	this.c1mark.style.top= this.ctrl1.y-4;
+   	this.c1mark.style.fontSize=0;
+   	this.c1mark.style.width=8;
+   	this.c1mark.style.height=8;
+   	this.c1mark.style.border="solid red 1px";
+   	this.c1mark.style.cursor='move';
+   	this.c1mark.innerHTML=MCOUNT-1;
+   	
+ 
+   
+   this.c1mark.onmouseover=function(){
+										inln=true;
+									};
+   this.c1mark.onmouseout=function(){
+	   									inln=false;
+									};
 
+	this.dragc1m=new YAHOO.util.DD(this.c1mark.id);
+	this.dragc1m.onDrag=function(e){$(this.id).node.updateCtrl1Node(getPosition(e))};							
+   	$("markerdrop").appendChild(this.c1mark);
+}
     
+function addCtrl2Mark() 
+{
+   	if(this.ctrl2.x=="non") {return}
+   	this.c2mark = document.createElement('div');
+   	this.c2mark.node=this;
+   	this.c2mark.id="mark"+(MCOUNT++);
+   	this.c2mark.style.left= this.ctrl2.x-4; 
+   	this.c2mark.style.top= this.ctrl2.y-4;
+   	this.c2mark.style.fontSize=0;
+   	this.c2mark.style.width=8;
+   	this.c2mark.style.height=8;
+   	this.c2mark.style.border="solid red 1px";
+   	this.c2mark.style.cursor='move';
+   	this.c2mark.innerHTML=MCOUNT-1;
+ 
+   
+   this.c2mark.onmouseover=function(){
+										inln=true;
+									};
+   this.c2mark.onmouseout=function(){
+	   									inln=false;
+									};
 
+	this.dragc2m=new YAHOO.util.DD(this.c2mark.id);
+	this.dragc2m.onDrag=function(e){$(this.id).node.updateCtrl2Node(getPosition(e))};							
+   	$("markerdrop").appendChild(this.c2mark);
+}
+
+function addFullMarks()
+{
+	this.addPointMark();
+	this.addCtrl1Mark();
+	this.addCtrl2Mark();
+}
+
+function updateCtrl1Node(cursor)
+{
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	var c1=new Point(cursor.x,cursor.y);
+	this.setNode(this.point,c1,this.ctrl2);
+	this.shape.draw();
+	this.shape.drawBezGuides();
+	//this.c1mark.innerHTML="c1";
+}
+
+function updateCtrl2Node(cursor)
+{
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	var c2=new Point(cursor.x,cursor.y);
+	this.setNode(this.point,this.ctrl1,c2);
+	this.shape.draw();
+	this.shape.drawBezGuides();
+	//this.c2mark.innerHTML="c2";
+}
        
 
 
