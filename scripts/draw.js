@@ -9,7 +9,7 @@ function draw()
 	
 	shapestarted=false;
 	worksaved='false';
-	this.Canvas.ctx.clearRect(0,0,activewidth,activeheight);
+	this.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	
    	var rule='rgba('
 	for (var j=0;j<3;j++)
@@ -110,7 +110,25 @@ function drawBezGuides()
 			this.Canvas.ctx.lineTo(node.ctrl1.x,node.ctrl1.y);
 	  	}
 	   	node=node.next;
+	}
+	this.Canvas.ctx.lineWidth=2;
+	this.Canvas.ctx.strokeStyle='rgb(255,255,255)';
+	this.Canvas.ctx.stroke();
+	this.Canvas.ctx.beginPath();
+	var node=this.path.next;
+	node=node.next;
+	while (node.point.x !="end")
+	{
+	  	if (node.ctrl1.x!="non")
+	  	{
+			this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+			this.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
+			this.Canvas.ctx.moveTo(node.prev.point.x,node.prev.point.y);
+			this.Canvas.ctx.lineTo(node.ctrl1.x,node.ctrl1.y);
+	  	}
+	   	node=node.next;
 	  }
+	  this.Canvas.ctx.lineWidth=1;
 	  this.Canvas.ctx.strokeStyle='rgb(255,0,0)';
 	  this.Canvas.ctx.stroke();
 }

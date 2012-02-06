@@ -16,7 +16,7 @@ function shapeMenu()
    this.elmRef.style.visibility='hidden';
    this.elmRef.style.backgroundColor='white';
    this.elmRef.style.border='solid black 1px';
-   this.elmRef.style.zIndex=20000000;
+   //this.elmRef.style.zIndex=20000000;
    $('toolbar').appendChild(this.elmRef);	
    for (var i=0; i<shapes.length;i++)
    {

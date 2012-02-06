@@ -11,21 +11,26 @@ function addPointMark()
    	this.mark = document.createElement('div');
    	this.mark.node=this;
    	this.mark.id="mark"+(MCOUNT++);
-   	this.mark.style.left= this.point.x-4; 
-   	this.mark.style.top= this.point.y-4;
+   	this.mark.style.left= this.point.x-2; 
+   	this.mark.style.top= this.point.y-2;
    	this.mark.style.fontSize=0;
-   	this.mark.style.width=8;
-   	this.mark.style.height=8;
+   	this.mark.style.width=4;
+   	this.mark.style.height=4;
    	this.mark.style.border="solid black 1px";
+   	this.mark.style.backgroundColor="white";
    	this.mark.style.cursor='move';
    	this.mark.innerHTML=MCOUNT-1;
  
-   
    this.mark.onmouseover=function(){
-										inln=true;
+										$("markerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.mark.onmouseout=function(){
-	   									inln=false;
+	   									$("markerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			$("markerdrop").style.visibility="hidden";
+	   																			clear($("markerdrop"));
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																		}
 									};
 	this.mark.onclick	=function(){
 										if ((this.style.backgroundColor!='white')&& (curcanv.complete) )
@@ -196,24 +201,27 @@ function addCtrl1Mark()
    	this.c1mark = document.createElement('div');
    	this.c1mark.node=this;
    	this.c1mark.id="mark"+(MCOUNT++);
-   	this.c1mark.style.left= this.ctrl1.x-4; 
-   	this.c1mark.style.top= this.ctrl1.y-4;
+   	this.c1mark.style.left= this.ctrl1.x-2; 
+   	this.c1mark.style.top= this.ctrl1.y-2;
    	this.c1mark.style.fontSize=0;
-   	this.c1mark.style.width=8;
-   	this.c1mark.style.height=8;
+   	this.c1mark.style.width=4;
+   	this.c1mark.style.height=4;
    	this.c1mark.style.border="solid red 1px";
+   	this.c1mark.style.backgroundColor="white";
    	this.c1mark.style.cursor='move';
    	this.c1mark.innerHTML=MCOUNT-1;
    	
- 
-   
-   this.c1mark.onmouseover=function(){
-										inln=true;
+	this.c1mark.onmouseover=function(){
+										$("markerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.c1mark.onmouseout=function(){
-	   									inln=false;
-									};
-
+	   									$("markerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			$("markerdrop").style.visibility="hidden";
+	   																			clear($("markerdrop"));
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																		}
+									};	
 	this.dragc1m=new YAHOO.util.DD(this.c1mark.id);
 	this.dragc1m.onDrag=function(e){$(this.id).node.updateCtrl1Node(getPosition(e))};							
    	$("markerdrop").appendChild(this.c1mark);
@@ -225,21 +233,26 @@ function addCtrl2Mark()
    	this.c2mark = document.createElement('div');
    	this.c2mark.node=this;
    	this.c2mark.id="mark"+(MCOUNT++);
-   	this.c2mark.style.left= this.ctrl2.x-4; 
-   	this.c2mark.style.top= this.ctrl2.y-4;
+   	this.c2mark.style.left= this.ctrl2.x-2; 
+   	this.c2mark.style.top= this.ctrl2.y-2;
    	this.c2mark.style.fontSize=0;
-   	this.c2mark.style.width=8;
-   	this.c2mark.style.height=8;
+   	this.c2mark.style.width=4;
+   	this.c2mark.style.height=4;
    	this.c2mark.style.border="solid red 1px";
+   	this.c2mark.style.backgroundColor="white";
    	this.c2mark.style.cursor='move';
    	this.c2mark.innerHTML=MCOUNT-1;
  
-   
-   this.c2mark.onmouseover=function(){
-										inln=true;
+	this.c2mark.onmouseover=function(){
+										$("markerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.c2mark.onmouseout=function(){
-	   									inln=false;
+	   									$("markerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			$("markerdrop").style.visibility="hidden";
+	   																			clear($("markerdrop"));
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																		}
 									};
 
 	this.dragc2m=new YAHOO.util.DD(this.c2mark.id);

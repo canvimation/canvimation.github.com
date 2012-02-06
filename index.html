@@ -6,7 +6,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 -->
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 <meta name="google-site-verification" content="urlI98uR-E1CxkgmtiHXUTowCXbv8VdQUiA1PkeetNk" />
 
 <title>Canvas Draw</title>
@@ -64,7 +63,7 @@ img.marker {
 	width: 100%;
 	height:85%;
 
-	z-index:20000002;
+
 	overflow:auto;
 }
 
@@ -74,7 +73,7 @@ img.marker {
 	width: 100%;
 	height:85%;
 	visibility:hidden;
-	z-index:20000002;
+
 }
 
 #filmdivhandle {
@@ -84,7 +83,7 @@ img.marker {
 	opacity:0.5;
 	visibility:hidden;
 	background-image:url(assets/filmove.png);
-	z-index:25000000;
+
 }
 
 #animationdiv {
@@ -92,7 +91,7 @@ img.marker {
 	left:0px;
 	width: 100%;
 	height:85%;
-	z-index:20000000;
+
 	visibility:hidden;
 }
 
@@ -104,41 +103,79 @@ img.marker {
 	background-color:transparent;
 }
 
-.theatre_elm {
+.dialoguebox {
+	border: 1px solid #000000;
+	visibility:hidden;
+	z-index:4;
+}
+
+.head {
+	background-color: #000000;
+	color: #FFFFFF;
+	font-size:12pt;
+	font-weight: bold;
+	height:25px;
+	width: 100%;
+}
+
+.content {
+	background-color: #DDDDDD;
+	width: 100%;
+	top:25px;
+}
+
+.content input {
+	position:relative;
+	text-align:right;
+	margin-left:2px;
+
+}
+
+p.text_input label {
+	position:relative;
+	left:5px;
+}
+
+p.text_input input {
+	left:30px;
+}
+
+p.text_input span {
+	position:relative;
+	left:40px;
+}
+
+p.chk_radio_input input{
+	left:5px;
+}
+
+p.chk_radio_input label {
+	position:relative;
+	left:10px;
+}
+
+#shapestage, #scenestage, #spritestage, #trackstage, #tweenstage, #filmstage {
+	visibility:hidden;
+}
+
+#stageframe {
+	visibility:hidden;
+	border:1px solid black;
+	z-index:1;
+}
+
+#stagearea {
+	background-color: #FFFFFF;
+	z-index:1;
+}
+
+.theatre_style {
+	visibility:hidden;
 	top:0px;
 	left:0px;
 	width: 100%;
 	height:100%;
-	background-color:transparent;
-}
-
-#shapestage {
-	visibility:visible;
-}
-
-#scenestage {
-	visibility:hidden;
-}
-
-#spritestage {
-	visibility:visible;
-}
-
-#trackstage {
-	visibility:hidden;
-}
-
-#tweenstage {
-	visibility:hidden;
-}
-
-#filmstage {
-	visibility:hidden;
-}
-
-#markerdrop {
-	visibility:hidden;
-	z-index:20000003;
+	z-index:1;
 }
 
 #hidecanvas {
@@ -161,8 +198,8 @@ img.marker {
 
 
 #logo {
-	top: 1px;
-	left: 400px;
+	top: 4px;
+	left: 200px;
 }
 	
 
@@ -171,7 +208,7 @@ img.marker {
 	left:10px;
 	width: 95px;
 	height:515px;
-	z-index:20000011;
+	z-index:1;
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
@@ -193,7 +230,7 @@ img.marker {
 	left:10px;
 	width: 115px;
 	height:515px;
-	z-index:20000011;
+
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
@@ -239,7 +276,7 @@ div.bar {
 	left:5px;
 	width: 115px;
 	height:520px;
-	z-index:20000011;
+
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
@@ -274,7 +311,7 @@ div.bar {
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
-	z-index:100;
+
 }
 
 #msgblank {
@@ -284,7 +321,7 @@ div.bar {
 	height:250px;
 	background-color:#66FFFF;
 	visibility:hidden;
-	z-index:100;
+
 }
 
 #buildgroup {
@@ -460,7 +497,7 @@ div.bar {
 	position:absolute;
 	top:52px;
 	left:0px;
-	z-index:20000001;
+
 }
 
 #colorcont {
@@ -590,15 +627,71 @@ div.bar {
 	left:0px;
 }
 
-div.choice {
-	left: 5px;
-	top:5px;
-	filter:alpha(opacity=60);
-    opacity:0.6;
-	visibility:hidden;
+.choice40 {
+	opacity:0.40;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=40)";
+    filter:alpha(opacity=40);
+    zoom:1;
 	cursor:pointer;
 }
 
+.choice100 {
+	opacity:1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=100)";
+    filter:alpha(opacity=100);
+    zoom:1;
+}
+
+#export {
+	left:110px;
+	visibility:visible;
+}
+
+#menushape, #copy, #editlines, #group, #ungroup, #rotate, #collines, #gradfill, #sname, #alntop, #alnbot{
+	left:50px; 
+}
+
+#grid, #del, #front, #back, #vert, #horz, #stylelines, #colfill, #shadow, #lundo, #alnright {
+	left:5px;
+}
+
+#menushape, #grid {
+	top:30px; 
+}
+#copy, #del {
+	top:80px; 
+}
+#editlines, #group, #ungroup, #front, #back {
+	top:130px; 
+}
+
+#rotate, #horz {
+	top:180px; 
+}
+#collines, #stylelines {
+	top:230px; 
+}
+#gradfill, #colfill {
+	top:280px; 
+}
+#sname, #shadow {
+	top:330px; 
+}
+
+#back {
+	left:25px; 
+}
+
+#vert {
+	top:196px; 
+}
+
+#lundo {
+	top:430px; 
+}
+#alnright {
+	left:25px; 
+}
 
 #quickColor {
 	height:50px;
@@ -612,11 +705,6 @@ div.choice {
 	width:72px;
 	top:0px;
 	left:73px;
-}
-
-
-#nick {
-	visibility:hidden;
 }
 
 #fopts {
@@ -633,7 +721,6 @@ div.choice {
 	top:300px;
 	width:220px;
 	height:220px;
-	z-index:20000011;
 	visibility:hidden;
 }
 
@@ -650,18 +737,18 @@ div.choice {
 	top:300px;
 	width:20px;
 	height:20px;
-	z-index:20000011;
+
 	font-size:0;
 	visibility:hidden;
 }
 
 </style>
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/dragdrop/dragdrop-min.js"></script> 
-//uptodate scripts
+
 <script type="text/javascript" src = "scripts/mark.js" ></script>
 <script type="text/javascript" src = "scripts/shape.js" ></script>
 <script type="text/javascript" src = "scripts/draw.js" ></script>
-//older scripts
+
 <script type="text/javascript" src = "scripts/boundary.js" ></script>
 <script type="text/javascript" src = "scripts/corner.js" ></script>
 <script type="text/javascript" src = "scripts/bottomhandle.js" ></script>
@@ -670,7 +757,6 @@ div.choice {
 <script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
 <script type="text/javascript" src = "scripts/linesmenu.js" ></script>
 <script type="text/javascript" src = "scripts/colorpicker.js" ></script>
-<script type="text/javascript" src = "scripts/sizeform.js" ></script>
 <script type="text/javascript" src = "scripts/export.js" ></script>
 <script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
 <script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
@@ -707,8 +793,7 @@ var numblocks=0;
 squote="'";
 dquote='"';
 var parentselected=null;
-var zpos=10000001;
-var zneg=10000000;
+
 var lnmrks=0;
 var gdmrks=0;
 var rdmrks=0;
@@ -788,6 +873,8 @@ SHAPES.counter=0;
 var SCRW; //actual screen width
 var SCRH; //actual screen height
 var MCOUNT=0; //counter for id of marks
+var ZPOS=0; //zindex for each shape as created or set to front
+var ZNEG=-1; //zindex for shapes when zindex sent to back
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 temptrack={};
 tracks = {};
@@ -1756,11 +1843,45 @@ function movenotfilm()
 		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotfilm()},10)}
 }
 
-function main()
+function setStage()
+{
+	var stages=["area","frame"];
+	for(var i=0; i<stages.length; i++)
+	{
+		$('stage'+stages[i]).style.top=(SCRH-$('stageheight').value)/2 - 52;
+		$('stage'+stages[i]).style.left=(SCRW-$('stagewidth').value)/2;
+		$('stage'+stages[i]).style.width=$('stagewidth').value;
+		$('stage'+stages[i]).style.height=$('stageheight').value;
+		$('stage'+stages[i]).style.visibility="visible";
+	}
+	$('stagebox').style.visibility="hidden";
+	$('shapestage').style.visibility="visible";
+	main();
+}
+
+function init()
 {	
 	SCRW=screen.availWidth;
 	SCRH=screen.availHeight;
+	$('startdiv').parentNode.removeChild($('startdiv'));
+	$('stagebox').style.width=200;
+	$('stagebox').style.height=150;
+	$('stagecontent').style.height=parseInt($('stagebox').style.height)-25;
+	$('stagebox').style.top=(SCRH-parseInt($('stagebox').style.height))/2 - 52;
+	$('stagebox').style.left=(SCRW-parseInt($('stagebox').style.width))/2;
+	$('stageOK').style.left=parseInt($('stagebox').style.width)-70;
+	$('stagebox').style.visibility="visible";
+	
+}
+	
+function main()
+{	
 	BODY=document.getElementsByTagName("body")[0];
+	$('toolbar').style.visibility='visible';
+	$('anibar').style.visibility='visible';
+	$('grid').style.visibility='visible';
+	$('menushape').style.visibility='visible';
+	$('background').style.visibility='visible';
 	canvwidth=0.98*screen.availWidth;
 	canvheight=0.785*screen.availHeight;
 	maxwidth=canvwidth;
@@ -1773,9 +1894,7 @@ function main()
 	$('filmdivhandle').style.left=masterwidth/2-25;
 	fhtfix=masterheight/2-25;
 	fhlfix=masterwidth/2-25;
-	sizebox();
-	sizechange('w');
-	adjust();
+
 	
 	if (!ieb)
 	{
@@ -1868,50 +1987,14 @@ function main()
 	$('anibar').style.top=60;
 	$('canvasdiv').style.height=maxheight-52;
 	$('canvasdiv').style.width=maxwidth;
-	$('canvasdiv').style.zIndex=2;
-	//$('shapestage').style.zIndex=30000003;
+	//$('canvasdiv').style.zIndex=2;
+
 	$('animationdiv').style.height=maxheight-52;
 	$('animationdiv').style.width=maxwidth;
-	$('heading').style.zIndex=20000003;
+
 	$('colorcont').style.left= (canvwidth-525);
 	$('colorcont').style.top= (canvheight-361)/2;
 	$('colorcont').style.height=391;
-	$('colorcont').style.zIndex=20000004;
-	
-	$('export').style.left=110;
-	$('export').style.visibility='visible';
-	$('grid').style.top=30;
-	$('menushape').style.left=50;
-	$('menushape').style.top=30;
-	$('del').style.top=80;
-	$('copy').style.left=50;
-	$('copy').style.top=80;
-	$('front').style.top=130;
-	$('back').style.left=25;
-	$('back').style.top=130;
-	$('editlines').style.left=50;
-	$('editlines').style.top=130;
-	$('group').style.left=50;
-	$('group').style.top=130;
-	$('ungroup').style.left=50;
-	$('ungroup').style.top=130;
-	$('rotate').style.left=50;
-	$('rotate').style.top=180;
-	$('vert').style.top=196;
-	$('horz').style.top=180;
-	$('stylelines').style.top=230;
-	$('collines').style.left=50;
-	$('collines').style.top=230;
-	$('colfill').style.top=280;
-	$('gradfill').style.left=50;
-	$('gradfill').style.top=280;
-	$('shadow').style.top=330;
-	$('sname').style.top=330;
-	$('sname').style.left=50;
-	$('lundo').style.top=430;
-	$('alntop').style.left=50;
-	$('alnbot').style.left=50;
-	$('alnright').style.left=25;
 	
 	$('colorpick').style.top=25;
 	$('colorpick').style.height=366;	
@@ -2041,7 +2124,7 @@ function main()
 	gridcanv.style.position='absolute';
 	gridcanv.style.left=0;
 	gridcanv.style.top=52;
-	gridcanv.style.zIndex=2;
+	//gridcanv.style.zIndex=2;
 	
 	$('vecdiv').style.left=500;
 	$('vecdiv').style.top=200;
@@ -2124,11 +2207,9 @@ function main()
 	$('spritecentre').style.top=200;
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
 
-	$('startdiv').parentNode.removeChild($('startdiv'));
-	$('background').style.visibility='visible';
-	$('drawarea').style.visibility='visible';
-	$('canvasarea').style.visibility='visible';
-	$('canvasframe').style.visibility='visible';
+	
+	
+
 
 	$('msg').innerHTML=flname+fstar;
 	$('sceneradio').checked='checked';
@@ -2138,6 +2219,7 @@ function main()
 	{
 		$('ifas').innerHTML='Open Files';
 	}
+	
 }
 
 </script>
@@ -2155,28 +2237,50 @@ function main()
 
 </script>
 </head>
-<body onLoad="main()">
+<body onLoad="init()">
 <div id='startdiv' 	style='width:100%; height:100%; top:52px; background-color:#FFFFFF; font-size:18px'>
       <div style='top:200px;left:400px '><img src='assets/3d_cd.gif'/> Please wait while the application finishes loading.....</div>
 </div>
-<div id='background'></div>
-<div id='drawarea'></div>
-<div id='canvasarea'></div>
-<canvas id='gridcanvas'> </canvas>
-<div id='canvasframe'></div>
-<div id ="shapestage" class="theatre_elm"></div>
-<div id ="scenestage" class="theatre_elm"></div>
-<div id ="spritestage" class="theatre_elm"></div>
-<div id ="trackstage" class="theatre_elm"></div>
-<div id ="tweenstage" class="theatre_elm"></div>
-<div id ="filmstage" class="theatre_elm"></div>
-<div id ="markerdrop" class="theatre_elm"></div>
+
+
+
 <div id="canvasdiv"></div>
 <div id="hidecanvas"></div>
 <div id='animationdiv'></div>
 <div id="bodydiv"></div>
 <div id="filmbodydiv"></div>
 <div id="filmdivhandle"></div>
+<canvas id='gradcanvas'> </canvas>
+
+
+<div id='background'></div>
+<div id='stagearea'></div>
+
+<div id="shapestage" class="theatre_style"></div>
+<div id="scenestage" class="theatre_style"></div>
+<div id="spritestage" class="theatre_style"></div>
+<div id="trackstage" class="theatre_style"></div>
+<div id="tweenstage" class="theatre_style"></div>
+<div id="filmstage" class="theatre_style"></div>
+
+<div id="stageframe"></div>
+
+<div id='stagebox' class="dialoguebox">
+	<div id='stagehead' class='head'> New Stage</div>
+	<div id='stagecontent' class='content'>
+		<p class="text_input">
+			<label for="stagewidth">Width</label> <input type="text" name"stagewidth" id="stagewidth" value=1000 size=5/><span>px</span>
+		</p>
+		<p class="text_input">
+			<label for="stageheight">Height</label> <input type="text" name"stageheight" id="stageheight" value=500 size=5/><span>px</span>
+		</p>
+		
+		<input type="button" value=" OK " id="stageOK" onclick="setStage()" />
+	</div>	
+</div>
+<canvas id='gridcanvas'> </canvas>
+<div id="markerdrop" class="theatre_style"></div>
+
 <div id='colorcont'>
   <div id='colorpick' >
     <div id='colform' >
@@ -2311,92 +2415,40 @@ Film Elements from back to front.<br>
 
 <div id='toolbar'>
   <div id='tlbrhead'> &nbsp; Tools </div>
-  <div class="choice" id='menushape'  alt="insert shapes" title="insert shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="showmenu()"> <img src="assets/menushapes.png"> </div>
-  <div class="choice" id='editlines'  alt="edit lines" title="edit lines" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="markLine(selected[0])"> <img src="assets/editlines.png"> </div>
-  <div class="choice" id='group'  alt="group shapes" title="group shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="group()"> <img src="assets/group.png"> </div>
-  <div class="choice" id='ungroup'  alt="ungroup shapes" title="ungroup shapes" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="ungroup()"> <img src="assets/ungroup.png"> </div>
-  <div class="choice" id='stylelines'  alt="line styles" title="line styles" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="linestyles()"> <img src="assets/stylelines.png"> </div>
-  <div class="choice" id='collines'  alt="line colour" title="line colour" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="linecolor()"> <img src="assets/collines.png"> </div>
-  <div class="choice" id='colfill'  alt="fill colour" title="fill colour" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="fillcolor()"> <img id='colimg' src="assets/colfill.png"> </div>
-  <div class="choice" id='gradfill'  alt="gradient fill" title="gradient fill" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="gradfill()"> <img id='gradimg' src="assets/gradfilloff.png"> </div>
-  <div class="choice" id='rotate'  alt="rotate" title="rotate" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="canvrotate()"> <img src="assets/rotate.png"> </div>
-  <div class="choice" id='front'  alt="bring to front" title="bring to front" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="bringfront()"> <img src="assets/front.png"> </div>
-  <div class="choice" id='back'  alt="send to back" title="send to back" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="sendback()"> <img src="assets/back.png"> </div>
-  <div class="choice" id='grid'  alt="set grid" title="set grid" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="setgrid()"> <img src="assets/grid.png"> </div>
-  <div class="choice" id='del'  alt="delete" title="delete" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="shapedelete()"> <img src="assets/delete.png"> </div>
-  <div class="choice" id='copy'  alt="copy" title="copy" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="shapecopy(true)"> <img src="assets/copy.png"> </div>
-  <div class="choice" id='vert'  alt="flip vertical" title="flip vertical" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="flipvert()"> <img src="assets/vert.png"> </div>
-  <div class="choice" id='horz'  alt="flip horizontal" title="flip horizontal" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="fliphorz()"> <img src="assets/horz.png"> </div>
-  <div class="choice" id='alntop'  alt="align top" title="align top" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="aligntop()"> <img src="assets/alntop.png"> </div>
-  <div class="choice" id='alnbot'  alt="align bottom" title="align bottom" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="alignbot()"> <img src="assets/alnbot.png"> </div>
-  <div class="choice" id='alnleft'  alt="align left" title="align left" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="alignleft()"> <img src="assets/alnleft.png"> </div>
-  <div class="choice" id='alnright'  alt="align right" title="align right" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="alignright()"> <img src="assets/alnright.png"> </div>
-  <div class="choice" id='lundo'  alt="undo delete" title="undo delete" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="undolast()"> <img src="assets/undo.png"> </div>	
-  <div class="choice" id='shadow'  alt="shadow" title="shadow" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="shadow()"> <img src="assets/shadow.png"> </div>
-  <div class="choice" id='sname'  alt="shape name" title="shape name" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="shapename()"> <img src="assets/shapename.png"> </div>
+  <div class="choice40" id='menushape'  alt="insert shapes" title="insert shapes" onclick="showmenu()" onmouseover="this.className='choice100'" onmouseout="this.className='choice100'"> <img src="assets/menushapes.png"> </div>
+  <div class="choice40" id='editlines'  alt="edit lines" title="edit lines" onclick="markLine(selected[0])" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/editlines.png"> </div>
+  <div class="choice40" id='group'  alt="group shapes" title="group shapes" onclick="group()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/group.png"> </div>
+  <div class="choice40" id='ungroup'  alt="ungroup shapes" title="ungroup shapes" onclick="ungroup()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/ungroup.png"> </div>
+  <div class="choice40" id='stylelines'  alt="line styles" title="line styles" onclick="linestyles()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/stylelines.png"> </div>
+  <div class="choice40" id='collines'  alt="line colour" title="line colour" onclick="linecolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/collines.png"> </div>
+  <div class="choice40" id='colfill'  alt="fill colour" title="fill colour" onclick="fillcolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='colimg' src="assets/colfill.png"> </div>
+  <div class="choice40" id='gradfill'  alt="gradient fill" title="gradient fill" onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='gradimg' src="assets/gradfilloff.png"> </div>
+  <div class="choice40" id='rotate'  alt="rotate" title="rotate" onclick="canvrotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/rotate.png"> </div>
+  <div class="choice40" id='front'  alt="bring to front" title="bring to front" onclick="bringfront()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/front.png"> </div>
+  <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
+  <div class="choice40" id='grid'  alt="set grid" title="set grid" onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/grid.png"> </div>
+  <div class="choice40" id='del'  alt="delete" title="delete" onclick="shapedelete()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/delete.png"> </div>
+  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy(true)" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
+  <div class="choice40" id='vert'  alt="flip vertical" title="flip vertical" onclick="flipvert()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/vert.png"> </div>
+  <div class="choice40" id='horz'  alt="flip horizontal" title="flip horizontal" onclick="fliphorz()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/horz.png"> </div>
+  <div class="choice40" id='alntop'  alt="align top" title="align top" onclick="aligntop()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alntop.png"> </div>
+  <div class="choice40" id='alnbot'  alt="align bottom" title="align bottom" onclick="alignbot()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnbot.png"> </div>
+  <div class="choice40" id='alnleft'  alt="align left" title="align left" onclick="alignleft()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnleft.png"> </div>
+  <div class="choice40" id='alnright'  alt="align right" title="align right" onclick="alignright()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnright.png"> </div>
+  <div class="choice40" id='lundo'  alt="undo delete" title="undo delete" onclick="undolast()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/undo.png"> </div>	
+  <div class="choice40" id='shadow'  alt="shadow" title="shadow" onclick="shadow()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/shadow.png"> </div>
+  <div class="choice40" id='sname'  alt="shape name" title="shape name" onclick="shapename()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/shapename.png"> </div>
 	
 </div>
 
 
-<canvas id='gradcanvas'> </canvas>
-<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px;z-index=200000020 '> </div>
+
+<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px; '> </div>
  <div id='logo'><img src="assets/logo.png"></div>
   
-  <div class="choice" id='export'  alt="To HTML" title="To HTML" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60"
-	onclick="$('fopts').style.visibility='visible'"> <img src="assets/export.png"> </div>
-  <div id='nick'> </div>
-
-  <div class='choice' id='visit' alt="Visit Gallery" title="Visit Gallery" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60;" onclick='visitgallery()'> <img src='assets/visit.png'> </div>
-  <div class='choice' id='help' alt="help" title="help" onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-	onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60;" onclick='openhelp()'> <img src='assets/help.png'> </div>	
+  <div class="choice40" id='export'  alt="To HTML" title="To HTML" onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/export.png"> </div>
+  <div class='choice40' id='visit' alt="Visit Gallery" title="Visit Gallery" onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src='assets/visit.png'> </div>
+  <div class='choice40' id='help' alt="help" title="help" onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src='assets/help.png'> </div>	
 	
   <div id='fopts'><a href='#' onClick="writeCanvas();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="totext();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromtext(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>
@@ -2408,5 +2460,6 @@ Film Elements from back to front.<br>
 <div id='spritecentre'>
 	<canvas id='spritemidiv'></canvas>
 </div> 
+ 
 </body>
 </html>

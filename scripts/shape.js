@@ -18,6 +18,7 @@ function Node(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=ctrl1;
 		this.ctrl2=ctrl2;
+		this.type="corner";
 	}
 	else
 	{
@@ -25,7 +26,7 @@ function Node(point,ctrl1,ctrl2)
 		this.ctrl2=new Point("non","non");
 	}
 	this.next="";
-	this.prev=""
+	this.prev="";
 	this.shape;
 	
 	//methods
@@ -195,7 +196,7 @@ function Shape(name,open,editable,type)
    	this.shadowColor = [0, 0, 0, 0];
    	this.ScaleX=1;
    	this.ScaleY=1;
-   	this.zIndex=zpos++;
+   	this.zIndex=ZPOS++;
    	this.rotate=0;
    	this.clockw=true;
    	this.complete=false;
@@ -477,7 +478,7 @@ function drawGuide(cursor)
 }
 
 function drawNext(cursor)
-{$("markerdrop").style.visibility="visible";
+{
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid; 
 	this.path.prev.setNode(cursor);
@@ -495,7 +496,7 @@ function drawEnd(cursor)
 
 	if (this.editable) 
 	{
-		$("markerdrop").style.visibility="visible";
+		$("markerdrop").style.visibility="visible";	
 		var node=this.path.next;
 		node.addPointMark();
 		node=node.next;
