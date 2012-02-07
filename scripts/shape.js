@@ -48,7 +48,6 @@ function Node(point,ctrl1,ctrl2)
 	this.scaleY=scaleY;
 	this.translate=translate;
 	this.copyNodeTo=copyNodeTo;
-	//this.remMark=remMark; //remove marks;
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -225,6 +224,8 @@ function Shape(name,open,editable,type)
    	this.drawEnd=drawEnd;
    	this.drawNext=drawNext;
    	this.drawBezGuides=drawBezGuides;
+   	this.setCorners=setCorners;
+   	this.fixCorners=fixCorners;
    	return this;
    	
 }
@@ -244,7 +245,7 @@ function addTo(theatre)
 	this.Canvas = document.createElement('canvas');
    	this.Canvas.style.position='absolute';
    	this.Canvas.style.left=0; 
-   	this.Canvas.style.top= 0;
+   	this.Canvas.style.top= 0;  	
    	this.Canvas.width=SCRW;
    	this.Canvas.height=SCRH;
    	this.Canvas.style.zIndex=this.zIndex;
@@ -254,6 +255,7 @@ function addTo(theatre)
 	{
         this.Canvas.ctx = this.Canvas.getContext('2d');
     }
+    this.Canvas.shape=this;
 }
 
 
@@ -275,11 +277,11 @@ function setPath(cursor)
 	this.tplftcrnr=new Point(node.point.x,node.point.y);
 	this.btmrgtcrnr=new Point(node.point.x,node.point.y);
 	var curshape=this;
-	BODY.onmousemove=function(e) {curshape.drawGuide(getPosition(e))};
-	BODY.onmousedown=function() {};
+	this.Canvas.onmousemove=function(e) {noBubble(e);this.shape.drawGuide(getPosition(e))};
+	this.Canvas.onmousedown=function(e) {};
 	if (!(this.type=="curve" || this.type=="freeform"))
 	{
-		BODY.onmouseup=function(e) {curshape.drawEnd(getPosition(e))};
+		this.Canvas.onmouseup=function(e) {this.shape.drawEnd(getPosition(e))};
 	}	
 	switch (this.type)
 	{
@@ -309,9 +311,16 @@ function setPath(cursor)
 			var ctrl2=new Point(point.x+(start.point.x-point.x)/4, point.y+(start.point.y-point.y)/4);
 			node=new Node(point,ctrl1,ctrl2);
 			this.addNode(node);
-			BODY.onmousedown=function(e) {if(shiftdown(e)){curshape.drawEnd(getPosition(e))} else{curshape.drawNext(getPosition(e))}};
-			//BODY.onmouseup=function(e) {};
-			//BODY.ondblclick=function(e) {curshape.drawEnd(getPosition(e))};
+			var curshape=this;
+			this.Canvas.onmousedown=function(e) {if(shiftdown(e)){this.shape.drawEnd(getPosition(e))} else{this.shape.drawNext(getPosition(e))}};
+			document.onkeydown = function(e) {
+    												e = e || window.event;
+    												if (e.keyCode == 27) 
+    												{
+        												curshape.path.prev.removeNode();
+        												curshape.drawEnd(getPosition(e));
+    												}
+												};
 		break
 		case "rectangle":
 			for(var i=0;i<3;i++)
@@ -497,17 +506,24 @@ function drawEnd(cursor)
 	if (this.editable) 
 	{
 		$("markerdrop").style.visibility="visible";	
+		$("backstage").style.visibility="visible";
 		var node=this.path.next;
 		node.addPointMark();
 		node=node.next;
 	};
-	BODY.style.cursor="default";
-	BODY.onmousemove=function() {};
-	BODY.onmouseup=function() {};
+	this.Canvas.style.cursor="default";
+	this.Canvas.onmousemove=function() {};
+	this.Canvas.onmouseup=function() {};
 	switch (this.type)
 	{
 		case "line":
 			node.addPointMark();
+			var start=this.path.next;
+			var last=this.path.prev;
+			this.tplftcrnr.x=Math.min(start.x,last.x);
+			this.tplftcrnr.y=Math.min(start.y,last.y);
+			this.btmrgtcrnr.x=Math.max(start.x,last.x);
+			this.btmrgtcrnr.y=Math.max(start.x,last.y);
 		break
 		case "arc":
 		case "segment":
@@ -569,6 +585,8 @@ function drawEnd(cursor)
 				node=node.next;  
 			}this.draw();
 			this.drawBezGuides();
+			DEFAULTKEYDOWN;
+			this.setCorners();
 		break
 		case "curve": 
 			node=this.path.next;
@@ -579,11 +597,14 @@ function drawEnd(cursor)
 				node=node.next;  
 			}this.draw();
 			this.drawBezGuides();
+			DEFAULTKEYDOWN
+			this.setCorners();
 		break
 		case "triangle":
 			this.tplftcrnr.x -= cursor.x-this.tplftcrnr.x;
 		break
 	}
+	this.fixCorners();
 }
 
 function setRndRect() //bottom right corner
@@ -717,15 +738,54 @@ function arctan(y,x)
 	return theta;
 }
 
+
+function setCorners() //for freeform and curve;
+{
+   	var step=100;
+   	var x,y;
+   	node=this.path.next;
+   	var mxx=node.point.x;
+	var mnx=node.point.x;
+	var mxy=node.point.y;
+	var mny=node.point.y;
+	node=node.next;
+   	while(node.point.x!="end")
+   	{
+   		for (var i=0;i<=step; i++)
+   		{	
+			t=i/step;			
+			x = (1-t)*(1-t)*(1-t)*node.prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x;
+			y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;
+			if (x>mxx) {mxx=x};
+			if (x<mnx) {mnx=x};
+			if (y>mxy) {mxy=y};
+			if (y<mny) {mny=y};
+		}
+		node=node.next;
+   	}
+	this.tplftcrnr.x=mnx; 
+	this.tplftcrnr.y=mny;
+   	this.btmrgtcrnr.x=mxx;
+   	this.btmrgtcrnr.y=mxy;
+}
+
+function fixCorners()  //shapes other than freeform or curve
+{
+	var tx=this.tplftcrnr.x;
+	var ty=this.tplftcrnr.y;
+	var bx=this.btmrgtcrnr.x;
+	var by=this.btmrgtcrnr.y;
+	this.tplftcrnr.x=Math.min(tx,bx);
+	this.tplftcrnr.y=Math.min(ty,by);
+	this.btmrgtcrnr.x=Math.max(tx,bx);
+	this.btmrgtcrnr.y=Math.max(tx,ty);
+}
 //old functions 
 
 
-function getmaxmin(C)//C a canvas path
+function getmaxmin()//C a canvas path
 {
-	var s=100;
-	var ang;
-	var x,xs,xe,xc1,xc2;
-	var y,ys,ye,yc1,yc2;
+	
 	mxx=C[3][1];
 	mnx=C[3][1];
 	mxy=C[3][2];

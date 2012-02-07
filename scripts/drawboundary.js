@@ -4,23 +4,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function checkBoundary(shifted,cursor,canv)
-{alert("here");
+function checkBoundary(shifted,cursor)
+{
 	if (doingani) {return};
-	var rmvbdry=false;
-	if (editjustcreated) {editjustcreated=false;return};
-	if (shapejustcreated) 
-	{
-		shapejustcreated=false;
-		return;
-	}; 
-	if (inln) {return};
-	if (lnmrks>0) drawline(canv);
-	if (undo.length>0) {$('lundo').style.visibility='visible'};
-	while (lnmrks >0)
-	{
-		if($('lnm'+(--lnmrks))) {$('lnm'+lnmrks).parentNode.removeChild($('lnm'+lnmrks))};
-	}
 	removeGradLine();
 	removeRotate();
 	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
@@ -29,17 +15,7 @@ function checkBoundary(shifted,cursor,canv)
 		closeColor();
 		selected=[];
 		$('colfill').style.visibility='hidden';
-		var bd=$('bodydiv');
-		var bdc=$('bodydiv').childNodes;
-		while(bdc.length>0)
-		{
-			if (bd.firstChild.id.substr(0,8)=='boundary')
-			{
-				bd.firstChild.canvas.boundary='empty';
-			}
-			bd.firstChild.parentNode.removeChild(bd.firstChild);
-			bdc=$('bodydiv').childNodes;
-		}
+		clear($("markerdrop"));
 	}
 	$('editlines').style.visibility='hidden';
 	$('shapemenu').style.visibility='hidden';
@@ -62,27 +38,23 @@ function checkBoundary(shifted,cursor,canv)
 	$('alnright').style.visibility='hidden';
 	$('shadow').style.visibility='hidden';
 	$('sname').style.visibility='hidden';
-	var cd =$('canvasdiv');
-	var cdc=cd.childNodes;
-	var cdcl=cdc.length;
-	var foundshape ={zIndex:-1};
-	for (var i=0; i<cdcl; i++)
+	var shape, foundshape;
+	var shapefound=false;
+	for(var name in SHAPES)
 	{
+		shape=SHAPES[name];
+		if((this.tplftcrnr.x-4)<=cursor.x && cursor.x<=(this.btmrgtcrnr.x+4) && (this.tplftcrnr.y-4)<=cursor.y && cursor.y<=(this.btmrgtcrnr.y+4))
 
-
-		if (cdc[i].bleft<=cursor.x && (cdc[i].bleft+cdc[i].bwidth)>=cursor.x && cdc[i].btop<=(cursor.y-52) && (cdc[i].btop+cdc[i].bheight)>=(cursor.y-52))
-		{
-
-			if (foundshape.zIndex<cdc[i].zIndex) 
+			if (!shapefound) 
 			{
-				if (cdc[i].path[0]=='open')
+				if (this.open)
 				{
 					if (ison(cursor,cdc[i]))
 					{
 						foundshape=cdc[i];
 					}
 				}
-				else if (cdc[i].path[0]=='closed')
+				else
 				{
 					if (isin(cursor,cdc[i]))
 					{
@@ -833,33 +805,37 @@ function isin(cur,canv)
 	}
 }
 
-function ison(cur,canv)
+function isOn(cursor)
 {
 	var ontheline=false;
-	var s=10;
-	var n=canv.path.length-3;
-	var ang;
-	var xs,xe,xc1,xc2;
-	var ys,ye,yc1,yc2;
-	
-	var ox=cur.x;
-	var oy=cur.y-52;
-	var xa=canv.path[3][1]-ox;
-	var ya=canv.path[3][2]-oy;
-	
-	for(var i=1; i<n; i++)
+	var step=10;
+	var theta;
+	var L=2; //extension distance around line so that on cursor is within L pixels of line
+	var xs,ys,xe,ye; //extension to start and end points of line;
+	var tl=new Point(0,0); //top left corner of bounding rectangle to straight line joining two points
+	var tr=new Point(0,0); //top right corner of bounding rectangle to straight line joining two points
+	var br=new Point(0,0); //bottom right corner of bounding rectangle to straight line joining two points
+	var bl=new Point(0,0); //bottom left corner of bounding rectangle to straight line joining two points
+	var node=this.path.next;
+	node=node.next;
+	while(node.point!="end")
 	{
-		if (canv.path[i+3][0] == 'L')
+		theta=arctan((node.point.x-node.prev.point.x),(node.point.y-node.prev.point.y)) //gradient angle
+		xs=node.prev.point.x-L*Math.cos(theta);
+		ys=node.prev.point.y-L*Math.sin(theta);
+		xe=node.point.x+L*Math.cos(theta);
+		ye=node.point.y+L*Math.sin(theta);
+		tl.x=xs-L*Math.sin(theta);
+		tl.y=ys+L*Math.cos(theta);
+		br.x=xs+L*Math.sin(theta);
+		br.y=ys-L*Math.cos(theta);
+		tr.x=xe-L*Math.sin(theta);
+		tr.y=ye+L*Math.cos(theta);
+		bl.x=xe+L*Math.sin(theta);
+		bl.y=ye-L*Math.cos(theta);
+		if (node.ctrl1.x == 'non ')
 		{
-			xb=canv.path[i+3][1]-ox;
-			yb=canv.path[i+3][2]-oy;
-			if (ya==yb) {yb +=0.01};
-			if (ya==0) {ya +=0.01};
-			if (yb==0) {yb +=0.01};
-			if (ya==yb) {yb +=0.01};
-			isonline();
-			xa=xb;
-			ya=yb;
+			isInElm(cursor,tl,tr,bl,br)
 		}
 		else if (canv.path[i+3][0] =='B')
 		{
@@ -916,4 +892,5 @@ function ison(cur,canv)
 		}
 	}
 }
+
 

@@ -16,7 +16,6 @@ function shapeMenu()
    this.elmRef.style.visibility='hidden';
    this.elmRef.style.backgroundColor='white';
    this.elmRef.style.border='solid black 1px';
-   //this.elmRef.style.zIndex=20000000;
    $('toolbar').appendChild(this.elmRef);	
    for (var i=0; i<shapes.length;i++)
    {
@@ -41,12 +40,11 @@ function shapeMenu()
 	   					{
 	   							$("shapemenu").style.visibility="hidden";
 	   							noBubble(e);
-	   							var shape=new Shape("Shape"+(SHAPES.counter++),this.open,this.edit,this.title);
+	   							var shape=new Shape("Shape"+(SHAPECOUNT++),this.open,this.edit,this.title);
 	   							shape.addTo($("shapestage"));
-	   							BODY.style.cursor="crosshair";
-	   							BODY.onmousedown=function(e){shape.setPath(getPosition(e))}
+	   							shape.Canvas.style.cursor="crosshair";
+	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))}
 	   					}
-	   //this.img.onclick=function(){createScanvas(blocknum++,this.i);numblocks+=1;$('shapemenu').style.visibility='hidden';};
 	   this.elmRef.appendChild(this.img);
    }
 }

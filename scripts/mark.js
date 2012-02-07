@@ -30,6 +30,8 @@ function addPointMark()
 	   																			$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			$("backstage").style.visibility="hidden";
 	   																		}
 									};
 	this.mark.onclick	=function(){
@@ -157,6 +159,7 @@ function updatePointNode(cursor)
 			this.setNode(cursor);
 			this.shape.draw();
 			this.shape.drawBezGuides();
+			this.shape.setCorners();
 		break
 		case "freeform":
 			this.setNode(cursor);
@@ -166,6 +169,7 @@ function updatePointNode(cursor)
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
+			this.shape.setCorners();
 		break
 		case "rounded_rectangle":
 			var start=this.shape.path.next; 			
@@ -219,6 +223,8 @@ function addCtrl1Mark()
 	   																			noBubble(e);
 	   																			$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			$("backstage").style.visibility="hidden";
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																		}
 									};	
@@ -251,6 +257,8 @@ function addCtrl2Mark()
 	   																			noBubble(e);
 	   																			$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
+	   																			$("backstage").style.visibility="hidden";
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																		}
 									};
@@ -275,7 +283,7 @@ function updateCtrl1Node(cursor)
 	this.setNode(this.point,c1,this.ctrl2);
 	this.shape.draw();
 	this.shape.drawBezGuides();
-	//this.c1mark.innerHTML="c1";
+	this.shape.setCorners();
 }
 
 function updateCtrl2Node(cursor)
@@ -286,7 +294,7 @@ function updateCtrl2Node(cursor)
 	this.setNode(this.point,this.ctrl1,c2);
 	this.shape.draw();
 	this.shape.drawBezGuides();
-	//this.c2mark.innerHTML="c2";
+	this.shape.setCorners();
 }
        
 
