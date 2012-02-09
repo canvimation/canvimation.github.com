@@ -20,11 +20,11 @@ function addPointMark()
    	this.mark.style.backgroundColor="white";
    	this.mark.style.cursor='move';
    	this.mark.innerHTML=MCOUNT-1;
- 
-   this.mark.onmouseover=function(){
+
+   	this.mark.onmouseover=function(){
 										$("markerdrop").onclick=function(e) {noBubble(e)};
 									};
-   this.mark.onmouseout=function(){
+   	this.mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
 	   																			$("markerdrop").style.visibility="hidden";
@@ -46,6 +46,8 @@ function addPointMark()
 											}
 										}							
 									};
+									
+	
 	this.dragm=new YAHOO.util.DD(this.mark.id);
 	this.dragm.onDrag=function(e){$(this.id).node.updatePointNode(getPosition(e))};							
    	$("markerdrop").appendChild(this.mark);

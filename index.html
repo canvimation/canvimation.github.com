@@ -881,6 +881,7 @@ var editcheck=false;
 var trackcheck=false;
 var flmovetop;
 var flmoveleft;
+var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes;
 var SCRW; //actual screen width
 var SCRH; //actual screen height
@@ -968,6 +969,24 @@ function shiftdown(e)
 	
 	e = e || window.event;
 	return e.shiftKey;
+}
+
+function getPosition(e) {
+    e = e || window.event;
+    var cursor = {x:0, y:0};
+    if (e.pageX || e.pageY) {
+        cursor.x = e.pageX;
+        cursor.y = e.pageY;
+    } 
+    else {
+        var de = document.documentElement;
+        var b = document.body;
+        cursor.x = e.clientX + 
+            (de.scrollLeft || b.scrollLeft) - (de.clientLeft || 0);
+        cursor.y = e.clientY + 
+            (de.scrollTop || b.scrollTop) - (de.clientTop || 0);
+    }
+    return cursor;
 }
 
 function createScanvas(n, m)

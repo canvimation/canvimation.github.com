@@ -43,28 +43,30 @@ function checkBoundary(shifted,cursor)
 	for(var name in SHAPES)
 	{
 		shape=SHAPES[name];
-		if((this.tplftcrnr.x-4)<=cursor.x && cursor.x<=(this.btmrgtcrnr.x+4) && (this.tplftcrnr.y-4)<=cursor.y && cursor.y<=(this.btmrgtcrnr.y+4))
-
-			if (!shapefound) 
+		if((shape.tplftcrnr.x-4)<=cursor.x && cursor.x<=(shape.btmrgtcrnr.x+4) && (shape.tplftcrnr.y-4)<=cursor.y && cursor.y<=(shape.btmrgtcrnr.y+4))
+		{
+			if (!shapefound || (shapefound && shape.zIndex>foundshape.zIndex)) 
 			{
-				if (this.open)
+				if (shape.open)
 				{
-					if (ison(cursor,cdc[i]))
-					{
-						foundshape=cdc[i];
-					}
+					 if(shape.isOn(cursor))
+					 {
+					 	shapefound=true;
+					 	foundshape=shape;
+					 }
 				}
 				else
 				{
-					if (isin(cursor,cdc[i]))
+					if (shape.isIn(cursor))
 					{
-						foundshape=cdc[i];
+						shapefound=true;
+					 	foundshape=shape;
 					}
 				}
 			}
 		}
 	}
-	if (foundshape.zIndex>-1)
+	if (shapefound)
 	{
 		rmvbdry=false;
 		$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),foundshape)};
@@ -85,7 +87,7 @@ function checkBoundary(shifted,cursor)
 			$('vert').style.visibility='visible';
 			$('horz').style.visibility='visible';
 		
-			if (foundshape.path[0]=='closed') {
+			if (!foundshape.open) {
 											$('colfill').style.visibility='visible';
 											$('gradfill').style.visibility='visible';
 											$('shadow').style.visibility='visible';
@@ -686,26 +688,6 @@ function markLine(canv)
 
 }
 
-function getPosition(e) {
-    e = e || window.event;
-    var cursor = {x:0, y:0};
-    if (e.pageX || e.pageY) {
-        cursor.x = e.pageX;
-        cursor.y = e.pageY;
-    } 
-    else {
-        var de = document.documentElement;
-        var b = document.body;
-        cursor.x = e.clientX + 
-            (de.scrollLeft || b.scrollLeft) - (de.clientLeft || 0);
-        cursor.y = e.clientY + 
-            (de.scrollTop || b.scrollTop) - (de.clientTop || 0);
-    }
-    return cursor;
-}
-
-
-
 
 function isin(cur,canv)
 {
@@ -810,87 +792,70 @@ function isOn(cursor)
 	var ontheline=false;
 	var step=10;
 	var theta;
-	var L=2; //extension distance around line so that on cursor is within L pixels of line
-	var xs,ys,xe,ye; //extension to start and end points of line;
-	var tl=new Point(0,0); //top left corner of bounding rectangle to straight line joining two points
-	var tr=new Point(0,0); //top right corner of bounding rectangle to straight line joining two points
-	var br=new Point(0,0); //bottom right corner of bounding rectangle to straight line joining two points
-	var bl=new Point(0,0); //bottom left corner of bounding rectangle to straight line joining two points
+	var D=2; //extension distance around line so that on cursor is within L pixels of line
+	var sp,ep,ip; //extension to start and end points of line and intersection point;
+	var x0,y0; //previous point when curve split into small lines
+	var x,y; //current position on line when curve split into small points
 	var node=this.path.next;
 	node=node.next;
 	while(node.point!="end")
 	{
-		theta=arctan((node.point.x-node.prev.point.x),(node.point.y-node.prev.point.y)) //gradient angle
-		xs=node.prev.point.x-L*Math.cos(theta);
-		ys=node.prev.point.y-L*Math.sin(theta);
-		xe=node.point.x+L*Math.cos(theta);
-		ye=node.point.y+L*Math.sin(theta);
-		tl.x=xs-L*Math.sin(theta);
-		tl.y=ys+L*Math.cos(theta);
-		br.x=xs+L*Math.sin(theta);
-		br.y=ys-L*Math.cos(theta);
-		tr.x=xe-L*Math.sin(theta);
-		tr.y=ye+L*Math.cos(theta);
-		bl.x=xe+L*Math.sin(theta);
-		bl.y=ye-L*Math.cos(theta);
-		if (node.ctrl1.x == 'non ')
+		
+		if (node.vertex == "L")
 		{
-			isInElm(cursor,tl,tr,bl,br)
-		}
-		else if (canv.path[i+3][0] =='B')
-		{
-			xs = xa;
-			xe = canv.path[i+3][5]-ox;
-			xc1 = canv.path[i+3][1]-ox;
-			xc2 = canv.path[i+3][3]-ox;
-			ys = ya;
-			ye = canv.path[i+3][6]-oy;
-			yc1 = canv.path[i+3][2]-oy;
-			yc2 = canv.path[i+3][4]-oy;
-			
-			for (var q=0;q<=s; q++)
-			{				
-				t=q/s;
-				xb = (1-t)*(1-t)*(1-t)*xs + 3*(1-t)*(1-t)*t*xc1 + 3*(1-t)*t*t*xc2 + t*t*t*xe;
-				yb = (1-t)*(1-t)*(1-t)*ys + 3*(1-t)*(1-t)*t*yc1 + 3*(1-t)*t*t*yc2 + t*t*t*ye;
-				if (ya==yb) {yb +=0.01};
-				if (ya==0) {ya +=0.01};
-				if (yb==0) {yb +=0.01};
-				if (ya==yb) {yb +=0.01};
-				isonline();
-				xa=xb;
-				ya=yb;
-			}
-		}
-		else
-		{
-			ang = (canv.path[i+3][5]-canv.path[i+3][4])/s;
-			for (var a=0;a<s;a++)
+			theta=arctan(node.y-node.prev.y,node.x-node.prev.x);
+			sp=new Point(node.prev.point.x-D*Math.cos(theta),node.prev.point.y-D*Math.sin(theta)); //extend start point  
+			ep=new Point(node.point.x+D*Math.cos(theta),node.point.y+D*Math.sin(theta)); //extend end point
+			ip=intersection(cursor,sp,ep);
+			if(sp.x<=ip.x && ip.x<=ep.x && sp.y<=ip.y && ip<=ep.y)
 			{
-				xb = canv.path[i+3][1]+ox + canv.path[i+3][3]*Math.cos(canv.path[i+3][4]+ang*a);
-				yb = canv.path[i+3][2]+oy + canv.path[i+3][3]*Math.sin(canv.path[i+3][4]+ang*a);
-				if (ya==yb) {yb +=0.01};
-				if (ya==0) {ya +=0.01};
-				if (yb==0) {yb +=0.01};	
-				if (ya==yb) {yb +=0.01};
-				isonline();
+				if(sqdistance(cursor,ip)<=D*D)
+				{
+					ontheline=true;
+				}
 			}
-			xa = xb;
-			ya = yb;
 		}
+		else 
+		{
+			x0=node.point.x;
+			y0=node.point.y;
+			for (var i=1;i<=step; i++)
+   			{	
+				t=i/step;			
+				x = (1-t)*(1-t)*(1-t)*node.prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x;
+				y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;
+				sp=new Point(x0,y0);  
+				ep=new Point(x,y); 
+				ip=intersection(cursor,sp,ep);
+				if(sp.x<=ip.x && ip.x<=ep.x && sp.y<=ip.y && ip<=ep.y)
+				{
+					if(sqdistance(cursor,ip)<=D*D)
+					{
+						ontheline=true;
+					}
+				}
+			}
+		}
+		node=node.next;
 	}
 	return ontheline;
-	
-	function isonline()
-	{
-		if (xa*xb<0 || ya*yb<0)
-		{
-			if ((ya*xb-yb*xa)*(ya*xb-yb*xa)/((yb-ya)*(yb-ya)+(xb-xa)*(xb-xa))<16)
-			{
-				ontheline=true;
-			}
-		}
-	}
 }
 
+function intersection(c,sp,ep)  //from point c perpendicular intersection of line through sp and ep
+{
+	var k = ((ep.y-sp.y) * (c.x-sp.x) - (ep.x-sp.x) * (c.y-sp.y)) / ((ep.y-sp.y)*(ep.y-sp.y) + (ep.x-sp.x)*(ep.x-sp.x))
+	var x = c.x - k * (ep.y-sp.y)
+	var y = c.y + k * (ep.x-sp.x)
+	return {x:x, y:y}
+}
+
+function sqdistance(p,q)
+{
+	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
+}
+
+function isIn(cursor)
+{
+	
+}
 

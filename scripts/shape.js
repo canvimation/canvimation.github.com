@@ -18,12 +18,14 @@ function Node(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=ctrl1;
 		this.ctrl2=ctrl2;
-		this.type="corner";
+		this.corner="corner";
+		this.vertex="L";
 	}
 	else
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
+		this.vertex="B";
 	}
 	this.next="";
 	this.prev="";
@@ -60,6 +62,7 @@ function setNode(point,ctrl1,ctrl2)
 		this.ctrl1.y=ctrl1.y;
 		this.ctrl2.x=ctrl2.x;
 		this.ctrl2.y=ctrl2.y;
+		this.vertex="B";
 	}
 }
 
@@ -226,6 +229,8 @@ function Shape(name,open,editable,type)
    	this.drawBezGuides=drawBezGuides;
    	this.setCorners=setCorners;
    	this.fixCorners=fixCorners;
+   	this.isOn=isOn;
+   	this.isIn=isIn;
    	return this;
    	
 }
@@ -783,54 +788,6 @@ function fixCorners()  //shapes other than freeform or curve
 //old functions 
 
 
-function getmaxmin()//C a canvas path
-{
-	
-	mxx=C[3][1];
-	mnx=C[3][1];
-	mxy=C[3][2];
-	mny=C[3][2];
-	for (var i=4; i<C.length;i++)
-	{
-		if (C[i][0] == 'L' || C[i][0] == 'M')
-		{
-			if (C[i][1]>mxx) {mxx=C[i][1]};
-			if (C[i][1]<mnx) {mnx=C[i][1]};
-			if (C[i][2]>mxy) {mxy=C[i][2]};
-			if (C[i][2]<mny) {mny=C[i][2]};
-		}
-		else
-		{
-			if (C[i-1][0] == 'B')
-			{
-				xs = C[i-1][5];
-				ys = C[i-1][6];
-			}
-			else
-			{
-				xs = C[i-1][1];
-				ys = C[i-1][2];
-			}
-			xe = C[i][5];
-			xc1 = C[i][1];
-			xc2 = C[i][3];
-			ye = C[i][6];
-			yc1 = C[i][2];
-			yc2 = C[i][4];
-			for (var j=0;j<=s; j++)
-			{	
-				t=j/s;			
-				x = (1-t)*(1-t)*(1-t)*xs + 3*(1-t)*(1-t)*t*xc1 + 3*(1-t)*t*t*xc2 + t*t*t*xe;
-				y = (1-t)*(1-t)*(1-t)*ys + 3*(1-t)*(1-t)*t*yc1 + 3*(1-t)*t*t*yc2 + t*t*t*ye;
-				if (x>mxx) {mxx=x};
-				if (x<mnx) {mnx=x};
-				if (y>mxy) {mxy=y};
-				if (y<mny) {mny=y};
-			}
-		}
-	}
-	return {mxx:mxx, mnx:mnx, mxy:mxy, mny:mny};
-}
 
 function showtools(canv)
 {

@@ -28,7 +28,7 @@ function draw()
 	while (node.next.point.x !="end")
 	{
 	   	node=node.next;
-	   	if (node.ctrl1.x=="non")
+	   	if (node.vertex=="L")
 	   	{ 
 		    this.Canvas.ctx.lineTo(node.point.x,node.point.y)
 	   	}
@@ -103,7 +103,7 @@ function drawBezGuides()
 	node=node.next;
 	while (node.point.x !="end")
 	{
-	  	if (node.ctrl1.x!="non")
+	  	if (node.vertex=="B")
 	  	{
 			BACKDROP.Canvas.ctx.moveTo(node.point.x,node.point.y);
 			BACKDROP.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
@@ -120,7 +120,7 @@ function drawBezGuides()
 	node=node.next;
 	while (node.point.x !="end")
 	{
-	  	if (node.ctrl1.x!="non")
+	  	if (node.vertex=="B")
 	  	{
 			BACKDROP.Canvas.ctx.moveTo(node.point.x,node.point.y);
 			BACKDROP.Canvas.ctx.lineTo(node.ctrl2.x,node.ctrl2.y);
