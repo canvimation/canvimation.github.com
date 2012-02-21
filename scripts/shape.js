@@ -1,4 +1,4 @@
-/*ursor.xodsg...ode.
+/*
 Copyright (c)  2012   John King
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -19,13 +19,13 @@ function Node(point,ctrl1,ctrl2)
 		this.ctrl1=ctrl1;
 		this.ctrl2=ctrl2;
 		this.corner="corner";
-		this.vertex="L";
+		this.vertex="B";
 	}
 	else
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
-		this.vertex="B";
+		this.vertex="L";
 	}
 	this.next="";
 	this.prev="";
@@ -229,6 +229,7 @@ function Shape(name,open,editable,type)
    	this.drawBezGuides=drawBezGuides;
    	this.setCorners=setCorners;
    	this.fixCorners=fixCorners;
+   	this.addBoundary=addBoundary;
    	this.isOn=isOn;
    	this.isIn=isIn;
    	return this;
@@ -252,7 +253,7 @@ function addTo(theatre)
    	this.Canvas.style.left=0; 
    	this.Canvas.style.top= 0;  	
    	this.Canvas.width=SCRW;
-   	this.Canvas.height=SCRH;
+   	this.Canvas.height=SCRH;   	
    	this.Canvas.style.zIndex=this.zIndex;
    	theatre.appendChild(this.Canvas);
    	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
@@ -496,7 +497,6 @@ function drawNext(cursor)
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid; 
 	this.path.prev.setNode(cursor);
-	//this.path.prev.addFullMarks();
 	var node=new Node(cursor);
 	this.addNode(node);
 }
@@ -507,10 +507,10 @@ function drawEnd(cursor)
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	this.btmrgtcrnr=cursor;
-
+	$("markerdrop").style.visibility="visible";
 	if (this.editable) 
 	{
-		$("markerdrop").style.visibility="visible";	
+			
 		$("backstage").style.visibility="visible";
 		var node=this.path.next;
 		node.addPointMark();
@@ -525,10 +525,10 @@ function drawEnd(cursor)
 			node.addPointMark();
 			var start=this.path.next;
 			var last=this.path.prev;
-			this.tplftcrnr.x=Math.min(start.x,last.x);
-			this.tplftcrnr.y=Math.min(start.y,last.y);
-			this.btmrgtcrnr.x=Math.max(start.x,last.x);
-			this.btmrgtcrnr.y=Math.max(start.x,last.y);
+			this.tplftcrnr.x=Math.min(start.point.x,last.point.x);
+			this.tplftcrnr.y=Math.min(start.point.y,last.point.y);
+			this.btmrgtcrnr.x=Math.max(start.point.x,last.point.x);
+			this.btmrgtcrnr.y=Math.max(start.point.y,last.point.y);
 		break
 		case "arc":
 		case "segment":
@@ -543,7 +543,7 @@ function drawEnd(cursor)
 			{
 				last.setNode(this.arccentre);
 				last=last.prev;
-			}
+			}			
 			if(this.arcwidth*this.archeight<0)//swap nodes so that going clockwise start node is before last node
 			{
 				this.arcwidth=Math.abs(this.arcwidth);
@@ -574,6 +574,7 @@ function drawEnd(cursor)
 			this.tnode.removeNode();
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
+			this.setCorners();
 		break
 		case "freeform":
 			var last=this.path.prev;
@@ -753,7 +754,7 @@ function setCorners() //for freeform and curve;
 	var mnx=node.point.x;
 	var mxy=node.point.y;
 	var mny=node.point.y;
-	node=node.next;
+	node=node.next;	
    	while(node.point.x!="end")
    	{
    		for (var i=0;i<=step; i++)
@@ -783,7 +784,7 @@ function fixCorners()  //shapes other than freeform or curve
 	this.tplftcrnr.x=Math.min(tx,bx);
 	this.tplftcrnr.y=Math.min(ty,by);
 	this.btmrgtcrnr.x=Math.max(tx,bx);
-	this.btmrgtcrnr.y=Math.max(tx,ty);
+	this.btmrgtcrnr.y=Math.max(ty,by);
 }
 //old functions 
 

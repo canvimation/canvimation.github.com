@@ -1927,6 +1927,14 @@ function main()
 	BACKDROP.zIndex=0;
 	BACKDROP.addTo=addTo;
 	BACKDROP.addTo($("backstage"));
+	$("markerdrop").style.visibility="visible";
+	$("markerdrop").onclick=function(e) {
+	   										noBubble(e);
+	   										clear($("markerdrop"));
+	   										//BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   										checkBoundary(shiftdown(e),getPosition(e));
+	   									}
+	
 	canvwidth=0.98*screen.availWidth;
 	canvheight=0.785*screen.availHeight;
 	maxwidth=canvwidth;
@@ -2323,7 +2331,7 @@ function main()
 </div>
 <canvas id='gridcanvas'> </canvas>
 <div id="backstage" class="theatre_style"></div>
-<div id="markerdrop" class="theatre_style"></div>
+<div id="markerdrop" class="theatre_style" ></div>
 
 <div id='colorcont'>
   <div id='colorpick' >

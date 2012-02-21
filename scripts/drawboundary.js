@@ -6,9 +6,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function checkBoundary(shifted,cursor)
 {
-	if (doingani) {return};
-	removeGradLine();
-	removeRotate();
+	//if (doingani) {return};
+	//removeGradLine();
+	//removeRotate();
 	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
 	if (!shifted)
 	{
@@ -44,7 +44,7 @@ function checkBoundary(shifted,cursor)
 	{
 		shape=SHAPES[name];
 		if((shape.tplftcrnr.x-4)<=cursor.x && cursor.x<=(shape.btmrgtcrnr.x+4) && (shape.tplftcrnr.y-4)<=cursor.y && cursor.y<=(shape.btmrgtcrnr.y+4))
-		{
+		{ 
 			if (!shapefound || (shapefound && shape.zIndex>foundshape.zIndex)) 
 			{
 				if (shape.open)
@@ -65,9 +65,12 @@ function checkBoundary(shifted,cursor)
 				}
 			}
 		}
-	}
+	}//alert(shapefound);
 	if (shapefound)
 	{
+		foundshape.addBoundary();
+		
+		
 		rmvbdry=false;
 		$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),foundshape)};
 		if (shifted && foundshape.boundary !='empty') 
@@ -205,23 +208,17 @@ function checkBoundary(shifted,cursor)
 	if ($('bodydiv').childNodes.length==1 && selected.length==1) {$('sname').style.visibility='visible'}
 }
 
-function Boundary(canvas) 
+function addBoundary() 
 {
-   this.elmRef = document.createElement('div');
-   this.elmRef.bdnum=bndries;
-   this.elmRef.id  = 'boundary'+bndries++
-   this.elmRef.style.position='absolute';
-   this.elmRef.style.left= canvas.bleft; 
-   this.elmRef.style.top= canvas.btop;
-   this.elmRef.style.width=canvas.bwidth;
-   this.elmRef.style.height=canvas.bheight;
-   this.elmRef.parentdiv=$('bodydiv');
-   this.elmRef.style.border="dashed #040404 1px"; 
-   this.elmRef.oleft=parseInt(this.elmRef.style.left);
-   this.elmRef.otop=parseInt(this.elmRef.style.top);
-   this.elmRef.parentdiv.appendChild(this.elmRef);
-   this.elmRef.canvas=canvas;
-   this.elmRef.DD=new YAHOO.util.DD(this.elmRef.id);
+   this.boundary = document.createElement('div');
+   this.boundary.shape=this;
+   this.boundary.style.left= this.tplftcrnr.x; 
+   this.boundary.style.top= this.tplftcrnr.y;
+   this.boundary.style.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
+   this.boundary.style.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
+   this.boundary.style.border="dashed #040404 1px"; 
+   $("markerdrop").appendChild(this.boundary);
+/*   this.elmRef.DD=new YAHOO.util.DD(this.elmRef.id);
    this.elmRef.DD.onDrag = function() {
     											var thisbd=$(this.id);
 												thisbd.style.left=Math.round(parseInt(thisbd.style.left)/xgrid)*xgrid;
@@ -288,7 +285,7 @@ function Boundary(canvas)
 								if (rtmrks>0) {drawrotate(selected[0])}
 								
 							  };
-   return this.elmRef;
+   return this.elmRef; */
 }
 
 function createBoundary()
@@ -689,75 +686,61 @@ function markLine(canv)
 }
 
 
-function isin(cur,canv)
+function isIn(cursor)
 {
 	var crosses=0;
-	var s=10; //number of sectors;
-	var n=canv.path.length-3;
-	var ang;
-	var xs,xe,xc1,xc2;
-	var ys,ye,yc1,yc2;
-	
-	var ox=cur.x;
-	var oy=cur.y-52;
-	var xa=canv.path[3][1]-ox;
-	var ya=canv.path[3][2]-oy;
-	
-	for(var i=1; i<n; i++)
+	var steps=10; //number of segments per curve;
+	var A,B,P,Q;
+	var node=this.path.next;
+	node=node.next;
+	while(node.point.x!="end")
 	{
-		if (canv.path[i+3][0] == 'L')
+		if (node.vertex  == 'L')
 		{
-			xb=canv.path[i+3][1]-ox;
-			yb=canv.path[i+3][2]-oy;
-			if (ya==yb) {yb +=0.01};
-			if (ya==0) {ya +=0.01};
-			if (yb==0) {yb +=0.01};
-			if (ya==yb) {yb +=0.01};
-			updatecrosses();
-			xa=xb;
-			ya=yb;
-		}
-		else if (canv.path[i+3][0] =='B')
-		{
-			xs = xa;
-			xe = canv.path[i+3][5]-ox;
-			xc1 = canv.path[i+3][1]-ox;
-			xc2 = canv.path[i+3][3]-ox;
-			ys = ya;
-			ye = canv.path[i+3][6]-oy;
-			yc1 = canv.path[i+3][2]-oy;
-			yc2 = canv.path[i+3][4]-oy;
-			
-			for (var q=0;q<=s; q++)
-			{				
-				t=q/s;
-				xb = (1-t)*(1-t)*(1-t)*xs + 3*(1-t)*(1-t)*t*xc1 + 3*(1-t)*t*t*xc2 + t*t*t*xe;
-				yb = (1-t)*(1-t)*(1-t)*ys + 3*(1-t)*(1-t)*t*yc1 + 3*(1-t)*t*t*yc2 + t*t*t*ye;
-				if (ya==yb) {yb +=0.01};
-				if (ya==0) {ya +=0.01};
-				if (yb==0) {yb +=0.01};
-				if (ya==yb) {yb +=0.01};
-				updatecrosses();
-				xa=xb;
-				ya=yb;
-			}
+			A=new Point(node.prev.point.x-cursor.x,node.prev.point.y-cursor.y);
+			B=new Point(node.point.x-cursor.x,node.point.y-cursor.y);
+			if (A.y==B.y) {B.y +=0.01};
+			if (A.y==0) {A.y +=0.01};
+			if (B.y==0) {B.y +=0.01};
+			if (A.y==B.y) {B.y +=0.01};
+			updatecrosses(A,B);$("msg").innerHTML+=crosses+"....";
 		}
 		else
 		{
-			ang = (canv.path[i+3][5]-canv.path[i+3][4])/s;
-			for (var a=0;a<s;a++)
-			{
-				xb = canv.path[i+3][1]+ox + canv.path[i+3][3]*Math.cos(canv.path[i+3][4]+ang*a);
-				yb = canv.path[i+3][2]+oy + canv.path[i+3][3]*Math.sin(canv.path[i+3][4]+ang*a);
-				if (ya==yb) {yb +=0.01};
-				if (ya==0) {ya +=0.01};
-				if (yb==0) {yb +=0.01};	
-				if (ya==yb) {yb +=0.01};
-				updatecrosses();
-			}
-			xa = xb;
-			ya = yb;
+			A=new Point(node.prev.point.x-cursor.x,node.prev.point.y-cursor.y);
+			B=new Point(node.point.x-cursor.x,node.point.y-cursor.y);
+			C=new Point(node.ctrl1.x-cursor.x,node.ctrl1.y-cursor.y);
+			D=new Point(node.ctrl2.x-cursor.x,node.ctrl2.y-cursor.y);
+			P=new Point(node.prev.point.x-cursor.x,node.prev.point.y-cursor.y);
+			Q=new Point(0,0);
+			
+			for (var i=1;i<=steps; i++)
+			{				
+				t=i/steps;
+				Q.x = (1-t)*(1-t)*(1-t)*A.x + 3*(1-t)*(1-t)*t*C.x + 3*(1-t)*t*t*D.x + t*t*t*B.x;
+				Q.y = (1-t)*(1-t)*(1-t)*A.y + 3*(1-t)*(1-t)*t*C.y + 3*(1-t)*t*t*D.y + t*t*t*B.y;
+				if (P.y==Q.y) {Q.y +=0.01};
+				if (P.y==0) {P.y +=0.01};
+				if (Q.y==0) {Q.y +=0.01};
+				if (P.y==Q.y) {Q.y +=0.01};
+				updatecrosses(P,Q);
+				P.x=Q.x;
+				P.y=Q.y;
+			}	
 		}
+	node=node.next;	
+	}
+	if(this.type=="sector" || this.type=="segment") //check intersection with closing line
+	{
+		var start=this.path.next;
+		var last=this.path.prev;
+		A=new Point(last.point.x-cursor.x,last.point.y-cursor.y);
+		B=new Point(start.point.x-cursor.x,start.point.y-cursor.y);
+		if (A.y==B.y) {B.y +=0.01};
+		if (A.y==0) {A.y +=0.01};
+		if (B.y==0) {B.y +=0.01};
+		if (A.y==B.y) {B.y +=0.01};
+		updatecrosses(A,B);
 	}
 	if ((crosses % 2)==0)
 	{
@@ -768,17 +751,17 @@ function isin(cur,canv)
 		return true;
 	}
 	
-	function updatecrosses()
+	function updatecrosses(P,Q)
 	{
-		if (ya*yb<0)
+		if (P.y*Q.y<0)
 		{
-			if (xa>0 && xb>0)
+			if (P.x>0 && Q.x>0)
 			{
 				crosses +=1;
 			}
-			else if (xa*xb<0)
+			else if (P.x*Q.x<0)
 			{
-				if ((ya*xb-yb*xa)/(ya-yb)>0)
+				if ((P.y*Q.x-Q.y*P.x)/(P.y-Q.y)>0)
 				{
 					crosses +=1;
 				}
@@ -792,22 +775,21 @@ function isOn(cursor)
 	var ontheline=false;
 	var step=10;
 	var theta;
-	var D=2; //extension distance around line so that on cursor is within L pixels of line
+	var D=2; //extension distance around line so that on cursor is within D pixels of line
 	var sp,ep,ip; //extension to start and end points of line and intersection point;
-	var x0,y0; //previous point when curve split into small lines
 	var x,y; //current position on line when curve split into small points
-	var node=this.path.next;
-	node=node.next;
-	while(node.point!="end")
-	{
-		
+	var node=this.path.next;	
+	node=node.next;	
+	
+	while(node.point.x!="end")
+	{	
 		if (node.vertex == "L")
 		{
-			theta=arctan(node.y-node.prev.y,node.x-node.prev.x);
+			theta=arctan(node.point.y-node.prev.point.y,node.point.x-node.prev.point.x);
 			sp=new Point(node.prev.point.x-D*Math.cos(theta),node.prev.point.y-D*Math.sin(theta)); //extend start point  
 			ep=new Point(node.point.x+D*Math.cos(theta),node.point.y+D*Math.sin(theta)); //extend end point
 			ip=intersection(cursor,sp,ep);
-			if(sp.x<=ip.x && ip.x<=ep.x && sp.y<=ip.y && ip<=ep.y)
+			if(ip.inRect(sp,ep))
 			{
 				if(sqdistance(cursor,ip)<=D*D)
 				{
@@ -817,27 +799,26 @@ function isOn(cursor)
 		}
 		else 
 		{
-			x0=node.point.x;
-			y0=node.point.y;
+			sp=new Point(node.prev.point.x,node.prev.point.y);
 			for (var i=1;i<=step; i++)
    			{	
 				t=i/step;			
 				x = (1-t)*(1-t)*(1-t)*node.prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x;
-				y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;
-				sp=new Point(x0,y0);  
-				ep=new Point(x,y); 
+				y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;  
+				ep=new Point(x,y); 				
 				ip=intersection(cursor,sp,ep);
-				if(sp.x<=ip.x && ip.x<=ep.x && sp.y<=ip.y && ip<=ep.y)
+				if(ip.inRect(sp,ep))
 				{
 					if(sqdistance(cursor,ip)<=D*D)
 					{
 						ontheline=true;
 					}
 				}
+				sp=new Point(ep.x,ep.y);
 			}
 		}
 		node=node.next;
-	}
+	}	
 	return ontheline;
 }
 
@@ -845,8 +826,21 @@ function intersection(c,sp,ep)  //from point c perpendicular intersection of lin
 {
 	var k = ((ep.y-sp.y) * (c.x-sp.x) - (ep.x-sp.x) * (c.y-sp.y)) / ((ep.y-sp.y)*(ep.y-sp.y) + (ep.x-sp.x)*(ep.x-sp.x))
 	var x = c.x - k * (ep.y-sp.y)
-	var y = c.y + k * (ep.x-sp.x)
-	return {x:x, y:y}
+	var y = c.y + k * (ep.x-sp.x);
+	var i={x:x, y:y};
+	i.inRect=inRect;
+	return i;
+}
+
+function inRect(sp,ep)
+{
+	var t=new Point(0,0); //top left corner of rectangle
+	var b=new Point(0,0); //bottom right corner of rectangle
+	t.x=Math.min(sp.x,ep.x);
+	t.y=Math.min(sp.y,ep.y);
+	b.x=Math.max(sp.x,ep.x);
+	b.y=Math.max(sp.y,ep.y);
+	return (t.x<=this.x && this.x<=b.x && t.y<=this.y && this.y<=b.y);
 }
 
 function sqdistance(p,q)
@@ -854,8 +848,4 @@ function sqdistance(p,q)
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
 }
 
-function isIn(cursor)
-{
-	
-}
 

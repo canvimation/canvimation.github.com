@@ -27,7 +27,7 @@ function addPointMark()
    	this.mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			$("markerdrop").style.visibility="hidden";
+	   																			//$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
@@ -156,6 +156,7 @@ function updatePointNode(cursor)
 			this.shape.draw();
 			$(this.mark.id).style.left=this.point.x-4;
 			$(this.mark.id).style.top=this.point.y-4;
+			this.shape.setCorners();
 		break
 		case "curve":
 			this.setNode(cursor);
@@ -223,7 +224,7 @@ function addCtrl1Mark()
    this.c1mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			$("markerdrop").style.visibility="hidden";
+	   																			//$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			$("backstage").style.visibility="hidden";
@@ -257,7 +258,7 @@ function addCtrl2Mark()
    this.c2mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			$("markerdrop").style.visibility="hidden";
+	   																			//$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			$("backstage").style.visibility="hidden";
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);

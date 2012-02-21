@@ -95,7 +95,7 @@ function checkBoundary(shifted,cursor,canv)
 	if (foundshape.zIndex>-1)
 	{
 		rmvbdry=false;
-		$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),foundshape)};
+		//$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),foundshape)};
 		if (shifted && foundshape.boundary !='empty') 
 		{
 			var bdry=foundshape.boundary; 

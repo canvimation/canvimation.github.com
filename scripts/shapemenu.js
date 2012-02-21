@@ -6,7 +6,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function shapeMenu()
 {
- 
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'shapemenu';
    this.elmRef.style.left= 75; 
@@ -41,6 +40,10 @@ function shapeMenu()
 	   							$("shapemenu").style.visibility="hidden";
 	   							noBubble(e);
 	   							var shape=new Shape("Shape"+(SHAPECOUNT++),this.open,this.edit,this.title);
+	   							$("markerdrop").style.visibility="hidden";
+	   							clear($("markerdrop"));
+	   							BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   							$("backstage").style.visibility="hidden";
 	   							shape.addTo($("shapestage"));
 	   							shape.Canvas.style.cursor="crosshair";
 	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))}
