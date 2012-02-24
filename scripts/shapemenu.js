@@ -43,6 +43,8 @@ function shapeMenu()
 	   							$("markerdrop").style.visibility="hidden";
 	   							clear($("markerdrop"));
 	   							BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   							SELECTED={};
+	   							BCOUNT=0;
 	   							$("backstage").style.visibility="hidden";
 	   							shape.addTo($("shapestage"));
 	   							shape.Canvas.style.cursor="crosshair";

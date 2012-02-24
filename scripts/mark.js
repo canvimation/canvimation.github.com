@@ -299,6 +299,17 @@ function updateCtrl2Node(cursor)
 	this.shape.drawBezGuides();
 	this.shape.setCorners();
 }
-       
-
-
+/*       
+function markLine()
+{
+	node=this.path.next;
+	node=node.next;
+	while(node.point.x != "end")
+	{
+		node.addFullMarks();
+		node=node.next;  
+	}
+	this.draw();
+	this.drawBezGuides();
+}
+*/

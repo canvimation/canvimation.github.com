@@ -166,18 +166,19 @@ function Shape(name,open,editable,type)
    	this.psuid=this.id;
    	this.tplftcrnr; //coordinates of top left of boundary box;
    	this.btmrgtcrnr; //coordinates of bottom right of boundary box;
-   	this.scleft=90;
-   	this.sctop=90;
+   	this.boundaryTop;
+	this.boundaryLeft;
+	this.boundaryWidth;
+	this.boundaryHeight;
    	this.scx=1;
    	this.scy=1;
    	this.sox=0;
    	this.soy=0;
    	this.ox=0;
    	this.oy=0;
-   	this.cx=0;
-   	this.cy=0;
-   	this.rr=100;
-   	this.phi=0;
+   	var p=new Point(0,0);
+   	this.centreOfRotation=p;
+   	this.phi=0;  //angle of rotation
    	this.rotated=false;
    	this.ratio=this.bheight/this.bwidth;
    	this.strokeStyle=[0,0,0,1];
@@ -203,20 +204,17 @@ function Shape(name,open,editable,type)
    	this.clockw=true;
    	this.complete=false;
    	this.group=[];
-   	this.boundary='empty';
    	this.beztypes=[];
    	this.crnradius=10;
-   	var p=new Point("end","end");
+   	p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
    	this.path.prev=this.path;
- 	//this.path=this.head;
+   	this.group=new Group();
    	
    	SHAPES[this.name]=this;
    	
    	//methods
-   	this.createBoundary=createBoundary;
-   	this.removeBoundary=removeBoundary;
    	this.addTo=addTo;
    	this.getTop=getTop;
    	this.getLeft=getLeft;
@@ -232,6 +230,7 @@ function Shape(name,open,editable,type)
    	this.addBoundary=addBoundary;
    	this.isOn=isOn;
    	this.isIn=isIn;
+   	this.inAgroup=inAgroup;
    	return this;
    	
 }
@@ -426,7 +425,7 @@ function drawGuide(cursor)
 			var midx=this.tplftcrnr.x+lx;
 			var midy=this.tplftcrnr.y+ly;
 			
-			p=new Point(midx,this.tplftcrnr.y);
+			var p=new Point(midx,this.tplftcrnr.y);
 			var c1=new Point(p.x+lx*K,p.y);
 			node=this.path.next;//top
 			node.setNode(p); //top point
@@ -579,9 +578,10 @@ function drawEnd(cursor)
 		case "freeform":
 			var last=this.path.prev;
 			node=this.path.next;
+			var point=new Point(node.point.x,node.point.y);
 			var ctrl2=new Point(node.point.x+(last.point.x-node.point.x)/4, node.point.y+(last.point.y-node.point.y)/4);
 			var ctrl1=new Point(last.point.x+(node.point.x-last.point.x)/4, last.point.y+(node.point.y-last.point.y)/4);
-			var closenode= new Node(node.point,ctrl1,ctrl2);
+			var closenode= new Node(point,ctrl1,ctrl2);
 			this.addNode(closenode);
 			node.removeMark();
 			node=node.next;
@@ -589,7 +589,8 @@ function drawEnd(cursor)
 			{
 				node.addFullMarks();
 				node=node.next;  
-			}this.draw();
+			}
+			this.draw();
 			this.drawBezGuides();
 			DEFAULTKEYDOWN;
 			this.setCorners();
@@ -611,23 +612,28 @@ function drawEnd(cursor)
 		break
 	}
 	this.fixCorners();
+	this.boundaryLeft= this.tplftcrnr.x; 
+   	this.boundaryTop= this.tplftcrnr.y;
+   	this.boundaryWidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+   	this.boundaryHeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	this.ratio = this.boundaryHeight/this.boundaryWidth;
 }
 
 function setRndRect() //bottom right corner
 {
-	var bwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
-	var bheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
-	var dx=bwidth/Math.abs(bwidth);
-	var dy=bheight/Math.abs(bheight);
-	if (Math.abs(bwidth)<20)
+	var RRwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+	var RRheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	var dx=RRwidth/Math.abs(RRwidth);
+	var dy=RRheight/Math.abs(RRheight);
+	if (Math.abs(RRwidth)<20)
 	{
 		this.btmrgtcrnr.x=this.tplftcrnr.x+20*dx;
-		bwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
+		RRwidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
 	}
-	if (Math.abs(bheight)<20)
+	if (Math.abs(RRheight)<20)
 	{
 		this.btmrgtcrnr.y=this.tplftcrnr.y+20 *dy;
-		bheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
+		RRheight=this.btmrgtcrnr.y-this.tplftcrnr.y;
 	}
 	var brc=this.btmrgtcrnr;
 	var start=this.path.next;

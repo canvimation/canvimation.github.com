@@ -794,11 +794,6 @@ div.bar {
 <!--[IF IE]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
 <script type="text/javascript">
 
-if(typeof String.prototype.trim !== 'function') {
-  String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g, ''); 
-  }
-}
 ieb=navigator.appName=='Microsoft Internet Explorer';
 iop=navigator.appName=='Opera';
 var blocknum=0;
@@ -882,10 +877,12 @@ var trackcheck=false;
 var flmovetop;
 var flmoveleft;
 var CURSOR;  //previous cursor point
-var SHAPES={};  // list of shapes;
+var SHAPES={};  // list of shapes
+var SELECTED={}; //list of selected shapes
 var SCRW; //actual screen width
 var SCRH; //actual screen height
 var MCOUNT=0; //counter for id of marks
+var BCOUNT=0; //counter for id of boundaries
 SHAPECOUNT=0; //counter for shapes
 var ZPOS=1; //zindex for each shape as created or set to front
 var ZNEG=-1; //zindex for shapes when zindex sent to back
@@ -898,6 +895,12 @@ scenes = {};
 sprites = {};
 tweens = {};
 films = {};
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}
 
 if(!Array.indexOf){
 	    Array.prototype.indexOf = function(obj){
@@ -989,86 +992,6 @@ function getPosition(e) {
     return cursor;
 }
 
-function createScanvas(n, m)
-{	
-
-	shapestarted=true;
-	
-	if (curcanv !='empty') {drawline(curcanv)};
-	var temp=[];
-	temp[0]=shapes[m][0];
-	temp[1]=shapes[m][1];
-	temp[2]=shapes[m][2];
-	
-	while (lnmrks >0)
-	{
-		if($('lnm'+(--lnmrks))) {$('lnm'+lnmrks).parentNode.removeChild($('lnm'+lnmrks))};
-	}
-	var bd=$('bodydiv');
-	var bdc=$('bodydiv').childNodes;
-	while(bdc.length>0)
-	{
-		bd.firstChild.canvas.boundary='empty';
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=$('bodydiv').childNodes;
-	}
-	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
-	$('editlines').style.visibility='hidden';
-	$('shapemenu').style.visibility='hidden';
-	$('bodydiv').style.cursor='crosshair';
-	ncanvas=new Canvasdiv(n,temp);
-	curcanv=ncanvas;
-	if (shapes[m][2]=='square')
-	{
-		$('bodydiv').onmousedown=function(e){createSqu(getPosition(e),ncanvas)};
-	}
-	if (shapes[m][2]=='rounded_square')
-	{
-		editjustcreated=true;
-		$('bodydiv').onmousedown=function(e){createRndSqu(getPosition(e),ncanvas)};
-	}	
-	if (shapes[m][2]=='triangle')
-	{
-		$('bodydiv').onmousedown=function(e){createTri(getPosition(e),ncanvas)};
-	}
-	if (shapes[m][2]=='right_triangle')
-	{
-		$('bodydiv').onmousedown=function(e){createRgtTri(getPosition(e),ncanvas)};
-	}		
-	else if (shapes[m][2]=='line')
-	{
-		editjustcreated=true;
-		$('bodydiv').onmousedown=function(e){createLine(getPosition(e),ncanvas)};
-	}
-	else if (shapes[m][2]=='circle')
-	{
-		$('bodydiv').onmousedown=function(e){createCircle(getPosition(e),ncanvas)};
-	}		
-	else if (shapes[m][2]=='arc')
-	{
-		editjustcreated=true;
-		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
-	}
-	else if (shapes[m][2]=='sector')
-	{
-		editjustcreated=true;
-		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
-	}
-	else if (shapes[m][2]=='segment')
-	{
-		editjustcreated=true;
-		$('bodydiv').onmousedown=function(e){createArc(getPosition(e),ncanvas)};
-	}			
-	else if (shapes[m][2]=='curve' || shapes[m][2]=='freeform')
-	{
-		$('bodydiv').onclick=function(e){createBez(getPosition(e),ncanvas,shapes[m][2])};
-	}
-}
-
-function setfilenames()
-{
-
-}
 
 
 function aligntop()
@@ -1930,8 +1853,6 @@ function main()
 	$("markerdrop").style.visibility="visible";
 	$("markerdrop").onclick=function(e) {
 	   										noBubble(e);
-	   										clear($("markerdrop"));
-	   										//BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   										checkBoundary(shiftdown(e),getPosition(e));
 	   									}
 	
