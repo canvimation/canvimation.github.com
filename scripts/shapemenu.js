@@ -39,7 +39,7 @@ function shapeMenu()
 	   					{
 	   							$("shapemenu").style.visibility="hidden";
 	   							noBubble(e);
-	   							var shape=new Shape("Shape"+(SHAPECOUNT++),this.open,this.edit,this.title);
+	   							var shape=new Shape("Shape"+(SCOUNT++),this.open,this.edit,this.title);
 	   							$("markerdrop").style.visibility="hidden";
 	   							clear($("markerdrop"));
 	   							BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);

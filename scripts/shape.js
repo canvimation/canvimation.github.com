@@ -166,10 +166,6 @@ function Shape(name,open,editable,type)
    	this.psuid=this.id;
    	this.tplftcrnr; //coordinates of top left of boundary box;
    	this.btmrgtcrnr; //coordinates of bottom right of boundary box;
-   	this.boundaryTop;
-	this.boundaryLeft;
-	this.boundaryWidth;
-	this.boundaryHeight;
    	this.scx=1;
    	this.scy=1;
    	this.sox=0;
@@ -210,7 +206,7 @@ function Shape(name,open,editable,type)
    	this.path=new Node(p);
    	this.path.next=this.path;
    	this.path.prev=this.path;
-   	this.group=new Group();
+   	this.group=new Group(this);
    	
    	SHAPES[this.name]=this;
    	
@@ -227,10 +223,10 @@ function Shape(name,open,editable,type)
    	this.drawBezGuides=drawBezGuides;
    	this.setCorners=setCorners;
    	this.fixCorners=fixCorners;
-   	this.addBoundary=addBoundary;
+   	//this.addBoundary=addBoundary;
    	this.isOn=isOn;
    	this.isIn=isIn;
-   	this.inAgroup=inAgroup;
+   	this.elType=elType;
    	return this;
    	
 }
@@ -612,11 +608,11 @@ function drawEnd(cursor)
 		break
 	}
 	this.fixCorners();
-	this.boundaryLeft= this.tplftcrnr.x; 
-   	this.boundaryTop= this.tplftcrnr.y;
-   	this.boundaryWidth=this.btmrgtcrnr.x-this.tplftcrnr.x;
-   	this.boundaryHeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
-	this.ratio = this.boundaryHeight/this.boundaryWidth;
+	this.group.left= this.tplftcrnr.x; 
+   	this.group.top= this.tplftcrnr.y;
+   	this.group.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
+   	this.group.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	this.group.ratio = this.group.height/this.group.width;
 }
 
 function setRndRect() //bottom right corner

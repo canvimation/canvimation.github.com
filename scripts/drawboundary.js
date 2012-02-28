@@ -11,14 +11,7 @@ function checkBoundary(shiftdown,cursor)
 	//removeGradLine();
 	//removeRotate();
 	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
-	if (!shiftdown)
-	{
-		closeColor();
-		SELECTED={};
-		BCOUNT=0;
-		$('colfill').style.visibility='hidden';
-		clear($("markerdrop"));
-	}
+	
 	$('editlines').style.visibility='hidden';
 	$('shapemenu').style.visibility='hidden';
 	$('group').style.visibility='hidden';
@@ -40,6 +33,16 @@ function checkBoundary(shiftdown,cursor)
 	$('alnright').style.visibility='hidden';
 	$('shadow').style.visibility='hidden';
 	$('sname').style.visibility='hidden';
+	if (!shiftdown)
+	{
+		closeColor();
+		SELECTED={};
+		//GROUPS={};
+		BCOUNT=0;
+		//GCOUNT=0;
+		$('colfill').style.visibility='hidden';
+		clear($("markerdrop"));
+	}
 	var shape, foundshape;
 	var shapefound=false;
 	for(var name in SHAPES)
@@ -70,26 +73,25 @@ function checkBoundary(shiftdown,cursor)
 	}
 	if (shapefound)
 	{
-		
 		if(shiftdown)
 		{
-			if(foundshape.name in SELECTED)
+			if(foundshape.group.name in SELECTED)
 			{
-				foundshape.boundary.parentNode.removeChild(foundshape.boundary);
-				delete SELECTED[foundshape.name];
+				foundshape.group.removeBoundary();
+				delete SELECTED[foundshape.group.name];
 			}
 			else
 			{
-				foundshape.addBoundary();
-				SELECTED[foundshape.name]=foundshape;
+				foundshape.group.drawBoundary();
+				SELECTED[foundshape.group.name]=foundshape.group;
 			}
 		}
 		else
 		{
-			if(!(foundshape.name in SELECTED))
+			if(!(foundshape.group.name in SELECTED))
 			{
-				foundshape.addBoundary();
-				SELECTED[foundshape.name]=foundshape;
+				foundshape.group.drawBoundary();
+				SELECTED[foundshape.group.name]=foundshape.group;
 			}
 		}
 		if (!foundshape.open) {
@@ -222,16 +224,40 @@ function checkBoundary(shiftdown,cursor)
 	if ($('bodydiv').childNodes.length==1 && selected.length>1) {$('ungroup').style.visibility='visible'}
 	if ($('bodydiv').childNodes.length==1 && selected.length==1) {$('sname').style.visibility='visible'} */
 }
+/*
+function Boundary()
+{
+	this.left=this.tplftcrnr.x;
+	this.top=this.tplftcrnr.y;
+	this.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
+	this.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
+	this.group=this;
+	
+	//methods
+	this.draw=drawBoundary;
+	this.set=setBoundary;
+	this.remove=removeBoundary;
+}
 
-function addBoundary() 
+function setBoundary(left,top,width,height)
+{
+	
+}
+*/
+function removeBoundary()
+{
+	if(this.boundary) {this.boundary.parentNode.removeChild(this.boundary)};
+}
+
+function drawBoundary() 
 {
    	this.boundary = document.createElement('div');
    	this.boundary.id="b"+BCOUNT++;
-   	this.boundary.shape=this;
-   	this.boundary.style.left= this.boundaryLeft; 
-   	this.boundary.style.top= this.boundaryTop;
-   	this.boundary.style.width=this.boundaryWidth;
-   	this.boundary.style.height=this.boundaryHeight;
+   	this.boundary.group=this;
+   	this.boundary.style.left= this.left; 
+   	this.boundary.style.top= this.top;
+   	this.boundary.style.width=this.width;
+   	this.boundary.style.height=this.height;
    	this.boundary.style.border="dashed #040404 1px";
    	this.boundary.cc = new Corner(this.boundary);
 	this.boundary.cc.DD = new YAHOO.util.DD(this.boundary.cc.id);
@@ -242,61 +268,63 @@ function addBoundary()
    	$("markerdrop").appendChild(this.boundary);
    	this.boundary.DD=new YAHOO.util.DD(this.boundary.id);
     this.boundary.onmouseup=function(e) {
-								var dx=parseInt(this.style.left)-this.shape.boundaryLeft;
-								var dy=parseInt(this.style.top)-this.shape.boundaryTop;
+								var dx=parseInt(this.style.left)-this.group.left;
+								var dy=parseInt(this.style.top)-this.group.top;
 								var shape,node;
-								for (name in SELECTED)
-								{
-									shape=SELECTED[name];
-									//shape.ox +=dx;
-									//shape.oy +=dy;
-									//shape.sox +=dx;
-									//shape.soy +=dy;
-									node=shape.path.next;
-									while(node.point.x!="end")
-									{
-										node.point.x+=dx;
-										node.point.y+=dy;
-										if(node.vertex=="B")
-										{
-											node.ctrl1.x+=dx;
-											node.ctrl1.y+=dy;
-											node.ctrl2.x+=dx;
-											node.ctrl2.y+=dy;
-										}
-										node=node.next;
-									}					
-									shape.tplftcrnr.x +=dx;
-									shape.btmrgtcrnr.x+=dx;
-									shape.tplftcrnr.y +=dy;
-									shape.btmrgtcrnr.y+=dy;
-									//shape.scleft=shape.bleft;
-									//shape.sctop=shape.btop;
-									shape.lineGrad[0] +=dx;
-									shape.lineGrad[1] +=dy;
-									shape.lineGrad[2] +=dx;
-									shape.lineGrad[3] +=dy;
-									shape.radGrad[0] +=dx;
-									shape.radGrad[1] +=dy;
-									shape.radGrad[3] +=dx;
-									shape.radGrad[4] +=dy;
-									shape.cx +=dx;
-									shape.cy +=dy;
-									
-									shape.boundaryLeft+=dx;
-									shape.boundaryTop+=dy;
-									shape.draw();
-									//$("backstage").style.visibility="visible";
-									//shape.drawBezGuides();alert("stop");
-									
-								};
 								clear($("markerdrop"));
-								for(name in SELECTED)
+								for(var groupName in SELECTED)
 								{
-									SELECTED[name].addBoundary();
-								}//if (gdmrks>0) {drawgradpoints(selected[0])};
-								//if (rtmrks>0) {drawrotate(selected[0])}
+									var group=SELECTED[groupName];
+									var shapeNames=group.memberShapes();
+									for(var name in shapeNames)
+									{
+										shape=shapeNames[name];
+										//shape.ox +=dx;
+										//shape.oy +=dy;
+										//shape.sox +=dx;
+										//shape.soy +=dy;
+										node=shape.path.next;
+										while(node.point.x!="end")
+										{
+											node.point.x+=dx;
+											node.point.y+=dy;
+											if(node.vertex=="B")
+											{
+												node.ctrl1.x+=dx;
+												node.ctrl1.y+=dy;
+												node.ctrl2.x+=dx;
+												node.ctrl2.y+=dy;
+											}
+											node=node.next;
+										}					
+										shape.tplftcrnr.x +=dx;
+										shape.btmrgtcrnr.x+=dx;
+										shape.tplftcrnr.y +=dy;
+										shape.btmrgtcrnr.y+=dy;
+										//shape.scleft=shape.bleft;
+										//shape.sctop=shape.btop;
+										shape.lineGrad[0] +=dx;
+										shape.lineGrad[1] +=dy;
+										shape.lineGrad[2] +=dx;
+										shape.lineGrad[3] +=dy;
+										shape.radGrad[0] +=dx;
+										shape.radGrad[1] +=dy;
+										shape.radGrad[3] +=dx;
+										shape.radGrad[4] +=dy;
+										shape.cx +=dx;
+										shape.cy +=dy;
+
+										shape.draw();
+										group.left+=dx;
+										group.top+=dy;
+										group.drawBoundary();
+										//$("backstage").style.visibility="visible";
+										//shape.drawBezGuides();alert("stop");
+									}
+								};
 								
+								//if (gdmrks>0) {drawgradpoints(selected[0])};
+								//if (rtmrks>0) {drawrotate(selected[0])}
 							  };
 	this.boundary.cc.DD.onDrag =function() {
 												removeRotate();
@@ -325,6 +353,7 @@ function addBoundary()
 												}
 											};
 }
+
 
 function createBoundary()
 {
@@ -834,38 +863,6 @@ function inRect(sp,ep)
 function sqdistance(p,q)
 {
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
-}
-
-function Group()
-{
-	this.members={};
-	this.size=0;
-	this.boundaryTop=0
-	this.boundaryLeft=0;
-	this.boundaryWidth=0;
-	this.boundaryHeight=0;
-	
-	//methods
-	this.addToGroup=addToGroup;
-	this.updateBoundary=updateBoundary;
-}
-
-function addToGroup(obj,type)
-{
-	this.members[this.size++]=obj;
-	if(arguments.length>1)
-	{
-		obj.type="group"
-	}
-	else
-	{
-		
-	}
-}
-
-function inAgroup()
-{
-	return (this.group.size>0)
 }
 
 function updateBoundary()

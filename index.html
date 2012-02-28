@@ -776,7 +776,7 @@ div.bar {
 <script type="text/javascript" src = "scripts/drawshapes.js" ></script>
 <script type="text/javascript" src = "scripts/shapemenu.js" ></script>
 <script type="text/javascript" src = "scripts/linemarker.js" ></script>
-<script type="text/javascript" src = "scripts/grouping.js" ></script>
+<script type="text/javascript" src = "scripts/group.js" ></script>
 <script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
 <script type="text/javascript" src = "scripts/gradmenu.js" ></script>
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
@@ -879,11 +879,13 @@ var flmoveleft;
 var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes
 var SELECTED={}; //list of selected shapes
+var GROUPS={}; //list of groups
 var SCRW; //actual screen width
 var SCRH; //actual screen height
 var MCOUNT=0; //counter for id of marks
 var BCOUNT=0; //counter for id of boundaries
-SHAPECOUNT=0; //counter for shapes
+var SCOUNT=0; //counter for shapes
+var GCOUNT=0; //counter for groups
 var ZPOS=1; //zindex for each shape as created or set to front
 var ZNEG=-1; //zindex for shapes when zindex sent to back
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
@@ -895,6 +897,8 @@ scenes = {};
 sprites = {};
 tweens = {};
 films = {};
+
+String.prototype.elType=elType;
 
 if(typeof String.prototype.trim !== 'function') {
   String.prototype.trim = function() {
@@ -1855,7 +1859,6 @@ function main()
 	   										noBubble(e);
 	   										checkBoundary(shiftdown(e),getPosition(e));
 	   									}
-	
 	canvwidth=0.98*screen.availWidth;
 	canvheight=0.785*screen.availHeight;
 	maxwidth=canvwidth;
@@ -2191,6 +2194,21 @@ function main()
 		$('ifas').innerHTML='Open Files';
 	}
 	
+/*	
+	A=new Group();
+	A.members=["a","b","c"];
+	D=new Group();
+	D.members=["d", "e", A];
+	F=new Group();
+	F.members=["f"];
+	G=new Group();
+	G.members=["g", "h"];
+	H=new Group();
+	H.members=[F,G];
+	K=new Group();
+	K.members=["k",D,H];
+	alert(separate(K.members));
+*/	
 }
 
 </script>
