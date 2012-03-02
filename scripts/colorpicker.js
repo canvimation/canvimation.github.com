@@ -307,58 +307,76 @@ function fixGradientImg()
 
 function setColor()
 {
-	var sl=selected.length;
 	if (coltype=='F')
 	{
 		
-		for (var i=0; i<sl; i++)
+		for(var groupName in SELECTED)
 		{
-			selected[i].justfill=true;
-			selected[i].fillStyle[0]=$("redBox").value;
-			selected[i].fillStyle[1]=$("greenBox").value;
-			selected[i].fillStyle[2]=$("blueBox").value;
-			selected[i].fillStyle[3]=1-alphaperct/100;
-			drawline(selected[i]);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape.justfill=true;
+				shape.fillStyle[0]=$("redBox").value;
+				shape.fillStyle[1]=$("greenBox").value;
+				shape.fillStyle[2]=$("blueBox").value;
+				shape.fillStyle[3]=1-alphaperct/100;
+				shape.draw();
+			}
 		}
 	}
 	else if (coltype=='S')
 	{
 		
-		for (var i=0; i<sl; i++)
+		for(var groupName in SELECTED)
 		{
-			selected[i].shadowColor[0]=$("redBox").value;
-			selected[i].shadowColor[1]=$("greenBox").value;
-			selected[i].shadowColor[2]=$("blueBox").value;
-			selected[i].shadowColor[3]=1-alphaperct/100;
-			drawline(selected[i]);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape.shadowColor[0]=$("redBox").value;
+				shape.shadowColor[1]=$("greenBox").value;
+				shape.shadowColor[2]=$("blueBox").value;
+				shape.shadowColor[3]=1-alphaperct/100;
+				shape.draw();
+			}
 		}
 	}	
 	else if (coltype=='L')
 	{
-		for (var i=0; i<sl; i++)
+		for(var groupName in SELECTED)
 		{
-			selected[i].strokeStyle[0]=$("redBox").value;
-			selected[i].strokeStyle[1]=$("greenBox").value;
-			selected[i].strokeStyle[2]=$("blueBox").value;
-			selected[i].strokeStyle[3]=1-alphaperct/100;
-			drawline(selected[i]);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape.strokeStyle[0]=$("redBox").value;
+				shape.strokeStyle[1]=$("greenBox").value;
+				shape.strokeStyle[2]=$("blueBox").value;
+				shape.strokeStyle[3]=1-alphaperct/100;
+				shape.draw();
+			}
 		}
 	}
 	else
 	{
-
-		var canv=selected[0];
-		var sp=canv.stopn;
-		canv.colorStops[sp][1]=$("redBox").value;
-		canv.colorStops[sp][2]=$("greenBox").value;
-		canv.colorStops[sp][3]=$("blueBox").value;
-		canv.colorStops[sp][4]=1-alphaperct/100;
-		for (var i=0;i<selected.length;i++)
+		var sp=SELECTEDSHAPE.stopn;
+		SELECTEDSHAPE.colorStops[sp][1]=$("redBox").value;
+		SELECTEDSHAPE.colorStops[sp][2]=$("greenBox").value;
+		SELECTEDSHAPE.colorStops[sp][3]=$("blueBox").value;
+		SELECTEDSHAPE.colorStops[sp][4]=1-alphaperct/100;
+		for(var groupName in SELECTED)
 		{
-			selected[i].justfill=false;
-			selected[i].colorStops=canv.colorStops;
-			selected[i].lineGrad=canv.lineGrad;
-			drawline(selected[i]);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape=shapeNames[name];
+				shape.justfill=false;
+				shape.colorStops=SELECTEDSHAPE.colorStops;
+				shape.lineGrad=SELECTEDSHAPE.lineGrad;
+				shape.draw();
+			}
 		}
 		removeGradLine();
 		showGradLine(canv);
@@ -378,15 +396,15 @@ function fillcolor()
 	$('colimg').src="assets/colfill.png";
 	removeGradLine();
 	removeRotate();
-	var canv=selected[0];
-	$("redBox").value=canv.fillStyle[0];
+	var shape=SELECTEDSHAPE;
+	$("redBox").value=shape.fillStyle[0];
 	redBoxChanged();
-	$("greenBox").value=canv.fillStyle[1];
+	$("greenBox").value=shape.fillStyle[1];
 	greenBoxChanged();
-	$("blueBox").value=canv.fillStyle[2];
+	$("blueBox").value=shape.fillStyle[2];
 	blueBoxChanged();
-	alphaperct = 100*(1-canv.fillStyle[3]);
-	$('varrows').style.left=256*alphaperct/100-4;
+	alphaperct = 100*(1-shape.fillStyle[3]);
+	$('varrows').style.left=128*alphaperct/100-4;
 	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
 	if (ieb)
 	{
@@ -405,14 +423,13 @@ function fillcolor()
 
 function linecolor()
 {
-	var canv=selected[0];
-	$("redBox").value=canv.strokeStyle[0];
+	$("redBox").value=SELECTEDSHAPE.strokeStyle[0];
 	redBoxChanged();
-	$("greenBox").value=canv.strokeStyle[1];
+	$("greenBox").value=SELECTEDSHAPE.strokeStyle[1];
 	greenBoxChanged();
-	$("blueBox").value=canv.strokeStyle[2];
+	$("blueBox").value=SELECTEDSHAPE.strokeStyle[2];
 	blueBoxChanged();
-	alphaperct = 100*(1-canv.strokeStyle[3]);
+	alphaperct = 100*(1-SELECTEDSHAPE.strokeStyle[3]);
 	$('varrows').style.left=256*alphaperct/100-4;
 	$('transptext').innerHTML ='Transparency '+alphaperct+'%';
 	if (ieb)

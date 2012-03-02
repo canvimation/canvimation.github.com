@@ -879,6 +879,7 @@ var flmoveleft;
 var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes
 var SELECTED={}; //list of selected shapes
+var SELECTEDSHAPE; //shape clicked on
 var GROUPS={}; //list of groups
 var SCRW; //actual screen width
 var SCRH; //actual screen height
@@ -2044,9 +2045,9 @@ function main()
 	DDcc.setHandleElId('colorhead');
 
 	$('colXD').onclick=function() {
-	   														$('colorcont').style.visibility='hidden';
+	   									$('colorcont').style.visibility='hidden';
 														
-														};
+								};
 	fixGradientImg();
 	
 	colorChanged('box');
@@ -2074,15 +2075,15 @@ function main()
 	$('colorheadtext').innerHTML='\u00A0 Background Colour';
 
 	$('gradientBox').onclick=function(e) {
-																	moveCircleTo(getPosition(e))
-																};
+											moveCircleTo(getPosition(e))
+										};
 	
 	$('transpbox').onclick=function(e) {
-																	movetransarrwTo(getPosition(e))
-																};
+											movetransarrwTo(getPosition(e))
+										};
 	$('hueBarDiv').onclick=function(e) {
-																	HueBarmoveTo(getPosition(e))
-																};															
+											HueBarmoveTo(getPosition(e))
+										};															
 
 	
     if (gradcanv.getContext)

@@ -6,7 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function checkBoundary(shiftdown,cursor)
 {
-
+alert("in");
 	//if (doingani) {return};
 	//removeGradLine();
 	//removeRotate();
@@ -84,6 +84,7 @@ function checkBoundary(shiftdown,cursor)
 			{
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
+				SELECTEDSHAPE=foundshape;
 			}
 		}
 		else
@@ -92,6 +93,7 @@ function checkBoundary(shiftdown,cursor)
 			{
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
+				SELECTEDSHAPE=foundshape;
 			}
 		}
 		if (!foundshape.open) {
@@ -267,9 +269,22 @@ function drawBoundary()
 	this.boundary.bh.DD = new YAHOO.util.DD(this.boundary.bh.id); 
    	$("markerdrop").appendChild(this.boundary);
    	this.boundary.DD=new YAHOO.util.DD(this.boundary.id);
-    this.boundary.onmouseup=function(e) {
-								var dx=parseInt(this.style.left)-this.group.left;
-								var dy=parseInt(this.style.top)-this.group.top;
+   	this.boundary.DD.onDrag=function (e) {
+   											noBubble(e);
+   											var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
+											var dy=parseInt($(this.id).style.top)-$(this.id).group.top;
+											var boundary;
+											for(var i=0; i<$("markerdrop").childNodes.length; i++)
+											{
+												boundary=$("markerdrop").childNodes[i];
+												boundary.style.left=boundary.group.left+dx;
+												boundary.style.top=boundary.group.top+dy;
+											}
+   										}
+    this.boundary.DD.onMouseUp=function(e) {
+								noBubble(e);
+								var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
+								var dy=parseInt($(this.id).style.top)-$(this.id).group.top;
 								var shape,node;
 								clear($("markerdrop"));
 								for(var groupName in SELECTED)
@@ -315,36 +330,40 @@ function drawBoundary()
 										shape.cy +=dy;
 
 										shape.draw();
-										group.left+=dx;
-										group.top+=dy;
-										group.drawBoundary();
+										
 										//$("backstage").style.visibility="visible";
 										//shape.drawBezGuides();alert("stop");
 									}
+									group.left+=dx;
+									group.top+=dy;
+									group.drawBoundary();
 								};
 								
 								//if (gdmrks>0) {drawgradpoints(selected[0])};
 								//if (rtmrks>0) {drawrotate(selected[0])}
 							  };
-	this.boundary.cc.DD.onDrag =function() {
+	this.boundary.cc.DD.onDrag =function(e) {
+												noBubble(e);
 												removeRotate();
 												var boundary=$(this.id).parentNode;
-												var shape=boundary.shape;
+												var group=boundary.group;
 												if (parseInt($(this.id).style.left)>5)
 												{
-													var scaledwidth=(parseInt($(this.id).style.left)+5)/(shape.boundaryLeft);													
-													for(var name in SELECTED)
+													var width=parseInt($(this.id).style.left)+5;
+													var scale=width/group.width;													
+													var boundary;
+													for(var i=0; i<$("markerdrop").childNodes.length; i++)
 													{
-														shape=SELECTED[name];
-														shape.boundary.style.width=shape.boundaryLeft*scaledwidth;
-														shape.boundary.style.height=shape.boundaryWidth*shape.ratio;
-														shape.boundary.cc.style.top=shape.boundaryHeight-5;
-														shape.boundary.cc.style.left=shape.boundaryWidth-5;
-														shape.boundary.rh.style.top=shape.boundaryHeight/2-5;
-														shape.boundary.rh.style.left=shape.boundaryWidth-5;
-														shape.boundary.bh.style.top=shape.boundaryHeight-5;
-														shape.boundary.bh.style.left=shape.boundaryWidth/2-5;
-													}
+														boundary=$("markerdrop").childNodes[i];
+														boundary.style.width=boundary.group.width*scale;
+														boundary.style.height=boundary.group.height*scale;
+														boundary.cc.style.left=parseInt(boundary.style.width)-5;
+														boundary.cc.style.top=parseInt(boundary.style.height)-5;
+														boundary.rh.style.left=parseInt(boundary.style.width)-5;
+														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
+														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
+														boundary.bh.style.top=parseInt(boundary.style.height)-5;
+													}	
 												}
 												else
 												{
@@ -352,6 +371,195 @@ function drawBoundary()
 													$(this.id).style.left=parseInt(boundary.style.width)-5;
 												}
 											};
+			
+   this.boundary.cc.DD.onMouseUp=function(e) {
+   								noBubble(e);
+								var boundary=$(this.id).parentNode;
+								var group=boundary.group;
+								var scale=parseInt(boundary.style.width)/group.width;
+								for(var groupName in SELECTED)
+								{
+									var group=SELECTED[groupName];
+									var shapeNames=group.memberShapes();
+									for(var name in shapeNames)
+									{
+										shape=shapeNames[name];
+										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
+										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
+										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
+										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
+										if (shape.type=='rounded_rectangle')
+										{
+											shape.setRndRect()
+										}
+										else
+										{
+
+											//selected[s].scx=scx;
+											//selected[s].scy=scy;
+											//selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
+											//selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
+											node=shape.path.next;
+											while(node.point.x!="end")
+											{
+												node.point.x=group.left+(node.point.x-group.left)*scale;
+												node.point.y=group.top+(node.point.y-group.top)*scale;
+												if(node.ctrl1.x!="end")// will also scale when curve has been set as straight line
+												{
+													node.ctrl1.x=group.left+(node.ctrl1.x-group.left)*scale;
+													node.ctrl1.y=group.top+(node.ctrl1.y-group.top)*scale;
+													node.ctrl2.x=group.left+(node.ctrl2.x-group.left)*scale;
+													node.ctrl2.y=group.top+(node.ctrl2.y-group.top)*scale;
+												}
+												node=node.next;
+											}
+										}
+										shape.draw();
+							  		}
+							  		group.width=parseInt(group.boundary.style.width);
+									group.height=parseInt(group.boundary.style.height);
+								}
+							}
+//right handle
+	this.boundary.rh.DD.onDrag =function(e) {
+												noBubble(e);
+												removeRotate();
+												var boundary=$(this.id).parentNode;
+												var group=boundary.group;
+												if (parseInt($(this.id).style.left)>5)
+												{
+													var width=parseInt($(this.id).style.left)+5;
+													var scale=width/group.width;													
+													var boundary;
+													for(var i=0; i<$("markerdrop").childNodes.length; i++)
+													{
+														boundary=$("markerdrop").childNodes[i];
+														boundary.style.width=boundary.group.width*scale;
+														boundary.cc.style.left=parseInt(boundary.style.width)-5;
+														boundary.rh.style.left=parseInt(boundary.style.width)-5;
+														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
+														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
+													}	
+												}
+												else
+												{
+													$(this.id).style.left=parseInt(boundary.style.width)-5;
+												}
+											};
+			
+   this.boundary.rh.DD.onMouseUp=function(e) {
+   								noBubble(e);
+								var boundary=$(this.id).parentNode;
+								var group=boundary.group;
+								var scale=parseInt(boundary.style.width)/group.width;
+								for(var groupName in SELECTED)
+								{
+									var group=SELECTED[groupName];
+									var shapeNames=group.memberShapes();
+									for(var name in shapeNames)
+									{
+										shape=shapeNames[name];
+										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
+										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
+										if (shape.type=='rounded_rectangle')
+										{
+											shape.setRndRect()
+										}
+										else
+										{
+
+											//selected[s].scx=scx;
+											//selected[s].scy=scy;
+											//selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
+											//selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
+											node=shape.path.next;
+											while(node.point.x!="end")
+											{
+												node.point.x=group.left+(node.point.x-group.left)*scale;
+												if(node.ctrl1.x!="end")// will also scale when curve has been set as straight line
+												{
+													node.ctrl1.x=group.left+(node.ctrl1.x-group.left)*scale;
+													node.ctrl2.x=group.left+(node.ctrl2.x-group.left)*scale;
+												}
+												node=node.next;
+											}
+										}
+										shape.draw();
+							  		}
+							  		group.width=parseInt(group.boundary.style.width);
+								}
+							}
+//bottom handle
+	this.boundary.bh.DD.onDrag =function(e) {
+												noBubble(e);
+												removeRotate();
+												var boundary=$(this.id).parentNode;
+												var group=boundary.group;
+												if (parseInt($(this.id).style.left)>5)
+												{
+													var height=parseInt($(this.id).style.top)+5;
+													var scale=height/group.height;													
+													var boundary;
+													for(var i=0; i<$("markerdrop").childNodes.length; i++)
+													{
+														boundary=$("markerdrop").childNodes[i];
+														boundary.style.height=boundary.group.height*scale;
+														boundary.cc.style.top=parseInt(boundary.style.height)-5;
+														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
+														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
+														boundary.bh.style.top=parseInt(boundary.style.height)-5;
+													}	
+												}
+												else
+												{
+													$(this.id).style.top=parseInt(boundary.style.height)-5;
+												}
+											};
+			
+   this.boundary.bh.DD.onMouseUp=function(e) {
+   								noBubble(e);
+								var boundary=$(this.id).parentNode;
+								var group=boundary.group;
+								var scale=parseInt(boundary.style.height)/group.height;
+								for(var groupName in SELECTED)
+								{
+									var group=SELECTED[groupName];
+									var shapeNames=group.memberShapes();
+									for(var name in shapeNames)
+									{
+										shape=shapeNames[name];
+										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
+										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
+										if (shape.type=='rounded_rectangle')
+										{
+											shape.setRndRect()
+										}
+										else
+										{
+
+											//selected[s].scx=scx;
+											//selected[s].scy=scy;
+											//selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
+											//selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
+											node=shape.path.next;
+											while(node.point.x!="end")
+											{
+												node.point.y=group.top+(node.point.y-group.top)*scale;
+												if(node.ctrl1.x!="end")// will also scale when curve has been set as straight line
+												{
+													node.ctrl1.y=group.top+(node.ctrl1.y-group.top)*scale;
+													node.ctrl2.y=group.top+(node.ctrl2.y-group.top)*scale;
+												}
+												node=node.next;
+											}
+										}
+										shape.draw();
+							  		}
+									group.height=parseInt(group.boundary.style.height);
+								}
+							}
+
+
 }
 
 
@@ -368,47 +576,7 @@ function createBoundary()
 	this.sctop=this.btop;
 	var canv=this;
 		
-   this.boundary.cc.DD.onMouseUp=function(e) {
-								var scalex,scaley;
-								var boundary=$(this.id).parentNode;
-								var shape=boundary.shape;
-								shape.btmrgtcrnr.x=shape.tplftcrnr.x+boundary.style.width;
-								shape.btmrgtcrnr.y=shape.tplftcrnr.y+bounday.style.height;
-								for (var name in SELECTED)
-								{									
-									shape=SELECTED[name];
-									if (shape.type=='rounded_rectangle')
-									{
-										shape.setRndRect()
-									}
-									else
-									{
-										scalex = parseInt(selected[s].boundary.style.width)/selected[s].bwidth;
-										scaley = parseInt(selected[s].boundary.style.height)/selected[s].bheight;
-										selected[s].scx=scx;
-										selected[s].scy=scy;
-										selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
-										selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
-										for (var i=3; i<selected[s].path.length ;i++)
-										{
-											for (var k=1;k<selected[s].path[i].length; k++)
-											{
-												if ( k%2 == 1)
-												{
-													selected[s].path[i][k] =selected[s].bleft+(selected[s].path[i][k]-selected[s].bleft)*scx;
-												}
-												else
-												{
-													selected[s].path[i][k] =selected[s].btop+(selected[s].path[i][k]-selected[s].btop)*scy;
-												}
-											}
-										}
-										selected[s].bwidth=parseInt(selected[s].boundary.style.width);
-										selected[s].bheight=parseInt(selected[s].boundary.style.height);
-										drawline(selected[s])
-									}
-								};
-							  };
+
 					
 	this.boundary.rh.DD.onDrag =function() {
 												removeRotate();
