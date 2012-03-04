@@ -6,40 +6,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function checkBoundary(shiftdown,cursor)
 {
-alert("in");
 	//if (doingani) {return};
 	//removeGradLine();
 	//removeRotate();
 	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
+	hideTools();
 	
-	$('editlines').style.visibility='hidden';
-	$('shapemenu').style.visibility='hidden';
-	$('group').style.visibility='hidden';
-	$('ungroup').style.visibility='hidden';
-	$('stylelines').style.visibility='hidden';
-	$('collines').style.visibility='hidden';
-	$('colfill').style.visibility='hidden'
-	$('gradfill').style.visibility='hidden';
-	$('rotate').style.visibility='hidden';
-	$('front').style.visibility='hidden';
-	$('back').style.visibility='hidden';
-	$('del').style.visibility='hidden';
-	$('copy').style.visibility='hidden';
-	$('vert').style.visibility='hidden';
-	$('horz').style.visibility='hidden';
-	$('alntop').style.visibility='hidden';
-	$('alnbot').style.visibility='hidden';
-	$('alnleft').style.visibility='hidden';
-	$('alnright').style.visibility='hidden';
-	$('shadow').style.visibility='hidden';
-	$('sname').style.visibility='hidden';
 	if (!shiftdown)
 	{
 		closeColor();
 		SELECTED={};
-		//GROUPS={};
 		BCOUNT=0;
-		//GCOUNT=0;
 		$('colfill').style.visibility='hidden';
 		clear($("markerdrop"));
 	}
@@ -73,6 +50,7 @@ alert("in");
 	}
 	if (shapefound)
 	{
+		$("boundarydrop").style.visibility="visible";
 		if(shiftdown)
 		{
 			if(foundshape.group.name in SELECTED)
@@ -85,47 +63,26 @@ alert("in");
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
 				SELECTEDSHAPE=foundshape;
+				showTools(foundshape);
+				setTools();
 			}
 		}
 		else
 		{
-			if(!(foundshape.group.name in SELECTED))
+			if(!(foundshape.group.name in SELECTED)) //if already drawn do not redraw
 			{
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
 				SELECTEDSHAPE=foundshape;
+				showTools(foundshape);
+				setTools();
 			}
 		}
-		if (!foundshape.open) {
-								$('colfill').style.visibility='visible';
-								$('gradfill').style.visibility='visible';
-								$('shadow').style.visibility='visible';
-						  }
 	}
-	
-	$('stylelines').style.visibility='visible';
-	$('collines').style.visibility='visible';
-	$('rotate').style.visibility='visible';
-	$('front').style.visibility='visible';
-	$('back').style.visibility='visible';
-	$('del').style.visibility='visible';
-	$('copy').style.visibility='visible';
-	$('vert').style.visibility='visible';
-	$('horz').style.visibility='visible';
 	
 	
 							  
-/*			if (foundshape.group.length>0)
-			{
-				var gpindx=foundshape.group.pop();
-				foundshape.group.push(gpindx);
-				for (var i=0; i<gp[gpindx].length; i++)
-				{
-					selected.push(gp[gpindx][i])
-				}
-			}
-			else
-			{
+/*			
 				selected.push(foundshape);
 				if (selected.length ==1 && selected[0].path[0]=='closed')
 				{
@@ -226,26 +183,7 @@ alert("in");
 	if ($('bodydiv').childNodes.length==1 && selected.length>1) {$('ungroup').style.visibility='visible'}
 	if ($('bodydiv').childNodes.length==1 && selected.length==1) {$('sname').style.visibility='visible'} */
 }
-/*
-function Boundary()
-{
-	this.left=this.tplftcrnr.x;
-	this.top=this.tplftcrnr.y;
-	this.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
-	this.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
-	this.group=this;
-	
-	//methods
-	this.draw=drawBoundary;
-	this.set=setBoundary;
-	this.remove=removeBoundary;
-}
 
-function setBoundary(left,top,width,height)
-{
-	
-}
-*/
 function removeBoundary()
 {
 	if(this.boundary) {this.boundary.parentNode.removeChild(this.boundary)};
@@ -267,16 +205,16 @@ function drawBoundary()
 	this.boundary.rh.DD = new YAHOO.util.DD(this.boundary.rh.id);
 	this.boundary.bh = new BottomH(this.boundary);
 	this.boundary.bh.DD = new YAHOO.util.DD(this.boundary.bh.id); 
-   	$("markerdrop").appendChild(this.boundary);
+   	$("boundarydrop").appendChild(this.boundary);
    	this.boundary.DD=new YAHOO.util.DD(this.boundary.id);
    	this.boundary.DD.onDrag=function (e) {
    											noBubble(e);
    											var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
 											var dy=parseInt($(this.id).style.top)-$(this.id).group.top;
 											var boundary;
-											for(var i=0; i<$("markerdrop").childNodes.length; i++)
+											for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 											{
-												boundary=$("markerdrop").childNodes[i];
+												boundary=$("boundarydrop").childNodes[i];
 												boundary.style.left=boundary.group.left+dx;
 												boundary.style.top=boundary.group.top+dy;
 											}
@@ -286,7 +224,7 @@ function drawBoundary()
 								var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
 								var dy=parseInt($(this.id).style.top)-$(this.id).group.top;
 								var shape,node;
-								clear($("markerdrop"));
+								clear($("boundarydrop"));
 								for(var groupName in SELECTED)
 								{
 									var group=SELECTED[groupName];
@@ -352,9 +290,9 @@ function drawBoundary()
 													var width=parseInt($(this.id).style.left)+5;
 													var scale=width/group.width;													
 													var boundary;
-													for(var i=0; i<$("markerdrop").childNodes.length; i++)
+													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
-														boundary=$("markerdrop").childNodes[i];
+														boundary=$("boundarydrop").childNodes[i];
 														boundary.style.width=boundary.group.width*scale;
 														boundary.style.height=boundary.group.height*scale;
 														boundary.cc.style.left=parseInt(boundary.style.width)-5;
@@ -431,9 +369,9 @@ function drawBoundary()
 													var width=parseInt($(this.id).style.left)+5;
 													var scale=width/group.width;													
 													var boundary;
-													for(var i=0; i<$("markerdrop").childNodes.length; i++)
+													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
-														boundary=$("markerdrop").childNodes[i];
+														boundary=$("boundarydrop").childNodes[i];
 														boundary.style.width=boundary.group.width*scale;
 														boundary.cc.style.left=parseInt(boundary.style.width)-5;
 														boundary.rh.style.left=parseInt(boundary.style.width)-5;
@@ -500,9 +438,9 @@ function drawBoundary()
 													var height=parseInt($(this.id).style.top)+5;
 													var scale=height/group.height;													
 													var boundary;
-													for(var i=0; i<$("markerdrop").childNodes.length; i++)
+													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
-														boundary=$("markerdrop").childNodes[i];
+														boundary=$("boundarydrop").childNodes[i];
 														boundary.style.height=boundary.group.height*scale;
 														boundary.cc.style.top=parseInt(boundary.style.height)-5;
 														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
@@ -558,153 +496,8 @@ function drawBoundary()
 									group.height=parseInt(group.boundary.style.height);
 								}
 							}
-
-
 }
 
-
-function createBoundary()
-{
-	this.boundary = new Boundary(this);
-	this.boundary.cc = new Corner(this.boundary);
-	this.boundary.cc.DD = new YAHOO.util.DD(this.boundary.cc.id);
-	this.boundary.rh = new RightH(this.boundary);
-	this.boundary.rh.DD = new YAHOO.util.DD(this.boundary.rh.id);
-	this.boundary.bh = new BottomH(this.boundary);
-	this.boundary.bh.DD = new YAHOO.util.DD(this.boundary.bh.id);
-	this.scleft=this.bleft;
-	this.sctop=this.btop;
-	var canv=this;
-		
-
-					
-	this.boundary.rh.DD.onDrag =function() {
-												removeRotate();
-												if (parseInt(canv.boundary.rh.style.left)>0)
-												{
-													canv.boundary.style.width=parseInt(canv.boundary.rh.style.left)+5;
-													canv.boundary.style.width=Math.round(parseInt(canv.boundary.style.width)/xgrid)*xgrid;
-													canv.boundary.cc.style.left=parseInt(canv.boundary.style.width)-5;
-													canv.boundary.rh.style.left=parseInt(canv.boundary.style.width)-5;
-													canv.boundary.rh.style.top=parseInt(canv.boundary.style.height)/2-5;
-													canv.boundary.bh.style.left=parseInt(canv.boundary.style.width)/2-5;
-													var scw=parseInt(canv.boundary.style.width)/canv.bwidth;
-						
-													for (var s=0;s<selected.length;s++)
-													{
-														if (canv !=selected[s])
-														{
-															selected[s].boundary.style.width=selected[s].bwidth*scw;
-															selected[s].boundary.cc.style.left=parseInt(selected[s].boundary.style.width)-5;
-															selected[s].boundary.rh.style.left=parseInt(selected[s].boundary.style.width)-5;
-															selected[s].boundary.bh.style.left=parseInt(selected[s].boundary.style.width)/2-5;
-														}
-													}
-												}
-												else
-												{
-													canv.boundary.rh.style.left=parseInt(canv.boundary.style.width)-5;
-													canv.boundary.rh.style.top=parseInt(canv.boundary.style.height)/2-5;
-												}
-											};	
-   this.boundary.rh.DD.onMouseUp=function(e) {
-								var scx;
-								for (var s=0;s<selected.length;s++)
-								{
-									if (selected[s].path[2]=='rounded_square')
-									{
-										scx = parseInt(selected[s].boundary.style.width)/selected[s].bwidth;
-										selected[s].scx=scx;
-										selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
-										selected[s].bwidth=parseInt(selected[s].boundary.style.width);
-										selected[s].bheight=parseInt(selected[s].boundary.style.height);
-										drawrndsq(selected[s]);
-									}
-									else
-									{
-										scx = parseInt(selected[s].boundary.style.width)/selected[s].bwidth;
-										selected[s].scx=scx;										
-										selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
-										for (var i=3; i<selected[s].path.length ;i++)
-										{
-											for (var k=1;k<selected[s].path[i].length; k+=2)
-											{
-												selected[s].path[i][k] =selected[s].bleft+(selected[s].path[i][k]-selected[s].bleft)*scx;
-											}
-										}
-										selected[s].bwidth=parseInt(selected[s].boundary.style.width);
-										selected[s].bheight=parseInt(selected[s].boundary.style.height);
-										drawline(selected[s])
-									}
-								};
-							  };
-
-
-
-	this.boundary.bh.DD.onDrag =function() {
-												removeRotate();
-												if (parseInt(canv.boundary.bh.style.top)>0)
-												{
-													canv.boundary.style.height=parseInt(canv.boundary.bh.style.top)+5;
-													canv.boundary.style.height=Math.round(parseInt(canv.boundary.style.height)/ygrid)*ygrid;
-													canv.boundary.cc.style.top=parseInt(canv.boundary.style.height)-5;
-													canv.boundary.rh.style.top=parseInt(canv.boundary.style.height)/2-5;
-													canv.boundary.bh.style.left=parseInt(canv.boundary.style.width)/2-5;
-													canv.boundary.bh.style.top=parseInt(canv.boundary.style.height)-5;
-													var scw=parseInt(canv.boundary.style.height)/canv.bheight;
-						
-													for (var s=0;s<selected.length;s++)
-													{
-														if (canv !=selected[s])
-														{
-															selected[s].boundary.style.height=selected[s].bheight*scw;
-															selected[s].boundary.cc.style.top=parseInt(selected[s].boundary.style.height)-5;
-															selected[s].boundary.rh.style.top=parseInt(selected[s].boundary.style.height)/2-5;
-															selected[s].boundary.bh.style.top=parseInt(selected[s].boundary.style.height)-5;
-														}
-													}
-												}
-												else
-												{
-													canv.boundary.bh.style.left=parseInt(canv.boundary.style.width)/2-5;
-													canv.boundary.bh.style.top=parseInt(canv.boundary.style.height)-5;
-												}
-											};	
-   this.boundary.bh.DD.onMouseUp=function(e) {
-								var scy;
-								for (var s=0;s<selected.length;s++)
-								{
-									if (selected[s].path[2]=='rounded_square')
-									{
-										scy = parseInt(selected[s].boundary.style.height)/selected[s].bheight;
-										selected[s].scy=scy;
-										selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
-										selected[s].bwidth=parseInt(selected[s].boundary.style.width);
-										selected[s].bheight=parseInt(selected[s].boundary.style.height);
-										drawrndsq(selected[s]);
-									}
-									else
-									{
-										scy = parseInt(selected[s].boundary.style.height)/selected[s].bheight;
-										selected[s].scy=scy;										
-										selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;	
-										for (var i=3; i<selected[s].path.length ;i++)
-										{
-											for (var k=2;k<selected[s].path[i].length; k+=2)
-											{
-												selected[s].path[i][k] =selected[s].btop+(selected[s].path[i][k]-selected[s].btop)*scy;
-											}
-										}
-										selected[s].bwidth=parseInt(selected[s].boundary.style.width);
-										selected[s].bheight=parseInt(selected[s].boundary.style.height);
-										drawline(selected[s])
-									}
-								};
-							  };
-
-					
-	return this.boundary;
-}
 
 
 function markLine(canv)

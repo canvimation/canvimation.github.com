@@ -224,7 +224,6 @@ function addCtrl1Mark()
    this.c1mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			//$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			$("backstage").style.visibility="hidden";

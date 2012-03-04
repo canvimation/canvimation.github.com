@@ -176,7 +176,6 @@ function Shape(name,open,editable,type)
    	this.centreOfRotation=p;
    	this.phi=0;  //angle of rotation
    	this.rotated=false;
-   	this.ratio=this.bheight/this.bwidth;
    	this.strokeStyle=[0,0,0,1];
    	this.fillStyle=[255,255,255,1];
    	this.lineWidth = 1;
@@ -199,7 +198,6 @@ function Shape(name,open,editable,type)
    	this.rotate=0;
    	this.clockw=true;
    	this.complete=false;
-   	this.group=[];
    	this.beztypes=[];
    	this.crnradius=10;
    	p=new Point("end","end");
@@ -223,7 +221,7 @@ function Shape(name,open,editable,type)
    	this.drawBezGuides=drawBezGuides;
    	this.setCorners=setCorners;
    	this.fixCorners=fixCorners;
-   	//this.addBoundary=addBoundary;
+   	this.inAgroup=inAgroup;
    	this.isOn=isOn;
    	this.isIn=isIn;
    	this.elType=elType;
@@ -792,7 +790,7 @@ function fixCorners()  //shapes other than freeform or curve
 
 
 
-function showtools(canv)
+function showTools(shape)
 {
 	$('stylelines').style.visibility='visible';
 	$('collines').style.visibility='visible';
@@ -803,7 +801,8 @@ function showtools(canv)
 	$('copy').style.visibility='visible';
 	$('vert').style.visibility='visible';
 	$('horz').style.visibility='visible';
-	if (canv.path[0]=='closed')
+	$('sname').style.visibility='visible'
+	if (!shape.open)
 	{
 		$('colfill').style.visibility='visible';
 		$('gradfill').style.visibility='visible';
@@ -811,6 +810,126 @@ function showtools(canv)
 	}
 }
 
-       
+function setTools()
+{
+	var slctd=$("boundarydrop").childNodes;
+	var nslctd=slctd.length;
+	if(nslctd==1)
+	{
+		var boundary=slctd[0];
+		var members=boundary.group.memberShapes;
+		if(members.length==1)
+		{
+			if(members[0].editable)
+			{
+				$('editlines').style.visibility="visible";
+				$('ungroup').style.visibility="hidden";
+				$('group').style.visibility="hidden";
+			}
+			else if (members[0].inAgroup())
+			{
+				$('ungroup').style.visibility="visible";
+				$('editlines').style.visibility="hidden";
+				$('group').style.visibility="hidden";
+			}
+		}
+	}
+	else
+	{
+		$('ungroup').style.visibility="hidden";
+		$('editlines').style.visibility="hidden";
+		$('group').style.visibility="visible";
+		$('alntop').style.visibility='visible';
+		$('alnbot').style.visibility='visible';
+		$('alnleft').style.visibility='visible';
+		$('alnright').style.visibility='visible';
+		$('alntop').style.top=280;
+		$('alnbot').style.top=300;
+		$('alnleft').style.top=280;
+		$('alnright').style.top=280;
+		if ($('colfill').style.visibility=='visible')  //one of selected shapes is closed
+		{
+			$('alntop').style.top=380;
+			$('alnbot').style.top=400;
+			$('alnleft').style.top=380;
+			$('alnright').style.top=380;
+		}
+	}
+}
+      
+function hideTools()
+{
+	$('editlines').style.visibility='hidden';
+	$('shapemenu').style.visibility='hidden';
+	$('group').style.visibility='hidden';
+	$('ungroup').style.visibility='hidden';
+	$('stylelines').style.visibility='hidden';
+	$('collines').style.visibility='hidden';
+	$('colfill').style.visibility='hidden'
+	$('gradfill').style.visibility='hidden';
+	$('rotate').style.visibility='hidden';
+	$('front').style.visibility='hidden';
+	$('back').style.visibility='hidden';
+	$('del').style.visibility='hidden';
+	$('copy').style.visibility='hidden';
+	$('vert').style.visibility='hidden';
+	$('horz').style.visibility='hidden';
+	$('alntop').style.visibility='hidden';
+	$('alnbot').style.visibility='hidden';
+	$('alnleft').style.visibility='hidden';
+	$('alnright').style.visibility='hidden';
+	$('shadow').style.visibility='hidden';
+	$('sname').style.visibility='hidden';
+}
 
+function shapecopy()
+{
+	for(var groupName in SELECTED)
+	{
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.edit,shape.title);
+			for(var property in shape)
+			{
+				copy.property=shape.property
+			}
+   			copy.tplftcrnr+=5; //coordinates of top left of boundary box;
+   			copy.btmrgtcrnr+=5; //coordinates of bottom right of boundary box;
+   			var p=new Point(shape.centreOfRotation.x+5,shape.centreOfRotation.x+5);
+   			copy.centreOfRotation=p;
+   			for(var i=0; i<4;i++)
+   			{
+   				copy.strokeStyle[i]=shape.strokeStyle[i];
+   				copy.lineGrad[i]=shape.lineGrad[i]+5;
+   				copy.shadowColor=shape.shadowColor;
+   			}
+   			copy.radGrad[0]=shape.radGrad[0]+5;
+   			copy.radGrad[1]=shape.radGrad[1]+5;
+   			copy.radGrad[2]=shape.radGrad[2];
+   			copy.radGrad[3]=shape.radGrad[3]+5;
+   			copy.radGrad[4]=shape.radGrad[4]+5;
+   			copy.radGrad[5]=shape.radGrad[5];
+   			for(var i=0;i<shape.colorStops.length;i++)
+   			{
+   				for(var j=0;j<shape.colorStops[i].length;j++)
+   				{
+   					copy.colorStops[i][j]=shape.colorStops[i][j];
+   				}
+   			}
+   			copy.zIndex=ZPOS++;
+   			for(var i=0;i<shape.beztypes.length;i++)
+   			{
+   				copy.beztypes[i]=shape.beztypes[i];
+   			}
+   			p=new Point("end","end");
+   			this.path=new Node(p); //got to do this complicated
+   			this.path.next=this.path;
+   			this.path.prev=this.path;
+   			this.group=new Group(this);
 
+		}
+	}
+}

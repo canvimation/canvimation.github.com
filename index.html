@@ -111,11 +111,16 @@ img.marker {
 
 .head {
 	background-color: #000000;
+
 	color: #FFFFFF;
 	font-size:12pt;
 	font-weight: bold;
 	height:25px;
 	width: 100%;
+}
+
+.head img {
+	float:right;
 }
 
 .content {
@@ -501,42 +506,22 @@ div.bar {
 }
 
 #colorcont {
-	height:391px;
-	width:531px;
-	clip:rect(0,550px,410px,0);
-	
-	visibility:hidden;
+	height:411px;
+	width:335px;//531px;
+	clip:rect(1,550px,430px,0);
 }
 
-#colorhead {
-	height:25px;
-	width:531px;
-	border:1px solid black;
-	background-color:#000000;
-	color:#FFFFFF;
-}
-
-#colXD {
-	top:0px;
-	left:506px;
-	height:25px;
-	border-left:#FFFFFF medium solid;
-}
-
-
-#colupD {
-	top:0px;
-	left:481px;
-	height:25px;
-	border-left:#FFFFFF medium solid;
+#colormask {
+	height:380px;
+	width:325px;//531px;
+	background-color:#FFFFFF;
 }
 
 #colorpick {
 	top:25px;
 	left:0px;
-	height:366px;
-	width:531px;
-	border:1px solid black;
+	height:386px;
+	width:335px;//531px;
 	background-color:#FFFFFF;
 }
 
@@ -594,8 +579,8 @@ div.bar {
 }
 
 #colform {
-	top:330px;
-	left:350px;
+	top:350px;
+	left:15px;
 }
 #varrows {
 	width:9px;
@@ -610,7 +595,7 @@ div.bar {
 }
 
 #hueBarDiv {
-	left:310px;
+	left:280px;
 	width:35px;
 	height:256px;
 	top:15px;
@@ -625,6 +610,35 @@ div.bar {
 	height:9px;
 	width:35px;
 	left:0px;
+}
+
+#coldigits {
+	left:155px;//370px;
+	width:180px;
+	height:256px;
+	top:15px;
+}
+
+#colvertline {
+	width:10px; 
+	height:386px; 
+	background-color: #888888; 
+	left:170px;
+	top:-15px;
+}
+
+#quickColor {
+	height:50px;
+	width:73px;
+	top:0px;
+	left:0px;	
+}
+
+#staticColor {
+	height:50px;
+	width:72px;
+	top:0px;
+	left:73px;
 }
 
 .choice40 {
@@ -706,20 +720,6 @@ div.bar {
 	left:25px; 
 }
 
-#quickColor {
-	height:50px;
-	width:73px;
-	top:0px;
-	left:0px;	
-}
-
-#staticColor {
-	height:50px;
-	width:72px;
-	top:0px;
-	left:73px;
-}
-
 #fopts {
 	left:110px;
 	top:50px;
@@ -761,6 +761,7 @@ div.bar {
 <script type="text/javascript" src = "scripts/mark.js" ></script>
 <script type="text/javascript" src = "scripts/shape.js" ></script>
 <script type="text/javascript" src = "scripts/draw.js" ></script>
+<script type="text/javascript" src = "scripts/dialogue.js" ></script>
 
 <script type="text/javascript" src = "scripts/drawboundary.js" ></script>
 <script type="text/javascript" src = "scripts/corner.js" ></script>
@@ -1185,189 +1186,7 @@ function shapedelete()
 }
 
 
-function shapecopy(showcopy,asset,type)
-{
-	var tempsel=[];
-	var disp=0; //displacement;
-	if (showcopy) {disp=10};
-	var gpl=gp.length;
-	var ncanvnum=blocknum;
-	var sgl;
-	var minz=20005000;
-	for (var i=0; i<selected.length;i++)
-	{
-		if (selected[i].zIndex<minz) {minz=selected[i].zIndex}
-	}
-	var nczpos=zpos-minz;
-	for (var i=0; i<selected.length;i++)
-	{
-		ncanvas=new Canvasdiv(blocknum++,[selected[i].path[0],selected[i].path[1]]);
-		if (!showcopy)
-		{
-			ncanvas.parentNode.removeChild(ncanvas);
-			switch(type)
-			{
-				case "scene":
-					asset.cars.push(ncanvas);
-				break;
-				case "sprite":
 
-				break;
-				case "tween":
-			
-				break;
-				case "track":
-					asset.line=ncanvas;
-				break
-				case "film":
-			
-				break
-			
-			}
-		}
-		ncanvas.path[2]=selected[i].path[2];
-		for (j=3;j<selected[i].path.length;j++)
-		{
-			ncanvas.path[j]=[];
-			ncanvas.path[j][0]=selected[i].path[j][0]
-			for (k=1; k<selected[i].path[j].length;k++)
-			{
-				ncanvas.path[j][k]=selected[i].path[j][k]+ disp;
-			}
-		}
-		ncanvas.bleft =   selected[i].bleft+ disp;
-   		ncanvas.btop =   selected[i].btop+ disp;
-   		ncanvas.bwidth =   selected[i].bwidth;
-   		ncanvas.bheight =   selected[i].bheight;
-   		ncanvas.scleft =   selected[i].scleft+ disp;
-   		ncanvas.sctop =   selected[i].sctop+ disp;
-   		ncanvas.scx =   selected[i].scx;
-   		ncanvas.scy =   selected[i].scy;
-   		ncanvas.sox =   selected[i].sox+ disp;
-   		ncanvas.soy =   selected[i].soy+ disp;
-   		ncanvas.ox =   selected[i].ox+ disp;
-   		ncanvas.oy =   selected[i].oy+ disp;
-   		ncanvas.cx =   selected[i].cx+ disp;
-   		ncanvas.cy =   selected[i].cy+ disp;
-   		ncanvas.rr =   selected[i].rr;
-   		ncanvas.phi =   selected[i].phi;
-   		ncanvas.rotated =   selected[i].rotated;
-   		ncanvas.ratio =   selected[i].ratio;
-		for (var j=0; j<selected[i].strokeStyle.length;j++)
-		{
-   			ncanvas.strokeStyle[j]=   selected[i].strokeStyle[j];
-		}
-   		for (var j=0;j<selected[i].fillStyle.length;j++)
-		{
-			ncanvas.fillStyle[j]=   selected[i].fillStyle[j];
-		}
-   		ncanvas.lineWidth  =   selected[i].lineWidth ;
-   		ncanvas.lineCap  =   selected[i].lineCap ;
-   		ncanvas.lineJoin  =   selected[i].lineJoin ;
-   		ncanvas.justfill =   selected[i].justfill;
-   		ncanvas.linearfill =   selected[i].linearfill;
-		for (var j=0; j<selected[i].lineGrad.length; j++)
-		{
-   			ncanvas.lineGrad[j] =   selected[i].lineGrad[j]+ disp;
-		}
-		for (var j=0; j<selected[i].radGrad.length;j++)
-   		{
-			ncanvas.radGrad[j] =   selected[i].radGrad[j];
-		}
-		ncanvas.radGrad[0]+=10;
-		ncanvas.radGrad[1]+=10;
-		ncanvas.radGrad[3]+=10;
-		ncanvas.radGrad[4]+=10;
-		for (var j=0; j<selected[i].colorStops.length; j++)
-		{
-			for (var k=0; k<selected[i].colorStops[j].length;k++)
-			{
-				ncanvas.colorStops[j][k] =   selected[i].colorStops[j][k];
-			}
-		}
-   		ncanvas.stopn =   selected[i].stopn;
-   		ncanvas.shadow =   selected[i].shadow;
-   		ncanvas.shadowOffsetX  =   selected[i].shadowOffsetX ;
-   		ncanvas.shadowOffsetY  =   selected[i].shadowOffsetY ;
-   		ncanvas.shadowBlur  =   selected[i].shadowBlur ;
-		for (var j=0; j<selected[i].shadowColor.length;j++)
-   		{
-			ncanvas.shadowColor[j]  =   selected[i].shadowColor[j] ;
-		}
-   		ncanvas.ScaleX =   selected[i].ScaleX;
-   		ncanvas.ScaleY =   selected[i].ScaleY;
-   		ncanvas.zIndex =   selected[i].zIndex+nczpos;
-   		ncanvas.style.zIndex =   ncanvas.zIndex;
-		zpos++;
-   		ncanvas.rotate =   selected[i].rotate;
-   		ncanvas.clockw =   selected[i].clockw;
-   		ncanvas.complete =   selected[i].complete;
-		for (var j=0;j<selected[i].group.length;j++)
-		{
-   			ncanvas.group[j] =   selected[i].group[j]+gpl;
-		}
-		for (var j=0;j<selected[i].beztypes.length;j++)
-		{
-   			ncanvas.beztypes =   selected[i].beztypes;
-		}
-
-		sgl=selected[i].group.length;
-		for (var s=0; s<sgl; s++)
-		{
-			ncindex=selected[i].group[s]+gpl;
-			if (!(ncindex in gp)) {gp[ncindex]=[]};
-			if(gp[ncindex].indexOf(ncanvas)==-1) {gp[ncindex].push(ncanvas)};
-		} 
-		tempsel.push(ncanvas);
-		if (showcopy) {drawline(ncanvas)};
-	}
-	var bd=$('bodydiv');
-	var bdc=$('bodydiv').childNodes;
-	while(bdc.length>0)
-	{
-		if (bd.firstChild.id.substr(0,8)=='boundary')
-		{
-			bd.firstChild.canvas.boundary='empty';
-		}
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=$('bodydiv').childNodes;
-	}
-	selected=tempsel;
-
-	sl=selected.length;
-	gpinxlist=[];
-	for (var i=0;i<sl;i++)
-	{
-		g=getmaxmin(selected[i].path);
-		selected[i].bleft=g.mnx;
-		selected[i].bwidth=g.mxx-g.mnx;
-		selected[i].btop=g.mny;
-		selected[i].bheight=g.mxy-g.mny;
-		sg=selected[i].group;
-		if (gpinxlist.indexOf(sg[sg.length-1])==-1)
-		{
-			gpinxlist.push(sg[sg.length-1])
-		}		
-	} 
-	if (showcopy)
-	{
-		if (gpinxlist.length==0)
-		{
-			for (var i=0;i<sl;i++)
-			{
-				selected[i].createBoundary();
-			} 
-		}
-		else
-		{
-			gpinxlist.sort(asnum);
-			for (var i=0; i<gpinxlist.length; i++)
-			{
-				reboundary(gpinxlist[i]);
-			} 
-		}
-	}	
-}
 
 
 function bringfront()
@@ -1422,43 +1241,7 @@ function sendback()
 	}
 }
 
-function colopcl()
-{
-	if (coldir=='up')
-	{
-		coldir='down';
-		$('colup').src='assets/down.png';
-		setTimeout(function () {colclosediv()},50);
-	}
-	else
-	{
-		coldir='up';
-		$('colup').src='assets/up.png';
-		setTimeout(function () {colopendiv()},50);
-	};
-	
-	function colclosediv()
-	{
-		var lbody=$('colorpick');
-		if (parseInt(lbody.style.top)+parseInt(lbody.style.height)>25)
-		{
-			lbody.style.top = parseInt(lbody.style.top)-10;
-			$('colorcont').style.height=parseInt($('colorcont').style.height)-10
-			setTimeout(function () {colclosediv()},10)
-		}
-	}
-	
-	function colopendiv()
-	{
-		var lbody=$('colorpick'); 
-		if (parseInt(lbody.style.top)<25)
-		{
-			lbody.style.top = parseInt(lbody.style.top)+10;
-			$('colorcont').style.height=parseInt($('colorcont').style.height)+10
-			setTimeout(function () {colopendiv()},10)
-		}
-	}
-}
+
 
 function undolast()
 {
@@ -1859,7 +1642,14 @@ function main()
 	$("markerdrop").onclick=function(e) {
 	   										noBubble(e);
 	   										checkBoundary(shiftdown(e),getPosition(e));
+	   										//BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   										//$("backstage").style.visibility="hidden";
 	   									}
+	 $("boundarydrop").onclick=function(e) {
+	   										noBubble(e);
+	   										checkBoundary(shiftdown(e),getPosition(e));
+	   									}  									
+	
 	canvwidth=0.98*screen.availWidth;
 	canvheight=0.785*screen.availHeight;
 	maxwidth=canvwidth;
@@ -1971,11 +1761,14 @@ function main()
 	$('animationdiv').style.width=maxwidth;
 
 	$('colorcont').style.left= (canvwidth-525);
-	$('colorcont').style.top= (canvheight-361)/2;
-	$('colorcont').style.height=391;
+	$('colorcont').style.top= (canvheight-380)/2;
+	$('colorcont').style.height=411;
+	$('colorcont').style.width=335;
 	
 	$('colorpick').style.top=25;
-	$('colorpick').style.height=366;	
+	$('colorpick').style.height=386;
+	
+	$("coldigits").style.left=155;	
 	
 	$('export').style.visibility='visible';
 	$('visit').style.visibility='visible';
@@ -2044,10 +1837,6 @@ function main()
 	DDcc=new YAHOO.util.DD('colorcont');
 	DDcc.setHandleElId('colorhead');
 
-	$('colXD').onclick=function() {
-	   									$('colorcont').style.visibility='hidden';
-														
-								};
 	fixGradientImg();
 	
 	colorChanged('box');
@@ -2255,9 +2044,9 @@ function main()
 <div id="filmstage" class="theatre_style"></div>
 
 <div id="stageframe"></div>
-
+<!--dialogue box setting stage width and height-->
 <div id='stagebox' class="dialoguebox">
-	<div id='stagehead' class='head'> New Stage</div>
+	<div id='stagehead' class='head'>&nbsp; New Stage</div>
 	<div id='stagecontent' class='content'>
 		<p class="text_input">
 			<label for="stagewidth">Width</label> <input type="text" name"stagewidth" id="stagewidth" value=1000 size=5/><span>px</span>
@@ -2272,9 +2061,57 @@ function main()
 <canvas id='gridcanvas'> </canvas>
 <div id="backstage" class="theatre_style"></div>
 <div id="markerdrop" class="theatre_style" ></div>
+<div id="boundarydrop" class="theatre_style" ></div>
 
-<div id='colorcont'>
+<!--dialogue box for colour picker-->
+<div id='colorcont' class="dialoguebox">
   <div id='colorpick' >
+  	  <div id="coldigits" >
+      	<div style="border: 1px solid black;height:50px;width:145px;top:0px;left:0px;">
+        	<div id="quickColor"></div>
+        	<div id="staticColor"></div>
+      	</div>
+      	<table width=145 style="position:absolute;top:55px;">
+       	 <tr>
+	          <td>Hex: </td>
+    	      <td><input style="margin:0.3em;" size="8" type="text" id="hexBox" onChange="hexBoxChanged();" />
+        	  </td>
+	        </tr>
+    	    <tr>
+        	  <td>Red: </td>
+	          <td><input style="margin:0.3em;" size="8" type="text" id="redBox" onChange="redBoxChanged();" />
+	          </td>
+    	    </tr>
+        	<tr>
+	          <td>Green: </td>
+    	      <td><input style="margin:0.3em;" size="8" type="text" id="greenBox" onChange="greenBoxChanged();" />
+        	  </td>
+	        </tr>
+	        <tr>
+    	      <td>Blue: </td>
+        	  <td><input style="margin:0.3em;" size="8" type="text" id="blueBox" onChange="blueBoxChanged();" />
+	          </td>
+    	    </tr>
+        	<tr>
+	          <td>Hue: </td>
+	          <td><input style="margin:0.3em;" size="8" type="text" id="hueBox" onChange="hueBoxChanged();" />
+    	      </td>
+        	</tr>
+	        <tr>
+    	      <td>Saturation: </td>
+        	  <td><input style="margin:0.3em;" size="8" type="text" id="saturationBox" onChange="saturationBoxChanged();" />
+	          </td>
+    	    </tr>
+        	<tr>
+	          <td>Value: </td>
+    	      <td><input style="margin:0.3em;" size="8" type="text" id="valueBox" onChange="valueBoxChanged();" />
+        	  </td>
+	        </tr>
+    	  </table>
+    	  <div id="colvertline"><img id="colptr" src="assets/openpointer.png" style="position: absolute; top: 183px" onclick="colexpand()"/></div>
+	    </div>
+    <div id='colormask'></div>	
+  
     <div id='colform' >
       <input type="button" id="OKbut" value="OK" onClick="setColor();closeColor()">
 	  <input type="button" id="Applybut" value="Apply" onClick="setColor()">
@@ -2289,57 +2126,12 @@ function main()
     <div id="gradientBox" style=""> <img id="gradientImg" src="assets/color_picker_gradient.png" /> <img class='marker' id="circle" src="assets/color_picker_circle.gif" /> </div>
     <div id="hueBarDiv" style=""> <img class='marker' id='colorbar' src="assets/color_picker_bar.png" /> <img class='marker' id="arrows" src="assets/color_picker_arrows.gif" /> <br />
     </div>
-    <div style="left:370px;width:145px;height:256px;top:15px;">
-      <div style="border: 1px solid black;height:50px;width:145px;top:0px;left:0px;">
-        <div id="quickColor"></div>
-        <div id="staticColor"></div>
-      </div>
-      <br />
-      <table width="100%" style="position:absolute;top:55px;">
-        <tr>
-          <td>Hex: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="hexBox" onChange="hexBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Red: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="redBox" onChange="redBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Green: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="greenBox" onChange="greenBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Blue: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="blueBox" onChange="blueBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Hue: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="hueBox" onChange="hueBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Saturation: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="saturationBox" onChange="saturationBoxChanged();" />
-          </td>
-        </tr>
-        <tr>
-          <td>Value: </td>
-          <td><input style="margin:0.3em;" size="8" type="text" id="valueBox" onChange="valueBoxChanged();" />
-          </td>
-        </tr>
-      </table>
-    </div>
   </div>
-  </center>
-  <div id='colorhead'>
-    <div id='colorheadtext'> Line Colour </div>
-    <div id='colupD' onclick='colopcl()'> <img id='colup' src='assets/up.png' /> </div>
-    <div id='colXD'> <img id='colX' src='assets/x.png' /> </div>
-  </div>
+  <div id='colorhead' class="head">
+    	<div id="colorheadtext">&nbsp; Line Colour</div>
+    	<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"colorpick")'/>
+  </div>  
 </div>
 
 <div id='anibar'>
@@ -2420,7 +2212,7 @@ Film Elements from back to front.<br>
   <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
   <div class="choice40" id='grid'  alt="set grid" title="set grid" onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/grid.png"> </div>
   <div class="choice40" id='del'  alt="delete" title="delete" onclick="shapedelete()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/delete.png"> </div>
-  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy(true)" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
+  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
   <div class="choice40" id='vert'  alt="flip vertical" title="flip vertical" onclick="flipvert()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/vert.png"> </div>
   <div class="choice40" id='horz'  alt="flip horizontal" title="flip horizontal" onclick="fliphorz()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/horz.png"> </div>
   <div class="choice40" id='alntop'  alt="align top" title="align top" onclick="aligntop()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alntop.png"> </div>

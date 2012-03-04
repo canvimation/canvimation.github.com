@@ -313,9 +313,11 @@ function setColor()
 		for(var groupName in SELECTED)
 		{
 			var group=SELECTED[groupName];
+
 			var shapeNames=group.memberShapes();
 			for(var name in shapeNames)
 			{
+				shape=shapeNames[name];
 				shape.justfill=true;
 				shape.fillStyle[0]=$("redBox").value;
 				shape.fillStyle[1]=$("greenBox").value;
@@ -334,6 +336,7 @@ function setColor()
 			var shapeNames=group.memberShapes();
 			for(var name in shapeNames)
 			{
+				shape=shapeNames[name];
 				shape.shadowColor[0]=$("redBox").value;
 				shape.shadowColor[1]=$("greenBox").value;
 				shape.shadowColor[2]=$("blueBox").value;
@@ -350,6 +353,7 @@ function setColor()
 			var shapeNames=group.memberShapes();
 			for(var name in shapeNames)
 			{
+				shape=shapeNames[name];
 				shape.strokeStyle[0]=$("redBox").value;
 				shape.strokeStyle[1]=$("greenBox").value;
 				shape.strokeStyle[2]=$("blueBox").value;

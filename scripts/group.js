@@ -31,7 +31,7 @@ function Group(shape)   //Group object contains shapes and groups in group
 
 function inAgroup()
 {
-	return (this.members.length>1)
+	return (this.group.members.length>1)
 }
 
 function elType()

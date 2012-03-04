@@ -42,13 +42,17 @@ function shapeMenu()
 	   							var shape=new Shape("Shape"+(SCOUNT++),this.open,this.edit,this.title);
 	   							$("markerdrop").style.visibility="hidden";
 	   							clear($("markerdrop"));
+	   							$("boundarydrop").style.visibility="hidden";
+	   							clear($("boundarydrop"));
 	   							BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   							SELECTED={};
 	   							BCOUNT=0;
 	   							$("backstage").style.visibility="hidden";
+	   							
 	   							shape.addTo($("shapestage"));
 	   							shape.Canvas.style.cursor="crosshair";
-	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))}
+	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))};
+	   							hideTools();
 	   					}
 	   this.elmRef.appendChild(this.img);
    }
