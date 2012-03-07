@@ -890,6 +890,7 @@ var SCOUNT=0; //counter for shapes
 var GCOUNT=0; //counter for groups
 var ZPOS=1; //zindex for each shape as created or set to front
 var ZNEG=-1; //zindex for shapes when zindex sent to back
+var ZSTART,ZOFFSET; //ensure z-order maintained when copying shapes;
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 var DEFAULTKEYDOWN=document.onkeydown;
 var BACKDROP; // object where backstage canvas is added for bezguides;
@@ -2212,7 +2213,7 @@ Film Elements from back to front.<br>
   <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
   <div class="choice40" id='grid'  alt="set grid" title="set grid" onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/grid.png"> </div>
   <div class="choice40" id='del'  alt="delete" title="delete" onclick="shapedelete()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/delete.png"> </div>
-  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
+  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy(10)" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
   <div class="choice40" id='vert'  alt="flip vertical" title="flip vertical" onclick="flipvert()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/vert.png"> </div>
   <div class="choice40" id='horz'  alt="flip horizontal" title="flip horizontal" onclick="fliphorz()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/horz.png"> </div>
   <div class="choice40" id='alntop'  alt="align top" title="align top" onclick="aligntop()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alntop.png"> </div>

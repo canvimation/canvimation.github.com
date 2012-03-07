@@ -30,7 +30,7 @@ function draw()
 	   	node=node.next;
 	   	if (node.vertex=="L")
 	   	{ 
-		    this.Canvas.ctx.lineTo(node.point.x,node.point.y)
+		    this.Canvas.ctx.lineTo(node.point.x,node.point.y);
 	   	}
 	   	else 
 	   	{

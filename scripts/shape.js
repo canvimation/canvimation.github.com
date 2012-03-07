@@ -25,6 +25,7 @@ function Node(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
+		this.corner="blank";
 		this.vertex="L";
 	}
 	this.next="";
@@ -164,15 +165,16 @@ function Shape(name,open,editable,type)
    	this.editable=editable;
    	this.type=type;
    	this.psuid=this.id;
-   	this.tplftcrnr; //coordinates of top left of boundary box;
-   	this.btmrgtcrnr; //coordinates of bottom right of boundary box;
+   	var p=new Point(0,0);
+   	this.tplftcrnr=p; //coordinates of top left of boundary box;
+   	this.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
    	this.scx=1;
    	this.scy=1;
    	this.sox=0;
    	this.soy=0;
    	this.ox=0;
    	this.oy=0;
-   	var p=new Point(0,0);
+   	p=new Point(0,0);
    	this.centreOfRotation=p;
    	this.phi=0;  //angle of rotation
    	this.rotated=false;
@@ -210,8 +212,6 @@ function Shape(name,open,editable,type)
    	
    	//methods
    	this.addTo=addTo;
-   	this.getTop=getTop;
-   	this.getLeft=getLeft;
    	this.setPath=setPath;
    	this.addNode=addNode;
    	this.draw=draw;
@@ -255,17 +255,6 @@ function addTo(theatre)
         this.Canvas.ctx = this.Canvas.getContext('2d');
     }
     this.Canvas.shape=this;
-}
-
-
-function getTop()
-{
-	return parseInt(this.style.top);
-}
-
-function getLeft()
-{
-	return parseInt(this.style.left);
 }
 
 function setPath(cursor)
@@ -610,7 +599,16 @@ function drawEnd(cursor)
    	this.group.top= this.tplftcrnr.y;
    	this.group.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
    	this.group.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
-	this.group.ratio = this.group.height/this.group.width;
+   	if(!this.editable)
+   	{
+   		$("boundarydrop").style.visibility="visible";
+   		this.group.drawBoundary();
+		SELECTED[this.group.name]=this.group;
+		SELECTEDSHAPE=this;
+		hideTools();
+		showTools(this);
+		setTools();
+   	}
 }
 
 function setRndRect() //bottom right corner
@@ -882,54 +880,104 @@ function hideTools()
 	$('sname').style.visibility='hidden';
 }
 
-function shapecopy()
+function shapecopy(offset)
 {
-	for(var groupName in SELECTED)
+	ZSTART=ZPOS;
+	ZOFFSET=ZPOS-ZNEG;
+	SELECTED={};
+	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
 	{
-		var group=SELECTED[groupName];
-		var shapeNames=group.memberShapes();
-		for(var name in shapeNames)
-		{
-			shape=shapeNames[name];
-			var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.edit,shape.title);
-			for(var property in shape)
-			{
-				copy.property=shape.property
-			}
-   			copy.tplftcrnr+=5; //coordinates of top left of boundary box;
-   			copy.btmrgtcrnr+=5; //coordinates of bottom right of boundary box;
-   			var p=new Point(shape.centreOfRotation.x+5,shape.centreOfRotation.x+5);
-   			copy.centreOfRotation=p;
-   			for(var i=0; i<4;i++)
-   			{
-   				copy.strokeStyle[i]=shape.strokeStyle[i];
-   				copy.lineGrad[i]=shape.lineGrad[i]+5;
-   				copy.shadowColor=shape.shadowColor;
-   			}
-   			copy.radGrad[0]=shape.radGrad[0]+5;
-   			copy.radGrad[1]=shape.radGrad[1]+5;
-   			copy.radGrad[2]=shape.radGrad[2];
-   			copy.radGrad[3]=shape.radGrad[3]+5;
-   			copy.radGrad[4]=shape.radGrad[4]+5;
-   			copy.radGrad[5]=shape.radGrad[5];
-   			for(var i=0;i<shape.colorStops.length;i++)
-   			{
-   				for(var j=0;j<shape.colorStops[i].length;j++)
-   				{
-   					copy.colorStops[i][j]=shape.colorStops[i][j];
-   				}
-   			}
-   			copy.zIndex=ZPOS++;
-   			for(var i=0;i<shape.beztypes.length;i++)
-   			{
-   				copy.beztypes[i]=shape.beztypes[i];
-   			}
-   			p=new Point("end","end");
-   			this.path=new Node(p); //got to do this complicated
-   			this.path.next=this.path;
-   			this.path.prev=this.path;
-   			this.group=new Group(this);
+		var group=$("boundarydrop").childNodes[i].group;
+		var groupcopy=copyGroup(group,offset,$("shapestage"));
+		SELECTED[groupcopy.name]=groupcopy;
+	}
+	clear($("boundarydrop"));
+	for(var name in SELECTED)
+	{
+		SELECTED[name].drawBoundary();
+	}
+	ZPOS=ZSTART+ZOFFSET;
+}
 
+function shapetransfer(theatre)
+{
+	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
+	{
+		var group=$("boundarydrop").childNodes[i].group;
+		var groupcopy=copyGroup(group,0,theatre);
+	}
+}
+
+function makeCopy(shape,offset,theatre)
+{
+	var p,n,c1,c2;
+	var non=new Point("non","non");
+	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.edit,shape.title);
+	for(var property in shape)
+	{
+		copy.property=shape.property;
+	}
+	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
+	copy.tplftcrnr=p; //coordinates of top left of boundary box;
+	p=new Point(shape.btmrgtcrnr.x+offset,shape.btmrgtcrnr.y+offset);
+	copy.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
+	p=new Point(shape.centreOfRotation.x+offset,shape.centreOfRotation.y+offset);
+	copy.centreOfRotation=p;
+	for(var i=0; i<4;i++)
+	{
+		copy.fillStyle[i]=shape.fillStyle[i];
+		copy.strokeStyle[i]=shape.strokeStyle[i];
+		copy.lineGrad[i]=shape.lineGrad[i]+offset;
+		copy.shadowColor=shape.shadowColor;
+	}
+	copy.radGrad[0]=shape.radGrad[0]+offset;
+	copy.radGrad[1]=shape.radGrad[1]+offset;
+	copy.radGrad[2]=shape.radGrad[2];
+	copy.radGrad[3]=shape.radGrad[3]+offset;
+	copy.radGrad[4]=shape.radGrad[4]+offset;
+	copy.radGrad[5]=shape.radGrad[5];
+	for(var i=0;i<shape.colorStops.length;i++)
+	{
+		for(var j=0;j<shape.colorStops[i].length;j++)
+		{
+			copy.colorStops[i][j]=shape.colorStops[i][j];
 		}
 	}
+	copy.zIndex=shape.zIndex+ZSTART+ZOFFSET;
+	for(var i=0;i<shape.beztypes.length;i++)
+	{
+		copy.beztypes[i]=shape.beztypes[i];
+	}
+	p=new Point("end","end");
+	copy.path=new Node(p); //got to do this complicated
+	copy.path.next=copy.path;
+	copy.path.prev=copy.path;
+	var node=shape.path.next;
+	while(node.point.x!="end")
+	{
+		p=new Point(node.point.x+offset,node.point.y+offset);
+		if(node.ctrl1.x=="non")
+		{
+			c1=non;
+		}
+		else
+		{
+			c1=new Point(node.ctrl1.x+offset,node.ctrl1.y+offset);
+		}
+		if(node.ctrl2.x=="non")
+		{
+			c2=non;
+		}
+		else
+		{
+			c2=new Point(node.ctrl2.x+offset,node.ctrl2.y+offset);
+		}
+		n=new Node(p,c1,c2);
+		n.corner=node.corner;
+		n.vertex=node.vertex;
+		n.shape=copy;
+		copy.addNode(n);
+		node=node.next;
+	}
+	return copy;
 }

@@ -17,8 +17,8 @@ function checkBoundary(shiftdown,cursor)
 		closeColor();
 		SELECTED={};
 		BCOUNT=0;
-		$('colfill').style.visibility='hidden';
 		clear($("markerdrop"));
+		clear($("boundarydrop"));
 	}
 	var shape, foundshape;
 	var shapefound=false;
@@ -79,7 +79,7 @@ function checkBoundary(shiftdown,cursor)
 			}
 		}
 	}
-	
+
 	
 							  
 /*			
@@ -206,6 +206,7 @@ function drawBoundary()
 	this.boundary.bh = new BottomH(this.boundary);
 	this.boundary.bh.DD = new YAHOO.util.DD(this.boundary.bh.id); 
    	$("boundarydrop").appendChild(this.boundary);
+   
    	this.boundary.DD=new YAHOO.util.DD(this.boundary.id);
    	this.boundary.DD.onDrag=function (e) {
    											noBubble(e);

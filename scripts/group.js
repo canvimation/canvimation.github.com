@@ -14,7 +14,6 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.top;
 	this.width;
 	this.height;
-	this.ratio;
 	
 	if(arguments.length>0)
 	{
@@ -94,7 +93,7 @@ function Union(A,B)
 	return S;
 }
 
-function groupSELECTED()  //groups together those shapes and groups with drawn boundaries
+function groupJoin()  //groups together array of  groups  place $("boundarydrop").childNodes[].group into any array before using for group by boundaries
 {
 	var group=new Group();
 	var SELgroup;
@@ -102,9 +101,9 @@ function groupSELECTED()  //groups together those shapes and groups with drawn b
 	var top=1000000;
 	var right=-1000000;
 	var bottom=-1000000;
-	for(var i=0;i<$("markerdrop").childNodes.length;i++)  //child nodes are drawn boundaries
+	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
 	{
-		 SELgroup=$("markerdrop").childNodes[i].group;  //gets group surrounded by boundary
+		 SELgroup=$("boundarydrop").childNodes[i].group;  //gets group surrounded by boundary
 		 group.members.push(SELgroup);                  // adds this to new group
 		 left=Math.min(left,SELgroup.left);            // checks boundary position and size to ensure boundary of new group 
 		 top=Math.min(top,SELgroup.top);
@@ -120,4 +119,33 @@ function groupSELECTED()  //groups together those shapes and groups with drawn b
 	{
 		membersList[i].group=group;   //replace the group of each shape with the new group;
 	}
+}
+
+function copyGroup(group,offset,theatre)
+{
+	var groupcopy=new Group();
+	groupcopy.left=group.left+offset;
+	groupcopy.top=group.top+offset;
+	groupcopy.width=group.width;
+	groupcopy.height=group.height;
+	for(var i=0; i<group.members.length; i++)
+		{
+			if(group.members[i].elType()=="group")
+			{
+				groupcopy.members.push(copyGroup(group.members[i],offset));
+			}
+			else
+			{
+				var shape=group.members[i];
+				var copy=makeCopy(shape,offset,theatre);
+				groupcopy.members.push(copy);
+				copy.group=groupcopy;
+				copy.addTo(theatre);
+				if(theatre.id=="shapestage")
+				{
+					copy.draw();
+				}
+			}
+		}
+		return groupcopy;
 }
