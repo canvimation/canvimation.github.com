@@ -93,7 +93,7 @@ function Union(A,B)
 	return S;
 }
 
-function groupJoin()  //groups together array of  groups  place $("boundarydrop").childNodes[].group into any array before using for group by boundaries
+function groupJoin()  //groups together array of  groups  place $("boundarydrop").childNodes[].group into any array SELgroup before using for group by boundaries
 {
 	var group=new Group();
 	var SELgroup;
@@ -107,18 +107,29 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 		 group.members.push(SELgroup);                  // adds this to new group
 		 left=Math.min(left,SELgroup.left);            // checks boundary position and size to ensure boundary of new group 
 		 top=Math.min(top,SELgroup.top);
-		 right=Math.max(right,SELgroup.right);
-		 bottom=Math.max(bottom,SELgroup.bottom);
+		 right=Math.max(right,SELgroup.left+SELgroup.width);
+		 bottom=Math.max(bottom,SELgroup.top+SELgroup.height);
 	}
 	group.left=left;
 	group.top=top;
 	group.width=right-left;
 	group.height=bottom-top;
-	membersList=group.setOfMembers();  //array of all shapes within the group 
-	for (var i=0; i<membersList; i++)
+	var members=group.memberShapes();  // all shapes within the group 
+	for (var name in members)
 	{
-		membersList[i].group=group;   //replace the group of each shape with the new group;
+		members[name].group=group;   //replace the group of each shape with the new group;
 	}
+	clear($("boundarydrop"));
+	$('ungroup').style.visibility="visible";
+	$('editlines').style.visibility="hidden";
+	$('group').style.visibility="hidden";
+	$('alntop').style.visibility='hidden';
+	$('alnbot').style.visibility='hidden';
+	$('alnleft').style.visibility='hidden';
+	$('alnright').style.visibility='hidden';
+	SELECTED={};
+	SELECTED[group.name]=group;
+	group.drawBoundary();
 }
 
 function copyGroup(group,offset,theatre)

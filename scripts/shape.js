@@ -800,12 +800,9 @@ function showTools(shape)
 	$('vert').style.visibility='visible';
 	$('horz').style.visibility='visible';
 	$('sname').style.visibility='visible'
-	if (!shape.open)
-	{
-		$('colfill').style.visibility='visible';
-		$('gradfill').style.visibility='visible';
-		$('shadow').style.visibility='visible';	
-	}
+	$('colfill').style.visibility='visible';
+	$('gradfill').style.visibility='visible';
+	$('shadow').style.visibility='visible';	
 }
 
 function setTools()
