@@ -755,15 +755,27 @@ function setCorners() //for freeform and curve;
 	node=node.next;	
    	while(node.point.x!="end")
    	{
-   		for (var i=0;i<=step; i++)
-   		{	
-			t=i/step;			
-			x = (1-t)*(1-t)*(1-t)*node.prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x;
-			y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;
+   		if(node.vertex=="L")
+   		{
+   			x = node.point.x;
+			y = node.point.y;
 			if (x>mxx) {mxx=x};
 			if (x<mnx) {mnx=x};
 			if (y>mxy) {mxy=y};
 			if (y<mny) {mny=y};
+   		}
+   		else
+   		{
+   			for (var i=0;i<=step; i++)
+   			{	
+				t=i/step;			
+				x = (1-t)*(1-t)*(1-t)*node.prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x;
+				y = (1-t)*(1-t)*(1-t)*node.prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y;
+				if (x>mxx) {mxx=x};
+				if (x<mnx) {mnx=x};
+				if (y>mxy) {mxy=y};
+				if (y<mny) {mny=y};
+			}
 		}
 		node=node.next;
    	}
@@ -771,6 +783,10 @@ function setCorners() //for freeform and curve;
 	this.tplftcrnr.y=mny;
    	this.btmrgtcrnr.x=mxx;
    	this.btmrgtcrnr.y=mxy;
+   	this.group.left=this.tplftcrnr.x;
+   	this.group.top=this.tplftcrnr.y;
+   	this.group.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
+   	this.group.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
 }
 
 function fixCorners()  //shapes other than freeform or curve
@@ -808,25 +824,40 @@ function showTools(shape)
 function setTools()
 {
 	var slctd=$("boundarydrop").childNodes;
-	var nslctd=slctd.length;
+	var nslctd=slctd.length; 
 	if(nslctd==1)
 	{
 		var boundary=slctd[0];
-		var members=boundary.group.memberShapes;
-		if(members.length==1)
+		var members=boundary.group.memberShapes();
+		var memlen=0;
+		for(var name in members)
 		{
-			if(members[0].editable)
+			memlen++;
+		}
+		if(memlen==1)
+		{
+			for(var name in members)
 			{
-				$('editlines').style.visibility="visible";
-				$('ungroup').style.visibility="hidden";
-				$('group').style.visibility="hidden";
+				shape=members[name];
+				if(shape.editable)
+				{
+					$('editlines').style.visibility="visible";
+					$('ungroup').style.visibility="hidden";
+					$('group').style.visibility="hidden";
+				}
+				else
+				{
+					$('editlines').style.visibility="hidden";
+					$('ungroup').style.visibility="hidden";
+					$('group').style.visibility="hidden";
+				}
 			}
-			else if (members[0].inAgroup())
-			{
-				$('ungroup').style.visibility="visible";
-				$('editlines').style.visibility="hidden";
-				$('group').style.visibility="hidden";
-			}
+		}
+		else
+		{
+			$('ungroup').style.visibility="visible";
+			$('editlines').style.visibility="hidden";
+			$('group').style.visibility="hidden";
 		}
 	}
 	else

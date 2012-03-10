@@ -23,7 +23,7 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.memberShapes=memberShapes;
 	this.drawBoundary=drawBoundary;
 	this.removeBoundary=removeBoundary;
-	this.updateBoundary=updateBoundary;
+	this.update=update;
 	this.elType=elType;
 }
 
@@ -51,7 +51,7 @@ function elType()
 
 function memberShapes()
 {
-	var ms={}
+	var ms={};
 	var list=separate(this.members);
 	for(var i=0; i<list.length; i++)
 	{
@@ -115,9 +115,9 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 	group.width=right-left;
 	group.height=bottom-top;
 	var members=group.memberShapes();  // all shapes within the group 
-	for (var name in members)
+	for (var shape in members)
 	{
-		members[name].group=group;   //replace the group of each shape with the new group;
+		members[shape].group=group;   //replace the group of each shape with the new group;
 	}
 	clear($("boundarydrop"));
 	$('ungroup').style.visibility="visible";
@@ -143,7 +143,7 @@ function copyGroup(group,offset,theatre)
 		{
 			if(group.members[i].elType()=="group")
 			{
-				groupcopy.members.push(copyGroup(group.members[i],offset));
+				groupcopy.members.push(copyGroup(group.members[i],offset,theatre));
 			}
 			else
 			{
@@ -159,4 +159,48 @@ function copyGroup(group,offset,theatre)
 			}
 		}
 		return groupcopy;
+}
+
+function ungroup()
+{
+	var members;
+	var grouped=$("boundarydrop").childNodes[0].group;
+	clear($("boundarydrop"));
+	SELECTED={};
+	for(var i=0; i<grouped.members.length; i++)
+	{
+		group=grouped.members[i];
+		SELECTED[group.name]=group;
+		members=group.memberShapes();
+		for(var shapename in members)
+		{
+			shape=members[shapename];
+			shape.group=group;
+		}
+		group.drawBoundary();
+	}
+	$('ungroup').style.visibility="hidden";
+	$('editlines').style.visibility="hidden";
+	$('group').style.visibility="visible";
+	$('alntop').style.visibility='visible';
+	$('alnbot').style.visibility='visible';
+	$('alnleft').style.visibility='visible';
+	$('alnright').style.visibility='visible';
+}
+
+function update(l,t,dx,dy,scalew,scaleh)
+{
+	this.left+=dx;
+	this.top+=dy;
+	this.left=l+(this.left-l)*scalew;
+	this.top=t+(this.top-t)*scaleh;
+	this.width*=scalew;
+	this.height*=scaleh;
+	for(var i=0;i<this.members.length;i++)
+	{
+		if(this.members[i].elType()=="group")
+		{
+			this.members[i].update(l,t,dx,dy,scalew,scaleh); 
+		}
+	}
 }

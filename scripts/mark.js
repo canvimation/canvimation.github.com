@@ -67,6 +67,7 @@ function updatePointNode(cursor)
 		case "line":
 			this.setNode(cursor);
 			this.shape.draw();
+			this.shape.setCorners();
 		break
 		case "arc":
 		case "segment":

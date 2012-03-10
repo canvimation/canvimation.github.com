@@ -224,6 +224,8 @@ function drawBoundary()
 								noBubble(e);
 								var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
 								var dy=parseInt($(this.id).style.top)-$(this.id).group.top;
+								var l=parseInt($(this.id).style.left);
+								var t=parseInt($(this.id).style.top);
 								var shape,node;
 								clear($("boundarydrop"));
 								for(var groupName in SELECTED)
@@ -273,8 +275,7 @@ function drawBoundary()
 										//$("backstage").style.visibility="visible";
 										//shape.drawBezGuides();alert("stop");
 									}
-									group.left+=dx;
-									group.top+=dy;
+									group.update(l,t,dx,dy,1,1);
 									group.drawBoundary();
 								};
 								
@@ -316,6 +317,8 @@ function drawBoundary()
 								var boundary=$(this.id).parentNode;
 								var group=boundary.group;
 								var scale=parseInt(boundary.style.width)/group.width;
+								var l=parseInt(boundary.style.left);
+								var t=parseInt(boundary.style.top);
 								for(var groupName in SELECTED)
 								{
 									var group=SELECTED[groupName];
@@ -355,8 +358,7 @@ function drawBoundary()
 										}
 										shape.draw();
 							  		}
-							  		group.width=parseInt(group.boundary.style.width);
-									group.height=parseInt(group.boundary.style.height);
+							  		group.update(l,t,0,0,scale,scale)
 								}
 							}
 //right handle
@@ -391,6 +393,8 @@ function drawBoundary()
 								var boundary=$(this.id).parentNode;
 								var group=boundary.group;
 								var scale=parseInt(boundary.style.width)/group.width;
+								var l=parseInt(boundary.style.left);
+								var t=parseInt(boundary.style.top);
 								for(var groupName in SELECTED)
 								{
 									var group=SELECTED[groupName];
@@ -425,7 +429,7 @@ function drawBoundary()
 										}
 										shape.draw();
 							  		}
-							  		group.width=parseInt(group.boundary.style.width);
+							  		group.update(l,t,0,0,scale,1);
 								}
 							}
 //bottom handle
@@ -460,6 +464,8 @@ function drawBoundary()
 								var boundary=$(this.id).parentNode;
 								var group=boundary.group;
 								var scale=parseInt(boundary.style.height)/group.height;
+								var l=parseInt(boundary.style.left);
+								var t=parseInt(boundary.style.top);
 								for(var groupName in SELECTED)
 								{
 									var group=SELECTED[groupName];
@@ -494,7 +500,7 @@ function drawBoundary()
 										}
 										shape.draw();
 							  		}
-									group.height=parseInt(group.boundary.style.height);
+									group.update(l,t,0,0,1,scale);
 								}
 							}
 }
@@ -827,32 +833,3 @@ function sqdistance(p,q)
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
 }
 
-function updateBoundary()
-{
-	var bl=1000000;  //leftmost
-	var bt=1000000;  // topmost
-	var br=-1000000; // rightmost;
-	var bb=-1000000; //bottommost;
-	for(var member in this.members)
-	{
-		if(members[member].type=="group")
-		{
-			members[member].updateBoundary();
-			if(members[member].boundaryLeft<bl) {bl=members[member].boundaryLeft};
-			if(members[member].boundaryTop<bt) {bt=members[member].boundaryTop};
-			if((members[member].boundaryLeft+members[member].boundaryWidth)>br) {br=members[member].boundaryLeft+members[member].boundaryWidth};
-			if((members[member].boundaryTop+members[member].boundaryHeight)>bb) {bb=members[member].boundaryTop+members[member].boundaryHeight};
-		}
-		else
-		{
-			if(members[member].tplftcrnr.x<bl) {bl=members[member].tplftcrnr.x};
-			if(members[member].tplftcrnr.y<bt) {bt=members[member].tplftcrnr.y};
-			if(members[member].btmrgtcrnr.x>br) {br=members[member].btmrgtcrnr.x};
-			if(members[member].btmrgtcrnr.y>bb) {bb=members[member].btmrgtcrnr.y};
-		}
-	}
-	this.boundaryLeft=bl;
-	this.boundaryTop=bt;
-	this.boundaryWidth=br-bl;
-	this.boundaryHeight=bb-bt;
-}
