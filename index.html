@@ -105,6 +105,7 @@ img.marker {
 
 .dialoguebox {
 	border: 1px solid #000000;
+	border-top:1px solid #000000;
 	visibility:hidden;
 	z-index:4;
 }
@@ -129,6 +130,10 @@ img.marker {
 	top:25px;
 }
 
+.content img {
+	float:right;
+}
+
 .content input {
 	position:relative;
 	text-align:right;
@@ -136,25 +141,31 @@ img.marker {
 
 }
 
-p.text_input label {
+.content p.text_input label, p.select_input label{
 	position:relative;
 	left:5px;
 }
 
-p.text_input input {
+.content p.text_input input {
 	left:30px;
 }
 
-p.text_input span {
+.content p.text_input span {
 	position:relative;
 	left:40px;
 }
 
-p.chk_radio_input input{
+.content p.select_input select{
+	position:relative;
+	left:10px;
+	width:70px;
+}
+
+.content p.chk_radio_input input{
 	left:5px;
 }
 
-p.chk_radio_input label {
+.content p.chk_radio_input label {
 	position:relative;
 	left:10px;
 }
@@ -505,23 +516,24 @@ div.bar {
 
 }
 
-#colorcont {
+#colorbox {
 	height:411px;
-	width:335px;//531px;
+	width:335px;
+	background-color:#FFFFFF;
 	clip:rect(1,550px,430px,0);
 }
 
 #colormask {
 	height:380px;
-	width:325px;//531px;
+	width:325px;
 	background-color:#FFFFFF;
 }
 
-#colorpick {
+#colorcontent {
 	top:25px;
 	left:0px;
 	height:386px;
-	width:335px;//531px;
+	width:335px;
 	background-color:#FFFFFF;
 }
 
@@ -617,6 +629,7 @@ div.bar {
 	width:180px;
 	height:256px;
 	top:15px;
+	background-color: #FFFFFF;
 }
 
 #colvertline {
@@ -757,7 +770,7 @@ div.bar {
 
 </style>
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/dragdrop/dragdrop-min.js"></script> 
-
+<script type="text/javascript" src="scripts/getElementsByClassName-1.0.1.js" ></script>
 <script type="text/javascript" src = "scripts/mark.js" ></script>
 <script type="text/javascript" src = "scripts/shape.js" ></script>
 <script type="text/javascript" src = "scripts/draw.js" ></script>
@@ -894,6 +907,9 @@ var ZSTART,ZOFFSET; //ensure z-order maintained when copying shapes;
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 var DEFAULTKEYDOWN=document.onkeydown;
 var BACKDROP; // object where backstage canvas is added for bezguides;
+var BOXES; //array of dialogue boxes;
+var BOXNAME; //name of dialogue box, id with box dropped from end;
+var DD=new Array; //array of drag and drop elements for dialogue boxes;
 temptrack={};
 tracks = {};
 scenes = {};
@@ -1001,133 +1017,7 @@ function getPosition(e) {
 
 
 
-function aligntop()
-{
-	var sl=selected.length;
-	var mnt=100000000;
-	var dmnt;
-	for (var i=0; i<sl; i++)
-	{
-		if (selected[i].btop<mnt) {mnt=selected[i].btop}
-	}
-	for (var i=0; i<sl; i++)
-	{
-		dmnt=mnt-selected[i].btop;
-		selected[i].btop=mnt;
-		for (var j=3; j<selected[i].path.length; j++)
-		{
-			for(var k=2; k<selected[i].path[j].length;k+=2)
-			{
-				selected[i].path[j][k]+=dmnt;
-			}
-		}
-		selected[i].boundary.style.top=mnt;
-		selected[i].boundary.otop=mnt;
-		selected[i].sctop=selected[i].btop;
-		selected[i].lineGrad[1] +=dmnt;
-		selected[i].lineGrad[3] +=dmnt;
-		selected[i].radGrad[1] +=dmnt;
-		selected[i].radGrad[4] +=dmnt;
-		selected[i].cy +=dmnt;
-		drawline(selected[i]);
-	}
-}
 
-function alignleft()
-{
-	var sl=selected.length;
-	var mnl=100000000;
-	var dmnl;
-	for (var i=0; i<sl; i++)
-	{
-		if (selected[i].bleft<mnl) {mnl=selected[i].bleft}
-	}
-	for (var i=0; i<sl; i++)
-	{
-		dmnl=mnl-selected[i].bleft;
-		selected[i].bleft=mnl;
-		for (var j=3; j<selected[i].path.length; j++)
-		{
-			for(var k=1; k<selected[i].path[j].length;k+=2)
-			{
-				selected[i].path[j][k]+=dmnl;
-			}
-		}
-		selected[i].boundary.style.left=mnl;
-		selected[i].boundary.oleft=mnl;
-		selected[i].scleft=selected[i].bleft;
-		selected[i].lineGrad[0] +=dmnl;
-		selected[i].lineGrad[2] +=dmnl;
-		selected[i].radGrad[0] +=dmnl;
-		selected[i].radGrad[3] +=dmnl;
-		selected[i].cx +=dmnl;
-		drawline(selected[i]);
-	}
-}
-
-function alignright()
-{
-	var sl=selected.length;
-	var mxl=-100000000;
-	var dmxl;
-	for (var i=0; i<sl; i++)
-	{
-		if (selected[i].bleft+selected[i].bwidth>mxl) {mxl=selected[i].bleft+selected[i].bwidth}
-	}
-	for (var i=0; i<sl; i++)
-	{
-		dmxl=mxl-(selected[i].bleft+selected[i].bwidth);
-		for (var j=3; j<selected[i].path.length; j++)
-		{
-			for(var k=1; k<selected[i].path[j].length;k+=2)
-			{
-				selected[i].path[j][k]+=dmxl;
-			}
-		}
-		selected[i].boundary.style.left=mxl-parseInt(selected[i].boundary.style.width);
-		selected[i].bleft=parseInt(selected[i].boundary.style.left);
-		selected[i].boundary.oleft=parseInt(selected[i].boundary.style.left);
-		selected[i].scleft=selected[i].bleft;
-		selected[i].lineGrad[0] +=dmxl;
-		selected[i].lineGrad[2] +=dmxl;
-		selected[i].radGrad[0] +=dmxl;
-		selected[i].radGrad[3] +=dmxl;
-		selected[i].cx +=dmxl;
-		drawline(selected[i]);
-	}
-}
-
-function alignbot()
-{
-	var sl=selected.length;
-	var mxt=-100000000;
-	var dmxt;
-	for (var i=0; i<sl; i++)
-	{
-		if (selected[i].btop+selected[i].bheight>mxt) {mxt=selected[i].btop+selected[i].bheight}
-	}
-	for (var i=0; i<sl; i++)
-	{
-		dmxt=mxt-(selected[i].btop+selected[i].bheight);
-		for (var j=3; j<selected[i].path.length; j++)
-		{
-			for(var k=2; k<selected[i].path[j].length;k+=2)
-			{
-				selected[i].path[j][k]+=dmxt;
-			}
-		}
-		selected[i].boundary.style.top=mxt-parseInt(selected[i].boundary.style.height);
-		selected[i].btop=parseInt(selected[i].boundary.style.top);
-		selected[i].boundary.otop=parseInt(selected[i].boundary.style.top);
-		selected[i].sctop=selected[i].btop;
-		selected[i].lineGrad[1] +=dmxt;
-		selected[i].lineGrad[3] +=dmxt;
-		selected[i].radGrad[1] +=dmxt;
-		selected[i].radGrad[4] +=dmxt;
-		selected[i].cy +=dmxt;
-		drawline(selected[i]);
-	}
-}
 
 function openhelp()
 {
@@ -1760,17 +1650,37 @@ function main()
 
 	$('animationdiv').style.height=maxheight-52;
 	$('animationdiv').style.width=maxwidth;
-
-	$('colorcont').style.left= (canvwidth-525);
-	$('colorcont').style.top= (canvheight-380)/2;
-	$('colorcont').style.height=411;
-	$('colorcont').style.width=335;
 	
-	$('colorpick').style.top=25;
-	$('colorpick').style.height=386;
+	//dialogue box settings .....................................
+	
+	//colorbox
+	$('colorbox').style.height=411;
+	$('colorbox').style.width=335;
 	
 	$("coldigits").style.left=155;	
+		
+	//linebox
+	$('linebox').style.width=230;
+	$('linebox').style.height=200;
+
 	
+	BOXES=getElementsByClassName("dialoguebox");
+	for(var i=0; i<BOXES.length; i++)
+	{
+		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
+		BOXES[i].style.top=(SCRH-parseInt(BOXES[i].style.height))/2 - 52;
+		BOXES[i].style.left=(SCRW-parseInt(BOXES[i].style.width))/2;
+		BOXES[i].style.clip="rect(1,"+(parseInt(BOXES[i].style.width)+2)+","+(parseInt(BOXES[i].style.height)+2)+",0)";
+		BOXES[i].style.visibility="hidden";
+		$(BOXNAME+"content").style.height=parseInt(BOXES[i].style.height)-25;
+		$(BOXNAME+"content").style.top=25;
+		
+		DD[i]=new YAHOO.util.DD(BOXES[i].id);
+		DD[i].setHandleElId(BOXNAME+"head");
+	}
+	
+	$("colorbox").style.clip="rect(1,550px,430px,0)";	
+		
 	$('export').style.visibility='visible';
 	$('visit').style.visibility='visible';
 	$('help').style.visibility='visible';
@@ -1835,8 +1745,7 @@ function main()
   
 								};
 																			
-	DDcc=new YAHOO.util.DD('colorcont');
-	DDcc.setHandleElId('colorhead');
+	
 
 	fixGradientImg();
 	
@@ -2045,6 +1954,12 @@ function main()
 <div id="filmstage" class="theatre_style"></div>
 
 <div id="stageframe"></div>
+
+<canvas id='gridcanvas'> </canvas>
+<div id="backstage" class="theatre_style"></div>
+<div id="markerdrop" class="theatre_style" ></div>
+<div id="boundarydrop" class="theatre_style" ></div>
+
 <!--dialogue box setting stage width and height-->
 <div id='stagebox' class="dialoguebox">
 	<div id='stagehead' class='head'>&nbsp; New Stage</div>
@@ -2059,14 +1974,10 @@ function main()
 		<input type="button" value=" OK " id="stageOK" onclick="setStage()" />
 	</div>	
 </div>
-<canvas id='gridcanvas'> </canvas>
-<div id="backstage" class="theatre_style"></div>
-<div id="markerdrop" class="theatre_style" ></div>
-<div id="boundarydrop" class="theatre_style" ></div>
 
 <!--dialogue box for colour picker-->
-<div id='colorcont' class="dialoguebox">
-  <div id='colorpick' >
+<div id='colorbox' class="dialoguebox">
+  <div id='colorcontent' >
   	  <div id="coldigits" >
       	<div style="border: 1px solid black;height:50px;width:145px;top:0px;left:0px;">
         	<div id="quickColor"></div>
@@ -2131,10 +2042,45 @@ function main()
   <div id='colorhead' class="head">
     	<div id="colorheadtext">&nbsp; Line Colour</div>
     	<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"colorpick")'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"colorcontent")'/>
   </div>  
 </div>
 
+<!--dialogue box setting line weight-->
+<div id='linebox' class="dialoguebox">
+	<div id='linecontent' class='content'>
+		<p class="text_input">
+			<label for="linewidth">Width</label> <input type="text" name"linewidth" id="linewidth" value=1 size=5/><span>px</span>
+		</p>
+		<p class="select_input">
+			<label for="linecap">Line Cap</label> 
+			<select name"selectcap" id="selectcap" onchange="$('selectcapimg').src='assets/l'+$('selectcap').value+'.png'">
+				<option value="butt" selected="selected">Butt</option>
+				<option value="round">Round</option>
+				<option value="square" >Square</option>
+			</select>
+			<img id="selectcapimg" src="assets/lbutt.png" />
+		</p>
+		<p class="select_input">
+			<label for="linejoin">Line Join</label> 
+			<select name"selectjoin" id="selectjoin" onchange="$('selectjoinimg').src='assets/lj'+$('selectjoin').value+'.png'">
+				<option value="bevel" >Bevel</option>
+				<option value="miter" selected="selected">Miter</option>
+				<option value="round" >Round</option>
+			</select>
+			<img id="selectjoinimg" src="assets/ljmiter.png" />
+		</p>
+		<br>
+		<input type="button" value="OK" onClick="updateLines();closedialogue(this)">
+	  	<input type="button" value="Apply" onClick="updateLines()()">
+      	<input type="button"  value="Cancel" onClick="closedialogue(this)">
+	</div>
+	<div id='linehead' class='head'>&nbsp; New Stage
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"linecontent")'/>
+	</div>	
+</div>
+<!--toolbars ............................................................... -->
 <div id='anibar'>
   <div id='anibarhd'> &nbsp; Animation </div>
   

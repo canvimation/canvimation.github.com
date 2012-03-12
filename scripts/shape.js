@@ -1009,3 +1009,184 @@ function makeCopy(shape,offset,theatre)
 	}
 	return copy;
 }
+
+function aligntop()
+{
+	var mintop=100000000;
+	var dmnt;
+	var shape,node;
+	for(var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		if (group.top<mintop) {mintop=group.top}
+	}
+	for (var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		dmnt=mintop-group.top;
+		group.top=mintop;
+		group.removeBoundary();
+		group.drawBoundary();
+		members=group.memberShapes();
+		for(var name in members)
+		{
+			shape=members[name];
+			node=shape.path.next;
+			while(node.point.x!="end")
+			{
+				node.point.y+=dmnt;
+				if(node.ctrl1.x!="non") //changes when straight line set on curve
+				{
+					node.ctrl1.y+=dmnt;
+					node.ctrl2.y+=dmnt;
+				}
+				node=node.next;
+			}
+			//shape.sctop=shape.btop;
+			shape.tplftcrnr.y+=dmnt;
+			shape.btmrgtcrnr.y+=dmnt;
+			shape.lineGrad[1]+=dmnt;
+			shape.lineGrad[3]+=dmnt;
+			shape.radGrad[1]+=dmnt;
+			shape.radGrad[4]+=dmnt;
+			shape.centreOfRotation.y +=dmnt;
+			shape.draw();
+		}
+	}
+}
+
+function alignleft()
+{
+	var minleft=100000000;
+	var dmnl;
+	var shape,node;
+	for(var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		if (group.left<minleft) {minleft=group.left}
+	}
+	for (var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		dmnl=minleft-group.left;
+		group.left=minleft;
+		group.removeBoundary();
+		group.drawBoundary();
+		members=group.memberShapes();
+		for(var name in members)
+		{
+			shape=members[name];
+			node=shape.path.next;
+			while(node.point.x!="end")
+			{
+				node.point.x+=dmnl;
+				if(node.ctrl1.x!="non") //changes when straight line set on curve
+				{
+					node.ctrl1.x+=dmnl;
+					node.ctrl2.x+=dmnl;
+				}
+				node=node.next;
+			}
+			//shape.sctop=shape.btop;
+			shape.tplftcrnr.x+=dmnl;
+			shape.btmrgtcrnr.x+=dmnl;
+			shape.lineGrad[0]+=dmnl;
+			shape.lineGrad[2]+=dmnl;
+			shape.radGrad[0]+=dmnl;
+			shape.radGrad[3]+=dmnl;
+			shape.centreOfRotation.x+=dmnl;
+			shape.draw();
+		}
+	}
+}
+
+function alignright()
+{
+	var maxright=-100000000;
+	var dmxr;
+	var shape,node;
+	for(var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		if (group.left+group.width>maxright) {maxright=group.left+group.width}
+	}
+	for (var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		dmxr=maxright-(group.left+group.width);
+		group.left+=dmxr;
+		group.removeBoundary();
+		group.drawBoundary();
+		members=group.memberShapes();
+		for(var name in members)
+		{
+			shape=members[name];
+			node=shape.path.next;
+			while(node.point.x!="end")
+			{
+				node.point.x+=dmxr;
+				if(node.ctrl1.x!="non") //changes when straight line set on curve
+				{
+					node.ctrl1.x+=dmxr;
+					node.ctrl2.x+=dmxr;
+				}
+				node=node.next;
+			}
+			//shape.sctop=shape.btop;
+			shape.tplftcrnr.x+=dmxr;
+			shape.btmrgtcrnr.x+=dmxr;
+			shape.lineGrad[0]+=dmxr;
+			shape.lineGrad[2]+=dmxr;
+			shape.radGrad[0]+=dmxr;
+			shape.radGrad[3]+=dmxr;
+			shape.centreOfRotation.x+=dmxr;
+			shape.draw();
+		}
+	}
+}
+
+function alignbot()
+{
+
+	var maxbot=-100000000;
+	var dmxb;
+	var shape,node;
+	for(var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		if (group.top+group.height>maxbot) {maxbot=group.top+group.height}
+	}
+	for (var groupname in SELECTED)
+	{
+		group=SELECTED[groupname];
+		dmxb=maxbot-(group.top+group.height);
+		group.top+=dmxb;
+		group.removeBoundary();
+		group.drawBoundary();
+		members=group.memberShapes();
+		for(var name in members)
+		{
+			shape=members[name];
+			node=shape.path.next;
+			while(node.point.x!="end")
+			{
+				node.point.y+=dmxb;
+				if(node.ctrl1.x!="non") //changes when straight line set on curve
+				{
+					node.ctrl1.y+=dmxb;
+					node.ctrl2.y+=dmxb;
+				}
+				node=node.next;
+			}
+			//shape.sctop=shape.btop;
+			shape.tplftcrnr.y+=dmxb;
+			shape.btmrgtcrnr.y+=dmxb;
+			shape.lineGrad[1]+=dmxb;
+			shape.lineGrad[3]+=dmxb;
+			shape.radGrad[1]+=dmxb;
+			shape.radGrad[4]+=dmxb;
+			shape.centreOfRotation.y+=dmxb;
+			shape.draw();
+		}
+	}
+}

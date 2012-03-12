@@ -291,15 +291,5 @@ function lopendiv()
 	}
 }
 
-function updatelines()
-{
-	var sl=selected.length;
-	for (var i=0; i<sl; i++)
-	{
-		selected[i].lineWidth=parseInt($('lwidth').value);
-		selected[i].lineCap=$('lcap').value;
-		selected[i].lineJoin=$('ljoin').value;
-		drawline(selected[i]);
-	}	
-}
+
 

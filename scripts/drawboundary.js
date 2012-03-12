@@ -244,7 +244,7 @@ function drawBoundary()
 										{
 											node.point.x+=dx;
 											node.point.y+=dy;
-											if(node.vertex=="B")
+											if(node.ctrl1.x!="non") //changes when straight line set on curve
 											{
 												node.ctrl1.x+=dx;
 												node.ctrl1.y+=dy;
@@ -346,7 +346,7 @@ function drawBoundary()
 											{
 												node.point.x=group.left+(node.point.x-group.left)*scale;
 												node.point.y=group.top+(node.point.y-group.top)*scale;
-												if(node.ctrl1.x!="end")// will also scale when curve has been set as straight line
+												if(node.ctrl1.x!="non")// will also scale when curve has been set as straight line
 												{
 													node.ctrl1.x=group.left+(node.ctrl1.x-group.left)*scale;
 													node.ctrl1.y=group.top+(node.ctrl1.y-group.top)*scale;
@@ -419,7 +419,7 @@ function drawBoundary()
 											while(node.point.x!="end")
 											{
 												node.point.x=group.left+(node.point.x-group.left)*scale;
-												if(node.ctrl1.x!="end")// will also scale when curve has been set as straight line
+												if(node.ctrl1.x!="non")// will also scale when curve has been set as straight line
 												{
 													node.ctrl1.x=group.left+(node.ctrl1.x-group.left)*scale;
 													node.ctrl2.x=group.left+(node.ctrl2.x-group.left)*scale;

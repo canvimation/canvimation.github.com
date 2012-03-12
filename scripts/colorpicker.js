@@ -390,7 +390,7 @@ function setColor()
 
 function closeColor()
 { 
-	$('colorcont').style.visibility='hidden';
+	$('colorbox').style.visibility='hidden';
 	if ($('sizebox')) {$('sizebox').parentNode.removeChild($('sizebox'))};
 }
 
@@ -421,7 +421,7 @@ function fillcolor()
 	$("transpslider").style.backgroundColor = currentColor.HexString();
 	$('colorheadtext').innerHTML='\u00A0 Fill Colour';
 	coltype='F';
-	$('colorcont').style.visibility='visible';
+	$('colorbox').style.visibility='visible';
 	if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
 }
 
@@ -447,27 +447,18 @@ function linecolor()
 	$("transpslider").style.backgroundColor = currentColor.HexString();	
 	$('colorheadtext').innerHTML='\u00A0 Line Colour';
 	coltype='L';
-	$('colorcont').style.visibility='visible';
+	$('colorbox').style.visibility='visible';
 	if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
 	removeGradLine();
 	removeRotate();
 }
 
-function linestyles()
-{
-	if ($('lmenu')) {$('lmenu').parentNode.removeChild($('lmenu'))};
-	if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
-	removeGradLine();
-	removeRotate();
-	linesMenu();
-	DDcl=new YAHOO.util.DD('lmenu');
-   	DDcl.setHandleElId('lhead');
-}
+
 
 function moveCircleTo(cur)
 {
-	cur.x-=parseInt($('colorcont').style.left)+21;
-	cur.y-=parseInt($('colorcont').style.top)+46;
+	cur.x-=parseInt($('colorbox').style.left)+21;
+	cur.y-=parseInt($('colorbox').style.top)+46;
 	$('circle').style.left=cur.x;
 	$('circle').style.top=cur.y;
 	if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5}
@@ -480,7 +471,7 @@ function moveCircleTo(cur)
 
 function movetransarrwTo(cur)
 {
-	cur.x-=parseInt($('colorcont').style.left)+21;
+	cur.x-=parseInt($('colorbox').style.left)+21;
 	$('varrows').style.left=cur.x;
 	if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4}
 	if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252}
@@ -498,7 +489,7 @@ function movetransarrwTo(cur)
 
 function HueBarmoveTo(cur)
 {
-	cur.y-=parseInt($('colorcont').style.top)+46;
+	cur.y-=parseInt($('colorbox').style.top)+46;
 	$('arrows').style.top=cur.y
 	if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4}
 	if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251}

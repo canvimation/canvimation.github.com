@@ -22,6 +22,10 @@ function updialogue(img,content)
 			holder.style.height=parseInt(holder.style.height)-10
 			setTimeout(function () {close()},10)
 		}
+		else
+		{
+			holder.style.height=25;
+		}
 	}
 	
 	function open()
@@ -48,7 +52,7 @@ function closedialogue(img)
 
 function colexpand()
 {
-	if(parseInt($("colorcont").style.width)<531)
+	if(parseInt($("colorbox").style.width)<531)
 	{
 		$("colptr").src="assets/closepointer.png";
 		pullopen();
@@ -61,31 +65,57 @@ function colexpand()
 	
 	function pullopen()
 	{
-		if(parseInt($("colorcont").style.width)<531)
+		if(parseInt($("colorbox").style.width)<531)
 		{
-			$("colorcont").style.width=parseInt($("colorcont").style.width)+10;
+			$("colorbox").style.width=parseInt($("colorbox").style.width)+10;
 			$("coldigits").style.left=parseInt($("coldigits").style.left)+10;
 			setTimeout(function() {pullopen()},10)
 		}
 		else
 		{
-			$("colorcont").style.width=531;
+			$("colorbox").style.width=531;
 			$("coldigits").style.left=351;
 		}
 	}
 	
 	function pushclosed()
 	{
-		if(parseInt($("colorcont").style.width)>335)
+		if(parseInt($("colorbox").style.width)>335)
 		{
-			$("colorcont").style.width=parseInt($("colorcont").style.width)-10;
+			$("colorbox").style.width=parseInt($("colorbox").style.width)-10;
 			$("coldigits").style.left=parseInt($("coldigits").style.left)-10;
 			setTimeout(function() {pushclosed()},10)
 		}
 		else
 		{
-			$("colorcont").style.width=335;
+			$("colorbox").style.width=335;
 			$("coldigits").style.left=155;
 		}
 	}
+}
+
+function linestyles()
+{
+	$('linewidth').value=SELECTEDSHAPE.lineWidth;
+   	$('selectcap').value=SELECTEDSHAPE.lineCap;
+   	$('selectjoin').value=SELECTEDSHAPE.lineJoin;
+   	$("linebox").style.visibility="visible";
+}
+
+function updateLines()
+{
+	for(var groupName in SELECTED)
+		{
+			var group=SELECTED[groupName];
+
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape=shapeNames[name];
+				shape.lineWidth=$('linewidth').value;
+   				shape.lineCap = $('selectcap').value;
+   				shape.lineJoin = $('selectjoin').value;
+				shape.draw();
+			}
+		}	
 }
