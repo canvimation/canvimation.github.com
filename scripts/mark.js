@@ -27,7 +27,6 @@ function addPointMark()
    	this.mark.onmouseout=function(){
 	   									$("markerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			//$("markerdrop").style.visibility="hidden";
 	   																			clear($("markerdrop"));
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
@@ -35,16 +34,7 @@ function addPointMark()
 	   																		}
 									};
 	this.mark.onclick	=function(){
-										if ((this.style.backgroundColor!='white')&& (curcanv.complete) )
-										{
-										    shade(this,'#FEFEFE');
-											if (parseInt(this.id.substr(3))%3==0) 
-											{
-												cp = new pointsMenu(curcanv,this);
-   												DDcp=new YAHOO.util.DD('pmenu');
-   												DDcp.setHandleElId('phead');
-											}
-										}							
+										pointEdit($(this.id))							
 									};
 									
 	
@@ -155,21 +145,68 @@ function updatePointNode(cursor)
 				node=node.next;
 			}
 			this.shape.draw();
-			$(this.mark.id).style.left=this.point.x-4;
-			$(this.mark.id).style.top=this.point.y-4;
+			$(this.mark.id).style.left=this.point.x-2;
+			$(this.mark.id).style.top=this.point.y-2;
 			this.shape.setCorners();
 		break
 		case "curve":
-			this.setNode(cursor);
+			var dx=cursor.x-this.point.x;
+			var dy=cursor.y-this.point.y;
+			if(this.prev.point.x=="end")
+			{
+				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
+				this.setNode(cursor);
+				this.next.setNode(this.next.point,c1,this.next.ctrl2);
+				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
+				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+			}
+			else if(this.next.point.x!="end")
+			{
+				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
+				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				this.setNode(cursor,this.ctrl1,c2);
+				$(this.c2mark.id).style.left=this.ctrl2.x-2;
+				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				this.next.setNode(this.next.point,c1,this.next.ctrl2);
+				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
+				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+			}
+			else
+			{
+				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				this.setNode(cursor,this.ctrl1,c2);
+				$(this.c2mark.id).style.left=this.ctrl2.x-2;
+				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
 			this.shape.setCorners();
 		break
 		case "freeform":
-			this.setNode(cursor);
-			if(this.next.point.x=="end")
+			var dx=cursor.x-this.point.x;
+			var dy=cursor.y-this.point.y;
+			if(this.next.point.x!="end")
 			{
+				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
+				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				this.setNode(cursor,this.ctrl1,c2);
+				$(this.c2mark.id).style.left=this.ctrl2.x-2;
+				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				this.next.setNode(this.next.point,c1,this.next.ctrl2);
+				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
+				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+			}
+			else
+			{
+				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				this.setNode(cursor,this.ctrl1,c2);
+				$(this.c2mark.id).style.left=this.ctrl2.x-2;
+				$(this.c2mark.id).style.top=this.ctrl2.y-2;
 				this.shape.path.next.setNode(cursor);
+				var c1=new Point(this.shape.path.next.next.ctrl1.x+dx,this.shape.path.next.next.ctrl1.y+dy);
+				this.shape.path.next.next.setNode(this.shape.path.next.next.point,c1,this.shape.path.next.next.ctrl2);
+				$(this.shape.path.next.next.c1mark.id).style.left=this.shape.path.next.next.ctrl1.x-2;
+				$(this.shape.path.next.next.c1mark.id).style.top=this.shape.path.next.next.ctrl1.y-2;
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
@@ -177,7 +214,7 @@ function updatePointNode(cursor)
 		break
 		case "rounded_rectangle":
 			var start=this.shape.path.next; 			
-			this.mark.style.top=start.point.y-4;
+			this.mark.style.top=start.point.y-2;
 			var w=(this.shape.btmrgtcrnr.x-this.shape.tplftcrnr.x)/2;
 			var h=(this.shape.btmrgtcrnr.y-this.shape.tplftcrnr.y)/2;
 			var d=w*h/Math.abs(w*h); //corrects for height direction;

@@ -170,6 +170,13 @@ img.marker {
 	left:10px;
 }
 
+.content div {
+	width:100%;
+	height:25px;
+	background-color:#FFFFFF;
+	font-weight: bold;
+}
+
 #shapestage, #scenestage, #spritestage, #trackstage, #tweenstage, #filmstage {
 	visibility:hidden;
 }
@@ -775,22 +782,24 @@ div.bar {
 <script type="text/javascript" src = "scripts/shape.js" ></script>
 <script type="text/javascript" src = "scripts/draw.js" ></script>
 <script type="text/javascript" src = "scripts/dialogue.js" ></script>
-
+<script type="text/javascript" src = "scripts/group.js" ></script>
+<script type="text/javascript" src = "scripts/shapemenu.js" ></script>
 <script type="text/javascript" src = "scripts/drawboundary.js" ></script>
 <script type="text/javascript" src = "scripts/corner.js" ></script>
 <script type="text/javascript" src = "scripts/bottomhandle.js" ></script>
 <script type="text/javascript" src = "scripts/righthandle.js" ></script>
-<script type="text/javascript" src = "scripts/canvas.js" ></script>
-<script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
-<script type="text/javascript" src = "scripts/linesmenu.js" ></script>
 <script type="text/javascript" src = "scripts/colorpicker.js" ></script>
+<script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
+
+
+<script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
+
 <script type="text/javascript" src = "scripts/export.js" ></script>
 <script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
-<script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
-<script type="text/javascript" src = "scripts/drawshapes.js" ></script>
-<script type="text/javascript" src = "scripts/shapemenu.js" ></script>
+
+
 <script type="text/javascript" src = "scripts/linemarker.js" ></script>
-<script type="text/javascript" src = "scripts/group.js" ></script>
+
 <script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
 <script type="text/javascript" src = "scripts/gradmenu.js" ></script>
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
@@ -1663,6 +1672,34 @@ function main()
 	$('linebox').style.width=230;
 	$('linebox').style.height=200;
 
+	//pointsbox
+	$('pointsbox').style.width=156;
+	$('pointsbox').style.height=300;
+	
+	$("p_points").style.top=0;
+	$("p_points").style.backgroundColor="#888888";
+	$("p_points").style.color="yellow";
+	$("p_corner").style.top=25;
+	$("p_smooth").style.top=50;
+	$("p_inline").style.top=75;
+	$("p_delete").style.top=100;
+	$("p_open").style.top=125;
+	$("p_segments").style.top=150;
+	$("p_segments").style.backgroundColor="#888888";
+	$("p_line").style.top=175;
+	$("p_line").style.width=parseInt($('pointsbox').style.width)/2;
+	$("p_line2").style.left=parseInt($('pointsbox').style.width)/2;
+	$("p_line2").style.top=175;
+	$("p_line2").style.width=parseInt($('pointsbox').style.width)/2;
+	$("p_add").style.top=200;
+	$("p_add").style.width=parseInt($('pointsbox').style.width)/2;
+	$("p_add2").style.top=200;
+	$("p_add2").style.left=parseInt($('pointsbox').style.width)/2;
+	$("p_add2").style.width=parseInt($('pointsbox').style.width)/2;
+	$("p_paths").style.top=225;
+	$("p_paths").style.backgroundColor="#888888";
+	$("p_paths").style.color="#95B3D7";
+	$("p_close").style.top=250;
 	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
@@ -2080,6 +2117,27 @@ function main()
     	<img src='assets/up.png' onclick='updialogue(this,"linecontent")'/>
 	</div>	
 </div>
+
+<!--dialogue box setting line weight-->
+<div id='pointsbox' class="dialoguebox">
+	<div id='pointscontent' class='content'>
+		<div id="p_points">&nbsp;&nbsp;Points</div>
+		<div id="p_corner">&nbsp;&nbsp;Corner</div>
+		<div id="p_smooth">&nbsp;&nbsp;Smooth</div>
+		<div id="p_inline">&nbsp;&nbsp;In-line</div>
+		<div id="p_delete">&nbsp;&nbsp;Delete</div>
+		<div id="p_open">&nbsp;&nbsp;Open Path</div>
+		<div id="p_segments">&nbsp;&nbsp;<span style="color: yellow">Seg</span><span style="color: #95B3D7">ments</span></div>
+		<div id="p_line">&nbsp;&nbsp;Curved</div><div id="p_line2"> </div>
+		<div id="p_add">&nbsp;&nbsp;Add Point</div><div id="p_add2"> </div>
+		<div id="p_paths">&nbsp;&nbsp;Path</div>
+		<div id="p_close">&nbsp;&nbsp;Close Path</div>
+	</div>
+	<div id='pointshead' class='head'>&nbsp; Edit
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
+	</div>
+</div>
 <!--toolbars ............................................................... -->
 <div id='anibar'>
   <div id='anibarhd'> &nbsp; Animation </div>
@@ -2147,7 +2205,7 @@ Film Elements from back to front.<br>
 <div id='toolbar'>
   <div id='tlbrhead'> &nbsp; Tools </div>
   <div class="choice40" id='menushape'  alt="insert shapes" title="insert shapes" onclick="showmenu()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/menushapes.png"> </div>
-  <div class="choice40" id='editlines'  alt="edit lines" title="edit lines" onclick="markLine(selected[0])" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/editlines.png"> </div>
+  <div class="choice40" id='editlines'  alt="edit lines" title="edit lines" onclick="markLine()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/editlines.png"> </div>
   <div class="choice40" id='group'  alt="group shapes" title="group shapes" onclick="groupJoin()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/group.png"> </div>
   <div class="choice40" id='ungroup'  alt="ungroup shapes" title="ungroup shapes" onclick="ungroup()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/ungroup.png"> </div>
   <div class="choice40" id='stylelines'  alt="line styles" title="line styles" onclick="linestyles()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/stylelines.png"> </div>

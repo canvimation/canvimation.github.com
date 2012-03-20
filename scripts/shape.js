@@ -9,6 +9,17 @@ function Point(x,y)
 {
 	this.x=x;
 	this.y=y;
+	
+	//methods
+	this.pointRotate=pointRotate;
+}
+
+function pointRotate(theta)  //rotate p about origin through angle theta
+{
+	var px=this.x*Math.cos(theta)-this.y*Math.sin(theta);
+	var py=this.x*Math.sin(theta)+this.y*Math.cos(theta);
+	var p=new Point(px,py);
+	return p;
 }
 
 function Node(point,ctrl1,ctrl2) 
@@ -25,7 +36,7 @@ function Node(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
-		this.corner="blank";
+		this.corner="corner";
 		this.vertex="L";
 	}
 	this.next="";
@@ -115,7 +126,7 @@ function getAngleTo(node)  //relative to current centre
 	return theta;
 }
 
-function rotate(theta) //about centre
+function rotate(theta) //about origin
 {
 	
 	var px=this.point.x*Math.cos(theta)-this.point.y*Math.sin(theta);
@@ -696,7 +707,7 @@ function baseArcBez(radius,theta) // theta half angle subtending arc <90 degrees
  
 
 
-function arctan(y,x)
+function arctan(y,x)  //returns angle of line from (0,0) to (x,y) from x axis 
 {
 	if(x==0)
 	{
@@ -742,6 +753,11 @@ function arctan(y,x)
 	return theta;
 }
 
+function vecAdd(p1,p2)
+{
+	var p=new Point(p1.x+p2.x,p1.y+p2.y)
+	return p;
+}
 
 function setCorners() //for freeform and curve;
 {

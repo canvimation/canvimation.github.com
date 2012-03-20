@@ -507,19 +507,12 @@ function drawBoundary()
 
 
 
-function markLine(canv)
+function markLine()
 {
-	var bd=$('bodydiv');
-	var bdc=$('bodydiv').childNodes;
-	while(bdc.length>0)
-	{
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=$('bodydiv').childNodes;
-	}
-	while (lnmrks >0)
-	{
-		if($('lnm'+(--lnmrks))) {$('lnm'+lnmrks).parentNode.removeChild($('lnm'+lnmrks))};
-	}
+	clear($("boundarydrop"));
+	$("markerdrop").style.visibility="visible";
+	$("backstage").style.visibility="visible";
+	$("boundarydrop").style.visibility="hidden"
 	$('editlines').style.visibility='hidden';
 	$('stylelines').style.visibility='hidden';
 	$('collines').style.visibility='hidden';	
@@ -541,133 +534,23 @@ function markLine(canv)
 	closeColor();
 	removeGradLine();
 	removeRotate();
-	if (canv.path[2]=='line')
+	var node=SELECTEDSHAPE.path.next;
+	node.addPointMark();
+	node=node.next;
+	while(node.point.x!="end")
 	{
-		for (var i=3; i<canv.path.length; i++)
+		if(node.vertex=="L")
 		{
-			csr = {x:canv.path[i][1], y:canv.path[i][2]};
-			ln=new linemarker(lnmrks++,csr,'white');
-			ln.style.zIndex=zpos++;
-			DDln=new YAHOO.util.DD(ln.id);
-			DDln.onDrag=function(){updatepoints(canv,this)};
-		}
-	}
-	else if (canv.path[2]=='arc' || canv.path[2]=='segment' || canv.path[2]=='sector')
-	{
-
-		var last=canv.path.length;
-		
-		if (canv.path[2]=='arc')
-		{
-			var nl=last-1;
-		}
-		else if (canv.path[2]=='segment')
-		{
-			var nl=last-2;
-		}
-		else if (canv.path[2]=='sector')
-		{
-			var nl=last-3;
-		}
-		if (canv.clockw)
-		{
-			csr = {x:canv.path[3][1], y:canv.path[3][2]};
+			node.addPointMark();
 		}
 		else
 		{
-			csr = {x:canv.path[nl][5], y:canv.path[nl][6]};
+			node.addFullMarks();
 		}
-		ln=new linemarker(lnmrks++,csr,'white');
-		ln.style.zIndex=zpos++;
-		DDln=new YAHOO.util.DD(ln.id);
-		DDln.onDrag=function(){updateArcPoints(canv,this)};
-		if (canv.clockw)
-		{
-			csr = {x:canv.path[nl][5], y:canv.path[nl][6]};
-		}
-		else
-		{
-			csr = {x:canv.path[3][1], y:canv.path[3][2]};
-		}
-		ln=new linemarker(lnmrks++,csr,'white');
-		ln.style.zIndex=zpos++;
-		DDln=new YAHOO.util.DD(ln.id);
-		DDln.onDrag=function(){updateArcPoints(canv,this)};
-		
-		
+		node=node.next;
 	}
-	else if (canv.path[2]=='rounded_square')
-	{
-		var ep={x:canv.path[4][5],y:canv.path[4][6]};
-		ln=new linemarker(lnmrks++,ep, 'white');
-		ln.style.zIndex=zpos++;
-		DDln=new YAHOO.util.DD(ln.id);
-		DDln.onDrag=function(){updateRnSquRadius(canv,this)};
-	}
-	else
-	{
-		csr = {x:canv.path[3][1], y:canv.path[3][2]};
-		ln=new linemarker(lnmrks++,csr,'#FEFEFE');
-		ln.style.zIndex=zpos++;
-		ln.type=canv.beztypes[(lnmrks-1)/3];
-		DDln=new YAHOO.util.DD(ln.id);
-		DDln.onDrag=function(){updateBezPoints(canv,this)};
-		for (var i=4; i<canv.path.length; i++)
-		{
-			if (canv.path[i][0]=='B')
-			{
-				csr = {x:canv.path[i][1], y:canv.path[i][2]};
-				ln=new linemarker(lnmrks++,csr,'red');
-				ln.style.zIndex=zpos++;
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateCtrlBezPoints(canv,this)};
-				csr = {x:canv.path[i][3], y:canv.path[i][4]};
-				ln=new linemarker(lnmrks++,csr,'red');
-				ln.style.zIndex=zpos++;
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateCtrlBezPoints(canv,this)};
-				csr = {x:canv.path[i][5], y:canv.path[i][6]};
-				ln=new linemarker(lnmrks++,csr,'#FEFEFE');
-				ln.style.zIndex=zpos++;
-				ln.type=canv.beztypes[(lnmrks-1)/3];
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateBezPoints(canv,this)};
-			}
-			else
-			{
-				csr = {x:canv.path[i][5], y:canv.path[i][6]};
-				ln=new linemarker(lnmrks++,csr,'red');
-				ln.style.zIndex=zpos++;
-				ln.style.visibility='hidden';
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateCtrlBezPoints(canv,this)};
-				csr = {x:canv.path[i][3], y:canv.path[i][4]};
-				ln=new linemarker(lnmrks++,csr,'red');
-				ln.style.zIndex=zpos++;
-				ln.style.visibility='hidden';
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateCtrlBezPoints(canv,this)};
-				csr = {x:canv.path[i][1], y:canv.path[i][2]};
-				ln=new linemarker(lnmrks++,csr,'#FEFEFE');
-				ln.style.zIndex=zpos++;
-				ln.type=canv.beztypes[(lnmrks-1)/3];
-				DDln=new YAHOO.util.DD(ln.id);
-				DDln.onDrag=function(){updateBezPoints(canv,this)};
-			}			
-		}
-		if (canv.path[2]=='freeform')
-		{
-			$('lnm'+(lnmrks-1)).parentNode.removeChild($('lnm'+(lnmrks-1)));
-			lnmrks--;
-		}
-		g=getmaxmin(canv.path);
-		canv.bleft=g.mnx;
-		canv.bwidth=g.mxx-g.mnx;
-		canv.btop=g.mny;
-		canv.bheight=g.mxy-g.mny;
-		drawbezguides(canv);
-	}
-
+	SELECTEDSHAPE.drawBezGuides();
+	
 }
 
 
