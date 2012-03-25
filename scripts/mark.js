@@ -321,6 +321,39 @@ function updateCtrl1Node(cursor)
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	var c1=new Point(cursor.x,cursor.y);
 	this.setNode(this.point,c1,this.ctrl2);
+	var prevnode=this.prev;
+	if(prevnode.corner=="corner")
+	{
+		prevnode="none";
+	}
+	if(this.prev.point.x=="end")
+	{
+		if(this.shape.type=="freeform")
+		{
+			prevnode=this.prev.prev.prev;
+		}
+		else //type curve
+		{
+			prevnode="none"
+		}
+	}
+	if(prevnode!="none")
+	{
+		if(prevnode.corner=="smooth")
+		{
+			var c2=new Point(prevnode.point.x-(this.ctrl1.x-prevnode.point.x),prevnode.point.y-(this.ctrl1.y-prevnode.point.y));
+		}
+		else if(prevnode.corner=="inline")
+		{
+			var nl1=Math.sqrt((this.ctrl1.x-prevnode.point.x)*(this.ctrl1.x-prevnode.point.x)+(this.ctrl1.y-prevnode.point.y)*(this.ctrl1.y-prevnode.point.y));
+			var nl2=Math.sqrt((prevnode.ctrl2.x-prevnode.point.x)*(prevnode.ctrl2.x-prevnode.point.x)+(prevnode.ctrl2.y-prevnode.point.y)*(prevnode.ctrl2.y-prevnode.point.y));
+			var c2=new Point(prevnode.point.x-(this.ctrl1.x-prevnode.point.x)*nl2/nl1,prevnode.point.y-(this.ctrl1.y-prevnode.point.y)*nl2/nl1);
+			
+		}
+		prevnode.setNode(prevnode.point,prevnode.ctrl1,c2);
+		prevnode.c2mark.style.top=prevnode.ctrl2.y-2;
+		prevnode.c2mark.style.left=prevnode.ctrl2.x-2;
+	}
 	this.shape.draw();
 	this.shape.drawBezGuides();
 	this.shape.setCorners();
@@ -332,21 +365,41 @@ function updateCtrl2Node(cursor)
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	var c2=new Point(cursor.x,cursor.y);
 	this.setNode(this.point,this.ctrl1,c2);
+	var nextnode=this.next;
+	if(this.corner=="corner")
+	{
+		nextnode="none";
+	}
+	if(this.next.point.x=="end")
+	{
+		if(this.shape.type=="freeform")
+		{
+			nextnode=this.next.next.next;
+		}
+		else //type curve
+		{
+			nextnode="none"
+		}
+	}
+	if(nextnode!="none")
+	{
+		if(this.corner=="smooth")
+		{
+			var c1=new Point(this.point.x-(this.ctrl2.x-this.point.x),this.point.y-(this.ctrl2.y-this.point.y));
+		}
+		else if(this.corner=="inline")
+		{
+			var nl1=Math.sqrt((nextnode.ctrl1.x-this.point.x)*(nextnode.ctrl1.x-this.point.x)+(nextnode.ctrl1.y-this.point.y)*(nextnode.ctrl1.y-this.point.y));
+			var nl2=Math.sqrt((this.ctrl2.x-this.point.x)*(this.ctrl2.x-this.point.x)+(this.ctrl2.y-this.point.y)*(this.ctrl2.y-this.point.y));
+			var c1=new Point(this.point.x-(this.ctrl2.x-this.point.x)*nl1/nl2,this.point.y-(this.ctrl2.y-this.point.y)*nl1/nl2);
+			
+		}
+		nextnode.setNode(nextnode.point,c1,nextnode.ctrl2);
+		nextnode.c1mark.style.top=nextnode.ctrl1.y-2;
+		nextnode.c1mark.style.left=nextnode.ctrl1.x-2;
+	}
 	this.shape.draw();
 	this.shape.drawBezGuides();
 	this.shape.setCorners();
 }
-/*       
-function markLine()
-{
-	node=this.path.next;
-	node=node.next;
-	while(node.point.x != "end")
-	{
-		node.addFullMarks();
-		node=node.next;  
-	}
-	this.draw();
-	this.drawBezGuides();
-}
-*/
+

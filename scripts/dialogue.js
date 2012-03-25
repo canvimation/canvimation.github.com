@@ -130,13 +130,14 @@ function pointEdit(mark)
 		}
 		$("pointsbox").style.visibility="visible";
 		$("pointsbox").mark=mark;
-		//$("p_smooth").style.visibility="hidden";
-		//$("p_inline").style.visibility="hidden";
+		$("p_smooth").style.visibility="hidden";
+		$("p_inline").style.visibility="hidden";
 		$("p_open").style.visibility="hidden";
 		$("p_line").style.visibility="hidden";
 		$("p_line2").style.visibility="hidden";
 		$("p_add").style.visibility="hidden";
 		$("p_add2").style.visibility="hidden";
+		$("p_paths").style.visibility="hidden";
 		$("p_close").style.visibility="hidden";
 		$("p_corner").style.backgroundColor="#FFFFFF";
 		$("p_corner").style.color="#000000";
@@ -153,7 +154,91 @@ function pointEdit(mark)
 		$("p_corner").onclick=function(){updateCorner(mark.node,"corner")};
 		$("p_smooth").onclick=function(){updateCorner(mark.node,"smooth")};
 		$("p_inline").onclick=function(){updateCorner(mark.node,"inline")};
-		mark.style.backgroundColor="red";
+		$("p_delete").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_delete").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
+		$("p_delete").onclick=function(){delNode(mark.node)};
+		$("p_open").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_open").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
+		$("p_line").onmouseover=function() {this.style.backgroundColor="yellow",$("p_line2").style.backgroundColor="#95B3D7"};
+		$("p_line").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_line2").style.backgroundColor="#FFFFFF"};
+		$("p_line2").onmouseover=function() {$("p_line").style.backgroundColor="yellow",this.style.backgroundColor="#95B3D7"};
+		$("p_line2").onmouseout=function(){$("p_line").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
+		$("p_add").onmouseover=function() {this.style.backgroundColor="yellow",$("p_add2").style.backgroundColor="#95B3D7"};
+		$("p_add").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_add2").style.backgroundColor="#FFFFFF"};
+		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="yellow",this.style.backgroundColor="#95B3D7"};
+		$("p_add2").onmouseout=function(){$("p_add").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
+		var dt=0;
+		$("p_points").style.top=0;
+		$("p_corner").style.top=25;
+		if(mark.node.shape.type=="curve" && mark.node.corner=="corner" && (mark.node.next.point.x=="end" || mark.node.prev.point.x=="end"))
+		{
+			dt=50;
+		}
+		else
+		{
+			$("p_smooth").style.visibility="visible";
+			$("p_inline").style.visibility="visible";
+		}
+		$("p_smooth").style.top=50;
+		$("p_inline").style.top=75;
+		$("p_delete").style.top=100-dt;
+		if(mark.node.shape.type=="curve")
+		{
+			dt+=25;
+		}
+		else
+		{
+			$("p_open").style.visibility="visible";
+		}
+		$("p_open").style.top=125-dt;
+		if(mark.node.shape.type=="curve" && mark.node.next.point.x=="end")
+		{
+			dt+=75;
+		}
+		else
+		{
+			$("p_segments").style.visibility="visible";
+			$("p_line").style.visibility="visible";
+			$("p_line2").style.visibility="visible";
+			$("p_add").style.visibility="visible";
+			$("p_add2").style.visibility="visible";
+		}
+		$("p_segments").style.top=150-dt;
+		$("p_line").style.top=175-dt;
+		$("p_line2").style.top=175-dt;
+		$("p_add").style.top=200-dt;
+		$("p_add2").style.top=200-dt;
+		if(mark.node.shape.type=="curve")
+		{
+			$("p_paths").style.visibility="visible";
+			$("p_close").style.visibility="visible";
+		}
+		else
+		{
+			dt+=50;
+		}
+		$("p_paths").style.top=225-dt;
+		$("p_close").style.top=250-dt;
+		$('pointsbox').style.height=300-dt;
+		$('pointscontent').style.height=parseInt($('pointsbox').style.height)-25;
+		mark.style.backgroundColor="#D7D700";
+			
+		if(mark.node.shape.type=="freeform" && mark.node.next.point.x=="end")
+		{
+			var nextnode=mark.node.next.next.next;
+		}
+		else if(mark.node.shape.type=="curve" && (mark.node.next.point.x=="end" || mark.node.prev.point.x=="end"))
+		{
+			var nextnode="none";
+		}
+		else
+		{
+			var nextnode=mark.node.next;
+		}
+		if(nextnode!="none")
+		{
+			nextnode.mark.style.backgroundColor="#95B3D7";
+		}
 		switch(mark.node.corner)
 		{
 			case "corner":
@@ -197,7 +282,6 @@ function updateCorner(node,corner)
 	{
 		var nextnode=node.next;
 	}
-	
 	if(corner=="smooth")
 	{
 		var c1=new Point(nextnode.ctrl1.x-node.point.x,nextnode.ctrl2.y-node.point.y);
@@ -206,7 +290,7 @@ function updateCorner(node,corner)
 		if(node.corner=="corner")
 		{
 			var phi=arctan(c2.y,c2.x);
-			var psi=arctan(c1.y,c1.x);
+			//var psi=arctan(c1.y,c1.x);
 			var theta=arctan(p.y,p.x);  //angle of normal to line through midpoint
 			var np=c2.pointRotate(theta-phi-(theta-phi)/Math.abs(theta-phi)*Math.PI/2);
 			var ctrl2=new Point(node.point.x+np.x,node.point.y+np.y);
@@ -216,8 +300,8 @@ function updateCorner(node,corner)
 		}
 		else if(node.corner=="inline")
 		{
-			node.ctrl2.x=node.point.x+(node.ctrl2.x-node.point.x)*nl/nl1;
-			node.ctrl1.x=node.point.y+(node.ctrl2.y-node.point.y)*nl/nl1;
+			var x=node.ctrl2.x-node.point.x;
+			var y=node.ctrl2.y-node.point.y;
 			nextnode.ctrl1.x=node.point.x-x;
 			nextnode.ctrl1.y=node.point.y-y;
 		}
@@ -226,10 +310,19 @@ function updateCorner(node,corner)
 	{
 		if(node.corner=="corner")
 		{
-			var x=node.ctrl2.x-node.point.x;
-			var y=node.ctrl2.y-node.point.y;
-			nextnode.ctrl1.x=node.point.x-x;
-			nextnode.ctrl1.y=node.point.y-y;
+			var c1=new Point(nextnode.ctrl1.x-node.point.x,nextnode.ctrl2.y-node.point.y);
+			var c2=new Point(node.ctrl2.x-node.point.x,node.ctrl2.y-node.point.y);
+			var p=vecAdd(c1,c2);
+			var phi=arctan(c2.y,c2.x);
+			var psi=arctan(c1.y,c1.x);
+			var theta=arctan(p.y,p.x);  //angle of normal to line through midpoint
+			var clk=(theta-phi)/Math.abs(theta-phi) //clockwise or anticlockwise
+			var np2=c2.pointRotate(theta-phi-clk*Math.PI/2);
+			var np1=c1.pointRotate(3*Math.PI/2-clk*(theta-psi));
+			var ctrl2=new Point(node.point.x+np2.x,node.point.y+np2.y);
+			var ctrl1=new Point(node.point.x+np1.x,node.point.y+np1.y);
+			node.ctrl2=ctrl2;
+			nextnode.ctrl1=ctrl1;
 		}
 	}
 	node.c2mark.style.top=node.ctrl2.y-2;
@@ -240,4 +333,19 @@ function updateCorner(node,corner)
 	node.shape.draw();
 	node.shape.drawBezGuides();
 	pointEdit(node.mark)
+}
+
+function delNode(node)
+{
+	if(node.next.point.x=="end")
+	{
+		var p=new Point(node.point.x,node.point.y);
+		var c1=new Point(node.ctrl1.x,node.ctrl1.y);
+		var c2=new Point(node.ctrl2.x,node.ctrl2.y);
+		node.prev.setNode(p,c1,c2);
+	}
+	node.removeNode();
+	node.mark.style.visibility="hidden";
+	node.shape.draw();
+	node.shape.drawBezGuides();
 }

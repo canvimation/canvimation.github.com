@@ -674,6 +674,9 @@ div.bar {
     filter:alpha(opacity=100);
 }
 
+.notext {
+	cursor: default;
+}
 #export {
 	left:110px;
 	top:4px;
@@ -2121,17 +2124,17 @@ function main()
 <!--dialogue box setting line weight-->
 <div id='pointsbox' class="dialoguebox">
 	<div id='pointscontent' class='content'>
-		<div id="p_points">&nbsp;&nbsp;Points</div>
-		<div id="p_corner">&nbsp;&nbsp;Corner</div>
-		<div id="p_smooth">&nbsp;&nbsp;Smooth</div>
-		<div id="p_inline">&nbsp;&nbsp;In-line</div>
-		<div id="p_delete">&nbsp;&nbsp;Delete</div>
-		<div id="p_open">&nbsp;&nbsp;Open Path</div>
-		<div id="p_segments">&nbsp;&nbsp;<span style="color: yellow">Seg</span><span style="color: #95B3D7">ments</span></div>
-		<div id="p_line">&nbsp;&nbsp;Curved</div><div id="p_line2"> </div>
-		<div id="p_add">&nbsp;&nbsp;Add Point</div><div id="p_add2"> </div>
-		<div id="p_paths">&nbsp;&nbsp;Path</div>
-		<div id="p_close">&nbsp;&nbsp;Close Path</div>
+		<div id="p_points" class="notext">&nbsp;&nbsp;Points</div>
+		<div id="p_corner" class="notext">&nbsp;&nbsp;Corner</div>
+		<div id="p_smooth" class="notext">&nbsp;&nbsp;Smooth</div>
+		<div id="p_inline" class="notext">&nbsp;&nbsp;In-line</div>
+		<div id="p_delete" class="notext">&nbsp;&nbsp;Delete</div>
+		<div id="p_open" class="notext">&nbsp;&nbsp;Open Path</div>
+		<div id="p_segments" class="notext">&nbsp;&nbsp;<span style="color: yellow">Seg</span><span style="color: #95B3D7">ments</span></div>
+		<div id="p_line" class="notext">&nbsp;&nbsp;Curved</div><div id="p_line2"> </div>
+		<div id="p_add" class="notext">&nbsp;&nbsp;Add Point</div><div id="p_add2"> </div>
+		<div id="p_paths" class="notext">&nbsp;&nbsp;Path</div>
+		<div id="p_close" class="notext">&nbsp;&nbsp;Close Path</div>
 	</div>
 	<div id='pointshead' class='head'>&nbsp; Edit
 		<img src='assets/x.png' onclick='closedialogue(this)'/>
