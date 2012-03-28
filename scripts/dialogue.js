@@ -145,27 +145,29 @@ function pointEdit(mark)
 		$("p_smooth").style.color="#000000";
 		$("p_inline").style.backgroundColor="#FFFFFF";
 		$("p_inline").style.color="#000000";
-		$("p_corner").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_corner").onmouseover=function() {this.style.backgroundColor="#F09898"};
 		$("p_corner").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
-		$("p_smooth").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_smooth").onmouseover=function() {this.style.backgroundColor="#F09898"};
 		$("p_smooth").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
-		$("p_inline").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_inline").onmouseover=function() {this.style.backgroundColor="#F09898"};
 		$("p_inline").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
 		$("p_corner").onclick=function(){updateCorner(mark.node,"corner")};
 		$("p_smooth").onclick=function(){updateCorner(mark.node,"smooth")};
 		$("p_inline").onclick=function(){updateCorner(mark.node,"inline")};
-		$("p_delete").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_delete").onmouseover=function() {this.style.backgroundColor="#F09898"};
 		$("p_delete").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
 		$("p_delete").onclick=function(){delNode(mark.node)};
-		$("p_open").onmouseover=function() {this.style.backgroundColor="yellow"};
+		$("p_open").onmouseover=function() {this.style.backgroundColor="#F09898"};
 		$("p_open").onmouseout=function(){this.style.backgroundColor="#FFFFFF"};
-		$("p_line").onmouseover=function() {this.style.backgroundColor="yellow",$("p_line2").style.backgroundColor="#95B3D7"};
+		$("p_line").onmouseover=function() {this.style.backgroundColor="#F09898",$("p_line2").style.backgroundColor="#95B3D7"};
 		$("p_line").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_line2").style.backgroundColor="#FFFFFF"};
-		$("p_line2").onmouseover=function() {$("p_line").style.backgroundColor="yellow",this.style.backgroundColor="#95B3D7"};
+		$("p_line").onclick=function() {setSegment(mark.node)};
+		$("p_line2").onclick=function() {setSegment(mark.node)};
+		$("p_line2").onmouseover=function() {$("p_line").style.backgroundColor="#F09898",this.style.backgroundColor="#95B3D7"};
 		$("p_line2").onmouseout=function(){$("p_line").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
-		$("p_add").onmouseover=function() {this.style.backgroundColor="yellow",$("p_add2").style.backgroundColor="#95B3D7"};
+		$("p_add").onmouseover=function() {this.style.backgroundColor="#F09898",$("p_add2").style.backgroundColor="#95B3D7"};
 		$("p_add").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_add2").style.backgroundColor="#FFFFFF"};
-		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="yellow",this.style.backgroundColor="#95B3D7"};
+		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="#F09898",this.style.backgroundColor="#95B3D7"};
 		$("p_add2").onmouseout=function(){$("p_add").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		var dt=0;
 		$("p_points").style.top=0;
@@ -221,13 +223,13 @@ function pointEdit(mark)
 		$("p_close").style.top=250-dt;
 		$('pointsbox').style.height=300-dt;
 		$('pointscontent').style.height=parseInt($('pointsbox').style.height)-25;
-		mark.style.backgroundColor="#D7D700";
+		mark.style.backgroundColor="#F09898";//"#D7D700";
 			
 		if(mark.node.shape.type=="freeform" && mark.node.next.point.x=="end")
 		{
 			var nextnode=mark.node.next.next.next;
 		}
-		else if(mark.node.shape.type=="curve" && (mark.node.next.point.x=="end" || mark.node.prev.point.x=="end"))
+		else if(mark.node.shape.type=="curve" && mark.node.next.point.x=="end")
 		{
 			var nextnode="none";
 		}
@@ -238,6 +240,14 @@ function pointEdit(mark)
 		if(nextnode!="none")
 		{
 			nextnode.mark.style.backgroundColor="#95B3D7";
+			if(nextnode.vertex=="L")
+			{
+				$("p_line").innerHTML="&nbsp;&nbsp;Curve"
+			}
+			else
+			{
+				$("p_line").innerHTML="&nbsp;&nbsp;Straighten"
+			}
 		}
 		switch(mark.node.corner)
 		{
@@ -270,7 +280,7 @@ function pointEdit(mark)
 
 function updateCorner(node,corner)
 {
-	if(node.shape.type=="curve" && (node.next.point.x=="end" || node.prev.point.x=="end"))
+	if(node.shape.type=="curve" && node.next.point.x=="end")
 	{
 		return;
 	}
@@ -325,8 +335,11 @@ function updateCorner(node,corner)
 			nextnode.ctrl1=ctrl1;
 		}
 	}
-	node.c2mark.style.top=node.ctrl2.y-2;
-	node.c2mark.style.left=node.ctrl2.x-2;
+	if(!(node.shape.type=="curve" && node.prev.point.x=="end"))
+	{
+		node.c2mark.style.top=node.ctrl2.y-2;
+		node.c2mark.style.left=node.ctrl2.x-2;
+	}
 	nextnode.c1mark.style.top=nextnode.ctrl1.y-2;
 	nextnode.c1mark.style.left=nextnode.ctrl1.x-2;
 	node.corner=corner;
@@ -339,13 +352,98 @@ function delNode(node)
 {
 	if(node.next.point.x=="end")
 	{
-		var p=new Point(node.point.x,node.point.y);
+		if(node.shape.type=="freeform")
+		{
+			var nextnode=node.next.next.next;
+			var p=new Point(node.prev.point.x,node.prev.point.y);
+			n=node.shape.path.next;
+			node.shape.path.next.setNode(p);
+			
+		}
+		else
+		{
+			var nextnode="none";
+		}
+	}
+	else
+	{
+		nextnode=node.next;
+	}
+	if(nextnode!="none")
+	{
 		var c1=new Point(node.ctrl1.x,node.ctrl1.y);
-		var c2=new Point(node.ctrl2.x,node.ctrl2.y);
-		node.prev.setNode(p,c1,c2);
+		nextnode.setNode(nextnode.point,c1,nextnode.ctrl2);
 	}
 	node.removeNode();
 	node.mark.style.visibility="hidden";
 	node.shape.draw();
 	node.shape.drawBezGuides();
+	clear($("markerdrop"));
+	node.shape.addAllMarks();
+	if(node.shape.type=="freeform")
+	{
+		if(node.prev.prev.point.x=="end")
+		{
+			var prevnode=node.prev.prev.prev;
+		}
+		else
+		{
+			var prevnode=node.prev;
+		}
+		pointEdit(prevnode.mark);
+	}
+	else
+	{
+		if(node.prev.point.x=="end")
+		{
+			pointEdit(node.next.mark);
+		}
+		else
+		{
+			pointEdit(node.prev.mark);
+		}
+	}
+}
+
+function setSegment(node)
+{
+	if(node.shape.type=="freeform" && node.next.point.x=="end")
+	{
+		var nextnode=node.next.next.next;
+	}
+	else
+	{
+		var nextnode=node.next;
+	}
+	if(nextnode.vertex=="B")
+	{
+		nextnode.vertex="L";
+	}
+	else
+	{
+		nextnode.vertex="B";
+	}
+	
+	clear($("markerdrop"));
+	node.shape.addAllMarks();
+	updateCorner(nextnode,"corner");
+	updateCorner(node,"corner");
+}
+
+function extraNode(node)
+{
+	if(node.shape.type=="freeform" && node.next.point.x=="end")
+	{
+		var nextnode=node.next.next.next;
+	}
+	else
+	{
+		var nextnode=node.next;
+	}
+	var x = (1-t)*(1-t)*(1-t)*node.point.x + 3*(1-t)*(1-t)*t*nextnode.ctrl1.x + 3*(1-t)*t*t*nextnode.ctrl2.x + t*t*t*nextnode.point.x;
+	var y = (1-t)*(1-t)*(1-t)*node.point.y + 3*(1-t)*(1-t)*t*nextnode.ctrl1.y + 3*(1-t)*t*t*nextnode.ctrl2.y + t*t*t*nextnode.point.y; 
+	var p=new Point(x,y);
+	var c1=new Point();
+	var c2=new Point();
+	var insertnode=new Node()
 }

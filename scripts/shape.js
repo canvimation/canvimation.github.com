@@ -236,6 +236,7 @@ function Shape(name,open,editable,type)
    	this.isOn=isOn;
    	this.isIn=isIn;
    	this.elType=elType;
+	this.addAllMarks=addAllMarks;   	
    	return this;
    	
 }
@@ -1204,5 +1205,28 @@ function alignbot()
 			shape.centreOfRotation.y+=dmxb;
 			shape.draw();
 		}
+	}
+}
+
+
+function addAllMarks()
+{
+	node=this.path.next;
+	if(this.type=="curve")
+	{
+		node.addPointMark();
+	}
+	node=node.next;
+	while(node.point.x!="end")
+	{
+		if(node.vertex=="L")
+		{
+			node.addPointMark();
+		}
+		else
+		{
+			node.addFullMarks();
+		}
+		node=node.next;
 	}
 }
