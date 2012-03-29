@@ -29,16 +29,15 @@ function Node(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=ctrl1;
 		this.ctrl2=ctrl2;
-		this.corner="corner";
 		this.vertex="B";
 	}
 	else
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
-		this.corner="corner";
 		this.vertex="L";
 	}
+	this.corner="corner";
 	this.next="";
 	this.prev="";
 	this.shape;

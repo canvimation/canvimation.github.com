@@ -167,6 +167,8 @@ function pointEdit(mark)
 		$("p_line2").onmouseout=function(){$("p_line").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		$("p_add").onmouseover=function() {this.style.backgroundColor="#F09898",$("p_add2").style.backgroundColor="#95B3D7"};
 		$("p_add").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_add2").style.backgroundColor="#FFFFFF"};
+		$("p_add").onclick=function() {extraNode(mark.node)};
+		$("p_add2").onclick=function() {extraNode(mark.node)};
 		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="#F09898",this.style.backgroundColor="#95B3D7"};
 		$("p_add2").onmouseout=function(){$("p_add").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		var dt=0;
@@ -440,10 +442,33 @@ function extraNode(node)
 	{
 		var nextnode=node.next;
 	}
-	var x = (1-t)*(1-t)*(1-t)*node.point.x + 3*(1-t)*(1-t)*t*nextnode.ctrl1.x + 3*(1-t)*t*t*nextnode.ctrl2.x + t*t*t*nextnode.point.x;
-	var y = (1-t)*(1-t)*(1-t)*node.point.y + 3*(1-t)*(1-t)*t*nextnode.ctrl1.y + 3*(1-t)*t*t*nextnode.ctrl2.y + t*t*t*nextnode.point.y; 
-	var p=new Point(x,y);
-	var c1=new Point();
-	var c2=new Point();
-	var insertnode=new Node()
+	if(nextnode.vertex=="B")
+	{
+    	var c1=new Point((node.point.x+nextnode.ctrl1.x)/2,(node.point.y+nextnode.ctrl1.y)/2);
+    	var c2=new Point((node.point.x+2*nextnode.ctrl1.x+nextnode.ctrl2.x)/4,(node.point.y+2*nextnode.ctrl1.y+nextnode.ctrl2.y)/4);
+    	var m=new Point((node.point.x+3*(nextnode.ctrl1.x+nextnode.ctrl2.x)+nextnode.point.x)/8,(node.point.y+3*(nextnode.ctrl1.y+nextnode.ctrl2.y)+nextnode.point.y)/8);
+    	var d1=new Point((nextnode.ctrl1.x+2*nextnode.ctrl2.x+nextnode.point.x)/4,(nextnode.ctrl1.y+2*nextnode.ctrl2.y+nextnode.point.y)/4);
+    	var d2=new Point((nextnode.ctrl2.x+nextnode.point.x)/2,(nextnode.ctrl2.y+nextnode.point.y)/2);
+		var midnode=new Node(m,c1,c2);
+		nextnode.setNode(nextnode.point,d1,d2);
+	}
+	else
+	{
+		var m=new Point((node.point.x+nextnode.point.x)/2,(node.point.y+nextnode.point.y)/2);
+		var c1=new Point((3*node.point.x+m.x)/4,(3*node.point.y+m.y)/4);
+		var c2=new Point((node.point.x+3*m.x)/4,(node.point.y+3*m.y)/4);
+		var d1=new Point((3*m.x+nextnode.point.x)/4,(3*m.y+nextnode.point.y)/4);
+		var d2=new Point((m.x+3*nextnode.point.x)/4,(m.y+3*nextnode.point.y)/4);
+		var midnode=new Node(m,c1,c2);
+		midnode.vertex="L"
+		nextnode.setNode(nextnode.point,d1,d2);
+		nextnode.vertex="L"
+	}
+	midnode.shape=node.shape;
+	nextnode.insertNodeBefore(midnode);
+	node.shape.draw();
+	node.shape.drawBezGuides();
+	clear($("markerdrop"));
+	node.shape.addAllMarks();
+	pointEdit(node.mark);
 }
