@@ -85,6 +85,8 @@ function copyNodeTo(node)
 	node.ctrl1.y=this.ctrl1.y;
 	node.ctrl2.x=this.ctrl2.x;
 	node.ctrl2.y=this.ctrl2.y;
+	node.vertex=this.vertex;
+	node.corner=this.corner;
 	node.shape=this.shape;
 }
 
@@ -174,7 +176,6 @@ function Shape(name,open,editable,type)
    	this.open=open;
    	this.editable=editable;
    	this.type=type;
-   	this.psuid=this.id;
    	var p=new Point(0,0);
    	this.tplftcrnr=p; //coordinates of top left of boundary box;
    	this.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
@@ -704,9 +705,6 @@ function baseArcBez(radius,theta) // theta half angle subtending arc <90 degrees
 	return {p1:p1,p2:p2,c1:c1,c2:c2}
 }
 
- 
-
-
 function arctan(y,x)  //returns angle of line from (0,0) to (x,y) from x axis 
 {
 	if(x==0)
@@ -805,7 +803,7 @@ function setCorners() //for freeform and curve;
    	this.group.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
 }
 
-function fixCorners()  //shapes other than freeform or curve
+function fixCorners()  
 {
 	var tx=this.tplftcrnr.x;
 	var ty=this.tplftcrnr.y;
@@ -816,9 +814,6 @@ function fixCorners()  //shapes other than freeform or curve
 	this.btmrgtcrnr.x=Math.max(tx,bx);
 	this.btmrgtcrnr.y=Math.max(ty,by);
 }
-//old functions 
-
-
 
 function showTools(shape)
 {
@@ -926,13 +921,25 @@ function hideTools()
 
 function shapecopy(offset)
 {
-	ZSTART=ZPOS;
-	ZOFFSET=ZPOS-ZNEG;
+	var name;
+	var temps;
+	var shapelist=[];
+	//ZSTART=ZPOS;
+	//ZOFFSET=ZPOS-ZNEG;
 	SELECTED={};
 	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
 	{
 		var group=$("boundarydrop").childNodes[i].group;
 		var groupcopy=copyGroup(group,offset,$("shapestage"));
+		var members=groupcopy.memberShapes();
+		for(var shape in members)
+		{
+			members[shape].group=groupcopy;
+			temps=[];
+			temps[0]=members[shape].name;
+			temps[1]=members[shape].zIndex;
+			shapelist.push(temps);
+		}
 		SELECTED[groupcopy.name]=groupcopy;
 	}
 	clear($("boundarydrop"));
@@ -940,23 +947,22 @@ function shapecopy(offset)
 	{
 		SELECTED[name].drawBoundary();
 	}
-	ZPOS=ZSTART+ZOFFSET;
-}
-
-function shapetransfer(theatre)
-{
-	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
+	shapelist.sort(zindp);
+	
+	for (var i=0; i<shapelist.length;i++)
 	{
-		var group=$("boundarydrop").childNodes[i].group;
-		var groupcopy=copyGroup(group,0,theatre);
+		name=shapelist[i][0];
+		SHAPES[name].zIndex=ZPOS++;
+		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
 	}
+	//ZPOS=ZSTART+ZOFFSET;
 }
 
 function makeCopy(shape,offset,theatre)
 {
 	var p,n,c1,c2;
 	var non=new Point("non","non");
-	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.edit,shape.title);
+	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.editable,shape.type);
 	for(var property in shape)
 	{
 		copy.property=shape.property;
@@ -967,6 +973,7 @@ function makeCopy(shape,offset,theatre)
 	copy.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
 	p=new Point(shape.centreOfRotation.x+offset,shape.centreOfRotation.y+offset);
 	copy.centreOfRotation=p;
+	copy.lineWidth=shape.lineWidth;
 	for(var i=0; i<4;i++)
 	{
 		copy.fillStyle[i]=shape.fillStyle[i];
@@ -1207,6 +1214,66 @@ function alignbot()
 	}
 }
 
+function bringfront()
+{
+	var name;
+	var temps;
+	var shapelist=[];
+	for(var group in SELECTED)
+	{
+		var members=SELECTED[group].memberShapes();
+		for(var shape in members)
+		{
+			temps=[];
+			temps[0]=members[shape].name;
+			temps[1]=members[shape].zIndex;
+			shapelist.push(temps);
+		}
+	}
+	shapelist.sort(zindp);
+	
+	for (var i=0; i<shapelist.length;i++)
+	{
+		name=shapelist[i][0];
+		SHAPES[name].zIndex=ZPOS++;
+		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
+	}
+}
+
+function zindp(a,b)
+{
+	return a[1]-b[1]
+}
+
+function sendback()
+{
+	var name;
+	var temps;
+	var shapelist=[];
+	for(var group in SELECTED)
+	{
+		var members=SELECTED[group].memberShapes();
+		for(var shape in members)
+		{
+			temps=[];
+			temps[0]=members[shape].name;
+			temps[1]=members[shape].zIndex;
+			shapelist.push(temps);
+		}
+	}
+	shapelist.sort(zindn);
+	
+	for (var i=0; i<shapelist.length;i++)
+	{
+		name=shapelist[i][0];
+		SHAPES[name].zIndex=ZNEG--;
+		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
+	}
+	function zindn(a,b)
+	{
+		return b[1]-a[1]
+	}
+}
 
 function addAllMarks()
 {

@@ -48,7 +48,6 @@ function shapeMenu()
 	   							SELECTED={};
 	   							BCOUNT=0;
 	   							$("backstage").style.visibility="hidden";
-	   							
 	   							shape.addTo($("shapestage"));
 	   							shape.Canvas.style.cursor="crosshair";
 	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))};

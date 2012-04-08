@@ -14,6 +14,7 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.top;
 	this.width;
 	this.height;
+	//this.showmembers=showmembers;
 	
 	if(arguments.length>0)
 	{
@@ -140,25 +141,25 @@ function copyGroup(group,offset,theatre)
 	groupcopy.width=group.width;
 	groupcopy.height=group.height;
 	for(var i=0; i<group.members.length; i++)
+	{
+		if(group.members[i].elType()=="group")
 		{
-			if(group.members[i].elType()=="group")
+			groupcopy.members.push(copyGroup(group.members[i],offset,theatre));
+		}
+		else
+		{
+			var shape=group.members[i];
+			var copy=makeCopy(shape,offset,theatre);
+			groupcopy.members.push(copy);
+			copy.group=groupcopy;
+			copy.addTo(theatre);
+			if(theatre.id=="shapestage")
 			{
-				groupcopy.members.push(copyGroup(group.members[i],offset,theatre));
-			}
-			else
-			{
-				var shape=group.members[i];
-				var copy=makeCopy(shape,offset,theatre);
-				groupcopy.members.push(copy);
-				copy.group=groupcopy;
-				copy.addTo(theatre);
-				if(theatre.id=="shapestage")
-				{
-					copy.draw();
-				}
+				copy.draw();
 			}
 		}
-		return groupcopy;
+	}
+	return groupcopy;
 }
 
 function ungroup()
@@ -204,3 +205,24 @@ function update(l,t,dx,dy,scalew,scaleh)
 		}
 	}
 }
+
+/*
+function showmembers()
+{
+	var mem="[";
+		for(var i=0; i<this.members.length; i++)
+		{
+			if(this.members[i].elType()=="group")
+			{
+				mem+=this.members[i].showmembers();
+			}
+			else
+			{
+				var shape=this.members[i];
+				mem+=shape.name;
+			}
+		}
+		return mem+="]";
+
+}
+*/

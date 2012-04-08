@@ -49,7 +49,7 @@ function checkBoundary(shiftdown,cursor)
 		}
 	}
 	if (shapefound)
-	{
+	{//alert(foundshape.group.showmembers());
 		$("boundarydrop").style.visibility="visible";
 		if(shiftdown)
 		{
@@ -534,22 +534,42 @@ function markLine()
 	closeColor();
 	removeGradLine();
 	removeRotate();
-	var node=SELECTEDSHAPE.path.next;
-	node.addPointMark();
-	node=node.next;
-	while(node.point.x!="end")
+	switch (SELECTEDSHAPE.type)
 	{
-		if(node.vertex=="L")
-		{
+		case "line":
+		case "arc":
+		case "segment":
+		case "sector":
+			var node=SELECTEDSHAPE.path.next;
 			node.addPointMark();
-		}
-		else
-		{
-			node.addFullMarks();
-		}
-		node=node.next;
+			node=node.next;
+			node.addPointMark();
+		break
+		case "rounded_rectangle":
+			var node=SELECTEDSHAPE.path.next;
+			node.addPointMark();
+		break
+		case "freeform":
+		case "curve":
+			var node=SELECTEDSHAPE.path.next;
+			node.addPointMark();
+			node=node.next;
+			while(node.point.x!="end")
+			{
+				if(node.vertex=="L")
+				{
+					node.addPointMark();
+				}
+				else
+				{
+					node.addFullMarks();
+				}
+				node=node.next;
+			}
+			SELECTEDSHAPE.drawBezGuides();
+		break
 	}
-	SELECTEDSHAPE.drawBezGuides();
+	
 	
 }
 
@@ -598,7 +618,7 @@ function isIn(cursor)
 		}
 	node=node.next;	
 	}
-	if(this.type=="sector" || this.type=="segment") //check intersection with closing line
+	if(this.type=="sector" || this.type=="segment" || this.type=="rectangle") //check intersection with closing line
 	{
 		var start=this.path.next;
 		var last=this.path.prev;

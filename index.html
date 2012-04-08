@@ -793,21 +793,17 @@ div.bar {
 <script type="text/javascript" src = "scripts/righthandle.js" ></script>
 <script type="text/javascript" src = "scripts/colorpicker.js" ></script>
 <script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
+<script type="text/javascript" src = "scripts/reflect.js" ></script>
 
 
 <script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
-
 <script type="text/javascript" src = "scripts/export.js" ></script>
 <script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
-
-
 <script type="text/javascript" src = "scripts/linemarker.js" ></script>
-
 <script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
 <script type="text/javascript" src = "scripts/gradmenu.js" ></script>
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
 <script type="text/javascript" src = "scripts/grid.js" ></script>
-<script type="text/javascript" src = "scripts/reflect.js" ></script>
 <script type="text/javascript" src = "scripts/shadowmenu.js" ></script>
 <script type="text/javascript" src = "scripts/canvashtml.js" ></script>
 <script type="text/javascript" src = "scripts/idmenu.js" ></script>
@@ -1091,58 +1087,6 @@ function shapedelete()
 
 
 
-
-function bringfront()
-{
-	var slist=[];
-	var sl=selected.length;
-	var temps
-	for (var i=0; i<sl; i++)
-	{
-		temps=[];
-		temps[0]=selected[i].id;
-		temps[1]=selected[i].style.zIndex;
-		slist.push(temps);
-	}
-	slist.sort(zindp);
-	
-	for (var i=0; i<slist.length;i++)
-	{
-		$(slist[i][0]).zIndex=zpos++;
-		$(slist[i][0]).style.zIndex=$(slist[i][0]).zIndex;
-	}
-	
-	function zindp(a,b)
-	{
-		return a[1]-b[1]
-	}
-}
-
-function sendback()
-{
-	var slist=[];
-	var sl=selected.length;
-	var temps
-	for (var i=0; i<sl; i++)
-	{
-		temps=[];
-		temps[0]=selected[i].id;
-		temps[1]=selected[i].style.zIndex;
-		slist.push(temps);
-	}
-	slist.sort(zindn);
-	
-	for (var i=0; i<slist.length;i++)
-	{
-		$(slist[i][0]).zIndex=zneg--;
-		$(slist[i][0]).style.zIndex=$(slist[i][0]).zIndex;
-	}
-	
-	function zindn(a,b)
-	{
-		return b[1]-a[1]
-	}
-}
 
 
 
