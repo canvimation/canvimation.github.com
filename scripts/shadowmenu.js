@@ -4,7 +4,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function shadowMenu()
+/* function shadowMenu()
 {
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'shmenu';
@@ -234,7 +234,7 @@ function shadowMenu()
    return this.elmRef;  
    
 }
-
+*/
 function setarrow(cur)
 {
 	$('shdarw').style.left=cur.x-(parseInt($('shmenu').style.left)-10);
@@ -270,10 +270,16 @@ function shopendiv()
 
 function movshdright()
 {
-	for (var i=0; i<selected.length; i++)
+	for(var groupName in SELECTED)
 	{
-		selected[i].shadowOffsetX+=1;
-		drawline(selected[i]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.shadowOffsetX+=1;
+			shape.draw();
+		}
 	}
 	msr=setTimeout(function() {movshdright()},50)
 }
@@ -285,10 +291,16 @@ function stopshdright()
 
 function movshdleft()
 {
-	for (var i=0; i<selected.length; i++)
+	for(var groupName in SELECTED)
 	{
-		selected[i].shadowOffsetX-=1;
-		drawline(selected[i]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.shadowOffsetX-=1;
+			shape.draw();
+		}
 	}
 	msl=setTimeout(function() {movshdleft()},50)
 }
@@ -300,10 +312,16 @@ function stopshdleft()
 
 function movshdup()
 {
-	for (var i=0; i<selected.length; i++)
+	for(var groupName in SELECTED)
 	{
-		selected[i].shadowOffsetY-=1;
-		drawline(selected[i]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.shadowOffsetY-=1;
+			shape.draw();
+		}
 	}
 	msu=setTimeout(function() {movshdup()},50)
 }
@@ -315,10 +333,16 @@ function stopshdup()
 
 function movshddown()
 {
-	for (var i=0; i<selected.length; i++)
+	for(var groupName in SELECTED)
 	{
-		selected[i].shadowOffsetY+=1;
-		drawline(selected[i]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.shadowOffsetY+=1;
+			shape.draw();
+		}
 	}
 	msd=setTimeout(function() {movshddown()},50)
 }
@@ -336,35 +360,24 @@ function shadow()
 		alert('Internet Explorer does not support Shadows');
 		return;
 	}
-	var shad = new shadowMenu();
-	DDshad=new YAHOO.util.DD('shmenu');
-   	DDshad.setHandleElId('shhead');
+	$("shadowbox").style.visibility="visible";
+	
 	getshadowcolor();
 	coltype='S';
-	DDshdarw=new YAHOO.util.DD('shdarw');
-	DDshdarw.onDrag = function () {
-										$('shdarw').style.top=0;
-										if (parseInt($('shdarw').style.left)<0) {$('shdarw').style.left=0}
-										if (parseInt($('shdarw').style.left)>212) {$('shdarw').style.left=212}
-										for (var i=0;i<selected.length;i++)
-										{
-											selected[i].shadowBlur=parseInt($('shdarw').style.left);
-											drawline(selected[i]);
-										}
-  
-								};
+	$('colorheadtext').innerHTML='\u00A0 Shadow Colour';
+	$('colorbox').style.visibility='visible';
 }
 
 function getshadowcolor()
 {
-	var canv=selected[0];
-	$("redBox").value=canv.shadowColor[0];
+	var shape=SELECTEDSHAPE;
+	$("redBox").value=shape.shadowColor[0];
 	redBoxChanged();
-	$("greenBox").value=canv.shadowColor[1];
+	$("greenBox").value=shape.shadowColor[1];
 	greenBoxChanged();
-	$("blueBox").value=canv.shadowColor[2];
+	$("blueBox").value=shape.shadowColor[2];
 	blueBoxChanged();
-	alphaperct = 100*(1-canv.shadowColor[3]);
+	alphaperct = 100*(1-shape.shadowColor[3]);
 	$('varrows').style.left=256*alphaperct/100-4;
 	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
 	if (ieb)
@@ -376,8 +389,6 @@ function getshadowcolor()
 		$('transpslider').style.opacity=1-alphaperct/100;
 	}
 	$("transpslider").style.backgroundColor = currentColor.HexString();
-	$('colorheadtext').innerHTML='\u00A0 Shadow Colour';
-	coltype='F';
-	$('colorcont').style.visibility='visible';
+	$("shslider").style.left=shape.shadowBlur*5;
 }
 

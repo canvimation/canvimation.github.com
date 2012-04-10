@@ -177,6 +177,59 @@ img.marker {
 	font-weight: bold;
 }
 
+#shdirect{
+	top:5px;
+	height:20px;
+	text-align: center;
+	background-color: transparent;
+}
+
+#shadowuparrow,  #shadowdownarrow{
+	width:23px;
+	height:23px;
+	top:28px;
+}
+
+#shadowdownarrow{
+	top:74px;
+}
+
+#shadowsidearrows {
+	width:47px;
+	height:23px;
+	top:51px;
+}
+
+#shblurtext{
+	top:108px;
+	height:20px;
+	text-align: center;
+	background-color: transparent;
+}
+
+#shblur{
+	top:130px;
+	height:20px;
+	left:10px;
+	width:220px;
+	background-color: transparent;
+}
+
+#shslider, #shblurline {
+	float:none;
+	position: absolute;
+}
+
+#shslider {
+	left:0px;
+	top:0px;
+}
+
+#shblurline{
+	left:0px;
+	top:10px;
+}
+
 #shapestage, #scenestage, #spritestage, #trackstage, #tweenstage, #filmstage {
 	visibility:hidden;
 }
@@ -1618,7 +1671,70 @@ function main()
 	//linebox
 	$('linebox').style.width=230;
 	$('linebox').style.height=200;
-
+	
+	//shadowbox
+	$('shadowbox').style.width=250;
+	$('shadowbox').style.height=220;
+	
+	$("shdirectup").onmouseover=function() {this.src="assets/shupin.png"};
+	$("shdirectup").onmouseout=function() {this.src="assets/shup.png"};
+	$("shdirectup").onmousedown=function() {movshdup()};
+	$("shdirectup").onmouseup=function() {stopshdup()};
+	$("shdirectleft").onmouseover=function() {this.src="assets/shleftin.png"};
+	$("shdirectleft").onmouseout=function() {this.src="assets/shleft.png"};
+	$("shdirectleft").onmousedown=function() {movshdleft()};
+	$("shdirectleft").onmouseup=function() {stopshdleft()};
+	$("shdirectright").onmouseover=function() {this.src="assets/shrightin.png"};
+	$("shdirectright").onmouseout=function() {this.src="assets/shright.png"};
+	$("shdirectright").onmousedown=function() {movshdright()};
+	$("shdirectright").onmouseup=function() {stopshdright()};
+	$("shdirectdown").onmouseover=function() {this.src="assets/shdownin.png"};
+	$("shdirectdown").onmouseout=function() {this.src="assets/shdown.png"};
+	$("shdirectdown").onmousedown=function() {movshddown()};
+	$("shdirectdown").onmouseup=function() {stopshddown()};
+	$("shadowuparrow").style.left=parseInt($("shadowbox").style.width)/2-11;
+	$("shadowsidearrows").style.left=parseInt($("shadowbox").style.width)/2-23;
+	$("shadowdownarrow").style.left=parseInt($("shadowbox").style.width)/2-11;
+	$("shdirect").style.width=parseInt($("shadowbox").style.width);
+	$("shblurtext").style.width=parseInt($("shadowbox").style.width);
+	$("shblurline").onclick=function (e) {
+										var cursor=getPosition(e)
+										$('shslider').style.top=0;
+										$('shslider').style.left=cursor.x-(parseInt($('shadowbox').style.left))-10;
+										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0}
+										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212}
+										for(var groupName in SELECTED)
+										{
+											var group=SELECTED[groupName];
+											var shapeNames=group.memberShapes();
+											for(var name in shapeNames)
+											{
+												shape=shapeNames[name];
+												shape.shadowBlur=parseInt($('shslider').style.left)/5;
+												shape.draw();
+											}
+										}
+  								};
+								
+	DDshslider=new YAHOO.util.DD('shslider');
+	DDshslider.onDrag = function () {
+										$('shslider').style.top=0;
+										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0}
+										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212}
+										for(var groupName in SELECTED)
+										{
+											var group=SELECTED[groupName];
+											var shapeNames=group.memberShapes();
+											for(var name in shapeNames)
+											{
+												shape=shapeNames[name];
+												shape.shadowBlur=parseInt($('shslider').style.left)/5;
+												shape.draw();
+											}
+										}
+  
+								};
+	
 	//pointsbox
 	$('pointsbox').style.width=156;
 	$('pointsbox').style.height=300;
@@ -2059,7 +2175,7 @@ function main()
 	  	<input type="button" value="Apply" onClick="updateLines()()">
       	<input type="button"  value="Cancel" onClick="closedialogue(this)">
 	</div>
-	<div id='linehead' class='head'>&nbsp; New Stage
+	<div id='linehead' class='head'>&nbsp; Line Styles
 		<img src='assets/x.png' onclick='closedialogue(this)'/>
     	<img src='assets/up.png' onclick='updialogue(this,"linecontent")'/>
 	</div>	
@@ -2085,6 +2201,23 @@ function main()
     	<img src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
 	</div>
 </div>
+<!--dialogue box setting shadow effects-->
+<div id='shadowbox' class="dialoguebox">
+	<div id='shadowcontent' class='content'>
+		<div id="shdirect">Move Shadow</div>
+		<div id="shadowuparrow"><img id="shdirectup" src="assets/shup.png" /></div>
+		<div id="shadowsidearrows"><img id="shdirectright" src="assets/shright.png" /><img id="shdirectleft" src="assets/shleft.png" /></div>
+		<div id="shadowdownarrow"><img id="shdirectdown" src="assets/shdown.png" /></div>
+		<div id="shblurtext">Blur Shadow</div>
+		<div id="shblur"><img id="shslider" src="assets/transp_arrows.gif" /><img id="shblurline" src="assets/blur.png" /></div>
+		<div style="top:165px; left:170px; background-color:transparent"><input type="button"  value="Cancel" onClick="closedialogue(this.parentNode)"></div>
+	</div>
+	<div id='shadowhead' class='head'>&nbsp; Shadow Effects
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
+	</div>
+</div>
+
 <!--toolbars ............................................................... -->
 <div id='anibar'>
   <div id='anibarhd'> &nbsp; Animation </div>
