@@ -194,12 +194,12 @@ function Shape(name,open,editable,type)
    	this.lineWidth = 1;
    	this.lineCap = "butt";
    	this.lineJoin = "miter"
-   	this.justfill=true;
-   	this.linearfill=true;
+   	this.justfill=true;  //ordinary fill when true;
+   	this.linearfill=true; //linear when true, radial when false;
    	this.lineGrad=[0,0,0,0];
    	this.radGrad=[0,0,0,0,10,10];
    	this.colorStops=[[0,0,0,0,0],[1,0,0,0,0]];
-   	this.stopn=0;
+   	this.stopn=0; //pointer to current stop point;
    	this.shadow=false;
    	this.shadowOffsetX = 15;   
    	this.shadowOffsetY = 15;   

@@ -968,9 +968,10 @@ var ZSTART,ZOFFSET; //ensure z-order maintained when copying shapes;
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 var DEFAULTKEYDOWN=document.onkeydown;
 var BACKDROP; // object where backstage canvas is added for bezguides;
+var GRADIENTDROP; //object where gradientdrop canvas is added for gradient fill stops;
 var BOXES; //array of dialogue boxes;
 var BOXNAME; //name of dialogue box, id with box dropped from end;
-var DD=new Array; //array of drag and drop elements for dialogue boxes;
+var DD=[]; //array of drag and drop elements for dialogue boxes;
 temptrack={};
 tracks = {};
 scenes = {};
@@ -1538,6 +1539,10 @@ function main()
 	BACKDROP.zIndex=0;
 	BACKDROP.addTo=addTo;
 	BACKDROP.addTo($("backstage"));
+	GRADIENTDROP={};
+	GRADIENTDROP.zIndex=0;
+	GRADIENTDROP.addTo=addTo;
+	GRADIENTDROP.addTo($("gradientdrop"));
 	$("markerdrop").style.visibility="visible";
 	$("markerdrop").onclick=function(e) {
 	   										noBubble(e);
@@ -1556,7 +1561,6 @@ function main()
 	maxheight=canvheight;
 	masterwidth=0.80*maxwidth;
 	masterheight=0.80*maxheight;
-	gradcanv=$('gradcanvas');
 	gridcanv=$('gridcanvas');
 	$('filmdivhandle').style.top=masterheight/2-25;
 	$('filmdivhandle').style.left=masterwidth/2-25;
@@ -1570,7 +1574,7 @@ function main()
 		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
 	}
 	
-	DDcbxadj=new YAHOO.util.DD('canvasadjust');
+/*	DDcbxadj=new YAHOO.util.DD('canvasadjust');
 	DDcbxadj.onDrag=function () {
 									var cbxadj=$('canvasadjust');
 									if ($('shportrait').checked)
@@ -1646,7 +1650,7 @@ function main()
 										$('HsizeofP').innerHTML=p+' ';
 									}
 								}
-	
+*/	
 	$('toolbar').style.left=10;
 	$('toolbar').style.top=60;
 	$('filmsbar').style.left=10;
@@ -1671,6 +1675,10 @@ function main()
 	//linebox
 	$('linebox').style.width=230;
 	$('linebox').style.height=200;
+	
+	//gradfillbox
+	$('gradfillbox').style.width=160;
+	$('gradfillbox').style.height=170;
 	
 	//shadowbox
 	$('shadowbox').style.width=250;
@@ -1885,11 +1893,7 @@ function main()
 										};															
 
 	
-    if (gradcanv.getContext)
-	{
-        gradcanv.ctx = gradcanv.getContext('2d');
-    }
-	
+
 	
     if (gridcanv.getContext)
 	{
@@ -2039,8 +2043,6 @@ function main()
 <div id="bodydiv"></div>
 <div id="filmbodydiv"></div>
 <div id="filmdivhandle"></div>
-<canvas id='gradcanvas'> </canvas>
-
 
 <div id='background'></div>
 <div id='stagearea'></div>
@@ -2059,6 +2061,8 @@ function main()
 <div id="backstage" class="theatre_style"></div>
 <div id="markerdrop" class="theatre_style" ></div>
 <div id="boundarydrop" class="theatre_style" ></div>
+<div id="gradientdrop" class="theatre_style" ></div>
+<div id="gradientfly" class="theatre_style"></div>
 
 <!--dialogue box setting stage width and height-->
 <div id='stagebox' class="dialoguebox">
@@ -2181,7 +2185,7 @@ function main()
 	</div>	
 </div>
 
-<!--dialogue box setting line weight-->
+<!--dialogue box node types-->
 <div id='pointsbox' class="dialoguebox">
 	<div id='pointscontent' class='content'>
 		<div id="p_points" class="notext">&nbsp;&nbsp;Points</div>
@@ -2216,6 +2220,24 @@ function main()
 		<img src='assets/x.png' onclick='closedialogue(this)'/>
     	<img src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
 	</div>
+</div>
+
+<!--dialogue box gradient fill settings-->
+<div id='gradfillbox' class="dialoguebox">
+	<div id='gradfillcontent' class='content'>
+		<p class="chk_radio_input">
+			 <input type="radio" name="gradfilltype" id="linear" checked="checked" size=5 onchange="setlinear()"/><label for="linear">Linear Fill</label>
+		</p>
+		 <p class="chk_radio_input">
+			 <input type="radio" name="gradfilltype" id="radial" size=5/ onchange="setradial()"><label for="radial">Radial Fill</label>
+		</p>
+		<input type="button" id="gAdd" value="Add Stop Point" onClick="updateLines()"><br>
+	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="updateLines()">
+	</div>
+	<div id='gradfillhead' class='head'>&nbsp; Colour Stops
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"gradfillcontent")'/>
+	</div>	
 </div>
 
 <!--toolbars ............................................................... -->
@@ -2291,7 +2313,7 @@ Film Elements from back to front.<br>
   <div class="choice40" id='stylelines'  alt="line styles" title="line styles" onclick="linestyles()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/stylelines.png"> </div>
   <div class="choice40" id='collines'  alt="line colour" title="line colour" onclick="linecolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/collines.png"> </div>
   <div class="choice40" id='colfill'  alt="fill colour" title="fill colour" onclick="fillcolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='colimg' src="assets/colfill.png"> </div>
-  <div class="choice40" id='gradfill'  alt="gradient fill" title="gradient fill" onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='gradimg' src="assets/gradfilloff.png"> </div>
+  <div class="choice40" id='gradfill'  alt="gradient fill" title="gradient fill" onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='gradimg' src="assets/gradfill.png"> </div>
   <div class="choice40" id='rotate'  alt="rotate" title="rotate" onclick="canvrotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/rotate.png"> </div>
   <div class="choice40" id='front'  alt="bring to front" title="bring to front" onclick="bringfront()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/front.png"> </div>
   <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
