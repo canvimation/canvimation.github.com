@@ -1539,16 +1539,10 @@ function main()
 	BACKDROP.zIndex=0;
 	BACKDROP.addTo=addTo;
 	BACKDROP.addTo($("backstage"));
-	GRADIENTDROP={};
-	GRADIENTDROP.zIndex=0;
-	GRADIENTDROP.addTo=addTo;
-	GRADIENTDROP.addTo($("gradientdrop"));
 	$("markerdrop").style.visibility="visible";
 	$("markerdrop").onclick=function(e) {
 	   										noBubble(e);
 	   										checkBoundary(shiftdown(e),getPosition(e));
-	   										//BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
-	   										//$("backstage").style.visibility="hidden";
 	   									}
 	 $("boundarydrop").onclick=function(e) {
 	   										noBubble(e);
@@ -1573,84 +1567,7 @@ function main()
 		document.getElementsByTagName('body')[0].addEventListener('dragover', handleDragOver, false);
 		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
 	}
-	
-/*	DDcbxadj=new YAHOO.util.DD('canvasadjust');
-	DDcbxadj.onDrag=function () {
-									var cbxadj=$('canvasadjust');
-									if ($('shportrait').checked)
-									{
-										cbxadj.style.top=cbxadj.top;
-										var p=parseFloat($('WsizeofP').innerHTML);
-										if (parseInt(cbxadj.style.left)>cbxadj.left)
-										{
-											if (p<1)
-											{
-												$('canvasbox').style.width = parseInt($('canvasbox').style.width) + 1;
-												cbxadj.style.left =cbxadj.left+1;
-												p=parseFloat($('canvasbox').style.width)/100;
-												$('requdsizewidth').value= Math.round(masterheight*p);
-											}
-											else
-											{
-												cbxadj.style.left=cbxadj.left;
-											}	
-										}
-										else
-										{
-											if (p>0.01)
-											{
-												$('canvasbox').style.width =parseInt($('canvasbox').style.width) - 1;
-												cbxadj.style.left =cbxadj.left-1;
-												p=parseFloat($('canvasbox').style.width)/100;
-												$('requdsizewidth').value =Math.round(masterheight*p);
-											}
-											else
-											{
-												cbxadj.style.left=cbxadj.left;
-											}
-										}
-										
-										cbxadj.left=parseInt(cbxadj.style.left);
-										$('WsizeofP').innerHTML=p+' ';
-						
-									}
-									else
-									{
-										cbxadj.style.left=cbxadj.left;
-										var p=parseFloat($('HsizeofP').innerHTML);
-										if (parseInt(cbxadj.style.top)>cbxadj.top)
-										{
-											if (p<1)
-											{
-												$('canvasbox').style.height = parseInt($('canvasbox').style.height) + 1;
-												cbxadj.style.top =cbxadj.top+1;
-												p=parseFloat($('canvasbox').style.height)/100;
-												$('requdsizeheight').value =Math.round(masterwidth*p);
-											}
-											else
-											{
-												cbxadj.style.top=cbxadj.top;
-											}	
-										}
-										else
-										{
-											if (p>0.01)
-											{
-												$('canvasbox').style.height =parseInt($('canvasbox').style.height) - 1;
-												cbxadj.style.top =cbxadj.top-1;
-												p=parseFloat($('canvasbox').style.height)/100;
-												$('requdsizeheight').value =Math.round(masterwidth*p);
-											}
-											else
-											{
-												cbxadj.style.top=cbxadj.top;
-											}
-										}
-										cbxadj.top=parseInt(cbxadj.style.top);
-										$('HsizeofP').innerHTML=p+' ';
-									}
-								}
-*/	
+		
 	$('toolbar').style.left=10;
 	$('toolbar').style.top=60;
 	$('filmsbar').style.left=10;
@@ -1679,6 +1596,7 @@ function main()
 	//gradfillbox
 	$('gradfillbox').style.width=160;
 	$('gradfillbox').style.height=170;
+	$("linear").checked="checked";
 	
 	//shadowbox
 	$('shadowbox').style.width=250;
@@ -2062,7 +1980,6 @@ function main()
 <div id="markerdrop" class="theatre_style" ></div>
 <div id="boundarydrop" class="theatre_style" ></div>
 <div id="gradientdrop" class="theatre_style" ></div>
-<div id="gradientfly" class="theatre_style"></div>
 
 <!--dialogue box setting stage width and height-->
 <div id='stagebox' class="dialoguebox">
@@ -2201,7 +2118,7 @@ function main()
 		<div id="p_close" class="notext">&nbsp;&nbsp;Close Path</div>
 	</div>
 	<div id='pointshead' class='head'>&nbsp; Edit
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
+		<img src='assets/x.png' onclick='closedialogue(this);close_p_content();'/>
     	<img src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
 	</div>
 </div>
@@ -2226,13 +2143,13 @@ function main()
 <div id='gradfillbox' class="dialoguebox">
 	<div id='gradfillcontent' class='content'>
 		<p class="chk_radio_input">
-			 <input type="radio" name="gradfilltype" id="linear" checked="checked" size=5 onchange="setlinear()"/><label for="linear">Linear Fill</label>
+			 <input type="radio" name="gradfilltype" id="linear"  size=5 onchange="setlinear()" /><label for="linear">Linear Fill</label>
 		</p>
 		 <p class="chk_radio_input">
-			 <input type="radio" name="gradfilltype" id="radial" size=5/ onchange="setradial()"><label for="radial">Radial Fill</label>
+			 <input type="radio" name="gradfilltype" id="radial" size=5 onchange="setradial()" /><label for="radial">Radial Fill</label>
 		</p>
-		<input type="button" id="gAdd" value="Add Stop Point" onClick="updateLines()"><br>
-	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="updateLines()">
+		<input type="button" id="gAdd" value="Add Stop Point" onClick="addStop()"><br>
+	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="delStop()">
 	</div>
 	<div id='gradfillhead' class='head'>&nbsp; Colour Stops
 		<img src='assets/x.png' onclick='closedialogue(this)'/>
