@@ -14,16 +14,17 @@ function gradMarker()
    this.elmRef.style.visibility='visible';
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
-										$("gradientfly").onclick=function(e) {noBubble(e)};
+										this.style.cursor="move";
+										$("gradientdrop").onclick=function(e) {noBubble(e)};
 									};
    this.elmRef.onmouseout=function(){
-	   									$("gradientfly").onclick=function(e) {
+	   									this.style.cursor="default";
+	   									$("gradientdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			clear($("gradientfly"));
+	   																			clear($("gradientdrop"));
 	   																			checkBoundary(shiftdown(e),getPosition(e));
-	   																			GRADIENTDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			$("gradientdrop").style.visibility="hidden";
-	   																			$("gradientfly").style.visibility="hidden";
 	   																		}
 									};
 	this.elmRef.onclick	=function(){
@@ -37,17 +38,22 @@ function gradMarker()
 												shape.stopn=parseInt(this.id.substr(3));
 											}
 										}
-										if ($('gradientbox'))
+										if ($('gradfillbox'))
 										{
-											$('gAdd').style.visibility='visible';
-											$('gDel').style.visibility='visible';
-										}										
-										if (SELECTEDSHAPE.stopn==SELECTEDSHAPE.colorStops.length-1 || SELECTEDSHAPE.stopn==0)
-										{
-											if ($('gradientbox'))
+											if (SELECTEDSHAPE.stopn==SELECTEDSHAPE.colorStops.length-1)
 											{
 												$('gAdd').style.visibility='hidden';
 												$('gDel').style.visibility='hidden';
+											}
+											else if (SELECTEDSHAPE.stopn==0)
+											{
+												$('gAdd').style.visibility='visible';
+												$('gDel').style.visibility='hidden';
+											}
+											else
+											{
+												$('gAdd').style.visibility='visible';
+												$('gDel').style.visibility='visible';
 											}
 										}
 										removeGradLine();
@@ -55,7 +61,7 @@ function gradMarker()
 										$('colorbox').style.visibility='visible';
 									};
 									
-   $('gradientfly').appendChild(this.elmRef);
+   $('gradientdrop').appendChild(this.elmRef);
   
    
    return this.elmRef;
@@ -73,13 +79,21 @@ function radMarker()
    this.elmRef.style.backgroundColor='green';
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
-										inln=true;
+										this.style.cursor="move";
+										$("gradientdrop").onclick=function(e) {noBubble(e)};
 									};
    this.elmRef.onmouseout=function(){
-	   									inln=false;
+	   									this.style.cursor="default";
+	   									$("gradientdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			clear($("gradientdrop"));
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			$("gradientdrop").style.visibility="hidden";
+	   																		}
 									};
 									
-   $('bodydiv').appendChild(this.elmRef);
+   $('gradientdrop').appendChild(this.elmRef);
   
    
    return this.elmRef;
@@ -96,10 +110,10 @@ function createGradLine(shape)
 	
 	shape.radGrad[0]=shape.tplftcrnr.x+(shape.btmrgtcrnr.x-shape.tplftcrnr.x)/4;
 	shape.radGrad[1]=shape.tplftcrnr.y+3*(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/4;
-	shape.radGrad[2]=Math.max((shape.btmrgtcrnr.x-shape.tplftcrnr.x)/4,(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/4);
-	shape.radGrad[3]=shape.tplftcrnr.x+3*(shape.btmrgtcrnr.x-shape.tplftcrnr.x)/4;
-	shape.radGrad[4]=shape.tplftcrnr.y+(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/4;
-	shape.radGrad[5]=Math.max((shape.btmrgtcrnr.x-shape.tplftcrnr.x)/4,(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/4);
+	shape.radGrad[2]=Math.max((shape.btmrgtcrnr.x-shape.tplftcrnr.x)/8,(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/8);
+	shape.radGrad[3]=shape.tplftcrnr.x+(shape.btmrgtcrnr.x-shape.tplftcrnr.x)/2;
+	shape.radGrad[4]=shape.tplftcrnr.y+(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/2;
+	shape.radGrad[5]=Math.max((shape.btmrgtcrnr.x-shape.tplftcrnr.x)/2,(shape.btmrgtcrnr.y-shape.tplftcrnr.y)/2);
 	
 
 	shape.colorStops=[];
@@ -127,13 +141,9 @@ function createGradLine(shape)
 	DDln=new YAHOO.util.DD(ln.id)
 	DDln.onDrag=function(){updategradpoints(this)};		
 	drawgradpoints(shape);
-//	$('bodydiv').onmousemove=function() {};
-//	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-//	$('bodydiv').style.cursor='default';
-
 }
 
-function showGradLine(canv)
+function showGradLine(shape)
 {
 	
 	var cst=shape.colorStops.length;
@@ -152,19 +162,15 @@ function showGradLine(canv)
 		DDln=new YAHOO.util.DD(ln.id)
 		DDln.onDrag=function(){updaterad(this)};
 	}
-	setcolorbox(canv);
-	drawgradpoints(canv);
-	$('bodydiv').onmousemove=function() {};
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e),canv)};
-	$('bodydiv').style.cursor='default';
-
+	setcolorbox(shape);
+	drawgradpoints(shape);
 }
 
 
 
 function drawgradpoints(shape)
 {
-	GRADIENTDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	if (shape.linearfill)
 	{
 		var xs=shape.lineGrad[0]*1;
@@ -180,19 +186,19 @@ function drawgradpoints(shape)
 		var xe=shape.radGrad[3]*1;
 		var ye=shape.radGrad[4]*1;	
 		var re=shape.radGrad[5]*1;
-		GRADIENTDROP.Canvas.ctx.beginPath();
-		GRADIENTDROP.Canvas.ctx.strokeStyle='black';
-		GRADIENTDROP.Canvas.ctx.arc(xs,ys,rs,0,2*Math.PI,false);
-		GRADIENTDROP.Canvas.ctx.moveTo(xe+re,ye);
-		GRADIENTDROP.Canvas.ctx.arc(xe,ye,re,0,2*Math.PI,false);
-		GRADIENTDROP.Canvas.ctx.stroke();
-		GRADIENTDROP.Canvas.ctx.beginPath();
-		GRADIENTDROP.Canvas.ctx.strokeStyle='white';
-		GRADIENTDROP.Canvas.ctx.moveTo(xs+rs+2,ys);
-		GRADIENTDROP.Canvas.ctx.arc(xs,ys,rs+2,0,2*Math.PI,false);
-		GRADIENTDROP.Canvas.ctx.moveTo(xe+re+2,ye);
-		GRADIENTDROP.Canvas.ctx.arc(xe,ye,re+2,0,2*Math.PI,false);		
-		GRADIENTDROP.Canvas.ctx.stroke();
+		BACKDROP.Canvas.ctx.beginPath();
+		BACKDROP.Canvas.ctx.strokeStyle='black';
+		BACKDROP.Canvas.ctx.arc(xs,ys,rs,0,2*Math.PI,false);
+		BACKDROP.Canvas.ctx.moveTo(xe+re,ye);
+		BACKDROP.Canvas.ctx.arc(xe,ye,re,0,2*Math.PI,false);
+		BACKDROP.Canvas.ctx.stroke();
+		BACKDROP.Canvas.ctx.beginPath();
+		BACKDROP.Canvas.ctx.strokeStyle='white';
+		BACKDROP.Canvas.ctx.moveTo(xs+rs+2,ys);
+		BACKDROP.Canvas.ctx.arc(xs,ys,rs+2,0,2*Math.PI,false);
+		BACKDROP.Canvas.ctx.moveTo(xe+re+2,ye);
+		BACKDROP.Canvas.ctx.arc(xe,ye,re+2,0,2*Math.PI,false);		
+		BACKDROP.Canvas.ctx.stroke();
 		$('rdm0').style.left=xs+rs-4;
 		$('rdm0').style.top=ys-4;
 		$('rdm0').left=xs+rs-4;;
@@ -202,23 +208,23 @@ function drawgradpoints(shape)
 		$('rdm1').left=xe+re-4;;
 		$('rdm1').top=ye-4;		
 	}
-	var alpha=arctan(xe-xs,ye-ys);
+	var alpha=arctan(ye-ys,xe-xs);
 	var dx=xe-xs;
 	var dy=ye-ys;
 	var xp,yp,xc,yc,xa,ya,xb,yb,xg,yg,xh,yh;
 	var c,b,a,g,h,sc;
 	
 	
-	GRADIENTDROP.Canvas.ctx.beginPath();
-	GRADIENTDROP.Canvas.ctx.strokeStyle='black';
-	GRADIENTDROP.Canvas.ctx.moveTo(xs,ys);
-	GRADIENTDROP.Canvas.ctx.lineTo(xe,ye);
-	GRADIENTDROP.Canvas.ctx.stroke();
-	GRADIENTDROP.Canvas.ctx.beginPath();
-	GRADIENTDROP.Canvas.ctx.strokeStyle='white';
-	GRADIENTDROP.Canvas.ctx.moveTo(xs,ys-2);
-	GRADIENTDROP.Canvas.ctx.lineTo(xe,ye-2);
-	GRADIENTDROP.Canvas.ctx.stroke();	
+	BACKDROP.Canvas.ctx.beginPath();
+	BACKDROP.Canvas.ctx.strokeStyle='black';
+	BACKDROP.Canvas.ctx.moveTo(xs,ys);
+	BACKDROP.Canvas.ctx.lineTo(xe,ye);
+	BACKDROP.Canvas.ctx.stroke();
+	BACKDROP.Canvas.ctx.beginPath();
+	BACKDROP.Canvas.ctx.strokeStyle='white';
+	BACKDROP.Canvas.ctx.moveTo(xs,ys-2);
+	BACKDROP.Canvas.ctx.lineTo(xe,ye-2);
+	BACKDROP.Canvas.ctx.stroke();	
 	for (var i=0; i<shape.colorStops.length; i++)
 	{
 		sc=shape.colorStops[i][0]*1;
@@ -236,11 +242,16 @@ function drawgradpoints(shape)
 		yb=yp+5;
 		theta=alpha;
 		if (i%2 == 1) {theta +=Math.PI};
-		c=rotate(theta,xc-xp,yc-yp,'C');
-		a=rotate(theta,xa-xp,ya-yp,'C');
-		b=rotate(theta,xb-xp,yb-yp,'C');
-		g=rotate(theta,xg-xp,yg-yp,'C');
-		h=rotate(theta,xh-xp,yh-yp,'C');
+		var pt=new Point(xc-xp,yc-yp);
+		c=pt.pointRotate(theta);
+		pt=new Point(xa-xp,ya-yp);
+		a=pt.pointRotate(theta);
+		pt=new Point(xb-xp,yb-yp);
+		b=pt.pointRotate(theta);
+		pt=new Point(xg-xp,yg-yp);
+		g=pt.pointRotate(theta);
+		pt=new Point(xh-xp,yh-yp);
+		h=pt.pointRotate(theta);
 		xc=c.x+xp;
 		yc=c.y+yp;
 		xa=a.x+xp;
@@ -251,41 +262,41 @@ function drawgradpoints(shape)
 		yg=g.y+yp;
 		xh=h.x+xp;
 		yh=h.y+yp;		
-		GRADIENTDROP.Canvas.ctx.beginPath();
-		GRADIENTDROP.Canvas.ctx.strokeStyle='black';
-		GRADIENTDROP.Canvas.ctx.arc(xc,yc,5,0,Math.PI*2,true); 
-		GRADIENTDROP.Canvas.ctx.moveTo(xb,yb);
-		GRADIENTDROP.Canvas.ctx.lineTo(xp,yp);
-		GRADIENTDROP.Canvas.ctx.stroke();
+		BACKDROP.Canvas.ctx.beginPath();
+		BACKDROP.Canvas.ctx.strokeStyle='black';
+		BACKDROP.Canvas.ctx.arc(xc,yc,5,0,Math.PI*2,true); 
+		BACKDROP.Canvas.ctx.moveTo(xb,yb);
+		BACKDROP.Canvas.ctx.lineTo(xp,yp);
+		BACKDROP.Canvas.ctx.stroke();
 		var rule='rgba('
 		for (var j=1;j<4;j++)
 		{
 			rule += shape.colorStops[i][j]+',';
 		} 
 		rule += shape.colorStops[i][j]+')';
-		GRADIENTDROP.Canvas.ctx.fillStyle=rule;
-		GRADIENTDROP.Canvas.ctx.fill();
-		GRADIENTDROP.Canvas.ctx.beginPath();
-		GRADIENTDROP.Canvas.ctx.strokeStyle='white';
-		GRADIENTDROP.Canvas.ctx.arc(xc,yc,7,0,Math.PI*2,true);
-		GRADIENTDROP.Canvas.ctx.stroke();	
+		BACKDROP.Canvas.ctx.fillStyle=rule;
+		BACKDROP.Canvas.ctx.fill();
+		BACKDROP.Canvas.ctx.beginPath();
+		BACKDROP.Canvas.ctx.strokeStyle='white';
+		BACKDROP.Canvas.ctx.arc(xc,yc,7,0,Math.PI*2,true);
+		BACKDROP.Canvas.ctx.stroke();	
 		if (i==shape.stopn)
 		{
-			GRADIENTDROP.Canvas.ctx.save();
-			GRADIENTDROP.Canvas.ctx.beginPath();
-			GRADIENTDROP.Canvas.ctx.moveTo(xa,ya);
-			GRADIENTDROP.Canvas.ctx.lineTo(xb,yb);
-			GRADIENTDROP.Canvas.ctx.moveTo(xg,yg);
-			GRADIENTDROP.Canvas.ctx.lineTo(xh,yh);
+			BACKDROP.Canvas.ctx.save();
+			BACKDROP.Canvas.ctx.beginPath();
+			BACKDROP.Canvas.ctx.moveTo(xa,ya);
+			BACKDROP.Canvas.ctx.lineTo(xb,yb);
+			BACKDROP.Canvas.ctx.moveTo(xg,yg);
+			BACKDROP.Canvas.ctx.lineTo(xh,yh);
 			var rule='rgba('
 			for (var j=1;j<4;j++)
 			{
 				rule += (255-shape.colorStops[i][j])+',';
 			} 
 			rule += 1+')';
-			GRADIENTDROP.Canvas.ctx.strokeStyle=rule;
-			GRADIENTDROP.Canvas.ctx.stroke();
-			GRADIENTDROP.Canvas.ctx.restore();
+			BACKDROP.Canvas.ctx.strokeStyle=rule;
+			BACKDROP.Canvas.ctx.stroke();
+			BACKDROP.Canvas.ctx.restore();
 		}
 		
 		$('gdm'+i).style.left=xc-10;
@@ -298,7 +309,7 @@ function drawgradpoints(shape)
 
 function removeGradLine()
 {
-	GRADIENTDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	while (gdmrks >0)
 	{
 		if($('gdm'+(--gdmrks))) {$('gdm'+gdmrks).parentNode.removeChild($('gdm'+gdmrks))};
@@ -339,67 +350,103 @@ function updategradpoints(gdp)
 	var dy=parseInt(gdpt.style.top)-gdpt.top;
 	if (i==0)
 	{
-		if (selected[0].linearfill)
+		if (SELECTEDSHAPE.linearfill)
 		{
-			for (var j=0; j<selected.length;j++)
+			for(var groupName in SELECTED)
 			{
-				selected[j].lineGrad[0] +=dx;
-				selected[j].lineGrad[1] +=dy;
+				var group=SELECTED[groupName];
+				var shapeNames=group.memberShapes();
+				for(var name in shapeNames)
+				{
+					shape=shapeNames[name];
+					shape.lineGrad[0] +=dx;
+					shape.lineGrad[1] +=dy;
+				}
 			}
 		}
 		else
 		{
-			for (var j=0; j<selected.length;j++)
+			for(var groupName in SELECTED)
 			{
-				selected[j].radGrad[0] +=dx;
-				selected[j].radGrad[1] +=dy;
+				var group=SELECTED[groupName];
+				var shapeNames=group.memberShapes();
+				for(var name in shapeNames)
+				{
+					shape=shapeNames[name];
+					shape.radGrad[0] +=dx;
+					shape.radGrad[1] +=dy;
+				}
 			}			
 		}
 	}
-	else if (i==selected[0].colorStops.length-1)
+	else if (i==SELECTEDSHAPE.colorStops.length-1)
 	{
-		if (selected[0].linearfill)
+		if (SELECTEDSHAPE.linearfill)
 		{
-			for (var j=0; j<selected.length;j++)
+			for(var groupName in SELECTED)
 			{
-				selected[j].lineGrad[2] +=dx;
-				selected[j].lineGrad[3] +=dy;
+				var group=SELECTED[groupName];
+				var shapeNames=group.memberShapes();
+				for(var name in shapeNames)
+				{
+					shape=shapeNames[name];
+					shape.lineGrad[2] +=dx;
+					shape.lineGrad[3] +=dy;
+				}
 			}
 		}
 		else
 		{
-			for (var j=0; j<selected.length;j++)
+			for(var groupName in SELECTED)
 			{
-				selected[j].radGrad[3] +=dx;
-				selected[j].radGrad[4] +=dy;
+				var group=SELECTED[groupName];
+				var shapeNames=group.memberShapes();
+				for(var name in shapeNames)
+				{
+					shape=shapeNames[name];
+					shape.radGrad[3] +=dx;
+					shape.radGrad[4] +=dy;
+				}
 			}			
 		}
 	}
 	else
 	{
-		if (selected[0].linearfill)
+		if (SELECTEDSHAPE.linearfill)
 		{
-			var newp = selected[0].colorStops[i][0]+dx/(selected[0].lineGrad[2]-selected[0].lineGrad[0]);
+			var newp = SELECTEDSHAPE.colorStops[i][0]+dx/(SELECTEDSHAPE.lineGrad[2]-SELECTEDSHAPE.lineGrad[0]);
 		}
 		else
 		{
-			var newp = selected[0].colorStops[i][0]+dx/(selected[0].radGrad[3]-selected[0].radGrad[0]);
+			var newp = SELECTEDSHAPE.colorStops[i][0]+dx/(SELECTEDSHAPE.radGrad[3]-SELECTEDSHAPE.radGrad[0]);
 		}
-		if (selected[0].colorStops[i-1][0]<newp && newp<selected[0].colorStops[i+1][0])
+		if (SELECTEDSHAPE.colorStops[i-1][0]<newp && newp<SELECTEDSHAPE.colorStops[i+1][0])
 		{
-			for (var j=0; j<selected.length;j++)
+			for(var groupName in SELECTED)
 			{
-				selected[j].colorStops[i][0]=newp;
+				var group=SELECTED[groupName];
+				var shapeNames=group.memberShapes();
+				for(var name in shapeNames)
+				{
+					shape=shapeNames[name];
+					shape.colorStops[i][0]=newp;
+				}
 			}
 		}		
 	}
 	gdpt.left=parseInt(gdpt.style.left);
 	gdpt.top=parseInt(gdpt.style.top);
-	for (var j=0; j<selected.length;j++)
+	for(var groupName in SELECTED)
 	{
-		drawline(selected[j]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.draw();
+		}
 	}
-	drawgradpoints(selected[0]);
+	drawgradpoints(SELECTEDSHAPE);
 }
 
 function updaterad(rdp)
@@ -410,23 +457,41 @@ function updaterad(rdp)
 	var dy=parseInt(rdpt.style.top)-rdpt.top;
 	if (i==0)
 	{
-		for (var j=0; j<selected.length;j++)
+		for(var groupName in SELECTED)
 		{
-			selected[j].radGrad[2] +=Math.sqrt(dx*dx+dy*dy)*dx/Math.abs(dx);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape=shapeNames[name];
+				shape.radGrad[2] +=Math.sqrt(dx*dx+dy*dy)*dx/Math.abs(dx);
+			}
 		}
 	}
 	else 
 	{
-		for (var j=0; j<selected.length;j++)
+		for(var groupName in SELECTED)
 		{
-			selected[j].radGrad[5] +=Math.sqrt(dx*dx+dy*dy)*dx/Math.abs(dx);
+			var group=SELECTED[groupName];
+			var shapeNames=group.memberShapes();
+			for(var name in shapeNames)
+			{
+				shape=shapeNames[name];
+				shape.radGrad[5] +=Math.sqrt(dx*dx+dy*dy)*dx/Math.abs(dx);
+			}
 		}
 	}
 	rdpt.left=parseInt(rdpt.style.left);
 	rdpt.top=parseInt(rdpt.style.top);
-	for (var j=0; j<selected.length;j++)
+	for(var groupName in SELECTED)
 	{
-		drawline(selected[j]);
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.draw();
+		}
 	}
-	drawgradpoints(selected[0]);
+	drawgradpoints(SELECTEDSHAPE);
 }

@@ -250,31 +250,31 @@ function drawrotate()
 	$('rtm1').left=parseInt($('rtm1').style.left);
 	$('rtm1').top=parseInt($('rtm1').style.top);	
 
-	GRADIENTDROP.Canvas.ctx.clearRect(0,0,activewidth,activeheight);
-	GRADIENTDROP.Canvas.ctx.save();
-	GRADIENTDROP.Canvas.ctx.beginPath();
-	GRADIENTDROP.Canvas.ctx.translate(canv.cx,canv.cy);
-	GRADIENTDROP.Canvas.ctx.rotate(canv.phi);
+	BACKDROP.Canvas.ctx.clearRect(0,0,activewidth,activeheight);
+	BACKDROP.Canvas.ctx.save();
+	BACKDROP.Canvas.ctx.beginPath();
+	BACKDROP.Canvas.ctx.translate(canv.cx,canv.cy);
+	BACKDROP.Canvas.ctx.rotate(canv.phi);
 	
-	GRADIENTDROP.Canvas.ctx.arc(0,0,canv.rr+r,3*Math.PI/2-t,3*Math.PI/2+t,false);
-	GRADIENTDROP.Canvas.ctx.lineTo((canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.lineTo((canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
-	GRADIENTDROP.Canvas.ctx.lineTo((canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.lineTo((canv.rr-r)*Math.sin(t),-(canv.rr-r)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.arc(0,0,canv.rr-r,3*Math.PI/2+t,3*Math.PI/2-t,true);
-	GRADIENTDROP.Canvas.ctx.lineTo(-(canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.lineTo(-(canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
-	GRADIENTDROP.Canvas.ctx.lineTo(-(canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.lineTo(-(canv.rr+r)*Math.sin(t),-(canv.rr+r)*Math.cos(t));
-	GRADIENTDROP.Canvas.ctx.strokeStyle='black';
-	GRADIENTDROP.Canvas.ctx.fillStyle='white';
+	BACKDROP.Canvas.ctx.arc(0,0,canv.rr+r,3*Math.PI/2-t,3*Math.PI/2+t,false);
+	BACKDROP.Canvas.ctx.lineTo((canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
+	BACKDROP.Canvas.ctx.lineTo((canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
+	BACKDROP.Canvas.ctx.lineTo((canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
+	BACKDROP.Canvas.ctx.lineTo((canv.rr-r)*Math.sin(t),-(canv.rr-r)*Math.cos(t));
+	BACKDROP.Canvas.ctx.arc(0,0,canv.rr-r,3*Math.PI/2+t,3*Math.PI/2-t,true);
+	BACKDROP.Canvas.ctx.lineTo(-(canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
+	BACKDROP.Canvas.ctx.lineTo(-(canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
+	BACKDROP.Canvas.ctx.lineTo(-(canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
+	BACKDROP.Canvas.ctx.lineTo(-(canv.rr+r)*Math.sin(t),-(canv.rr+r)*Math.cos(t));
+	BACKDROP.Canvas.ctx.strokeStyle='black';
+	BACKDROP.Canvas.ctx.fillStyle='white';
 	
-	GRADIENTDROP.Canvas.ctx.moveTo(0,0);
-	GRADIENTDROP.Canvas.ctx.arc(0,0,4,3*Math.PI/2,7*Math.PI/2,false);
+	BACKDROP.Canvas.ctx.moveTo(0,0);
+	BACKDROP.Canvas.ctx.arc(0,0,4,3*Math.PI/2,7*Math.PI/2,false);
 	
-	GRADIENTDROP.Canvas.ctx.fill();
-	GRADIENTDROP.Canvas.ctx.stroke();
-	GRADIENTDROP.Canvas.ctx.restore();
+	BACKDROP.Canvas.ctx.fill();
+	BACKDROP.Canvas.ctx.stroke();
+	BACKDROP.Canvas.ctx.restore();
 	
 	$('rtm0').style.left=canv.cx-8;
 	$('rtm0').style.top=canv.cy-8;
@@ -284,7 +284,7 @@ function drawrotate()
 
 function removeRotate()
 {
-	GRADIENTDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	while (rtmrks >0)
 	{
 		if($('rtm'+(--rtmrks))) {$('rtm'+rtmrks).parentNode.removeChild($('rtm'+rtmrks))};

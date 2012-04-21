@@ -25,8 +25,23 @@ function gradfill()
 	$('colorheadtext').innerHTML='\u00A0 Gradient Stop Colour'+gt;
 	removeGradLine();
 	removeRotate();
-	$("gradientfly").style.visibility="visible";
 	$("gradientdrop").style.visibility="visible";
+	$("backstage").style.visibility="visible";
+	if (SELECTEDSHAPE.stopn==SELECTEDSHAPE.colorStops.length-1)
+	{
+		$('gAdd').style.visibility='hidden';
+		$('gDel').style.visibility='hidden';
+	}
+	else if (SELECTEDSHAPE.stopn==0)
+	{
+		$('gAdd').style.visibility='visible';
+		$('gDel').style.visibility='hidden';
+	}
+	else
+	{
+		$('gAdd').style.visibility='visible';
+		$('gDel').style.visibility='visible';
+	}
 	if (SELECTEDSHAPE.justfill)
 	{
 		createGradLine(SELECTEDSHAPE);
@@ -37,6 +52,7 @@ function gradfill()
 	}	
 	$("gradfillbox").style.visibility="visible";
 }
+
 
 function setlinear()
 {
@@ -72,28 +88,67 @@ function setradial()
 	$('colorheadtext').innerHTML='\u00A0 Gradient Stop Colour\u00A0 - Radial';
 }
 
-function addpoint()
+function addStop()
 {
-	var canv=selected[0];
-	var p=canv.stopn;
-	var s=(canv.colorStops[p][0]+canv.colorStops[p+1][0])/2;
-	var tempcsn=[s,canv.colorStops[p][1],canv.colorStops[p][2],canv.colorStops[p][3],canv.colorStops[p][4]];
+	var shape=SELECTEDSHAPE;
+	var p=shape.stopn;
+	var s=(shape.colorStops[p][0]+shape.colorStops[p+1][0])/2;
+	var tempcsn=[s,shape.colorStops[p][1],shape.colorStops[p][2],shape.colorStops[p][3],shape.colorStops[p][4]];
 	var tempcs=[];
 	for (var i=0; i<=p;i++)
 	{
-		tempcs[i]=canv.colorStops[i];
+		tempcs[i]=shape.colorStops[i];
 	}
 	tempcs[p+1]=tempcsn
-	for (var i=p+1; i<canv.colorStops.length;i++)
+	for (var i=p+1; i<shape.colorStops.length;i++)
 	{
-		tempcs[i+1]=canv.colorStops[i];
+		tempcs[i+1]=shape.colorStops[i];
 	}
-	for (var i=0; i<selected.length;i++)
+	for(var groupName in SELECTED)
 	{
-		selected[i].colorStops=tempcs
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.colorStops=tempcs;
+			shape.stopn=p+1;
+		}
 	}
 	removeGradLine();
-	showGradLine(canv);
-	
+	showGradLine(shape);
+	$('gDel').style.visibility='visible';
+}
+
+function delStop()
+{
+	var shape=SELECTEDSHAPE;
+	var p=shape.stopn;
+	var tempcs=[];
+	for(var i=0;i<p;i++)
+	{
+		tempcs.push(shape.colorStops[i]);
+	}
+	for(var i=p+1;i<shape.colorStops.length;i++)
+	{
+		tempcs.push(shape.colorStops[i]);
+	}
+	for(var groupName in SELECTED)
+	{
+		var group=SELECTED[groupName];
+		var shapeNames=group.memberShapes();
+		for(var name in shapeNames)
+		{
+			nshape=shapeNames[name];
+			nshape.colorStops=tempcs;
+			nshape.stopn=p-1;
+		}
+	}
+	removeGradLine();
+	showGradLine(shape);
+	if (shape.stopn==0)
+	{
+		$('gDel').style.visibility='hidden';
+	}
 }
 

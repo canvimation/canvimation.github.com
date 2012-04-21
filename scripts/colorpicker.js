@@ -383,7 +383,7 @@ function setColor()
 			}
 		}
 		removeGradLine();
-		showGradLine(canv);
+		showGradLine(SELECTEDSHAPE);
 	}
 	endMovement();
 }

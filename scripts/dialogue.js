@@ -280,6 +280,22 @@ function pointEdit(mark)
 	}
 }
 
+function close_p_content()
+{
+	$("p_points").style.visibility="hidden";
+	$("p_smooth").style.visibility="hidden";
+	$("p_inline").style.visibility="hidden";
+	$("p_delete").style.visibility="hidden";
+	$("p_open").style.visibility="hidden";
+	$("p_line").style.visibility="hidden";
+	$("p_line2").style.visibility="hidden";
+	$("p_add").style.visibility="hidden";
+	$("p_add2").style.visibility="hidden";
+	$("p_paths").style.visibility="hidden";
+	$("p_close").style.visibility="hidden";
+	$("p_segments").style.visibility="hidden";
+}
+
 function updateCorner(node,corner)
 {
 	if(node.shape.type=="curve" && node.next.point.x=="end")

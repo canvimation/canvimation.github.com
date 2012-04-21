@@ -31,6 +31,8 @@ function addPointMark()
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			$("backstage").style.visibility="hidden";
+	   																			$("markerdrop").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
 	   																		}
 									};
 	this.mark.onclick	=function(){
