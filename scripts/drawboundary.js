@@ -7,9 +7,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 function checkBoundary(shiftdown,cursor)
 {
 	//if (doingani) {return};
-	//removeGradLine();
-	//removeRotate();
-	if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	//if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
 	hideTools();
 	
 	if (!shiftdown)
@@ -18,6 +21,7 @@ function checkBoundary(shiftdown,cursor)
 		SELECTED={};
 		BCOUNT=0;
 		clear($("markerdrop"));
+		//clear($("frontmarkerdrop"));
 		clear($("boundarydrop"));
 	}
 	var shape, foundshape;

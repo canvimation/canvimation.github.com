@@ -14,6 +14,9 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.top;
 	this.width;
 	this.height;
+	p=new Point(200,200);
+   	this.centreOfRotation=p;
+   	this.phi=0;  //angle of rotation
 	//this.showmembers=showmembers;
 	
 	if(arguments.length>0)

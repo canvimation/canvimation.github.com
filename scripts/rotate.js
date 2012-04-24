@@ -140,69 +140,46 @@ function rotateMarker()
    this.elmRef.top=0;
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
-										inln=true;
+										this.style.cursor="move";
+										$("frontmarkerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.elmRef.onmouseout=function(){
-	   									inln=false;
+	   									this.style.cursor="default";
+	   									$("frontmarkerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
+	   																		}
 									};	
-   $('bodydiv').appendChild(this.elmRef);
    return this.elmRef
 }
 
-function canvrotate()
+function shaperotate()
 {
 	removeRotate();
 	removeGradLine();
-	var canv=selected[0];
-	if (!canv.rotated)
-	{
-		for (var i=0; i<selected.length;i++)
-		{
-			selected[i].rotated=true;
-			selected[i].cx=selected[i].bleft+selected[i].bwidth/2;
-			selected[i].cy=selected[i].btop+selected[i].bheight/2;
-		}
-	}
-	rtk=new rotateMarker();
-	rtk.style.left=canv.cx;
-	rtk.style.top=canv.cy;
-	rtk.left=rtk.style.left;
-	rtk.top=rtk.style.top;
-	DDrtk=new YAHOO.util.DD(rtk.id)
-	DDrtk.onDrag=function(){updatecenter(this)};
-	rtk=new rotateMarker();
-	rtk.style.left=canv.cx;
-	rtk.style.top=canv.cy-canv.rr;
-	rtk.left=rtk.style.left;
-	rtk.top=rtk.style.top;
-	DDrtk=new YAHOO.util.DD(rtk.id)
-	DDrtk.onDrag=function(){updateangle(this,'x')};
-	var rotm=new rotMenu(canv);
-	var DDrotm = new YAHOO.util.DD(rotm.id);
-	DDrotm.setHandleElId('rothead');
+	$("rotatebox").style.visibility="visible";
+	var shape=SELECTEDSHAPE;
+	var group=shape.group;
+	$("rotateCentre").style.left=group.centreOfRotation.x;
+	$("rotateCentre").style.top=group.centreOfRotation.y;
+	$("rotateMove").style.left=group.centreOfRotation.x;
+	$("rotateMove").style.top=group.centreOfRotation.y-ROTATIONRADIUS;
+	$("rotateCentre").style.visibility="visible";
+	$("rotateMove").style.visibility="visible";
+	$("frontmarkerdrop").style.visibility="visible";
+	$("rotateCentre").left=parseInt($("rotateCentre").style.left);
+	$("rotateCentre").top=parseInt($("rotateCentre").style.top);
+	$("rotateMove").left=parseInt($("rotateMove").style.left);
+	$("rotateMove").top=parseInt($("rotateMove").style.top);
 	drawrotate();
 }
 
 
 function drawrotate()
-{ 
-	var canv=selected[0];
-	if ($('rotmenu')) {$('rotangle').value=Math.round(canv.phi*180/Math.PI)};
-	
-	var t = Math.PI/32;
-	var a = Math.PI/32;
-	var r =3;
-	var er= r+4;
-	
-	//boundary box calculation
-	var width=2*(canv.rr)*Math.sin(t+a);
-	var height=(canv.rr+er)*Math.cos(t)-(canv.rr-er)*Math.cos(t)
-	var tplx=canv.cx-(canv.rr)*Math.sin(t+a);
-	var tply=canv.cy-canv.rr-er;
-	var tprx=tplx+width;
-	var tpry=tply;
-	var blx =tplx;
-	var bly =tply+height;
+{
 	var brx = tprx;
 	var bry = bly;
 	
@@ -249,32 +226,6 @@ function drawrotate()
 	}
 	$('rtm1').left=parseInt($('rtm1').style.left);
 	$('rtm1').top=parseInt($('rtm1').style.top);	
-
-	BACKDROP.Canvas.ctx.clearRect(0,0,activewidth,activeheight);
-	BACKDROP.Canvas.ctx.save();
-	BACKDROP.Canvas.ctx.beginPath();
-	BACKDROP.Canvas.ctx.translate(canv.cx,canv.cy);
-	BACKDROP.Canvas.ctx.rotate(canv.phi);
-	
-	BACKDROP.Canvas.ctx.arc(0,0,canv.rr+r,3*Math.PI/2-t,3*Math.PI/2+t,false);
-	BACKDROP.Canvas.ctx.lineTo((canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
-	BACKDROP.Canvas.ctx.lineTo((canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
-	BACKDROP.Canvas.ctx.lineTo((canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
-	BACKDROP.Canvas.ctx.lineTo((canv.rr-r)*Math.sin(t),-(canv.rr-r)*Math.cos(t));
-	BACKDROP.Canvas.ctx.arc(0,0,canv.rr-r,3*Math.PI/2+t,3*Math.PI/2-t,true);
-	BACKDROP.Canvas.ctx.lineTo(-(canv.rr-er)*Math.sin(t),-(canv.rr-er)*Math.cos(t));
-	BACKDROP.Canvas.ctx.lineTo(-(canv.rr)*Math.sin(t+a),-(canv.rr)*Math.cos(t+a));
-	BACKDROP.Canvas.ctx.lineTo(-(canv.rr+er)*Math.sin(t),-(canv.rr+er)*Math.cos(t));
-	BACKDROP.Canvas.ctx.lineTo(-(canv.rr+r)*Math.sin(t),-(canv.rr+r)*Math.cos(t));
-	BACKDROP.Canvas.ctx.strokeStyle='black';
-	BACKDROP.Canvas.ctx.fillStyle='white';
-	
-	BACKDROP.Canvas.ctx.moveTo(0,0);
-	BACKDROP.Canvas.ctx.arc(0,0,4,3*Math.PI/2,7*Math.PI/2,false);
-	
-	BACKDROP.Canvas.ctx.fill();
-	BACKDROP.Canvas.ctx.stroke();
-	BACKDROP.Canvas.ctx.restore();
 	
 	$('rtm0').style.left=canv.cx-8;
 	$('rtm0').style.top=canv.cy-8;
@@ -284,12 +235,9 @@ function drawrotate()
 
 function removeRotate()
 {
-	BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
-	while (rtmrks >0)
-	{
-		if($('rtm'+(--rtmrks))) {$('rtm'+rtmrks).parentNode.removeChild($('rtm'+rtmrks))};
-	}
-	if($('rotMenu')) {$('rotMenu').parentNode.removeChild($('rotMenu'))};
+	$("rotateCentre").style.visibility="hidden";
+	$("rotateMove").style.visibility="hidden";
+	//$("frontmarkerdrop").style.visibility="hidden";
 }
 
 function updatecenter(rtmk)

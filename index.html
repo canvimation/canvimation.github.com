@@ -230,6 +230,12 @@ img.marker {
 	top:10px;
 }
 
+.rotation {
+	visibility:hidden;
+	font-size: 0px;
+	cursor: move;
+}
+
 #shapestage, #scenestage, #spritestage, #trackstage, #tweenstage, #filmstage {
 	visibility:hidden;
 }
@@ -847,17 +853,15 @@ div.bar {
 <script type="text/javascript" src = "scripts/colorpicker.js" ></script>
 <script type="text/javascript" src = "scripts/canvasshapes.js" ></script>
 <script type="text/javascript" src = "scripts/reflect.js" ></script>
+<script type="text/javascript" src = "scripts/shadowmenu.js" ></script>
+<script type="text/javascript" src = "scripts/gradmenu.js" ></script>
+<script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
 
-
-<script type="text/javascript" src = "scripts/pointsmenu.js" ></script>
 <script type="text/javascript" src = "scripts/export.js" ></script>
 <script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
 <script type="text/javascript" src = "scripts/linemarker.js" ></script>
-<script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
-<script type="text/javascript" src = "scripts/gradmenu.js" ></script>
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
 <script type="text/javascript" src = "scripts/grid.js" ></script>
-<script type="text/javascript" src = "scripts/shadowmenu.js" ></script>
 <script type="text/javascript" src = "scripts/canvashtml.js" ></script>
 <script type="text/javascript" src = "scripts/idmenu.js" ></script>
 <script type="text/javascript" src = "scripts/totext.js" ></script>
@@ -966,9 +970,9 @@ var ZPOS=1; //zindex for each shape as created or set to front
 var ZNEG=-1; //zindex for shapes when zindex sent to back
 var ZSTART,ZOFFSET; //ensure z-order maintained when copying shapes;
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
+var ROTATIONRADIUS=100; //radius for rotation marker;
 var DEFAULTKEYDOWN=document.onkeydown;
-var BACKDROP; // object where backstage canvas is added for bezguides;
-var GRADIENTDROP; //object where gradientdrop canvas is added for gradient fill stops;
+var BACKDROP; // object where backstage canvas is added for bezguides, gradient stops, rotation markers;
 var BOXES; //array of dialogue boxes;
 var BOXNAME; //name of dialogue box, id with box dropped from end;
 var DD=[]; //array of drag and drop elements for dialogue boxes;
@@ -1544,6 +1548,10 @@ function main()
 	   										noBubble(e);
 	   										checkBoundary(shiftdown(e),getPosition(e));
 	   									}
+	$("frontmarkerdrop").onclick=function(e) {
+	   										noBubble(e);
+	   										checkBoundary(shiftdown(e),getPosition(e));
+	   									}
 	 $("boundarydrop").onclick=function(e) {
 	   										noBubble(e);
 	   										checkBoundary(shiftdown(e),getPosition(e));
@@ -1597,6 +1605,16 @@ function main()
 	$('gradfillbox').style.width=160;
 	$('gradfillbox').style.height=170;
 	$("linear").checked="checked";
+	
+	//rotatebox
+	$('rotatebox').style.width=120;
+	$('rotatebox').style.height=120;
+	
+	//rotation markers
+	DDrtC=new YAHOO.util.DD("rotateCentre")
+	DDrtC.onDrag=function(){updatecenter(this)};
+	DDrtM=new YAHOO.util.DD("rotateMove")
+	DDrtM.onDrag=function(){updateangle(this,'x')};
 	
 	//shadowbox
 	$('shadowbox').style.width=250;
@@ -1979,7 +1997,14 @@ function main()
 <div id="backstage" class="theatre_style"></div>
 <div id="markerdrop" class="theatre_style" ></div>
 <div id="boundarydrop" class="theatre_style" ></div>
-<div id="gradientdrop" class="theatre_style" ></div>
+<div id="frontmarkerdrop" class="theatre_style">
+	<div id="rotateCentre" class="rotation">
+		<img src="assets/ccircle.png" />
+	</div>
+	<div id="rotateMove" class="rotation">
+		<img src="assets/circle.png" />
+	</div>
+</div>
 
 <!--dialogue box setting stage width and height-->
 <div id='stagebox' class="dialoguebox">
@@ -2152,9 +2177,23 @@ function main()
 	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="delStop()">
 	</div>
 	<div id='gradfillhead' class='head'>&nbsp; Colour Stops
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
+		<img src='assets/x.png' onclick='closedialogue(this);closeStops();removeGradLine()'/>
     	<img src='assets/up.png' onclick='updialogue(this,"gradfillcontent")'/>
 	</div>	
+</div>
+
+<div id='rotatebox' class="dialoguebox">
+	<div id='rotatecontent' class='content'>
+		<p class="text_input">
+			<label for="rotateangle">Angle</label> <input type="text" name"rotateangle" id="rotateangle" value=0 size=3 style="left:15px"/><span style="left:20px">&deg;</span>
+		</p>
+		<input type="button" value=" OK " id="rotateOK" onclick="rotateshape()" />
+		<input type="button" value=" Close " id="rotateClose" onclick="closedialogue(this)" />
+	</div>	
+	<div id='rotatehead' class='head'>&nbsp; Rotate
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"rotatecontent")'/>
+	</div>
 </div>
 
 <!--toolbars ............................................................... -->
@@ -2231,7 +2270,7 @@ Film Elements from back to front.<br>
   <div class="choice40" id='collines'  alt="line colour" title="line colour" onclick="linecolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/collines.png"> </div>
   <div class="choice40" id='colfill'  alt="fill colour" title="fill colour" onclick="fillcolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='colimg' src="assets/colfill.png"> </div>
   <div class="choice40" id='gradfill'  alt="gradient fill" title="gradient fill" onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='gradimg' src="assets/gradfill.png"> </div>
-  <div class="choice40" id='rotate'  alt="rotate" title="rotate" onclick="canvrotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/rotate.png"> </div>
+  <div class="choice40" id='rotate'  alt="rotate" title="rotate" onclick="shaperotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/rotate.png"> </div>
   <div class="choice40" id='front'  alt="bring to front" title="bring to front" onclick="bringfront()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/front.png"> </div>
   <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
   <div class="choice40" id='grid'  alt="set grid" title="set grid" onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/grid.png"> </div>

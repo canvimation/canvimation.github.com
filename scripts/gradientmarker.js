@@ -15,16 +15,18 @@ function gradMarker()
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
 										this.style.cursor="move";
-										$("gradientdrop").onclick=function(e) {noBubble(e)};
+										$("frontmarkerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.elmRef.onmouseout=function(){
 	   									this.style.cursor="default";
-	   									$("gradientdrop").onclick=function(e) {
+	   									$("frontmarkerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			clear($("gradientdrop"));
+	   																			alert("here");
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
-	   																			$("gradientdrop").style.visibility="hidden";
+	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			$("backstage").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
 	   																		}
 									};
 	this.elmRef.onclick	=function(){
@@ -61,7 +63,7 @@ function gradMarker()
 										$('colorbox').style.visibility='visible';
 									};
 									
-   $('gradientdrop').appendChild(this.elmRef);
+   $('frontmarkerdrop').appendChild(this.elmRef);
   
    
    return this.elmRef;
@@ -80,20 +82,23 @@ function radMarker()
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
 										this.style.cursor="move";
-										$("gradientdrop").onclick=function(e) {noBubble(e)};
+										$("frontmarkerdrop").onclick=function(e) {noBubble(e)};
 									};
    this.elmRef.onmouseout=function(){
 	   									this.style.cursor="default";
-	   									$("gradientdrop").onclick=function(e) {
+	   									$("frontmarkerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			clear($("gradientdrop"));
+
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
-	   																			$("gradientdrop").style.visibility="hidden";
+	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			removeGradLine();
+	   																			$("backstage").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
 	   																		}
 									};
 									
-   $('gradientdrop').appendChild(this.elmRef);
+   $('frontmarkerdrop').appendChild(this.elmRef);
   
    
    return this.elmRef;

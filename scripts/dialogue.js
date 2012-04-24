@@ -296,6 +296,15 @@ function close_p_content()
 	$("p_segments").style.visibility="hidden";
 }
 
+function closeStops()
+{
+	$("gAdd").style.visibility="hidden";
+	$("gDel").style.visibility="hidden";
+	$("frontmarkerdrop").style.visibility="hidden";
+	$("backstage").style.visibility="hidden";
+	$("boundarydrop").style.visibility="visible";
+}
+
 function updateCorner(node,corner)
 {
 	if(node.shape.type=="curve" && node.next.point.x=="end")

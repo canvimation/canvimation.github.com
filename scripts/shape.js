@@ -185,9 +185,6 @@ function Shape(name,open,editable,type)
    	this.soy=0;
    	this.ox=0;
    	this.oy=0;
-   	p=new Point(0,0);
-   	this.centreOfRotation=p;
-   	this.phi=0;  //angle of rotation
    	this.rotated=false;
    	this.strokeStyle=[0,0,0,1];
    	this.fillStyle=[255,255,255,1];
@@ -611,6 +608,8 @@ function drawEnd(cursor)
    	this.group.top= this.tplftcrnr.y;
    	this.group.width=this.btmrgtcrnr.x-this.tplftcrnr.x;
    	this.group.height=this.btmrgtcrnr.y-this.tplftcrnr.y;
+   	this.group.centreOfRotation.x=this.group.left+this.group.width/2;
+   	this.group.centreOfRotation.y=this.group.top+this.group.height/2;
    	if(!this.editable)
    	{
    		$("boundarydrop").style.visibility="visible";

@@ -25,7 +25,7 @@ function gradfill()
 	$('colorheadtext').innerHTML='\u00A0 Gradient Stop Colour'+gt;
 	removeGradLine();
 	removeRotate();
-	$("gradientdrop").style.visibility="visible";
+	$("frontmarkerdrop").style.visibility="visible";
 	$("backstage").style.visibility="visible";
 	if (SELECTEDSHAPE.stopn==SELECTEDSHAPE.colorStops.length-1)
 	{

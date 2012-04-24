@@ -399,7 +399,7 @@ function fillcolor()
 	$('gradimg').src="assets/gradfilloff.png";
 	$('colimg').src="assets/colfill.png";
 	removeGradLine();
-	//removeRotate();
+	removeRotate();
 	var shape=SELECTEDSHAPE;
 	$("redBox").value=shape.fillStyle[0];
 	redBoxChanged();
@@ -449,7 +449,7 @@ function linecolor()
 	$('colorbox').style.visibility='visible';
 	if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
 	removeGradLine();
-	//removeRotate();
+	removeRotate();
 }
 
 
