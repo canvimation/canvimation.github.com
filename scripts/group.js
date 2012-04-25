@@ -143,6 +143,10 @@ function copyGroup(group,offset,theatre)
 	groupcopy.top=group.top+offset;
 	groupcopy.width=group.width;
 	groupcopy.height=group.height;
+	groupcopy.centreOfRotation.x=group.centreOfRotation.x+offset;
+	groupcopy.centreOfRotation.y=group.centreOfRotation.y+offset;
+   	groupcopy.phi=group.phi; 
+
 	for(var i=0; i<group.members.length; i++)
 	{
 		if(group.members[i].elType()=="group")
@@ -155,13 +159,14 @@ function copyGroup(group,offset,theatre)
 			var copy=makeCopy(shape,offset,theatre);
 			groupcopy.members.push(copy);
 			copy.group=groupcopy;
-			copy.addTo(theatre);
+			
 			if(theatre.id=="shapestage")
 			{
 				copy.draw();
 			}
 		}
 	}
+
 	return groupcopy;
 }
 
@@ -200,6 +205,10 @@ function update(l,t,dx,dy,scalew,scaleh)
 	this.top=t+(this.top-t)*scaleh;
 	this.width*=scalew;
 	this.height*=scaleh;
+	//this.centreOfRotation.x+=dx;
+	//this.centreOfRotation.y+=dy;
+	//this.centreOfRotation.x=l+(this.centreOfRotation.x-l)*scalew;
+	//this.centreOfRotation.y=t+(centreOfRotation.y-t)*scaleh;
 	for(var i=0;i<this.members.length;i++)
 	{
 		if(this.members[i].elType()=="group")

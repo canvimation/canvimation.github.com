@@ -237,7 +237,7 @@ function drawBoundary()
 									var group=SELECTED[groupName];
 									var shapeNames=group.memberShapes();
 									for(var name in shapeNames)
-									{
+									{msg+="<br>"+name+",";
 										shape=shapeNames[name];
 										//shape.ox +=dx;
 										//shape.oy +=dy;
@@ -271,8 +271,8 @@ function drawBoundary()
 										shape.radGrad[1] +=dy;
 										shape.radGrad[3] +=dx;
 										shape.radGrad[4] +=dy;
-										shape.cx +=dx;
-										shape.cy +=dy;
+										//shape.cx +=dx;
+										//shape.cy +=dy;
 
 										shape.draw();
 										

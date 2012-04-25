@@ -923,8 +923,6 @@ function shapecopy(offset)
 	var name;
 	var temps;
 	var shapelist=[];
-	//ZSTART=ZPOS;
-	//ZOFFSET=ZPOS-ZNEG;
 	SELECTED={};
 	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
 	{
@@ -936,7 +934,7 @@ function shapecopy(offset)
 			members[shape].group=groupcopy;
 			temps=[];
 			temps[0]=members[shape].name;
-			temps[1]=members[shape].zIndex;
+			temps[1]=members[shape].zIndex;alert(temps[1]);
 			shapelist.push(temps);
 		}
 		SELECTED[groupcopy.name]=groupcopy;
@@ -952,9 +950,8 @@ function shapecopy(offset)
 	{
 		name=shapelist[i][0];
 		SHAPES[name].zIndex=ZPOS++;
-		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
+		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;alert([name,SHAPES[name].Canvas.style.zIndex]);
 	}
-	//ZPOS=ZSTART+ZOFFSET;
 }
 
 function makeCopy(shape,offset,theatre)
@@ -962,23 +959,42 @@ function makeCopy(shape,offset,theatre)
 	var p,n,c1,c2;
 	var non=new Point("non","non");
 	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.editable,shape.type);
-	for(var property in shape)
-	{
-		copy.property=shape.property;
-	}
+	copy.scx = shape.scx;
+	copy.scy = shape.scy;
+	copy.sox = shape.sox;
+	copy.soy = shape.soy;
+	copy.ox = shape.ox;
+	copy.oy = shape.oy;
+	copy.rotated = shape.rotated;
+	copy.lineWidth  = shape.lineWidth ;
+	copy.lineCap  = shape.lineCap ;
+	copy.lineJoin  = shape.lineJoin ;
+	copy.justfill = shape.justfill;
+	copy.linearfill = shape.linearfill;
+	copy.stopn = shape.stopn;
+	copy.shadow = shape.shadow;
+	copy.shadowOffsetX  = shape.shadowOffsetX ;
+	copy.shadowOffsetY  = shape.shadowOffsetY ;
+	copy.shadowBlur  = shape.shadowBlur ;
+	copy.ScaleX = shape.ScaleX;
+	copy.ScaleY = shape.ScaleY;
+	copy.zIndex = shape.zIndex;
+	copy.rotate = shape.rotate;
+	copy.clockw = shape.clockw;
+	copy.complete = shape.complete;
+	copy.crnradius = shape.crnradius;
+
 	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
 	copy.tplftcrnr=p; //coordinates of top left of boundary box;
 	p=new Point(shape.btmrgtcrnr.x+offset,shape.btmrgtcrnr.y+offset);
 	copy.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
-	p=new Point(shape.centreOfRotation.x+offset,shape.centreOfRotation.y+offset);
-	copy.centreOfRotation=p;
 	copy.lineWidth=shape.lineWidth;
 	for(var i=0; i<4;i++)
 	{
 		copy.fillStyle[i]=shape.fillStyle[i];
 		copy.strokeStyle[i]=shape.strokeStyle[i];
 		copy.lineGrad[i]=shape.lineGrad[i]+offset;
-		copy.shadowColor=shape.shadowColor;
+		copy.shadowColor[i]=shape.shadowColor[i];
 	}
 	copy.radGrad[0]=shape.radGrad[0]+offset;
 	copy.radGrad[1]=shape.radGrad[1]+offset;
@@ -993,15 +1009,14 @@ function makeCopy(shape,offset,theatre)
 			copy.colorStops[i][j]=shape.colorStops[i][j];
 		}
 	}
-	copy.zIndex=shape.zIndex+ZSTART+ZOFFSET;
 	for(var i=0;i<shape.beztypes.length;i++)
 	{
 		copy.beztypes[i]=shape.beztypes[i];
 	}
-	p=new Point("end","end");
-	copy.path=new Node(p); //got to do this complicated
-	copy.path.next=copy.path;
-	copy.path.prev=copy.path;
+	//p=new Point("end","end");
+	//copy.path=new Node(p); 
+	//copy.path.next=copy.path;
+	//copy.path.prev=copy.path;
 	var node=shape.path.next;
 	while(node.point.x!="end")
 	{
@@ -1029,6 +1044,7 @@ function makeCopy(shape,offset,theatre)
 		copy.addNode(n);
 		node=node.next;
 	}
+	copy.addTo(theatre);
 	return copy;
 }
 

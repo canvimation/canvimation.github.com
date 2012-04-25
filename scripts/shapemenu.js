@@ -41,6 +41,7 @@ function shapeMenu()
 	   							noBubble(e);
 	   							var shape=new Shape("Shape"+(SCOUNT++),this.open,this.edit,this.title);
 	   							$("markerdrop").style.visibility="hidden";
+	   							$("frontmarkerdrop").style.visibility="hidden";
 	   							clear($("markerdrop"));
 	   							$("boundarydrop").style.visibility="hidden";
 	   							clear($("boundarydrop"));

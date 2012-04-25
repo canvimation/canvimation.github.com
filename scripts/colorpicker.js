@@ -377,8 +377,26 @@ function setColor()
 			{
 				shape=shapeNames[name];
 				shape.justfill=false;
-				shape.colorStops=SELECTEDSHAPE.colorStops;
-				shape.lineGrad=SELECTEDSHAPE.lineGrad;
+				for(var i=0; i<4;i++)
+				{
+					shape.fillStyle[i]=SELECTEDSHAPE.fillStyle[i];
+					shape.strokeStyle[i]=SELECTEDSHAPE.strokeStyle[i];
+					shape.lineGrad[i]=SELECTEDSHAPE.lineGrad[i];
+					shape.shadowColor[i]=SELECTEDSHAPE.shadowColor[i];
+				}
+				shape.radGrad[0]=SELECTEDSHAPE.radGrad[0];
+				shape.radGrad[1]=SELECTEDSHAPE.radGrad[1];
+				shape.radGrad[2]=SELECTEDSHAPE.radGrad[2];
+				shape.radGrad[3]=SELECTEDSHAPE.radGrad[3];
+				shape.radGrad[4]=SELECTEDSHAPE.radGrad[4];
+				shape.radGrad[5]=SELECTEDSHAPE.radGrad[5];
+				for(var i=0;i<SELECTEDSHAPE.colorStops.length;i++)
+				{
+					for(var j=0;j<SELECTEDSHAPE.colorStops[i].length;j++)
+					{
+						shape.colorStops[i][j]=SELECTEDSHAPE.colorStops[i][j];
+					}
+				}
 				shape.draw();
 			}
 		}
@@ -447,7 +465,7 @@ function linecolor()
 	$('colorheadtext').innerHTML='\u00A0 Line Colour';
 	coltype='L';
 	$('colorbox').style.visibility='visible';
-	if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
+	//if ($('gmenu')) {$('gmenu').parentNode.removeChild($('gmenu'))};
 	removeGradLine();
 	removeRotate();
 }
