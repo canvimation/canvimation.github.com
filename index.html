@@ -1611,10 +1611,48 @@ function main()
 	$('rotatebox').style.height=120;
 	
 	//rotation markers
-	DDrtC=new YAHOO.util.DD("rotateCentre")
-	DDrtC.onDrag=function(){updatecenter(this)};
-	DDrtM=new YAHOO.util.DD("rotateMove")
-	DDrtM.onDrag=function(){updateangle(this,'x')};
+	$("rotateCentre").style.width=12;
+	$("rotateCentre").style.height=12;
+	$("rotateMove").style.width=12;
+	$("rotateMove").style.height=12;
+	DDrtC=new YAHOO.util.DD("rotateCentre");
+	DDrtC.onDrag=function(){updatecenter()};
+	DDrtM=new YAHOO.util.DD("rotateMove");
+	DDrtM.onDrag=function(){updateangle()};
+	
+	$("rotateCentre").onmouseover=function(){
+										this.style.cursor="move";
+										$("frontmarkerdrop").onclick=function(e) {noBubble(e)};
+									};
+   	$("rotateCentre").onmouseout=function(){
+	   									this.style.cursor="default";
+	   									$("frontmarkerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			removeRotate();
+	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			$("backstage").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
+	   																		}
+									};
+									
+	$("rotateMove").onmouseover=function(){
+										this.style.cursor="move";
+										$("frontmarkerdrop").onclick=function(e) {noBubble(e)};
+									};
+   	$("rotateMove").onmouseout=function(){
+	   									this.style.cursor="default";
+	   									$("frontmarkerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			removeRotate();
+	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			$("backstage").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
+	   																		}
+									};
 	
 	//shadowbox
 	$('shadowbox').style.width=250;
@@ -2187,7 +2225,7 @@ function main()
 		<p class="text_input">
 			<label for="rotateangle">Angle</label> <input type="text" name"rotateangle" id="rotateangle" value=0 size=3 style="left:15px"/><span style="left:20px">&deg;</span>
 		</p>
-		<input type="button" value=" OK " id="rotateOK" onclick="rotateshape()" />
+		<input type="button" value=" OK " id="rotateOK" onclick="updateangle($('rotateangle').value)" />
 		<input type="button" value=" Close " id="rotateClose" onclick="closedialogue(this)" />
 	</div>	
 	<div id='rotatehead' class='head'>&nbsp; Rotate

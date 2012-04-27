@@ -27,6 +27,7 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.memberShapes=memberShapes;
 	this.drawBoundary=drawBoundary;
 	this.removeBoundary=removeBoundary;
+	this.groupRotate=groupRotate;
 	this.update=update;
 	this.elType=elType;
 }
@@ -118,6 +119,9 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 	group.top=top;
 	group.width=right-left;
 	group.height=bottom-top;
+	group.centreOfRotation.x=group.left+group.width/2;
+	group.centreOfRotation.y=group.top+group.height/2;
+	group.phi=0;
 	var members=group.memberShapes();  // all shapes within the group 
 	for (var shape in members)
 	{
@@ -205,10 +209,10 @@ function update(l,t,dx,dy,scalew,scaleh)
 	this.top=t+(this.top-t)*scaleh;
 	this.width*=scalew;
 	this.height*=scaleh;
-	//this.centreOfRotation.x+=dx;
-	//this.centreOfRotation.y+=dy;
-	//this.centreOfRotation.x=l+(this.centreOfRotation.x-l)*scalew;
-	//this.centreOfRotation.y=t+(centreOfRotation.y-t)*scaleh;
+	this.centreOfRotation.x+=dx;
+	this.centreOfRotation.y+=dy;
+	this.centreOfRotation.x=l+(this.centreOfRotation.x-l)*scalew;
+	this.centreOfRotation.y=t+(this.centreOfRotation.y-t)*scaleh;
 	for(var i=0;i<this.members.length;i++)
 	{
 		if(this.members[i].elType()=="group")
@@ -216,6 +220,55 @@ function update(l,t,dx,dy,scalew,scaleh)
 			this.members[i].update(l,t,dx,dy,scalew,scaleh); 
 		}
 	}
+}
+
+function groupRotate(phi)
+{
+	var members=this.memberShapes();  // all shapes within the group 
+	var cx=this.centreOfRotation.x;
+	var cy=this.centreOfRotation.y;
+	var p;
+	var mnx=1000000;
+	var mny=1000000;
+	var mxx=-1000000;
+	var mxy=-1000000;
+	
+	for(var name in members)
+	{
+		shape=members[name];
+		node=shape.path.next;
+		while(node.point.x!="end")
+		{
+			p=new Point(node.point.x-cx,node.point.y-cy);
+			p=p.pointRotate(phi);
+			node.point.x=p.x+cx;
+			node.point.y=p.y+cy;
+			if(node.ctrl1.x!="non") //changes when straight line set on curve
+			{
+				p=new Point(node.ctrl1.x-cx,node.ctrl1.y-cy);
+				p=p.pointRotate(phi);
+				node.ctrl1.x=p.x+cx;
+				node.ctrl1.y=p.y+cy;
+				p=new Point(node.ctrl2.x-cx,node.ctrl2.y-cy);
+				p=p.pointRotate(phi);
+				node.ctrl2.x=p.x+cx;
+				node.ctrl2.y=p.y+cy;
+			}
+			node=node.next;
+		}
+		shape.setCorners();
+		shape.draw();
+		if (mnx>shape.tplftcrnr.x){mnx=shape.tplftcrnr.x};
+		if (mny>shape.tplftcrnr.y){mny=shape.tplftcrnr.y};
+		if (mxx<shape.btmrgtcrnr.x){mxx=shape.btmrgtcrnr.x};
+		if (mxy<shape.btmrgtcrnr.y){mxy=shape.btmrgtcrnr.y};
+	}
+	this.left=mnx;
+	this.top=mny;
+	this.width=mxx-mnx;
+	this.height=mxy-mny;
+	clear($("boundarydrop"));
+	this.drawBoundary();
 }
 
 /*

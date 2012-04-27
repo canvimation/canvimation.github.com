@@ -756,7 +756,7 @@ function vecAdd(p1,p2)
 	return p;
 }
 
-function setCorners() //for freeform and curve;
+function setCorners() //sets boundary for individual shapes;
 {
    	var step=100;
    	var x,y;
@@ -1013,10 +1013,6 @@ function makeCopy(shape,offset,theatre)
 	{
 		copy.beztypes[i]=shape.beztypes[i];
 	}
-	//p=new Point("end","end");
-	//copy.path=new Node(p); 
-	//copy.path.next=copy.path;
-	//copy.path.prev=copy.path;
 	var node=shape.path.next;
 	while(node.point.x!="end")
 	{
@@ -1063,6 +1059,7 @@ function aligntop()
 		group=SELECTED[groupname];
 		dmnt=mintop-group.top;
 		group.top=mintop;
+		group.centreOfRotation.y +=dmnt;
 		group.removeBoundary();
 		group.drawBoundary();
 		members=group.memberShapes();
@@ -1087,7 +1084,6 @@ function aligntop()
 			shape.lineGrad[3]+=dmnt;
 			shape.radGrad[1]+=dmnt;
 			shape.radGrad[4]+=dmnt;
-			shape.centreOfRotation.y +=dmnt;
 			shape.draw();
 		}
 	}
@@ -1108,6 +1104,7 @@ function alignleft()
 		group=SELECTED[groupname];
 		dmnl=minleft-group.left;
 		group.left=minleft;
+		group.centreOfRotation.x+=dmnl;
 		group.removeBoundary();
 		group.drawBoundary();
 		members=group.memberShapes();
@@ -1132,7 +1129,6 @@ function alignleft()
 			shape.lineGrad[2]+=dmnl;
 			shape.radGrad[0]+=dmnl;
 			shape.radGrad[3]+=dmnl;
-			shape.centreOfRotation.x+=dmnl;
 			shape.draw();
 		}
 	}
@@ -1153,6 +1149,7 @@ function alignright()
 		group=SELECTED[groupname];
 		dmxr=maxright-(group.left+group.width);
 		group.left+=dmxr;
+		group.centreOfRotation.x+=dmxr;
 		group.removeBoundary();
 		group.drawBoundary();
 		members=group.memberShapes();
@@ -1177,7 +1174,6 @@ function alignright()
 			shape.lineGrad[2]+=dmxr;
 			shape.radGrad[0]+=dmxr;
 			shape.radGrad[3]+=dmxr;
-			shape.centreOfRotation.x+=dmxr;
 			shape.draw();
 		}
 	}
@@ -1199,6 +1195,7 @@ function alignbot()
 		group=SELECTED[groupname];
 		dmxb=maxbot-(group.top+group.height);
 		group.top+=dmxb;
+		group.centreOfRotation.y+=dmxb;
 		group.removeBoundary();
 		group.drawBoundary();
 		members=group.memberShapes();
@@ -1223,7 +1220,6 @@ function alignbot()
 			shape.lineGrad[3]+=dmxb;
 			shape.radGrad[1]+=dmxb;
 			shape.radGrad[4]+=dmxb;
-			shape.centreOfRotation.y+=dmxb;
 			shape.draw();
 		}
 	}

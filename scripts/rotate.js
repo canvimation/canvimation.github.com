@@ -149,7 +149,9 @@ function rotateMarker()
 	   																			noBubble(e);
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			removeRotate();
 	   																			$("frontmarkerdrop").style.visibility="hidden";
+	   																			$("backstage").style.visibility="hidden";
 	   																			$("boundarydrop").style.visibility="visible";
 	   																		}
 									};	
@@ -163,10 +165,10 @@ function shaperotate()
 	$("rotatebox").style.visibility="visible";
 	var shape=SELECTEDSHAPE;
 	var group=shape.group;
-	$("rotateCentre").style.left=group.centreOfRotation.x;
-	$("rotateCentre").style.top=group.centreOfRotation.y;
-	$("rotateMove").style.left=group.centreOfRotation.x;
-	$("rotateMove").style.top=group.centreOfRotation.y-ROTATIONRADIUS;
+	$("rotateCentre").style.left=group.centreOfRotation.x-6;
+	$("rotateCentre").style.top=group.centreOfRotation.y-6;
+	$("rotateMove").style.left=group.centreOfRotation.x+ROTATIONRADIUS*Math.cos(group.phi)-6;
+	$("rotateMove").style.top=group.centreOfRotation.y+ROTATIONRADIUS*Math.sin(group.phi)-6;
 	$("rotateCentre").style.visibility="visible";
 	$("rotateMove").style.visibility="visible";
 	$("frontmarkerdrop").style.visibility="visible";
@@ -174,63 +176,7 @@ function shaperotate()
 	$("rotateCentre").top=parseInt($("rotateCentre").style.top);
 	$("rotateMove").left=parseInt($("rotateMove").style.left);
 	$("rotateMove").top=parseInt($("rotateMove").style.top);
-	drawrotate();
-}
-
-
-function drawrotate()
-{
-	var brx = tprx;
-	var bry = bly;
-	
-	var tpl=rotate(canv.phi,tplx-canv.cx,tply-canv.cy,'C');
-	var tpr=rotate(canv.phi,tprx-canv.cx,tpry-canv.cy,'C');
-	var bl=rotate(canv.phi,blx-canv.cx,bly-canv.cy,'C');
-	var br=rotate(canv.phi,brx-canv.cx,bry-canv.cy,'C');
-	
-	tplx=canv.cx+tpl.x;
-	tply=canv.cy+tpl.y;
-	tprx=canv.cx+tpr.x;
-	tpry=canv.cy+tpr.y;
-	blx=canv.cx+bl.x;
-	bly=canv.cy+bl.y;
-	brx=canv.cx+br.x;
-	bry=canv.cy+br.y;
-	if (0<=canv.phi && canv.phi<Math.PI/2)
-	{
-		$('rtm1').style.left=blx;
-		$('rtm1').style.top=tply;
-		$('rtm1').style.width=tprx-blx;
-		$('rtm1').style.height=bry-tply;
-	}
-	else if (Math.PI/2<=canv.phi && canv.phi<Math.PI)
-	{
-		$('rtm1').style.left=brx;
-		$('rtm1').style.top=bly;
-		$('rtm1').style.width=tplx-brx;
-		$('rtm1').style.height=tpry-bly;	
-	}
-	else if (Math.PI<=canv.phi && canv.phi<3*Math.PI/2)
-	{
-		$('rtm1').style.left=tprx;
-		$('rtm1').style.top=bry;
-		$('rtm1').style.width=blx-tprx;
-		$('rtm1').style.height=tply-bry;
-	}
-	else
-	{
-		$('rtm1').style.left=tplx;
-		$('rtm1').style.top=tpry;
-		$('rtm1').style.width=brx-tplx;
-		$('rtm1').style.height=bly-tpry;
-	}
-	$('rtm1').left=parseInt($('rtm1').style.left);
-	$('rtm1').top=parseInt($('rtm1').style.top);	
-	
-	$('rtm0').style.left=canv.cx-8;
-	$('rtm0').style.top=canv.cy-8;
-	$('rtm0').left=parseInt($('rtm0').style.left);
-	$('rtm0').top=parseInt($('rtm0').style.top);
+	$("rotateangle").value=Math.round(group.phi*180/Math.PI);
 }
 
 function removeRotate()
@@ -240,120 +186,54 @@ function removeRotate()
 	//$("frontmarkerdrop").style.visibility="hidden";
 }
 
-function updatecenter(rtmk)
+function updatecenter()
 {
-	var rtmkt=$(rtmk.id);
-	var dx=parseInt(rtmkt.style.left)-rtmkt.left;
-	var dy=parseInt(rtmkt.style.top)-rtmkt.top;
-	for (var j=0; j<selected.length;j++)
+	var cm=$("rotateCentre");
+	var mm=$("rotateMove");
+	var dx=parseInt(cm.style.left)-cm.left;
+	var dy=parseInt(cm.style.top)-cm.top;
+	cm.left=parseInt(cm.style.left);
+	cm.top=parseInt(cm.style.top);
+	mm.left+=dx;
+	mm.top+=dy;
+	mm.style.left=mm.left;
+	mm.style.top=mm.top;
+	for (var groupName in SELECTED)
 	{
-		selected[j].cx +=dx;
-		selected[j].cy +=dy;
+		SELECTED[groupName].centreOfRotation.x +=dx;
+		SELECTED[groupName].centreOfRotation.y +=dy;
 	}
-	rtmkt.left=parseInt(rtmkt.style.left);
-	rtmkt.top=parseInt(rtmkt.style.top);
-	for (var j=0; j<selected.length;j++)
-	{
-		drawline(selected[j]);
-	}
-	drawrotate();
 }
 
-function updateangle(rtmk,phi)
+function updateangle(phi)
 {
-	var canv=selected[0];
-	var rtmkt=$(rtmk.id);
-	if (isNaN(phi))
+	var shape=SELECTEDSHAPE;
+	var mm=$("rotateMove");
+	if (arguments.length==0)
 	{
-		var dx=parseInt(rtmkt.style.left)+parseInt(rtmkt.style.width)/2-canv.cx;
-		var dy=parseInt(rtmkt.style.top)+parseInt(rtmkt.style.height)/2-canv.cy;
-		phi = arctan(dx,dy)+Math.PI/2;
-		if (phi>2*Math.PI) {phi-=2*Math.PI};
+		var dx=parseInt(mm.style.left)+6-shape.group.centreOfRotation.x;
+		var dy=parseInt(mm.style.top)+6-shape.group.centreOfRotation.y;
+		phi = arctan(dy,dx);
+	}
+	else
+	{
+		phi*=Math.PI/180;
+		
 	}
 	
-	var mxx=[];
-	var mnx=[];
-	var mxy=[];
-	var mny=[];
-	var gpind;
-	var slind=0;
-	for (var j=0; j<2*selected.length;j++)
+	mm.left=shape.group.centreOfRotation.x+ROTATIONRADIUS*Math.cos(phi)-6;
+	mm.top=shape.group.centreOfRotation.y+ROTATIONRADIUS*Math.sin(phi)-6;
+	mm.style.left=mm.left;
+	mm.style.top=mm.top;
+	
+	for (var groupName in SELECTED)
 	{
-		mnx[j]=100000000000;
-		mxx[j]=0;
-		mny[j]=100000000000;
-		mxy[j]=0;
+		var group=SELECTED[groupName];
+		
+		group.groupRotate(phi-group.phi);
+		group.phi=phi;
+		$("rotateangle").value=Math.round(group.phi*180/Math.PI);
 	}
-	for (var j=0; j<selected.length;j++)
-	{
-		pathrotate(selected[j],phi);
-		selected[j].phi =phi;
-		gpind=slind++;
-		if (selected [j].group.length>0) {
-											gpind=selected[j].group.pop();
-											selected[j].group.push(gpind);
-											gpind +=selected.length;
-										 }
-		if (selected[j].bleft<mnx[gpind]) {mnx[gpind]=selected[j].bleft};
-		if (selected[j].bleft+selected[j].bwidth>mxx[gpind]) {mxx[gpind]=selected[j].bleft+selected[j].bwidth};
-		if (selected[j].btop<mny[gpind]) {mny[gpind]=selected[j].btop};
-		if (selected[j].btop+selected[j].bheight>mxy[gpind]) {mxy[gpind]=selected[j].btop+selected[j].bheight};		
- 		drawline(selected[j]);
-	}
-	slind=0;
-	for (var j=0; j<selected.length; j++)
-	{
-		gpind=slind++;
-		if (selected [j].group.length>0) {
-											gpind=selected[j].group.pop();
-											selected[j].group.push(gpind);
-											gpind +=selected.length;
-										 }
-		selected[j].bleft=mnx[gpind];
-		selected[j].bwidth=mxx[gpind]-mnx[gpind];
-		selected[j].btop=mny[gpind];
-		selected[j].bheight=mxy[gpind]-mny[gpind];
-		selected[j].removeBoundary();
-		selected[j].createBoundary();
-	}
-	drawrotate();
+
 }
 
-function pathrotate(canv,phi)
-{
-	phi -=canv.phi;
-	for (var i=3; i<canv.path.length; i++)
-	{
-		canv.rotated=true;
-		for (var j=1; j<canv.path[i].length; j+=2)
-		{
-			tempxy=rotate(phi,canv.path[i][j]-canv.cx,canv.path[i][j+1]-canv.cy,'C');
-			canv.path[i][j]=canv.cx+tempxy.x;
-			canv.path[i][j+1]=canv.cy+tempxy.y;
-		}
-		tempxy=rotate(phi,canv.ox-canv.cx,canv.oy-canv.cy,'C');
-		canv.ox=canv.cx+tempxy.x;
-		canv.oy=canv.cy+tempxy.y;
-		tempxy=rotate(phi,canv.cx-canv.cx,canv.cy-canv.cy,'C');
-		canv.cx=canv.cx+tempxy.x;
-		canv.cy=canv.cy+tempxy.y;
-		tempxy=rotate(phi,canv.lineGrad[0]-canv.cx,canv.lineGrad[1]-canv.cy,'C');
-		canv.lineGrad[0]=canv.cx+tempxy.x;
-		canv.lineGrad[1]=canv.cy+tempxy.y;
-		tempxy=rotate(phi,canv.lineGrad[2]-canv.cx,canv.lineGrad[3]-canv.cy,'C');
-		canv.lineGrad[2]=canv.cx+tempxy.x;
-		canv.lineGrad[3]=canv.cy+tempxy.y;
-		tempxy=rotate(phi,canv.radGrad[0]-canv.cx,canv.radGrad[1]-canv.cy,'C');
-		canv.radGrad[0]=canv.cx+tempxy.x;
-		canv.radGrad[1]=canv.cy+tempxy.y;
-		tempxy=rotate(phi,canv.radGrad[3]-canv.cx,canv.radGrad[4]-canv.cy,'C');
-		canv.radGrad[3]=canv.cx+tempxy.x;
-		canv.radGrad[4]=canv.cy+tempxy.y;
-		g=getmaxmin(canv.path);	
-		canv.bleft=g.mnx;
-		canv.bwidth=g.mxx-g.mnx;
-		canv.btop=g.mny;
-		canv.bheight=g.mxy-g.mny;
-	}
-	
-}
