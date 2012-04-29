@@ -200,10 +200,3 @@ function updateid()
 	}
 }
 
-function shapename()
-{
-	var idm = new idMenu();
-	DDidm=new YAHOO.util.DD('idmenu');
-   	DDidm.setHandleElId('idhead');
-
-}

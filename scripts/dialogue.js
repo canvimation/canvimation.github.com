@@ -497,3 +497,30 @@ function extraNode(node)
 	node.shape.addAllMarks();
 	pointEdit(node.mark);
 }
+
+function shapeName()
+{
+	$("namebox").style.visibility="visible";
+	var shape=SELECTEDSHAPE;
+	var group=shape.group;
+	var members=group.members;
+	if(members.length>1)
+	{
+		$("namehead").innerHTML="&nbsp; Group";
+	}
+	else
+	{
+		$("namehead").innerHTML="&nbsp; Shape";
+	}
+	var nc="namecontent";
+	$("namehead").innerHTML+="<img src='assets/x.png' onclick='closedialogue(this)'/><img src='assets/up.png' onclick='updialogue(this,"+nc+")'/>";
+	$("shname").value=members[0].name;
+}
+
+function updatename(name)
+{
+	var shape=SELECTEDSHAPE;
+	var group=shape.group;
+	var members=group.members;
+	members[0].name=name;
+}

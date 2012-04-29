@@ -135,6 +135,9 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 	$('alnbot').style.visibility='hidden';
 	$('alnleft').style.visibility='hidden';
 	$('alnright').style.visibility='hidden';
+	$("sname").style.visibility="visible";
+	$("sname").alt="group name";
+	$("sname").title="group name";
 	SELECTED={};
 	SELECTED[group.name]=group;
 	group.drawBoundary();
@@ -199,6 +202,9 @@ function ungroup()
 	$('alnbot').style.visibility='visible';
 	$('alnleft').style.visibility='visible';
 	$('alnright').style.visibility='visible';
+	$("sname").style.visibility="hidden";
+	$("sname").alt="shape name";
+	$("sname").title="shape name";
 }
 
 function update(l,t,dx,dy,scalew,scaleh)

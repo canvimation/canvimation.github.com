@@ -179,13 +179,13 @@ function Shape(name,open,editable,type)
    	var p=new Point(0,0);
    	this.tplftcrnr=p; //coordinates of top left of boundary box;
    	this.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
-   	this.scx=1;
-   	this.scy=1;
-   	this.sox=0;
-   	this.soy=0;
-   	this.ox=0;
-   	this.oy=0;
-   	this.rotated=false;
+//   	this.scx=1;
+//   	this.scy=1;
+//   	this.sox=0;
+//   	this.soy=0;
+//   	this.ox=0;
+//   	this.oy=0;
+//   	this.rotated=false;
    	this.strokeStyle=[0,0,0,1];
    	this.fillStyle=[255,255,255,1];
    	this.lineWidth = 1;
@@ -849,6 +849,9 @@ function setTools()
 			for(var name in members)
 			{
 				shape=members[name];
+				$("sname").style.visibility="visible";
+				$("sname").alt="shape name";
+				$("sname").title="shape name";
 				if(shape.editable)
 				{
 					$('editlines').style.visibility="visible";
@@ -865,6 +868,9 @@ function setTools()
 		}
 		else
 		{
+			$("sname").style.visibility="visible";
+			$("sname").alt="group name";
+			$("sname").title="group name";
 			$('ungroup').style.visibility="visible";
 			$('editlines').style.visibility="hidden";
 			$('group').style.visibility="hidden";
@@ -872,6 +878,7 @@ function setTools()
 	}
 	else
 	{
+		$("sname").style.visibility="hidden";
 		$('ungroup').style.visibility="hidden";
 		$('editlines').style.visibility="hidden";
 		$('group').style.visibility="visible";
@@ -934,10 +941,11 @@ function shapecopy(offset)
 			members[shape].group=groupcopy;
 			temps=[];
 			temps[0]=members[shape].name;
-			temps[1]=members[shape].zIndex;alert(temps[1]);
+			temps[1]=members[shape].zIndex;
 			shapelist.push(temps);
 		}
 		SELECTED[groupcopy.name]=groupcopy;
+		SELECTEDSHAPE=members[shape];
 	}
 	clear($("boundarydrop"));
 	for(var name in SELECTED)
@@ -950,7 +958,7 @@ function shapecopy(offset)
 	{
 		name=shapelist[i][0];
 		SHAPES[name].zIndex=ZPOS++;
-		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;alert([name,SHAPES[name].Canvas.style.zIndex]);
+		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
 	}
 }
 
@@ -959,13 +967,13 @@ function makeCopy(shape,offset,theatre)
 	var p,n,c1,c2;
 	var non=new Point("non","non");
 	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.editable,shape.type);
-	copy.scx = shape.scx;
+/*	copy.scx = shape.scx;
 	copy.scy = shape.scy;
 	copy.sox = shape.sox;
 	copy.soy = shape.soy;
 	copy.ox = shape.ox;
 	copy.oy = shape.oy;
-	copy.rotated = shape.rotated;
+	copy.rotated = shape.rotated; */
 	copy.lineWidth  = shape.lineWidth ;
 	copy.lineCap  = shape.lineCap ;
 	copy.lineJoin  = shape.lineJoin ;
