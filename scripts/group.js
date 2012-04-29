@@ -236,6 +236,24 @@ function groupRotate(phi)
 	for(var name in members)
 	{
 		shape=members[name];
+		//rotate gradients
+		p=new Point(shape.lineGrad[0]-cx,shape.lineGrad[1]-cy);
+		p=p.pointRotate(phi);
+		shape.lineGrad[0]=p.x+cx;
+		shape.lineGrad[1]=p.y+cy;
+		p=new Point(shape.lineGrad[2]-cx,shape.lineGrad[3]-cy);
+		p=p.pointRotate(phi);
+		shape.lineGrad[2]=p.x+cx;
+		shape.lineGrad[3]=p.y+cy;
+		p=new Point(shape.radGrad[0]-cx,shape.radGrad[1]-cy);
+		p=p.pointRotate(phi);
+		shape.radGrad[0]=p.x+cx;
+		shape.radGrad[1]=p.y+cy;
+		p=new Point(shape.radGrad[3]-cx,shape.radGrad[4]-cy);
+		p=p.pointRotate(phi);
+		shape.radGrad[3]=p.x+cx;
+		shape.radGrad[4]=p.y+cy;
+	//rotate nodes
 		node=shape.path.next;
 		while(node.point.x!="end")
 		{
