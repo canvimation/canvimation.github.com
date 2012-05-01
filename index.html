@@ -1,9 +1,11 @@
+<!DOCTYPE html> 
 <!--
 Copyright (c)  2012   John King
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
+
 <html>
 <head>
 <meta name="google-site-verification" content="urlI98uR-E1CxkgmtiHXUTowCXbv8VdQUiA1PkeetNk" />
@@ -863,7 +865,6 @@ div.bar {
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
 <script type="text/javascript" src = "scripts/grid.js" ></script>
 <script type="text/javascript" src = "scripts/canvashtml.js" ></script>
-<script type="text/javascript" src = "scripts/idmenu.js" ></script>
 <script type="text/javascript" src = "scripts/totext.js" ></script>
 <script type="text/javascript" src = "scripts/fromtext.js" ></script>
 <script type="text/javascript" src = "scripts/alongpath.js" ></script>
@@ -872,6 +873,7 @@ div.bar {
 <script type="text/javascript" src = "scripts/filmpropmenu.js" ></script>
 <!--[IF IE]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
 <script type="text/javascript">
+
 
 ieb=navigator.appName=='Microsoft Internet Explorer';
 iop=navigator.appName=='Opera';
@@ -1601,6 +1603,10 @@ function main()
 	$('linebox').style.width=230;
 	$('linebox').style.height=200;
 	
+	//namebox
+	$('namebox').style.width=180;
+	$('namebox').style.height=120;	
+	
 	//gradfillbox
 	$('gradfillbox').style.width=160;
 	$('gradfillbox').style.height=170;
@@ -1751,7 +1757,7 @@ function main()
 	{
 		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
 		BOXES[i].style.top=(SCRH-parseInt(BOXES[i].style.height))/2 - 52;
-		BOXES[i].style.left=(SCRW-parseInt(BOXES[i].style.width))/2;
+		BOXES[i].style.left=(SCRW-parseInt(BOXES[i].style.width))/4;
 		BOXES[i].style.clip="rect(1,"+(parseInt(BOXES[i].style.width)+2)+","+(parseInt(BOXES[i].style.height)+2)+",0)";
 		BOXES[i].style.visibility="hidden";
 		$(BOXNAME+"content").style.height=parseInt(BOXES[i].style.height)-25;
@@ -1761,7 +1767,8 @@ function main()
 		DD[i].setHandleElId(BOXNAME+"head");
 	}
 	
-	$("colorbox").style.clip="rect(1,550px,430px,0)";	
+	$("colorbox").style.clip="rect(1,550px,430px,0)";
+	$("colorbox").style.left=3*(SCRW-parseInt($("colorbox").style.width))/4;	
 		
 	$('export').style.visibility='visible';
 	$('visit').style.visibility='visible';
@@ -2049,10 +2056,10 @@ function main()
 	<div id='stagehead' class='head'>&nbsp; New Stage</div>
 	<div id='stagecontent' class='content'>
 		<p class="text_input">
-			<label for="stagewidth">Width</label> <input type="text" name"stagewidth" id="stagewidth" value=1000 size=5/><span>px</span>
+			<label for="stagewidth">Width</label> <input type="text" name="stagewidth" id="stagewidth" value=1000 size=5 /><span>px</span>
 		</p>
 		<p class="text_input">
-			<label for="stageheight">Height</label> <input type="text" name"stageheight" id="stageheight" value=500 size=5/><span>px</span>
+			<label for="stageheight">Height</label> <input type="text" name="stageheight" id="stageheight" value=500 size=5 /><span>px</span>
 		</p>
 		
 		<input type="button" value=" OK " id="stageOK" onclick="setStage()" />
@@ -2067,7 +2074,7 @@ function main()
         	<div id="quickColor"></div>
         	<div id="staticColor"></div>
       	</div>
-      	<table width=145 style="position:absolute;top:55px;">
+      	<table style="position:absolute;top:55px; width:145px">
        	 <tr>
 	          <td>Hex: </td>
     	      <td><input style="margin:0.3em;" size="8" type="text" id="hexBox" onChange="hexBoxChanged();" />
@@ -2130,15 +2137,32 @@ function main()
   </div>  
 </div>
 
+<!--dialogue box setting shadow effects-->
+<div id='shadowbox' class="dialoguebox">
+	<div id='shadowcontent' class='content'>
+		<div id="shdirect">Move Shadow</div>
+		<div id="shadowuparrow"><img id="shdirectup" src="assets/shup.png" /></div>
+		<div id="shadowsidearrows"><img id="shdirectright" src="assets/shright.png" /><img id="shdirectleft" src="assets/shleft.png" /></div>
+		<div id="shadowdownarrow"><img id="shdirectdown" src="assets/shdown.png" /></div>
+		<div id="shblurtext">Blur Shadow</div>
+		<div id="shblur"><img id="shslider" src="assets/transp_arrows.gif" /><img id="shblurline" src="assets/blur.png" /></div>
+		<div style="top:165px; left:170px; background-color:transparent"><input type="button"  value="Cancel" onClick="closedialogue(this.parentNode)"></div>
+	</div>
+	<div id='shadowhead' class='head'>&nbsp; Shadow Effects
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
+	</div>
+</div>
+
 <!--dialogue box setting line weight-->
 <div id='linebox' class="dialoguebox">
 	<div id='linecontent' class='content'>
 		<p class="text_input">
-			<label for="linewidth">Width</label> <input type="text" name"linewidth" id="linewidth" value=1 size=5/><span>px</span>
+			<label for="linewidth">Width</label> <input type="text" name="linewidth" id="linewidth" value=1 size=5/><span>px</span>
 		</p>
 		<p class="select_input">
 			<label for="linecap">Line Cap</label> 
-			<select name"selectcap" id="selectcap" onchange="$('selectcapimg').src='assets/l'+$('selectcap').value+'.png'">
+			<select name="selectcap" id="selectcap" onchange="$('selectcapimg').src='assets/l'+$('selectcap').value+'.png'">
 				<option value="butt" selected="selected">Butt</option>
 				<option value="round">Round</option>
 				<option value="square" >Square</option>
@@ -2147,7 +2171,7 @@ function main()
 		</p>
 		<p class="select_input">
 			<label for="linejoin">Line Join</label> 
-			<select name"selectjoin" id="selectjoin" onchange="$('selectjoinimg').src='assets/lj'+$('selectjoin').value+'.png'">
+			<select name="selectjoin" id="selectjoin" onchange="$('selectjoinimg').src='assets/lj'+$('selectjoin').value+'.png'">
 				<option value="bevel" >Bevel</option>
 				<option value="miter" selected="selected">Miter</option>
 				<option value="round" >Round</option>
@@ -2185,31 +2209,15 @@ function main()
     	<img src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
 	</div>
 </div>
-<!--dialogue box setting shadow effects-->
-<div id='shadowbox' class="dialoguebox">
-	<div id='shadowcontent' class='content'>
-		<div id="shdirect">Move Shadow</div>
-		<div id="shadowuparrow"><img id="shdirectup" src="assets/shup.png" /></div>
-		<div id="shadowsidearrows"><img id="shdirectright" src="assets/shright.png" /><img id="shdirectleft" src="assets/shleft.png" /></div>
-		<div id="shadowdownarrow"><img id="shdirectdown" src="assets/shdown.png" /></div>
-		<div id="shblurtext">Blur Shadow</div>
-		<div id="shblur"><img id="shslider" src="assets/transp_arrows.gif" /><img id="shblurline" src="assets/blur.png" /></div>
-		<div style="top:165px; left:170px; background-color:transparent"><input type="button"  value="Cancel" onClick="closedialogue(this.parentNode)"></div>
-	</div>
-	<div id='shadowhead' class='head'>&nbsp; Shadow Effects
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
-	</div>
-</div>
 
 <!--dialogue box gradient fill settings-->
 <div id='gradfillbox' class="dialoguebox">
 	<div id='gradfillcontent' class='content'>
 		<p class="chk_radio_input">
-			 <input type="radio" name="gradfilltype" id="linear"  size=5 onchange="setlinear()" /><label for="linear">Linear Fill</label>
+			 <input type="radio" name="gradfilltype" id="linear"  onchange="setlinear()" /><label for="linear">Linear Fill</label>
 		</p>
 		 <p class="chk_radio_input">
-			 <input type="radio" name="gradfilltype" id="radial" size=5 onchange="setradial()" /><label for="radial">Radial Fill</label>
+			 <input type="radio" name="gradfilltype" id="radial" onchange="setradial()" /><label for="radial">Radial Fill</label>
 		</p>
 		<input type="button" id="gAdd" value="Add Stop Point" onClick="addStop()"><br>
 	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="delStop()">
@@ -2223,7 +2231,7 @@ function main()
 <div id='rotatebox' class="dialoguebox">
 	<div id='rotatecontent' class='content'>
 		<p class="text_input">
-			<label for="rotateangle">Angle</label> <input type="text" name"rotateangle" id="rotateangle" value=0 size=3 style="left:15px"/><span style="left:20px">&deg;</span>
+			<label for="rotateangle">Angle</label> <input type="text" name="rotateangle" id="rotateangle" value=0 size=3 style="left:15px"/><span style="left:20px">&deg;</span>
 		</p>
 		<input type="button" value=" OK " id="rotateOK" onclick="updateangle($('rotateangle').value)" />
 		<input type="button" value=" Close " id="rotateClose" onclick="closedialogue(this)" />
@@ -2231,6 +2239,20 @@ function main()
 	<div id='rotatehead' class='head'>&nbsp; Rotate
 		<img src='assets/x.png' onclick='closedialogue(this)'/>
     	<img src='assets/up.png' onclick='updialogue(this,"rotatecontent")'/>
+	</div>
+</div>
+
+<div id='namebox' class="dialoguebox">
+	<div id='namecontent' class='content'>
+		<p class="text_input">
+			<label for="shname">Name</label> <input type="text" name="shname" id="shname" value="" size=10 style="left:15px; text-align: left; "/>
+		</p>
+		<input type="button" value=" OK " onclick="updatename($('shname').value);closedialogue(this)" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>	
+	<div id='namehead' class='head'>&nbsp; Shape
+		<img src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img src='assets/up.png' onclick='updialogue(this,"namecontent")'/>
 	</div>
 </div>
 
@@ -2276,13 +2298,13 @@ function main()
    <div id='msggroup'> </div>
    <div id='msgblank'> </div>
 	<div id='buildgroup'>
-		<div id='anibuild' alt="build animation element" title="build animation element">&nbsp; Creator</div>	
+		<div id='anibuild'>&nbsp; Creator</div>	
 		<div id='buildhold'>
 		    <p>
 			<input type="radio" id="sceneradio" name="buildradio" onChange="aniobj='scene'" checked="checked"> Scenery<br> 
 			<input type="radio" name="buildradio" onChange="aniobj='sprite'"> Sprite<br>
 			<input type="radio"name="buildradio" onChange="aniobj='tween'"> Tween<br>
-			<input type="radio"name="buildradio" onChange="aniobj='track'"> Track<br>
+			<input type="radio" name="buildradio" onChange="aniobj='track'"> Track<br>
 			<input type="radio" name="buildradio" onChange="aniobj='film'"> Film<br><p>
 			&nbsp;&nbsp;&nbsp;<input type="button" onClick="buildobj()" value="Build">
 		</div> 
@@ -2300,29 +2322,29 @@ Film Elements from back to front.<br>
 
 <div id='toolbar'>
   <div id='tlbrhead'> &nbsp; Tools </div>
-  <div class="choice40" id='menushape'  alt="insert shapes" title="insert shapes" onclick="showmenu()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/menushapes.png"> </div>
-  <div class="choice40" id='editlines'  alt="edit lines" title="edit lines" onclick="markLine()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/editlines.png"> </div>
-  <div class="choice40" id='group'  alt="group shapes" title="group shapes" onclick="groupJoin()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/group.png"> </div>
-  <div class="choice40" id='ungroup'  alt="ungroup shapes" title="ungroup shapes" onclick="ungroup()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/ungroup.png"> </div>
-  <div class="choice40" id='stylelines'  alt="line styles" title="line styles" onclick="linestyles()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/stylelines.png"> </div>
-  <div class="choice40" id='collines'  alt="line colour" title="line colour" onclick="linecolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/collines.png"> </div>
-  <div class="choice40" id='colfill'  alt="fill colour" title="fill colour" onclick="fillcolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='colimg' src="assets/colfill.png"> </div>
-  <div class="choice40" id='gradfill'  alt="gradient fill" title="gradient fill" onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img id='gradimg' src="assets/gradfill.png"> </div>
-  <div class="choice40" id='rotate'  alt="rotate" title="rotate" onclick="shaperotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/rotate.png"> </div>
-  <div class="choice40" id='front'  alt="bring to front" title="bring to front" onclick="bringfront()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img src="assets/front.png"> </div>
-  <div class="choice40" id='back'  alt="send to back" title="send to back" onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/back.png"> </div>
-  <div class="choice40" id='grid'  alt="set grid" title="set grid" onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/grid.png"> </div>
-  <div class="choice40" id='del'  alt="delete" title="delete" onclick="shapedelete()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/delete.png"> </div>
-  <div class="choice40" id='copy'  alt="copy" title="copy" onclick="shapecopy(10)" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/copy.png"> </div>
-  <div class="choice40" id='vert'  alt="flip vertical" title="flip vertical" onclick="flipvert()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/vert.png"> </div>
-  <div class="choice40" id='horz'  alt="flip horizontal" title="flip horizontal" onclick="fliphorz()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/horz.png"> </div>
-  <div class="choice40" id='alntop'  alt="align top" title="align top" onclick="aligntop()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alntop.png"> </div>
-  <div class="choice40" id='alnbot'  alt="align bottom" title="align bottom" onclick="alignbot()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnbot.png"> </div>
-  <div class="choice40" id='alnleft'  alt="align left" title="align left" onclick="alignleft()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnleft.png"> </div>
-  <div class="choice40" id='alnright'  alt="align right" title="align right" onclick="alignright()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/alnright.png"> </div>
-  <div class="choice40" id='lundo'  alt="undo delete" title="undo delete" onclick="undolast()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/undo.png"> </div>	
-  <div class="choice40" id='shadow'  alt="shadow" title="shadow" onclick="shadow()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/shadow.png"> </div>
-  <div class="choice40" id='sname'  alt="shape name" title="shape name" onclick="shapename()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/shapename.png"> </div>
+  <div class="choice40" id='menushape'   onclick="showmenu()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="insert shapes" title="insert shapes" src="assets/menushapes.png"> </div>
+  <div class="choice40" id='editlines'   onclick="markLine()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img  alt="edit lines" title="edit lines" src="assets/editlines.png"> </div>
+  <div class="choice40" id='group'  onclick="groupJoin()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img alt="group shapes" title="group shapes" src="assets/group.png"> </div>
+  <div class="choice40" id='ungroup'  onclick="ungroup()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img alt="ungroup shapes" title="ungroup shapes" src="assets/ungroup.png"> </div>
+  <div class="choice40" id='stylelines' onclick="linestyles()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img alt="line styles" title="line styles" src="assets/stylelines.png"> </div>
+  <div class="choice40" id='collines' onclick="linecolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="line colour" title="line colour" src="assets/collines.png"> </div>
+  <div class="choice40" id='colfill' onclick="fillcolor()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="fill colour" title="fill colour" id='colimg' src="assets/colfill.png"> </div>
+  <div class="choice40" id='gradfill'  onclick="gradfill()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="gradient fill" title="gradient fill" id='gradimg' src="assets/gradfill.png"> </div>
+  <div class="choice40" id='rotate'  onclick="shaperotate()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="rotate" title="rotate" src="assets/rotate.png"> </div>
+  <div class="choice40" id='front'  onclick="bringfront()" onmouseover="this.className='choice100'"  onmouseout="this.className='choice40'"> <img alt="bring to front" title="bring to front" src="assets/front.png"> </div>
+  <div class="choice40" id='back'  onclick="sendback()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="send to back" title="send to back" src="assets/back.png"> </div>
+  <div class="choice40" id='grid'  onclick="setgrid()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="set grid" title="set grid" src="assets/grid.png"> </div>
+  <div class="choice40" id='del'  onclick="shapedelete()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="delete" title="delete" src="assets/delete.png"> </div>
+  <div class="choice40" id='copy'  onclick="shapecopy(10)" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="copy" title="copy" src="assets/copy.png"> </div>
+  <div class="choice40" id='vert'  onclick="flipvert()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="flip vertical" title="flip vertical" src="assets/vert.png"> </div>
+  <div class="choice40" id='horz'  onclick="fliphorz()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="flip horizontal" title="flip horizontal" src="assets/horz.png"> </div>
+  <div class="choice40" id='alntop'  onclick="aligntop()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="align top" title="align top" src="assets/alntop.png"> </div>
+  <div class="choice40" id='alnbot'  onclick="alignbot()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="align bottom" title="align bottom" src="assets/alnbot.png"> </div>
+  <div class="choice40" id='alnleft'  onclick="alignleft()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="align left" title="align left" src="assets/alnleft.png"> </div>
+  <div class="choice40" id='alnright'  onclick="alignright()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="align right" title="align right" src="assets/alnright.png"> </div>
+  <div class="choice40" id='lundo'  onclick="undolast()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="undo delete" title="undo delete" src="assets/undo.png"> </div>	
+  <div class="choice40" id='shadow'  onclick="shadow()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="shadow" title="shadow" src="assets/shadow.png"> </div>
+  <div class="choice40" id='sname'  onclick="shapeName()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="shape name" title="shape name" src="assets/shapename.png"> </div>
 	
 </div>
 

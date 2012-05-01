@@ -522,5 +522,25 @@ function updatename(name)
 	var shape=SELECTEDSHAPE;
 	var group=shape.group;
 	var members=group.members;
+	if(members[0].elType()=="shape")
+	{
+		if(name in SHAPES)
+		{
+			alert("A Shape with name '"+name+"' already exists!");
+			return;
+		}
+		delete SHAPES[members[0].name];
+		SHAPES[name]=members[0];
+	}
+	else
+	{
+		if(name in GROUPS)
+		{
+			alert("A Group with name '"+name+"' already exists!");
+			return;
+		}
+		delete GROUPS[members[0].name];
+		GROUPS[name]=members[0];
+	}
 	members[0].name=name;
 }
