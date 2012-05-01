@@ -8,10 +8,10 @@ function shapeMenu()
 {
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'shapemenu';
-   this.elmRef.style.left= 75; 
-   this.elmRef.style.top= 50;
-   this.elmRef.style.width=140;
-   this.elmRef.style.height=2+(1+Math.floor((shapes.length-1)/4))*34;
+   this.elmRef.style.left= 75+"px"; 
+   this.elmRef.style.top= 50+"px";
+   this.elmRef.style.width=140+"px";
+   this.elmRef.style.height=(2+(1+Math.floor((shapes.length-1)/4))*34)+"px";
    this.elmRef.style.visibility='hidden';
    this.elmRef.style.backgroundColor='white';
    this.elmRef.style.border='solid black 1px';
@@ -22,8 +22,8 @@ function shapeMenu()
 	   this.img.style.position='absolute';
 	   this.img.id='sh'+i;
 	   this.img.i=i;
-	   this.img.style.top=2+Math.floor(i/4)*34;
-	   this.img.style.left=2+(i%4)*34;
+	   this.img.style.top=(2+Math.floor(i/4)*34)+"px";
+	   this.img.style.left=(2+(i%4)*34)+"px";
 	   this.img.height=32;
 	   this.img.width=32;
 	   this.img.src='assets/'+shapes[i][2]+'.png';

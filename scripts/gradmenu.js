@@ -7,11 +7,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 function gradfill()
 {
-	if(ieb)
-	{
-		alert("Excanvas for Internet Explorer does not support Radial Fill");
-		return;
-	}
 	coltype='G';
 	var group=SELECTEDSHAPE.group;
 	if (SELECTEDSHAPE.linearfill)
@@ -73,6 +68,12 @@ function setlinear()
 
 function setradial()
 {
+	if(EXCANVASUSED)
+	{
+		alert("Excanvas for Internet Explorer does not support Radial Fill");
+		$("linear").checked="checked";
+		return;
+	}
 	for(var groupName in SELECTED)
 	{
 		var group=SELECTED[groupName];

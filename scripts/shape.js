@@ -252,16 +252,19 @@ function addTo(theatre)
 {
 	this.Canvas = document.createElement('canvas');
    	this.Canvas.style.position='absolute';
-   	this.Canvas.style.left=0; 
-   	this.Canvas.style.top= 0;  	
+   	this.Canvas.style.left=0+"px"; 
+   	this.Canvas.style.top= 0+"px";  	
    	this.Canvas.width=SCRW;
-   	this.Canvas.height=SCRH;   	
+   	this.Canvas.height=SCRH;	
    	this.Canvas.style.zIndex=this.zIndex;
    	theatre.appendChild(this.Canvas);
-   	if (ieb) {this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)}
    	if (this.Canvas.getContext)
 	{
         this.Canvas.ctx = this.Canvas.getContext('2d');
+    }
+    else
+    {
+    	this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)
     }
     this.Canvas.shape=this;
 }
@@ -886,16 +889,16 @@ function setTools()
 		$('alnbot').style.visibility='visible';
 		$('alnleft').style.visibility='visible';
 		$('alnright').style.visibility='visible';
-		$('alntop').style.top=280;
-		$('alnbot').style.top=300;
-		$('alnleft').style.top=280;
-		$('alnright').style.top=280;
+		$('alntop').style.top=280+"px";
+		$('alnbot').style.top=300+"px";
+		$('alnleft').style.top=280+"px";
+		$('alnright').style.top=280+"px";
 		if ($('colfill').style.visibility=='visible')  //one of selected shapes is closed
 		{
-			$('alntop').style.top=380;
-			$('alnbot').style.top=400;
-			$('alnleft').style.top=380;
-			$('alnright').style.top=380;
+			$('alntop').style.top=380+"px";
+			$('alnbot').style.top=400+"px";
+			$('alnleft').style.top=380+"px";
+			$('alnright').style.top=380+"px";
 		}
 	}
 }

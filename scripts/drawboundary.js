@@ -198,10 +198,10 @@ function drawBoundary()
    	this.boundary = document.createElement('div');
    	this.boundary.id="b"+BCOUNT++;
    	this.boundary.group=this;
-   	this.boundary.style.left= this.left; 
-   	this.boundary.style.top= this.top;
-   	this.boundary.style.width=this.width;
-   	this.boundary.style.height=this.height;
+   	this.boundary.style.left= this.left+"px"; 
+   	this.boundary.style.top= this.top+"px";
+   	this.boundary.style.width=this.width+"px";
+   	this.boundary.style.height=this.height+"px";
    	this.boundary.style.border="dashed #040404 1px";
    	this.boundary.cc = new Corner(this.boundary);
 	this.boundary.cc.DD = new YAHOO.util.DD(this.boundary.cc.id);
@@ -220,8 +220,8 @@ function drawBoundary()
 											for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 											{
 												boundary=$("boundarydrop").childNodes[i];
-												boundary.style.left=boundary.group.left+dx;
-												boundary.style.top=boundary.group.top+dy;
+												boundary.style.left=(boundary.group.left+dx)+"px";
+												boundary.style.top=(boundary.group.top+dy)+"px";
 											}
    										}
     this.boundary.DD.onMouseUp=function(e) {
@@ -299,20 +299,20 @@ function drawBoundary()
 													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
 														boundary=$("boundarydrop").childNodes[i];
-														boundary.style.width=boundary.group.width*scale;
-														boundary.style.height=boundary.group.height*scale;
-														boundary.cc.style.left=parseInt(boundary.style.width)-5;
-														boundary.cc.style.top=parseInt(boundary.style.height)-5;
-														boundary.rh.style.left=parseInt(boundary.style.width)-5;
-														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
-														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
-														boundary.bh.style.top=parseInt(boundary.style.height)-5;
+														boundary.style.width=boundary.group.width*scale+"px";
+														boundary.style.height=boundary.group.height*scale+"px";
+														boundary.cc.style.left=(parseInt(boundary.style.width)-5)+"px";
+														boundary.cc.style.top=(parseInt(boundary.style.height)-5)+"px";
+														boundary.rh.style.left=(parseInt(boundary.style.width)-5)+"px";
+														boundary.rh.style.top=(parseInt(boundary.style.height)/2-5)+"px";
+														boundary.bh.style.left=(parseInt(boundary.style.width)/2-5)+"px";
+														boundary.bh.style.top=(parseInt(boundary.style.height)-5)+"px";
 													}	
 												}
 												else
 												{
-													$(this.id).style.top=parseInt(boundary.style.height)-5;
-													$(this.id).style.left=parseInt(boundary.style.width)-5;
+													$(this.id).style.top=(parseInt(boundary.style.height)-5)+"px";
+													$(this.id).style.left=(parseInt(boundary.style.width)-5)+"px";
 												}
 											};
 			
@@ -379,16 +379,16 @@ function drawBoundary()
 													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
 														boundary=$("boundarydrop").childNodes[i];
-														boundary.style.width=boundary.group.width*scale;
-														boundary.cc.style.left=parseInt(boundary.style.width)-5;
-														boundary.rh.style.left=parseInt(boundary.style.width)-5;
-														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
-														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
+														boundary.style.width=boundary.group.width*scale+"px";
+														boundary.cc.style.left=(parseInt(boundary.style.width)-5)+"px";
+														boundary.rh.style.left=(parseInt(boundary.style.width)-5)+"px";
+														boundary.rh.style.top=(parseInt(boundary.style.height)/2-5)+"px";
+														boundary.bh.style.left=(parseInt(boundary.style.width)/2-5)+"px";
 													}	
 												}
 												else
 												{
-													$(this.id).style.left=parseInt(boundary.style.width)-5;
+													$(this.id).style.left=(parseInt(boundary.style.width)-5)+"px";
 												}
 											};
 			
@@ -450,16 +450,16 @@ function drawBoundary()
 													for(var i=0; i<$("boundarydrop").childNodes.length; i++)
 													{
 														boundary=$("boundarydrop").childNodes[i];
-														boundary.style.height=boundary.group.height*scale;
-														boundary.cc.style.top=parseInt(boundary.style.height)-5;
-														boundary.rh.style.top=parseInt(boundary.style.height)/2-5;
-														boundary.bh.style.left=parseInt(boundary.style.width)/2-5;
-														boundary.bh.style.top=parseInt(boundary.style.height)-5;
+														boundary.style.height=boundary.group.height*scale+"px";
+														boundary.cc.style.top=(parseInt(boundary.style.height)-5)+"px";
+														boundary.rh.style.top=(parseInt(boundary.style.height)/2-5)+"px";
+														boundary.bh.style.left=(parseInt(boundary.style.width)/2-5)+"px";
+														boundary.bh.style.top=(parseInt(boundary.style.height)-5)+"px";
 													}	
 												}
 												else
 												{
-													$(this.id).style.top=parseInt(boundary.style.height)-5;
+													$(this.id).style.top=(parseInt(boundary.style.height)-5)+"px";
 												}
 											};
 			

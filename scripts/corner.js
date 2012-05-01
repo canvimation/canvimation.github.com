@@ -11,12 +11,12 @@ function Corner(parentdiv)
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'corner'+parentdiv.id;
    this.elmRef.style.position='absolute';
-   this.elmRef.style.left= parseInt(parentdiv.style.width)-5; 
-   this.elmRef.style.top= parseInt(parentdiv.style.height)-5;
+   this.elmRef.style.left= (parseInt(parentdiv.style.width)-5)+"px"; 
+   this.elmRef.style.top= (parseInt(parentdiv.style.height)-5)+"px";
    this.elmRef.style.cursor='nw-resize';
    this.elmRef.style.fontSize=0;
-   this.elmRef.style.width=10;
-   this.elmRef.style.height=10;
+   this.elmRef.style.width=10+"px";
+   this.elmRef.style.height=10+"px";
    this.elmRef.parentdiv=parentdiv;
    this.elmRef.style.backgroundColor="white"; 
    this.elmRef.style.border="solid black 1px";   

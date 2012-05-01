@@ -9,8 +9,8 @@ function gradMarker()
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'gdm'+(gdmrks++);
    this.elmRef.style.fontSize=0;
-   this.elmRef.style.width=21;
-   this.elmRef.style.height=21;
+   this.elmRef.style.width=21+"px";
+   this.elmRef.style.height=21+"px";
    this.elmRef.style.visibility='visible';
    this.elmRef.style.cursor='move';
    this.elmRef.onmouseover=function(){
@@ -75,8 +75,8 @@ function radMarker()
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'rdm'+(rdmrks++);
    this.elmRef.style.fontSize=0;
-   this.elmRef.style.width=8;
-   this.elmRef.style.height=8;
+   this.elmRef.style.width=8+"px";
+   this.elmRef.style.height=8+"px";
    this.elmRef.style.border='solid 1px black';
    this.elmRef.style.backgroundColor='green';
    this.elmRef.style.cursor='move';
@@ -204,12 +204,12 @@ function drawgradpoints(shape)
 		BACKDROP.Canvas.ctx.moveTo(xe+re+2,ye);
 		BACKDROP.Canvas.ctx.arc(xe,ye,re+2,0,2*Math.PI,false);		
 		BACKDROP.Canvas.ctx.stroke();
-		$('rdm0').style.left=xs+rs-4;
-		$('rdm0').style.top=ys-4;
+		$('rdm0').style.left=(xs+rs-4)+"px";
+		$('rdm0').style.top=(ys-4)+"px";
 		$('rdm0').left=xs+rs-4;;
 		$('rdm0').top=ys-4;
-		$('rdm1').style.left=xe+re-4;
-		$('rdm1').style.top=ye-4;
+		$('rdm1').style.left=(xe+re-4)+"px";
+		$('rdm1').style.top=(ye-4)+"px";
 		$('rdm1').left=xe+re-4;;
 		$('rdm1').top=ye-4;		
 	}
@@ -304,8 +304,8 @@ function drawgradpoints(shape)
 			BACKDROP.Canvas.ctx.restore();
 		}
 		
-		$('gdm'+i).style.left=xc-10;
-		$('gdm'+i).style.top=yc-10;
+		$('gdm'+i).style.left=(xc-10)+"px";
+		$('gdm'+i).style.top=(yc-10)+"px";
 		$('gdm'+i).left=xc-10;
 		$('gdm'+i).top=yc-10;
 	}
@@ -334,9 +334,9 @@ function setcolorbox(canv)
 	$("blueBox").value=shape.colorStops[shape.stopn][3];
 	blueBoxChanged();
 	alphaperct = 100*(1-shape.colorStops[shape.stopn][4]);
-	$('varrows').style.left=256*alphaperct/100-4;
+	$('varrows').style.left=(256*alphaperct/100-4)+"px";
 	$('transptext').innerHTML ='Transparency '+alphaperct+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}

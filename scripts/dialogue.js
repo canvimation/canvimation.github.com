@@ -18,13 +18,13 @@ function updialogue(img,content)
 	{
 		if (parseInt(holder.style.height)>25)
 		{
-			box.style.top=parseInt(box.style.top)-10;
-			holder.style.height=parseInt(holder.style.height)-10
+			box.style.top=(parseInt(box.style.top)-10)+"px";
+			holder.style.height=(parseInt(holder.style.height)-10)+"px";
 			setTimeout(function () {close()},10)
 		}
 		else
 		{
-			holder.style.height=25;
+			holder.style.height=25+"px";
 		}
 	}
 	
@@ -32,13 +32,13 @@ function updialogue(img,content)
 	{
 		if (parseInt(holder.style.height)<holder.height)
 		{
-			box.style.top=parseInt(box.style.top)+10;
-			holder.style.height=parseInt(holder.style.height)+10
+			box.style.top=(parseInt(box.style.top)+10)+"px";
+			holder.style.height=(parseInt(holder.style.height)+10)+"px";
 			setTimeout(function () {open()},10)
 		}
 		else
 		{
-			holder.style.height=holder.height;
+			holder.style.height=holder.height+"px";
 		}
 	}
 	
@@ -67,14 +67,14 @@ function colexpand()
 	{
 		if(parseInt($("colorbox").style.width)<531)
 		{
-			$("colorbox").style.width=parseInt($("colorbox").style.width)+10;
-			$("coldigits").style.left=parseInt($("coldigits").style.left)+10;
+			$("colorbox").style.width=(parseInt($("colorbox").style.width)+10)+"px";
+			$("coldigits").style.left=(parseInt($("coldigits").style.left)+10)+"px";
 			setTimeout(function() {pullopen()},10)
 		}
 		else
 		{
-			$("colorbox").style.width=531;
-			$("coldigits").style.left=351;
+			$("colorbox").style.width=531+"px";
+			$("coldigits").style.left=351+"px";
 		}
 	}
 	
@@ -82,14 +82,14 @@ function colexpand()
 	{
 		if(parseInt($("colorbox").style.width)>335)
 		{
-			$("colorbox").style.width=parseInt($("colorbox").style.width)-10;
-			$("coldigits").style.left=parseInt($("coldigits").style.left)-10;
+			$("colorbox").style.width=(parseInt($("colorbox").style.width)-10)+"px";
+			$("coldigits").style.left=(parseInt($("coldigits").style.left)-10)+"px";
 			setTimeout(function() {pushclosed()},10)
 		}
 		else
 		{
-			$("colorbox").style.width=335;
-			$("coldigits").style.left=155;
+			$("colorbox").style.width=335+"px";
+			$("coldigits").style.left=155+"px";
 		}
 	}
 }
@@ -172,8 +172,8 @@ function pointEdit(mark)
 		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="#F09898",this.style.backgroundColor="#95B3D7"};
 		$("p_add2").onmouseout=function(){$("p_add").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		var dt=0;
-		$("p_points").style.top=0;
-		$("p_corner").style.top=25;
+		$("p_points").style.top=0+"px";
+		$("p_corner").style.top=25+"px";
 		if(mark.node.shape.type=="curve" && mark.node.corner=="corner" && (mark.node.next.point.x=="end" || mark.node.prev.point.x=="end"))
 		{
 			dt=50;
@@ -183,9 +183,9 @@ function pointEdit(mark)
 			$("p_smooth").style.visibility="visible";
 			$("p_inline").style.visibility="visible";
 		}
-		$("p_smooth").style.top=50;
-		$("p_inline").style.top=75;
-		$("p_delete").style.top=100-dt;
+		$("p_smooth").style.top=50+"px";
+		$("p_inline").style.top=75+"px";
+		$("p_delete").style.top=(100-dt)+"px";
 		if(mark.node.shape.type=="curve")
 		{
 			dt+=25;
@@ -194,7 +194,7 @@ function pointEdit(mark)
 		{
 			$("p_open").style.visibility="visible";
 		}
-		$("p_open").style.top=125-dt;
+		$("p_open").style.top=(125-dt)+"px";
 		if(mark.node.shape.type=="curve" && mark.node.next.point.x=="end")
 		{
 			dt+=75;
@@ -207,11 +207,11 @@ function pointEdit(mark)
 			$("p_add").style.visibility="visible";
 			$("p_add2").style.visibility="visible";
 		}
-		$("p_segments").style.top=150-dt;
-		$("p_line").style.top=175-dt;
-		$("p_line2").style.top=175-dt;
-		$("p_add").style.top=200-dt;
-		$("p_add2").style.top=200-dt;
+		$("p_segments").style.top=(150-dt)+"px";
+		$("p_line").style.top=(175-dt)+"px";
+		$("p_line2").style.top=(175-dt)+"px";
+		$("p_add").style.top=(200-dt)+"px";
+		$("p_add2").style.top=(200-dt)+"px";
 		if(mark.node.shape.type=="curve")
 		{
 			$("p_paths").style.visibility="visible";
@@ -221,10 +221,10 @@ function pointEdit(mark)
 		{
 			dt+=50;
 		}
-		$("p_paths").style.top=225-dt;
-		$("p_close").style.top=250-dt;
-		$('pointsbox').style.height=300-dt;
-		$('pointscontent').style.height=parseInt($('pointsbox').style.height)-25;
+		$("p_paths").style.top=(225-dt)+"px";
+		$("p_close").style.top=(250-dt)+"px";
+		$('pointsbox').style.height=(300-dt)+"px";
+		$('pointscontent').style.height=(parseInt($('pointsbox').style.height)-25)+"px";
 		mark.style.backgroundColor="#F09898";//"#D7D700";
 			
 		if(mark.node.shape.type=="freeform" && mark.node.next.point.x=="end")
@@ -364,11 +364,11 @@ function updateCorner(node,corner)
 	}
 	if(!(node.shape.type=="curve" && node.prev.point.x=="end"))
 	{
-		node.c2mark.style.top=node.ctrl2.y-2;
-		node.c2mark.style.left=node.ctrl2.x-2;
+		node.c2mark.style.top=(node.ctrl2.y-2)+"px";
+		node.c2mark.style.left=(node.ctrl2.x-2)+"px";
 	}
-	nextnode.c1mark.style.top=nextnode.ctrl1.y-2;
-	nextnode.c1mark.style.left=nextnode.ctrl1.x-2;
+	nextnode.c1mark.style.top=(nextnode.ctrl1.y-2)+"px";
+	nextnode.c1mark.style.left=(nextnode.ctrl1.x-2)+"px";
 	node.corner=corner;
 	node.shape.draw();
 	node.shape.drawBezGuides();

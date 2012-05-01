@@ -11,11 +11,11 @@ function shaperotate()
 	removeGradLine();
 	$("rotatebox").style.visibility="visible";
 	var shape=SELECTEDSHAPE;
-	var group=shape.group;$("msg").innerHTML=shape.name+".."+group.name;
-	$("rotateCentre").style.left=group.centreOfRotation.x-6;
-	$("rotateCentre").style.top=group.centreOfRotation.y-6;
-	$("rotateMove").style.left=group.centreOfRotation.x+ROTATIONRADIUS*Math.cos(group.phi)-6;
-	$("rotateMove").style.top=group.centreOfRotation.y+ROTATIONRADIUS*Math.sin(group.phi)-6;
+	var group=shape.group;
+	$("rotateCentre").style.left=(group.centreOfRotation.x-6)+"px";
+	$("rotateCentre").style.top=(group.centreOfRotation.y-6)+"px";
+	$("rotateMove").style.left=(group.centreOfRotation.x+ROTATIONRADIUS*Math.cos(group.phi)-6)+"px";
+	$("rotateMove").style.top=(group.centreOfRotation.y+ROTATIONRADIUS*Math.sin(group.phi)-6)+"px";
 	$("rotateCentre").style.visibility="visible";
 	$("rotateMove").style.visibility="visible";
 	$("frontmarkerdrop").style.visibility="visible";
@@ -43,8 +43,8 @@ function updatecenter()
 	cm.top=parseInt(cm.style.top);
 	mm.left+=dx;
 	mm.top+=dy;
-	mm.style.left=mm.left;
-	mm.style.top=mm.top;
+	mm.style.left=mm.left+"px";
+	mm.style.top=mm.top+"px";
 	for (var groupName in SELECTED)
 	{
 		SELECTED[groupName].centreOfRotation.x +=dx;
@@ -70,8 +70,8 @@ function updateangle(phi)
 	
 	mm.left=shape.group.centreOfRotation.x+ROTATIONRADIUS*Math.cos(phi)-6;
 	mm.top=shape.group.centreOfRotation.y+ROTATIONRADIUS*Math.sin(phi)-6;
-	mm.style.left=mm.left;
-	mm.style.top=mm.top;
+	mm.style.left=mm.left+"px";
+	mm.style.top=mm.top+"px";
 	
 	for (var groupName in SELECTED)
 	{

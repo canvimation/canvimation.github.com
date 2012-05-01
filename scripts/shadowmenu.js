@@ -7,10 +7,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 function setarrow(cur)
 {
-	$('shdarw').style.left=cur.x-(parseInt($('shmenu').style.left)-10);
+	$('shdarw').style.left=(cur.x-(parseInt($('shmenu').style.left)-10))+"px";
 	$('shdarw').style.top=0;
-	if (parseInt($('shdarw').style.left)<0) {$('shdarw').style.left=0}
-	if (parseInt($('shdarw').style.left)>212) {$('shdarw').style.left=212}
+	if (parseInt($('shdarw').style.left)<0) {$('shdarw').style.left=0+"px"}
+	if (parseInt($('shdarw').style.left)>212) {$('shdarw').style.left=212+"px"}
 	for (var i=0;i<selected.length;i++)
 	{
 		selected[i].shadowBlur=parseInt($('shdarw').style.left);
@@ -23,7 +23,7 @@ function shclosediv()
 	var lbody=$('shBody'); 
 	if (parseInt(lbody.style.top)+parseInt(lbody.style.height)>25)
 	{
-		lbody.style.top = parseInt(lbody.style.top)-5;
+		lbody.style.top = (parseInt(lbody.style.top)-5)+"px";
 		setTimeout(function () {shclosediv()},10)
 	}
 }
@@ -33,7 +33,7 @@ function shopendiv()
 	var lbody=$('shBody'); 
 	if (parseInt(lbody.style.top)<25)
 	{
-		lbody.style.top = parseInt(lbody.style.top)+5;
+		lbody.style.top = (parseInt(lbody.style.top)+5)+"px";
 		setTimeout(function () {shopendiv()},10)
 	}
 }
@@ -125,9 +125,9 @@ function stopshddown()
 
 function shadow()
 {
-	if (ieb) 
+	if (EXCANVASUSED) 
 	{
-		alert('Internet Explorer does not support Shadows');
+		alert('Internet Explorer using Excanvas does not support Shadows');
 		return;
 	}
 	$("shadowbox").style.visibility="visible";
@@ -148,9 +148,9 @@ function getshadowcolor()
 	$("blueBox").value=shape.shadowColor[2];
 	blueBoxChanged();
 	alphaperct = 100*(1-shape.shadowColor[3]);
-	$('varrows').style.left=256*alphaperct/100-4;
+	$('varrows').style.left=(256*alphaperct/100-4)+"px";
 	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}
@@ -159,6 +159,6 @@ function getshadowcolor()
 		$('transpslider').style.opacity=1-alphaperct/100;
 	}
 	$("transpslider").style.backgroundColor = currentColor.HexString();
-	$("shslider").style.left=shape.shadowBlur*5;
+	$("shslider").style.left=(shape.shadowBlur*5)+"px";
 }
 

@@ -224,8 +224,8 @@ function colorChanged(source)
     el.style.top = (256 - currentColor.Hue()*255/359.99 - 4) + 'px';
     var circlex = currentColor.Value()*255; 
 	var circley = (1-currentColor.Saturation())*255;
-    $('circle').style.left=circlex-5;
-	$('circle').style.top=circley-5;
+    $('circle').style.left=(circlex-5)+"px";
+	$('circle').style.top=(circley-5)+"px";
     endMovement();
   }
   
@@ -426,9 +426,9 @@ function fillcolor()
 	$("blueBox").value=shape.fillStyle[2];
 	blueBoxChanged();
 	alphaperct = 100*(1-shape.fillStyle[3]);
-	$('varrows').style.left=128*alphaperct/100-4;
+	$('varrows').style.left=(128*alphaperct/100-4)+"px";
 	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}
@@ -451,9 +451,9 @@ function linecolor()
 	$("blueBox").value=SELECTEDSHAPE.strokeStyle[2];
 	blueBoxChanged();
 	alphaperct = 100*(1-SELECTEDSHAPE.strokeStyle[3]);
-	$('varrows').style.left=256*alphaperct/100-4;
+	$('varrows').style.left=(256*alphaperct/100-4)+"px";
 	$('transptext').innerHTML ='Transparency '+alphaperct+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}
@@ -476,12 +476,12 @@ function moveCircleTo(cur)
 {
 	cur.x-=parseInt($('colorbox').style.left)+21;
 	cur.y-=parseInt($('colorbox').style.top)+46;
-	$('circle').style.left=cur.x;
-	$('circle').style.top=cur.y;
-	if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5}
-	if (parseInt($('circle').style.left)>250) {$('circle').style.left=250}
-	if (parseInt($('circle').style.top)<-5) {$('circle').style.top=-5}
-	if (parseInt($('circle').style.top)>250) {$('circle').style.top=251}	
+	$('circle').style.left=cur.x+"px";
+	$('circle').style.top=cur.y+"px";
+	if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5+"px"}
+	if (parseInt($('circle').style.left)>250) {$('circle').style.left=250+"px"}
+	if (parseInt($('circle').style.top)<-5) {$('circle').style.top=-5+"px"}
+	if (parseInt($('circle').style.top)>250) {$('circle').style.top=251+"px"}	
 	currentColor.SetHSV(currentColor.Hue(), 1-(parseInt($('circle').style.top)+5)/255.0,(parseInt($('circle').style.left)+5)/255.0);
   	colorChanged("circle");
 }
@@ -489,12 +489,12 @@ function moveCircleTo(cur)
 function movetransarrwTo(cur)
 {
 	cur.x-=parseInt($('colorbox').style.left)+21;
-	$('varrows').style.left=cur.x;
-	if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4}
-	if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252}
+	$('varrows').style.left=cur.x+"px";
+	if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4+"px"}
+	if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252+"px"}
 	alphaperct=Math.ceil(100*(parseInt($('varrows').style.left)+4)/256);
 	$('transptext').innerHTML ='Transparency '+alphaperct+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}
@@ -507,9 +507,9 @@ function movetransarrwTo(cur)
 function HueBarmoveTo(cur)
 {
 	cur.y-=parseInt($('colorbox').style.top)+46;
-	$('arrows').style.top=cur.y
-	if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4}
-	if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251}
+	$('arrows').style.top=cur.y+"px"
+	if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4+"px"}
+	if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251+"px"}
   	currentColor.SetHSV((256 - parseInt($('arrows').style.top)+4)*359.99/255, 
 	currentColor.Saturation(), currentColor.Value());
   	colorChanged("arrows");;

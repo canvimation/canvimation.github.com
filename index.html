@@ -1,4 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="google-site-verification" content="urlI98uR-E1CxkgmtiHXUTowCXbv8VdQUiA1PkeetNk" /> 
 <!--
 Copyright (c)  2012   John King
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -6,12 +10,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-<html>
-<head>
-<meta name="google-site-verification" content="urlI98uR-E1CxkgmtiHXUTowCXbv8VdQUiA1PkeetNk" />
+
 
 <title>Canvas Draw</title>
-<style>
+<style type="text/css">
 div {
 	position: absolute;
 }
@@ -260,6 +262,7 @@ img.marker {
 	width: 100%;
 	height:100%;
 	z-index:1;
+	background-image: url(assets/clear.png);
 }
 
 #hidecanvas {
@@ -605,7 +608,7 @@ div.bar {
 	background-color:#FFFFFF;
 }
 
-#gradientbox {
+#gradientBox {
 	cursor:crosshair;
 	top:15px;
 	left:15px;
@@ -840,7 +843,7 @@ div.bar {
 }
 
 </style>
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/dragdrop/dragdrop-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.9.0/build/dragdrop/dragdrop-min.js"></script> 
 <script type="text/javascript" src="scripts/getElementsByClassName-1.0.1.js" ></script>
 <script type="text/javascript" src = "scripts/mark.js" ></script>
 <script type="text/javascript" src = "scripts/shape.js" ></script>
@@ -871,7 +874,7 @@ div.bar {
 <script type="text/javascript" src = "scripts/buildmenu.js" ></script>
 <script type="text/javascript" src = "scripts/animations.js" ></script>
 <script type="text/javascript" src = "scripts/filmpropmenu.js" ></script>
-<!--[IF IE]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
+<!--[IF LT IE 9]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
 <script type="text/javascript">
 
 
@@ -984,6 +987,9 @@ scenes = {};
 sprites = {};
 tweens = {};
 films = {};
+
+EXCANVASUSED = !document.createElement("canvas").getContext;
+
 
 String.prototype.elType=elType;
 
@@ -1229,7 +1235,7 @@ function animenuset(id)
 	$('anitween').style.opacity=0.6;
 	$('anitrack').style.opacity=0.6;
 	$('anifilm').style.opacity=0.6;
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('aniscene').filters.alpha.opacity=60;
 		$('anisprite').filters.alpha.opacity=60;
@@ -1248,7 +1254,7 @@ function animenuset(id)
 	$('anifilm').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
 	$('anifilm').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
 	$('ani'+id).style.opacity=1;
-	if (ieb) {$('ani'+id).filters.alpha.opacity=100};
+	if (EXCANVASUSED) {$('ani'+id).filters.alpha.opacity=100};
 	$('ani'+id).onmouseover=function() {};
 	$('ani'+id).onmouseout=function() {};
 	switch(id)
@@ -1507,10 +1513,10 @@ function setStage()
 	var stages=["area","frame"];
 	for(var i=0; i<stages.length; i++)
 	{
-		$('stage'+stages[i]).style.top=(SCRH-$('stageheight').value)/2 - 52;
-		$('stage'+stages[i]).style.left=(SCRW-$('stagewidth').value)/2;
-		$('stage'+stages[i]).style.width=$('stagewidth').value;
-		$('stage'+stages[i]).style.height=$('stageheight').value;
+		$('stage'+stages[i]).style.top=((SCRH-$('stageheight').value)/2 - 52)+"px";
+		$('stage'+stages[i]).style.left=((SCRW-$('stagewidth').value)/2)+"px";
+		$('stage'+stages[i]).style.width=($('stagewidth').value)+"px";
+		$('stage'+stages[i]).style.height=$('stageheight').value+"px";
 		$('stage'+stages[i]).style.visibility="visible";
 	}
 	$('stagebox').style.visibility="hidden";
@@ -1523,12 +1529,12 @@ function init()
 	SCRW=screen.availWidth;
 	SCRH=screen.availHeight;
 	$('startdiv').parentNode.removeChild($('startdiv'));
-	$('stagebox').style.width=200;
-	$('stagebox').style.height=150;
-	$('stagecontent').style.height=parseInt($('stagebox').style.height)-25;
-	$('stagebox').style.top=(SCRH-parseInt($('stagebox').style.height))/2 - 52;
-	$('stagebox').style.left=(SCRW-parseInt($('stagebox').style.width))/2;
-	$('stageOK').style.left=parseInt($('stagebox').style.width)-70;
+	$('stagebox').style.width=200+"px";
+	$('stagebox').style.height=150+"px";
+	$('stagecontent').style.height=(parseInt($('stagebox').style.height)-25)+"px";
+	$('stagebox').style.top=((SCRH-parseInt($('stagebox').style.height))/2 - 52)+"px";
+	$('stagebox').style.left=((SCRW-parseInt($('stagebox').style.width))/2)+"px";
+	$('stageOK').style.left=(parseInt($('stagebox').style.width)-70)+"px";
 	$('stagebox').style.visibility="visible";
 	
 }
@@ -1566,8 +1572,8 @@ function main()
 	masterwidth=0.80*maxwidth;
 	masterheight=0.80*maxheight;
 	gridcanv=$('gridcanvas');
-	$('filmdivhandle').style.top=masterheight/2-25;
-	$('filmdivhandle').style.left=masterwidth/2-25;
+	$('filmdivhandle').style.top=(masterheight/2-25)+"px";
+	$('filmdivhandle').style.left=(masterwidth/2-25)+"px";
 	fhtfix=masterheight/2-25;
 	fhlfix=masterwidth/2-25;
 
@@ -1578,49 +1584,49 @@ function main()
 		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
 	}
 		
-	$('toolbar').style.left=10;
-	$('toolbar').style.top=60;
-	$('filmsbar').style.left=10;
-	$('filmsbar').style.top=60;
-	$('anibar').style.left=screen.availWidth-125;
-	$('anibar').style.top=60;
-	$('canvasdiv').style.height=maxheight-52;
-	$('canvasdiv').style.width=maxwidth;
+	$('toolbar').style.left=10+"px";
+	$('toolbar').style.top=60+"px";
+	$('filmsbar').style.left=10+"px";
+	$('filmsbar').style.top=60+"px";
+	$('anibar').style.left=(screen.availWidth-125)+"px";
+	$('anibar').style.top=60+"px";
+	$('canvasdiv').style.height=(maxheight-52)+"px";
+	$('canvasdiv').style.width=maxwidth+"px";
 	//$('canvasdiv').style.zIndex=2;
 
-	$('animationdiv').style.height=maxheight-52;
-	$('animationdiv').style.width=maxwidth;
+	$('animationdiv').style.height=(maxheight-52)+"px";
+	$('animationdiv').style.width=maxwidth+"px";
 	
 	//dialogue box settings .....................................
 	
 	//colorbox
-	$('colorbox').style.height=411;
-	$('colorbox').style.width=335;
+	$('colorbox').style.height=411+"px";
+	$('colorbox').style.width=335+"px";
 	
-	$("coldigits").style.left=155;	
+	$("coldigits").style.left=155+"px";	
 		
 	//linebox
-	$('linebox').style.width=230;
-	$('linebox').style.height=200;
+	$('linebox').style.width=230+"px";
+	$('linebox').style.height=200+"px";
 	
 	//namebox
-	$('namebox').style.width=180;
-	$('namebox').style.height=120;	
+	$('namebox').style.width=180+"px";
+	$('namebox').style.height=120+"px";	
 	
 	//gradfillbox
-	$('gradfillbox').style.width=160;
-	$('gradfillbox').style.height=170;
+	$('gradfillbox').style.width=160+"px";
+	$('gradfillbox').style.height=170+"px";
 	$("linear").checked="checked";
 	
 	//rotatebox
-	$('rotatebox').style.width=120;
-	$('rotatebox').style.height=120;
+	$('rotatebox').style.width=130+"px";
+	$('rotatebox').style.height=120+"px";
 	
 	//rotation markers
-	$("rotateCentre").style.width=12;
-	$("rotateCentre").style.height=12;
-	$("rotateMove").style.width=12;
-	$("rotateMove").style.height=12;
+	$("rotateCentre").style.width=12+"px";
+	$("rotateCentre").style.height=12+"px";
+	$("rotateMove").style.width=12+"px";
+	$("rotateMove").style.height=12+"px";
 	DDrtC=new YAHOO.util.DD("rotateCentre");
 	DDrtC.onDrag=function(){updatecenter()};
 	DDrtM=new YAHOO.util.DD("rotateMove");
@@ -1661,8 +1667,8 @@ function main()
 									};
 	
 	//shadowbox
-	$('shadowbox').style.width=250;
-	$('shadowbox').style.height=220;
+	$('shadowbox').style.width=250+"px";
+	$('shadowbox').style.height=220+"px";
 	
 	$("shdirectup").onmouseover=function() {this.src="assets/shupin.png"};
 	$("shdirectup").onmouseout=function() {this.src="assets/shup.png"};
@@ -1680,17 +1686,17 @@ function main()
 	$("shdirectdown").onmouseout=function() {this.src="assets/shdown.png"};
 	$("shdirectdown").onmousedown=function() {movshddown()};
 	$("shdirectdown").onmouseup=function() {stopshddown()};
-	$("shadowuparrow").style.left=parseInt($("shadowbox").style.width)/2-11;
-	$("shadowsidearrows").style.left=parseInt($("shadowbox").style.width)/2-23;
-	$("shadowdownarrow").style.left=parseInt($("shadowbox").style.width)/2-11;
-	$("shdirect").style.width=parseInt($("shadowbox").style.width);
-	$("shblurtext").style.width=parseInt($("shadowbox").style.width);
+	$("shadowuparrow").style.left=(parseInt($("shadowbox").style.width)/2-11)+"px";
+	$("shadowsidearrows").style.left=(parseInt($("shadowbox").style.width)/2-23)+"px";
+	$("shadowdownarrow").style.left=(parseInt($("shadowbox").style.width)/2-11)+"px";
+	$("shdirect").style.width=(parseInt($("shadowbox").style.width))+"px";
+	$("shblurtext").style.width=(parseInt($("shadowbox").style.width))+"px";
 	$("shblurline").onclick=function (e) {
 										var cursor=getPosition(e)
-										$('shslider').style.top=0;
-										$('shslider').style.left=cursor.x-(parseInt($('shadowbox').style.left))-10;
-										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0}
-										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212}
+										$('shslider').style.top=0+"px";
+										$('shslider').style.left=(cursor.x-(parseInt($('shadowbox').style.left))-10)+"px";
+										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0+"px"}
+										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212+"px"}
 										for(var groupName in SELECTED)
 										{
 											var group=SELECTED[groupName];
@@ -1706,9 +1712,9 @@ function main()
 								
 	DDshslider=new YAHOO.util.DD('shslider');
 	DDshslider.onDrag = function () {
-										$('shslider').style.top=0;
-										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0}
-										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212}
+										$('shslider').style.top=0+"px";
+										if (parseInt($('shslider').style.left)<0) {$('shslider').style.left=0+"px"}
+										if (parseInt($('shslider').style.left)>212) {$('shslider').style.left=212+"px"}
 										for(var groupName in SELECTED)
 										{
 											var group=SELECTED[groupName];
@@ -1724,61 +1730,61 @@ function main()
 								};
 	
 	//pointsbox
-	$('pointsbox').style.width=156;
-	$('pointsbox').style.height=300;
+	$('pointsbox').style.width=156+"px";
+	$('pointsbox').style.height=300+"px";
 	
-	$("p_points").style.top=0;
+	$("p_points").style.top=0+"px";
 	$("p_points").style.backgroundColor="#888888";
 	$("p_points").style.color="#F09898";
-	$("p_corner").style.top=25;
-	$("p_smooth").style.top=50;
-	$("p_inline").style.top=75;
-	$("p_delete").style.top=100;
-	$("p_open").style.top=125;
-	$("p_segments").style.top=150;
+	$("p_corner").style.top=25+"px";
+	$("p_smooth").style.top=50+"px";
+	$("p_inline").style.top=75+"px";
+	$("p_delete").style.top=100+"px";
+	$("p_open").style.top=125+"px";
+	$("p_segments").style.top=150+"px";
 	$("p_segments").style.backgroundColor="#888888";
-	$("p_line").style.top=175;
-	$("p_line").style.width=parseInt($('pointsbox').style.width)/2;
-	$("p_line2").style.left=parseInt($('pointsbox').style.width)/2;
-	$("p_line2").style.top=175;
-	$("p_line2").style.width=parseInt($('pointsbox').style.width)/2;
-	$("p_add").style.top=200;
-	$("p_add").style.width=parseInt($('pointsbox').style.width)/2;
-	$("p_add2").style.top=200;
-	$("p_add2").style.left=parseInt($('pointsbox').style.width)/2;
-	$("p_add2").style.width=parseInt($('pointsbox').style.width)/2;
-	$("p_paths").style.top=225;
+	$("p_line").style.top=175+"px";
+	$("p_line").style.width=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_line2").style.left=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_line2").style.top=175+"px";
+	$("p_line2").style.width=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_add").style.top=200+"px";
+	$("p_add").style.width=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_add2").style.top=200+"px";
+	$("p_add2").style.left=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_add2").style.width=(parseInt($('pointsbox').style.width)/2)+"px";
+	$("p_paths").style.top=225+"px";
 	$("p_paths").style.backgroundColor="#888888";
 	$("p_paths").style.color="#95B3D7";
-	$("p_close").style.top=250;
+	$("p_close").style.top=250+"px";
 	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
 	{
 		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
-		BOXES[i].style.top=(SCRH-parseInt(BOXES[i].style.height))/2 - 52;
-		BOXES[i].style.left=(SCRW-parseInt(BOXES[i].style.width))/4;
-		BOXES[i].style.clip="rect(1,"+(parseInt(BOXES[i].style.width)+2)+","+(parseInt(BOXES[i].style.height)+2)+",0)";
+		BOXES[i].style.top=((SCRH-parseInt(BOXES[i].style.height))/2 - 52)+"px";
+		BOXES[i].style.left=((SCRW-parseInt(BOXES[i].style.width))/4)+"px";
+		BOXES[i].style.clip="rect(1px,"+(parseInt(BOXES[i].style.width)+2)+"px,"+(parseInt(BOXES[i].style.height)+2)+"px,0px)";
 		BOXES[i].style.visibility="hidden";
-		$(BOXNAME+"content").style.height=parseInt(BOXES[i].style.height)-25;
-		$(BOXNAME+"content").style.top=25;
+		$(BOXNAME+"content").style.height=(parseInt(BOXES[i].style.height)-25)+"px";
+		$(BOXNAME+"content").style.top=25+"px";
 		
 		DD[i]=new YAHOO.util.DD(BOXES[i].id);
 		DD[i].setHandleElId(BOXNAME+"head");
 	}
 	
-	$("colorbox").style.clip="rect(1,550px,430px,0)";
-	$("colorbox").style.left=3*(SCRW-parseInt($("colorbox").style.width))/4;	
+	$("colorbox").style.clip="rect(1px,550px,430px,0px)";
+	$("colorbox").style.left=(3*(SCRW-parseInt($("colorbox").style.width))/4)+"px";	
 		
 	$('export').style.visibility='visible';
 	$('visit').style.visibility='visible';
 	$('help').style.visibility='visible';
 	
-	$('filmgroup').style.top=190;	
-	$('trackgroup').style.top=220;	
-	$('tweengroup').style.top=160;
-	$('spritegroup').style.top=130;	
-	$('scenegroup').style.top=0;
+	$('filmgroup').style.top=190+"px";	
+	$('trackgroup').style.top=220+"px";	
+	$('tweengroup').style.top=160+"px";
+	$('spritegroup').style.top=130+"px";	
+	$('scenegroup').style.top=0+"px";
 	
 	$('anibuild').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
 	$('anibuild').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};		
@@ -1794,35 +1800,35 @@ function main()
 	
 	DDcircle=new YAHOO.util.DD('circle');
 	DDcircle.onDrag = function () {
-									if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5}
-									if (parseInt($('circle').style.left)>250) {$('circle').style.left=250}
-									if (parseInt($('circle').style.top)<-5) {$('circle').style.top=-5}
-									if (parseInt($('circle').style.top)>250) {$('circle').style.top=251}
+									if (parseInt($('circle').style.left)<-5) {$('circle').style.left=-5+"px"}
+									if (parseInt($('circle').style.left)>250) {$('circle').style.left=250+"px"}
+									if (parseInt($('circle').style.top)<-5) {$('circle').style.top=-5+"px"}
+									if (parseInt($('circle').style.top)>250) {$('circle').style.top=251+"px"}
 									currentColor.SetHSV(currentColor.Hue(), 1-(parseInt($('circle').style.top)+5)/255.0, 
 									  (parseInt($('circle').style.left)+5)/255.0);
   									colorChanged("circle");
 								  }
 	DDarrows=new YAHOO.util.DD('arrows');
 	DDarrows.onDrag = function () {
-										$('arrows').style.left=0;
-										if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4}
-										if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251}
+										$('arrows').style.left=0+"px";
+										if (parseInt($('arrows').style.top)<-4) {$('arrows').style.top=-4+"px"}
+										if (parseInt($('arrows').style.top)>251) {$('arrows').style.top=251+"px"}
   										currentColor.SetHSV((256 - parseInt($('arrows').style.top)+4)*359.99/255, 
 										  currentColor.Saturation(), currentColor.Value());
   										colorChanged("arrows");
 								};
 
 									
-	$('varrows').style.left=-4;
+	$('varrows').style.left=-4+"px";
 	DDvarrows=new YAHOO.util.DD('varrows');
 	DDvarrows.setHandleElId("transpbox");
 	DDvarrows.onDrag = function () {
-										$('varrows').style.top=0;
-										if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4}
-										if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252}
+										$('varrows').style.top=0+"px";
+										if (parseInt($('varrows').style.left)<-4) {$('varrows').style.left=-4+"px"}
+										if (parseInt($('varrows').style.left)>252) {$('varrows').style.left=252+"px"}
 										alphaperct=Math.ceil(100*(parseInt($('varrows').style.left)+4)/256);
 										$('transptext').innerHTML ='Transparency '+alphaperct+'%';
-										if (ieb)
+										if (EXCANVASUSED)
 										{
 											$('transpslider').filters.alpha.opacity=100-alphaperct;
 										}
@@ -1849,9 +1855,9 @@ function main()
 	$("blueBox").value=255;
 	blueBoxChanged();
 	alphaperct = 0;
-	$('varrows').style.left=256*alphaperct/100-4;
+	$('varrows').style.left=(256*alphaperct/100-4)+"px";
 	$('transptext').innerHTML ='Transparency '+Math.floor(alphaperct)+'%';
-	if (ieb)
+	if (EXCANVASUSED)
 	{
 		$('transpslider').filters.alpha.opacity=100-alphaperct;
 	}
@@ -1881,12 +1887,12 @@ function main()
         gridcanv.ctx = gridcanv.getContext('2d');
     }
 	gridcanv.style.position='absolute';
-	gridcanv.style.left=0;
-	gridcanv.style.top=52;
+	gridcanv.style.left=0+"px";
+	gridcanv.style.top=52+"px";
 	//gridcanv.style.zIndex=2;
 	
-	$('vecdiv').style.left=500;
-	$('vecdiv').style.top=200;
+	$('vecdiv').style.left=500+"px";
+	$('vecdiv').style.top=200+"px";
 	
 	vecanv=$('vecanv')
     if (vecanv.getContext)
@@ -1926,8 +1932,8 @@ function main()
 	DDvecrotate.onDrag = function()
 						 {
 						 		var phi=arctan(parseInt($('vecrotate').style.left)-105,parseInt($('vecrotate').style.top)-105);
-								$('vecrotate').style.left=105+105*Math.cos(phi);
-								$('vecrotate').style.top=105+105*Math.sin(phi);
+								$('vecrotate').style.left=(105+105*Math.cos(phi))+"px";
+								$('vecrotate').style.top=(105+105*Math.sin(phi))+"px";
 								minivect.xe=100*Math.cos(phi);
 								minivect.ye=100*Math.sin(phi);
 								vecanv.ctx.rotate(-vecphi);
@@ -1962,8 +1968,8 @@ function main()
 	spritemid.ctx.lineTo(10,0);
 	spritemid.ctx.stroke();
 
-	$('spritecentre').style.left=500;
-	$('spritecentre').style.top=200;
+	$('spritecentre').style.left=500+"px";
+	$('spritecentre').style.top=200+"px";
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
 
 	
@@ -2013,7 +2019,7 @@ function main()
 </head>
 <body onLoad="init()">
 <div id='startdiv' 	style='width:100%; height:100%; top:52px; background-color:#FFFFFF; font-size:18px'>
-      <div style='top:200px;left:400px '><img src='assets/3d_cd.gif'/> Please wait while the application finishes loading.....</div>
+      <div style='top:200px;left:400px '><img alt="" src='assets/3d_cd.gif'/> Please wait while the application finishes loading.....</div>
 </div>
 
 
@@ -2044,10 +2050,10 @@ function main()
 <div id="boundarydrop" class="theatre_style" ></div>
 <div id="frontmarkerdrop" class="theatre_style">
 	<div id="rotateCentre" class="rotation">
-		<img src="assets/ccircle.png" />
+		<img alt="" src="assets/ccircle.png" />
 	</div>
 	<div id="rotateMove" class="rotation">
-		<img src="assets/circle.png" />
+		<img alt="" src="assets/circle.png" />
 	</div>
 </div>
 
@@ -2111,7 +2117,7 @@ function main()
         	  </td>
 	        </tr>
     	  </table>
-    	  <div id="colvertline"><img id="colptr" src="assets/openpointer.png" style="position: absolute; top: 183px" onclick="colexpand()"/></div>
+    	  <div id="colvertline"><img alt="" id="colptr" src="assets/openpointer.png" style="position: absolute; top: 183px" onclick="colexpand()"/></div>
 	    </div>
     <div id='colormask'></div>	
   
@@ -2122,18 +2128,18 @@ function main()
     </div>
     <div id ='transpbox' >
       <div id='transptext'>Transparency 0%</div>
-      <div id='transpimg'><img class='marker' id="check" src="assets/check.png" /> </div>
+      <div id='transpimg'><img alt="" class='marker' id="check" src="assets/check.png" /> </div>
       <div id='transpslider'> </div>
       <div id='transpcover'> </div>
-      <img class='marker' id="varrows" src="assets/transp_arrows.gif" /> </div>
-    <div id="gradientBox" style=""> <img id="gradientImg" src="assets/color_picker_gradient.png" /> <img class='marker' id="circle" src="assets/color_picker_circle.gif" /> </div>
-    <div id="hueBarDiv" style=""> <img class='marker' id='colorbar' src="assets/color_picker_bar.png" /> <img class='marker' id="arrows" src="assets/color_picker_arrows.gif" /> <br />
+      <img alt="" class='marker' id="varrows" src="assets/transp_arrows.gif" /> </div>
+    <div id="gradientBox" style=""> <img alt="" id="gradientImg" src="assets/color_picker_gradient.png" /> <img alt="" class='marker' id="circle" src="assets/color_picker_circle.gif" /> </div>
+    <div id="hueBarDiv" style=""> <img alt="" class='marker' id='colorbar' src="assets/color_picker_bar.png" /> <img alt="" class='marker' id="arrows" src="assets/color_picker_arrows.gif" /> <br />
     </div>
   </div>
   <div id='colorhead' class="head">
     	<div id="colorheadtext">&nbsp; Line Colour</div>
-    	<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"colorcontent")'/>
+    	<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"colorcontent")'/>
   </div>  
 </div>
 
@@ -2141,16 +2147,16 @@ function main()
 <div id='shadowbox' class="dialoguebox">
 	<div id='shadowcontent' class='content'>
 		<div id="shdirect">Move Shadow</div>
-		<div id="shadowuparrow"><img id="shdirectup" src="assets/shup.png" /></div>
-		<div id="shadowsidearrows"><img id="shdirectright" src="assets/shright.png" /><img id="shdirectleft" src="assets/shleft.png" /></div>
-		<div id="shadowdownarrow"><img id="shdirectdown" src="assets/shdown.png" /></div>
+		<div id="shadowuparrow"><img alt="" id="shdirectup" src="assets/shup.png" /></div>
+		<div id="shadowsidearrows"><img alt="" id="shdirectright" src="assets/shright.png" /><img alt="" id="shdirectleft" src="assets/shleft.png" /></div>
+		<div id="shadowdownarrow"><img alt="" id="shdirectdown" src="assets/shdown.png" /></div>
 		<div id="shblurtext">Blur Shadow</div>
-		<div id="shblur"><img id="shslider" src="assets/transp_arrows.gif" /><img id="shblurline" src="assets/blur.png" /></div>
+		<div id="shblur"><img alt="" id="shslider" src="assets/transp_arrows.gif" /><img alt="" id="shblurline" src="assets/blur.png" /></div>
 		<div style="top:165px; left:170px; background-color:transparent"><input type="button"  value="Cancel" onClick="closedialogue(this.parentNode)"></div>
 	</div>
 	<div id='shadowhead' class='head'>&nbsp; Shadow Effects
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"shadowcontent")'/>
 	</div>
 </div>
 
@@ -2158,25 +2164,25 @@ function main()
 <div id='linebox' class="dialoguebox">
 	<div id='linecontent' class='content'>
 		<p class="text_input">
-			<label for="linewidth">Width</label> <input type="text" name="linewidth" id="linewidth" value=1 size=5/><span>px</span>
+			<label for="linewidth">Width</label> <input type="text" name="linewidth" id="linewidth" value=1 size=5 /><span>px</span>
 		</p>
 		<p class="select_input">
-			<label for="linecap">Line Cap</label> 
+			<label for="selectcap">Line Cap</label> 
 			<select name="selectcap" id="selectcap" onchange="$('selectcapimg').src='assets/l'+$('selectcap').value+'.png'">
 				<option value="butt" selected="selected">Butt</option>
 				<option value="round">Round</option>
 				<option value="square" >Square</option>
 			</select>
-			<img id="selectcapimg" src="assets/lbutt.png" />
+			<img alt="" id="selectcapimg" src="assets/lbutt.png" />
 		</p>
 		<p class="select_input">
-			<label for="linejoin">Line Join</label> 
+			<label for="selectjoin">Line Join</label> 
 			<select name="selectjoin" id="selectjoin" onchange="$('selectjoinimg').src='assets/lj'+$('selectjoin').value+'.png'">
 				<option value="bevel" >Bevel</option>
 				<option value="miter" selected="selected">Miter</option>
 				<option value="round" >Round</option>
 			</select>
-			<img id="selectjoinimg" src="assets/ljmiter.png" />
+			<img alt="" id="selectjoinimg" src="assets/ljmiter.png" />
 		</p>
 		<br>
 		<input type="button" value="OK" onClick="updateLines();closedialogue(this)">
@@ -2184,8 +2190,8 @@ function main()
       	<input type="button"  value="Cancel" onClick="closedialogue(this)">
 	</div>
 	<div id='linehead' class='head'>&nbsp; Line Styles
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"linecontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"linecontent")'/>
 	</div>	
 </div>
 
@@ -2205,8 +2211,8 @@ function main()
 		<div id="p_close" class="notext">&nbsp;&nbsp;Close Path</div>
 	</div>
 	<div id='pointshead' class='head'>&nbsp; Edit
-		<img src='assets/x.png' onclick='closedialogue(this);close_p_content();'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this);close_p_content();'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"pointscontent")'/>
 	</div>
 </div>
 
@@ -2223,8 +2229,8 @@ function main()
 	  	<input type="button" id="gDel" value="Delete Stop Point" onClick="delStop()">
 	</div>
 	<div id='gradfillhead' class='head'>&nbsp; Colour Stops
-		<img src='assets/x.png' onclick='closedialogue(this);closeStops();removeGradLine()'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"gradfillcontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this);closeStops();removeGradLine()'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"gradfillcontent")'/>
 	</div>	
 </div>
 
@@ -2237,8 +2243,8 @@ function main()
 		<input type="button" value=" Close " id="rotateClose" onclick="closedialogue(this)" />
 	</div>	
 	<div id='rotatehead' class='head'>&nbsp; Rotate
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"rotatecontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"rotatecontent")'/>
 	</div>
 </div>
 
@@ -2251,8 +2257,8 @@ function main()
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>	
 	<div id='namehead' class='head'>&nbsp; Shape
-		<img src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img src='assets/up.png' onclick='updialogue(this,"namecontent")'/>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"namecontent")'/>
 	</div>
 </div>
 
@@ -2303,7 +2309,7 @@ function main()
 		    <p>
 			<input type="radio" id="sceneradio" name="buildradio" onChange="aniobj='scene'" checked="checked"> Scenery<br> 
 			<input type="radio" name="buildradio" onChange="aniobj='sprite'"> Sprite<br>
-			<input type="radio"name="buildradio" onChange="aniobj='tween'"> Tween<br>
+			<input type="radio" name="buildradio" onChange="aniobj='tween'"> Tween<br>
 			<input type="radio" name="buildradio" onChange="aniobj='track'"> Track<br>
 			<input type="radio" name="buildradio" onChange="aniobj='film'"> Film<br><p>
 			&nbsp;&nbsp;&nbsp;<input type="button" onClick="buildobj()" value="Build">
@@ -2317,7 +2323,7 @@ function main()
 Film Elements from back to front.<br>
 <ul id="anielmorder" style="list-style-type:none;padding:2px;text-align:left"></ul>
 </div>
-<div id='filmsmove'> <img src="assets/uparw.png" onClick="moveliup()">&nbsp; &nbsp;&nbsp;<img src="assets/downarw.png" onClick="movelidown()"></div>
+<div id='filmsmove'> <img alt="" src="assets/uparw.png" onClick="moveliup()">&nbsp; &nbsp;&nbsp;<img alt="" src="assets/downarw.png" onClick="movelidown()"></div>
  </div>
 
 <div id='toolbar'>
@@ -2351,11 +2357,11 @@ Film Elements from back to front.<br>
 
 
 <div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px; '> </div>
- <div id='logo'><img src="assets/logo.png"></div>
+ <div id='logo'><img alt="" src="assets/logo.png"></div>
   
-  <div class="choice40" id='export'  alt="To HTML" title="To HTML" onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src="assets/export.png"> </div>
-  <div class='choice40' id='visit' alt="Visit Gallery" title="Visit Gallery" onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src='assets/visit.png'> </div>
-  <div class='choice40' id='help' alt="help" title="help" onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img src='assets/help.png'> </div>	
+  <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
+  <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
+  <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
 	
   <div id='fopts'><a href='#' onClick="writeCanvas();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="totext();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromtext(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>

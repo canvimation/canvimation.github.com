@@ -11,11 +11,11 @@ function BottomH(parentdiv)
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'bottom'+parentdiv.id;
    this.elmRef.style.position='absolute';
-   this.elmRef.style.left= parseInt(parentdiv.style.width)/2-5; 
-   this.elmRef.style.top= parseInt(parentdiv.style.height)-5;
+   this.elmRef.style.left= (parseInt(parentdiv.style.width)/2-5)+"px"; 
+   this.elmRef.style.top= (parseInt(parentdiv.style.height)-5)+"px";
    this.elmRef.style.fontSize=0;
-   this.elmRef.style.width=10;
-   this.elmRef.style.height=10;
+   this.elmRef.style.width=10+"px";
+   this.elmRef.style.height=10+"px";
    this.elmRef.style.cursor='n-resize';
    this.elmRef.parentdiv=parentdiv;
    this.elmRef.style.backgroundColor="white"; 

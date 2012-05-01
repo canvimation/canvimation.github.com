@@ -11,11 +11,11 @@ function addPointMark()
    	this.mark = document.createElement('div');
    	this.mark.node=this;
    	this.mark.id="mark"+(MCOUNT++);
-   	this.mark.style.left= this.point.x-2; 
-   	this.mark.style.top= this.point.y-2;
+   	this.mark.style.left= (this.point.x-2)+"px"; 
+   	this.mark.style.top= (this.point.y-2)+"px";
    	this.mark.style.fontSize=0;
-   	this.mark.style.width=4;
-   	this.mark.style.height=4;
+   	this.mark.style.width=4+"px";
+   	this.mark.style.height=4+"px";
    	this.mark.style.border="solid black 1px";
    	this.mark.style.backgroundColor="white";
    	this.mark.style.cursor='move';
@@ -147,8 +147,8 @@ function updatePointNode(cursor)
 				node=node.next;
 			}
 			this.shape.draw();
-			$(this.mark.id).style.left=this.point.x-2;
-			$(this.mark.id).style.top=this.point.y-2;
+			$(this.mark.id).style.left=(this.point.x-2)+"px";
+			$(this.mark.id).style.top=(this.point.y-2)+"px";
 			this.shape.setCorners();
 		break
 		case "curve":
@@ -159,26 +159,26 @@ function updatePointNode(cursor)
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				this.setNode(cursor);
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
-				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
 			}
 			else if(this.next.point.x!="end")
 			{
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=this.ctrl2.x-2;
-				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
-				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
 			}
 			else
 			{
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=this.ctrl2.x-2;
-				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
@@ -192,23 +192,23 @@ function updatePointNode(cursor)
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=this.ctrl2.x-2;
-				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=this.next.ctrl1.x-2;
-				$(this.next.c1mark.id).style.top=this.next.ctrl1.y-2;
+				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
 			}
 			else
 			{
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=this.ctrl2.x-2;
-				$(this.c2mark.id).style.top=this.ctrl2.y-2;
+				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
 				this.shape.path.next.setNode(cursor);
 				var c1=new Point(this.shape.path.next.next.ctrl1.x+dx,this.shape.path.next.next.ctrl1.y+dy);
 				this.shape.path.next.next.setNode(this.shape.path.next.next.point,c1,this.shape.path.next.next.ctrl2);
-				$(this.shape.path.next.next.c1mark.id).style.left=this.shape.path.next.next.ctrl1.x-2;
-				$(this.shape.path.next.next.c1mark.id).style.top=this.shape.path.next.next.ctrl1.y-2;
+				$(this.shape.path.next.next.c1mark.id).style.left=(this.shape.path.next.next.ctrl1.x-2)+"px";
+				$(this.shape.path.next.next.c1mark.id).style.top=(this.shape.path.next.next.ctrl1.y-2)+"px";
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
@@ -216,7 +216,7 @@ function updatePointNode(cursor)
 		break
 		case "rounded_rectangle":
 			var start=this.shape.path.next; 			
-			this.mark.style.top=start.point.y-2;
+			this.mark.style.top=(start.point.y-2)+"px";
 			var w=(this.shape.btmrgtcrnr.x-this.shape.tplftcrnr.x)/2;
 			var h=(this.shape.btmrgtcrnr.y-this.shape.tplftcrnr.y)/2;
 			var d=w*h/Math.abs(w*h); //corrects for height direction;
@@ -234,7 +234,7 @@ function updatePointNode(cursor)
 			}
 			else
 			{
-				this.mark.style.left=start.point.x-4;
+				this.mark.style.left=(start.point.x-4)+"px";
 			}
 			this.shape.setRndRect();
 			this.shape.draw();
@@ -248,11 +248,11 @@ function addCtrl1Mark()
    	this.c1mark = document.createElement('div');
    	this.c1mark.node=this;
    	this.c1mark.id="mark"+(MCOUNT++);
-   	this.c1mark.style.left= this.ctrl1.x-2; 
-   	this.c1mark.style.top= this.ctrl1.y-2;
+   	this.c1mark.style.left= (this.ctrl1.x-2)+"px"; 
+   	this.c1mark.style.top= (this.ctrl1.y-2)+"px";
    	this.c1mark.style.fontSize=0;
-   	this.c1mark.style.width=4;
-   	this.c1mark.style.height=4;
+   	this.c1mark.style.width=4+"px";
+   	this.c1mark.style.height=4+"px";
    	this.c1mark.style.border="solid red 1px";
    	this.c1mark.style.backgroundColor="white";
    	this.c1mark.style.cursor='move';
@@ -281,11 +281,11 @@ function addCtrl2Mark()
    	this.c2mark = document.createElement('div');
    	this.c2mark.node=this;
    	this.c2mark.id="mark"+(MCOUNT++);
-   	this.c2mark.style.left= this.ctrl2.x-2; 
-   	this.c2mark.style.top= this.ctrl2.y-2;
+   	this.c2mark.style.left= (this.ctrl2.x-2)+"px"; 
+   	this.c2mark.style.top= (this.ctrl2.y-2)+"px";
    	this.c2mark.style.fontSize=0;
-   	this.c2mark.style.width=4;
-   	this.c2mark.style.height=4;
+   	this.c2mark.style.width=4+"px";
+   	this.c2mark.style.height=4+"px";
    	this.c2mark.style.border="solid red 1px";
    	this.c2mark.style.backgroundColor="white";
    	this.c2mark.style.cursor='move';
@@ -344,8 +344,8 @@ function updateCtrl1Node(cursor)
 			var c2=new Point(prevnode.point.x-(this.ctrl1.x-prevnode.point.x)*nl2/nl1,prevnode.point.y-(this.ctrl1.y-prevnode.point.y)*nl2/nl1);
 		}
 		prevnode.setNode(prevnode.point,prevnode.ctrl1,c2);
-		prevnode.c2mark.style.top=prevnode.ctrl2.y-2;
-		prevnode.c2mark.style.left=prevnode.ctrl2.x-2;
+		prevnode.c2mark.style.top=(prevnode.ctrl2.y-2)+"px";
+		prevnode.c2mark.style.left=(prevnode.ctrl2.x-2)+"px";
 	}
 	this.shape.draw();
 	this.shape.drawBezGuides();
@@ -386,8 +386,8 @@ function updateCtrl2Node(cursor)
 			}
 
 			nextnode.setNode(nextnode.point,c1,nextnode.ctrl2);
-			nextnode.c1mark.style.top=nextnode.ctrl1.y-2;
-			nextnode.c1mark.style.left=nextnode.ctrl1.x-2;
+			nextnode.c1mark.style.top=(nextnode.ctrl1.y-2)+"px";
+			nextnode.c1mark.style.left=(nextnode.ctrl1.x-2)+"px";
 		}
 	}
 	this.shape.draw();
