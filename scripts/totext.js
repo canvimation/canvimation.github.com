@@ -10,12 +10,13 @@ function totext()
 	totextbox();
 }
 
-function canvastotext()
+function CanvasToText()
 {
-	var params='canvas^'+magscale+'|'+canvleft+'|'+canvtop+'|'+actualwidth+'|'+actualheight+'|'+$("canvasdiv").childNodes.length+'*';
-	for(var i=0;i<$("canvasdiv").childNodes.length;i++)
+	var params='canvas2^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
+	for(var name in SHAPES)
 	{
-		params+=storeinparams($("canvasdiv").childNodes[i])+'*';
+		var shape=SHAPES[name];
+		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
 	var newwindow=window.open('','_blank');
@@ -160,67 +161,61 @@ function canceltotext()
 	if ($('boxto')) {$('boxto').parentNode.removeChild($('boxto'))};
 }
 
-function storeinparams(canv)
+function ShapeToText()
 {
-	var cprm='';
+	var shapeAsText='';
 	
-	cprm+=canv.bleft+'|';
-	cprm+=canv.btop+'|';
-	cprm+=canv.bwidth+'|';
-	cprm+=canv.bheight+'|';
-	cprm+=canv.scleft+'|';
-	cprm+=canv.sctop+'|';
-	cprm+=canv.scx+'|';
-	cprm+=canv.scy+'|';
-	cprm+=canv.sox+'|';
-	cprm+=canv.soy+'|';
-	cprm+=canv.ox+'|';
-	cprm+=canv.oy+'|';
-	cprm+=canv.sox+'|';
-	cprm+=canv.cx+'|';
-	cprm+=canv.cy+'|';
-	cprm+=canv.rr+'|';
-	cprm+=canv.phi+'|';
-	if (canv.rotated)
+	shapeAsText+=this.name+'|';
+	if (this.open)
 	{
-		cprm+=1+'|';
+		shapeAsText+=1+'|';
 	}
 	else
 	{
-		cprm+=-1+'|';
+		shapeAsText+=-1+'|';
 	}
-	cprm+=canv.ratio+'|';
-	cprm+= canv.strokeStyle.join()+'|';
-	cprm+= canv.fillStyle.join()+'|';
-	cprm+=canv.lineWidth+'|';
-	cprm+=canv.lineCap+'|';
-	cprm+=canv.lineJoin+'|';
-	if (canv.justfill)
+	if (this.editable)
 	{
-		cprm+=1+'|';
+		shapeAsText+=1+'|';
 	}
 	else
 	{
-		cprm+=-1+'|';
+		shapeAsText+=-1+'|';
+	}
+	shapeAsText+=this.tplftcrnr.x+'|';
+	shapeAsText+=this.tplftcrnr.y+'|';
+	shapeAsText+=this.btmrgtcrnr.x+'|';
+	shapeAsText+=this.btmrgtcrnr.y+'|';
+	shapeAsText+= this.strokeStyle.join()+'|';
+	shapeAsText+= this.fillStyle.join()+'|';
+	shapeAsText+=this.lineWidth+'|';
+	shapeAsText+=this.lineCap+'|';
+	shapeAsText+=this.lineJoin+'|';
+	if (this.justfill)
+	{
+		shapeAsText+=1+'|';
+	}
+	else
+	{
+		shapeAsText+=-1+'|';
 	}	
-	if (canv.linearfill)
+	if (this.linearfill)
 	{
-		cprm+=1+'|';
+		shapeAsText+=1+'|';
 	}
 	else
 	{
-		cprm+=-1+'|';
+		shapeAsText+=-1+'|';
 	}
-	cprm+= canv.lineGrad.join()+'|';
-	cprm+= canv.radGrad.join()+'|';
-
-	var carray=[];
-	for (j=0;j<canv.colorStops.length;j++)
+	shapeAsText+= this.lineGrad.join()+'|';
+	shapeAsText+= this.radGrad.join()+'|';
+	var carray=[]; //color array for color stops
+	for (j=0;j<this.colorStops.length;j++)
 	{
 		carray[j]=[];
 		for (k=0;k<5;k++)
 		{
-			carray[j][k]=canv.colorStops[j][k];
+			carray[j][k]=this.colorStops[j][k];
 		}
 	}
 	
@@ -231,71 +226,43 @@ function storeinparams(canv)
 	}
 	carray=carray.join(":");
 	
-	cprm+=carray+'|';
+	shapeAsText+=carray+'|';
 
-	cprm+=canv.stopn+'|';
+	shapeAsText+=this.stopn+'|';
 
-	if (canv.shadow)
+	if (this.shadow)
 	{
-		cprm+=1+'|';
+		shapeAsText+=1+'|';
 	}
 	else
 	{
-		cprm+=-1+'|';
+		shapeAsText+=-1+'|';
 	}
 
-	cprm+=canv.shadowOffsetX+'|';
-	cprm+=canv.shadowOffsetY+'|';
-	cprm+=canv.shadowBlur+'|';
-	cprm+= canv.shadowColor.join()+'|';
-	cprm+=canv.ScaleX+'|';
-	cprm+=canv.ScaleY+'|';
-	cprm+=canv.zIndex+'|';
-	cprm+=canv.rotate+'|';
-	if (canv.clockw)
+	shapeAsText+=this.shadowOffsetX+'|';
+	shapeAsText+=this.shadowOffsetY+'|';
+	shapeAsText+=this.shadowBlur+'|';
+	shapeAsText+= this.shadowColor.join()+'|';
+	shapeAsText+=this.zIndex+'|';
+	shapeAsText+=this.crnradius+'|';
+	var node=this.path.next;
+	while(node.point.x!="end")
 	{
-		cprm+=1+'|';
+		shapeAsText+=node.vertex+':';
+		shapeAsText+=node.corner+':';
+		shapeAsText+=node.point.x+':';
+		shapeAsText+=node.point.y+':';
+		shapeAsText+=node.ctrl1.x+':';
+		shapeAsText+=node.ctrl1.y+':';
+		shapeAsText+=node.ctrl2.x+':';
+		shapeAsText+=node.ctrl2.y+':';
+		node=node.next;
 	}
-	else
-	{
-		cprm+=-1+'|';
-	}
-	if (canv.complete)
-	{
-		cprm+=1+'|';
-	}
-	else
-	{
-		cprm+=-1+'|';
-	}
-	cprm+= canv.group.join()+'|';
-	cprm+='empty'+'|';
-	cprm+= canv.beztypes.join()+'|';
-
-	for (j=0;j<2;j++)
-	{
-		cprm+=canv.path[j]+',';
-	}
-	cprm+=canv.path[2]+'|';
-	carray=[];
-	for (j=3;j<canv.path.length;j++)
-	{
-		carray[j-3]=[];
-		for (k=0;k<canv.path[j].length;k++)
-		{
-			carray[j-3][k]=canv.path[j][k];
-		}
-	}
+	shapeAsText=shapeAsText.slice(0,-1);
+	shapeAsText+='|';
+	shapeAsText+= this.group.name+'|';
 	
-	for (j=0;j<carray.length;j++)
-	{
-		carray[j]=carray[j].join();
-	}
-	carray=carray.join(":");
-	cprm+=carray+'|';
-	cprm+=canv.radius+'|';
-	cprm+=canv.id;
-	return cprm;
+	return shapeAsText;
 }
 
 

@@ -544,3 +544,8 @@ function updatename(name)
 	}
 	members[0].name=name;
 }
+
+function setgrid()
+{
+	$("gridbox").style.visibility="visible";
+}

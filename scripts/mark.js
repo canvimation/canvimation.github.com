@@ -52,8 +52,8 @@ function removeMark()
 
 function updatePointNode(cursor)
 { 
-	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
-	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	//cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	//cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	switch (this.shape.type)
 	{
 		case "line":
@@ -319,8 +319,8 @@ function addFullMarks()
 
 function updateCtrl1Node(cursor)
 {
-	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
-	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	//cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	//cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	var c1=new Point(cursor.x,cursor.y);
 	this.setNode(this.point,c1,this.ctrl2);
 	if(this.shape.type=="freeform" && this.prev.prev.point.x=="end")
@@ -354,8 +354,8 @@ function updateCtrl1Node(cursor)
 
 function updateCtrl2Node(cursor)
 {
-	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
-	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
+	//cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	//cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	var c2=new Point(cursor.x,cursor.y);
 	this.setNode(this.point,this.ctrl1,c2);
 	var nextnode=this.next;

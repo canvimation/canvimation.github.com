@@ -7,37 +7,59 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 function resetdrawing(txt)
 {
 	var params=txt.split('|');
-	magscale=parseInt(params[0]);
-	canvleft=parseInt(params[1]);canvleft=0;
-	canvtop=parseInt(params[2]);canvtop=0;
-	actualwidth=parseInt(params[3]);
-	actualheight=parseInt(params[4]);
-	canvases=parseInt(params[5]);
-	clearall();
-	w=actualwidth*magscale/100;
-	h=actualheight*magscale/100;
-	scale(w,h);
-    blocknum=canvases;
-    numblocks=canvases;
-	lnmrks=0;
-	gdmrks=0;
-	rdmrks=0;
-	rtmrks=0;
-	bndries=0;
-	gpnum=0;
-	inln=false;
-	selected=[];
-	gp=[];
-	firstclick=false;
-	endpoint=false;
-	curcanv='empty';
-	shapestarted=false;
-	coldir='up';
-	shapejustcreated=false;
-	editjustcreated=false;
-	undo=[];
-	worksaved=true;
-	gp=[];
+	if(params.length>2)
+	{
+		var stagewidth=parseInt(params[3]);
+		var stageheight=parseInt(params[4]);
+	}
+	else
+	{
+		var stagewidth=parseInt(params[0]);
+		var stageheight=parseInt(params[1]);
+	}
+	setStage(stagewidth,stageheight);
+	SHAPES={};
+	SELECTED={};
+	SELECTEDSHAPE;
+	DELETED={};
+	DELETES=[];
+	GROUPS={};
+	MCOUNT=0;
+	BCOUNT=0;
+	SCOUNT=0;
+	GCOUNT=0;
+	ZPOS=1;
+	ZNEG=-1;
+}
+
+function resetnewcanv(txt)
+{
+	var params=txt.split('*');
+	resetdrawing(params[0]);alert(params[1])	
+	for (var c=0; c<canvases; c++)
+	{
+		drawline(paramstocanvas(c,params[c+1]));
+	}
+	zpos=zmax+1;
+	zneg=zmin-1;
+	var cdiv=$('canvasdiv');
+	var ptrlist=[];
+	for (var i=0; i<cdiv.childNodes.length; i++)
+	{
+		cgroup=cdiv.childNodes[i].group;
+		for (var j=0; j<cgroup.length; j++)
+		{
+			ptr=cgroup[j];
+			if (ptrlist.indexOf(ptr)==-1)
+			{
+				ptrlist.push(ptr);
+				gp[ptr]=[];
+				
+			}
+			gp[ptr].push(cdiv.childNodes[i])	
+		}
+	}
+	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e))};
 }
 
 
@@ -388,22 +410,27 @@ function handleFileSelect(evt)
 
  function extract(a)
  {
-	 if($('sizebox')) 
-	 {
-		$('sizebox').parentNode.removeChild($('sizebox'));
-		$('toolbar').style.visibility='visible';
-		$('anibar').style.visibility='visible';
-		$('grid').style.visibility='visible';
-		$('menushape').style.visibility='visible';
-	 }
+	 hideTools();
 
 	 var t=a.split('^');
 	 switch (t[0])
 	 {
+		 case 'canvas2':
+		 	try
+			{
+				resetnewcanv(t[1]);
+			}
+			catch(e)
+			{
+				alert(e.name + ": " + e.message + ": " + e.fileName + ": " + e.lineNumber);
+				alert('File data not recognised');
+				return;
+			}
+		 break
 		 case 'canvas':
 		 	try
 			{
-				resetcanv(t[1]);
+				resetoldcanv(t[1]);
 			}
 			catch(e)
 			{

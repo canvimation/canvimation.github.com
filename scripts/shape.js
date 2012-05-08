@@ -179,13 +179,6 @@ function Shape(name,open,editable,type)
    	var p=new Point(0,0);
    	this.tplftcrnr=p; //coordinates of top left of boundary box;
    	this.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
-//   	this.scx=1;
-//   	this.scy=1;
-//   	this.sox=0;
-//   	this.soy=0;
-//   	this.ox=0;
-//   	this.oy=0;
-//   	this.rotated=false;
    	this.strokeStyle=[0,0,0,1];
    	this.fillStyle=[255,255,255,1];
    	this.lineWidth = 1;
@@ -202,13 +195,13 @@ function Shape(name,open,editable,type)
    	this.shadowOffsetY = 15;   
    	this.shadowBlur = 0;   
    	this.shadowColor = [0, 0, 0, 0];
-   	this.ScaleX=1;
-   	this.ScaleY=1;
+   	//this.ScaleX=1;
+   	//this.ScaleY=1;
    	this.zIndex=ZPOS++;
-   	this.rotate=0;
-   	this.clockw=true;
-   	this.complete=false;
-   	this.beztypes=[];
+   	//this.rotate=0;
+   	//this.clockw=true;
+   	//this.complete=false;
+   	//this.beztypes=[];
    	this.crnradius=10;
    	p=new Point("end","end");
    	this.path=new Node(p);
@@ -233,7 +226,8 @@ function Shape(name,open,editable,type)
    	this.isOn=isOn;
    	this.isIn=isIn;
    	this.elType=elType;
-	this.addAllMarks=addAllMarks;   	
+	this.addAllMarks=addAllMarks; 
+	this.ShapeToText=ShapeToText; 	
    	return this;
    	
 }
@@ -264,7 +258,8 @@ function addTo(theatre)
     }
     else
     {
-    	this.Canvas=G_vmlCanvasManager.initElement(this.Canvas)
+    	this.Canvas=G_vmlCanvasManager.initElement(this.Canvas);
+    	this.Canvas.ctx = this.Canvas.getContext('2d');
     }
     this.Canvas.shape=this;
 }
@@ -991,8 +986,8 @@ function makeCopy(shape,offset,theatre)
 	copy.ScaleY = shape.ScaleY;
 	copy.zIndex = shape.zIndex;
 	copy.rotate = shape.rotate;
-	copy.clockw = shape.clockw;
-	copy.complete = shape.complete;
+	//copy.clockw = shape.clockw;
+	//copy.complete = shape.complete;
 	copy.crnradius = shape.crnradius;
 
 	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
@@ -1020,10 +1015,10 @@ function makeCopy(shape,offset,theatre)
 			copy.colorStops[i][j]=shape.colorStops[i][j];
 		}
 	}
-	for(var i=0;i<shape.beztypes.length;i++)
-	{
-		copy.beztypes[i]=shape.beztypes[i];
-	}
+//	for(var i=0;i<shape.beztypes.length;i++)
+//	{
+//		copy.beztypes[i]=shape.beztypes[i];
+//	}
 	var node=shape.path.next;
 	while(node.point.x!="end")
 	{
