@@ -4,7 +4,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function resetdrawing(txt)
+function resetshapestage(txt)
 {
 	var params=txt.split('|');
 	if(params.length>2)
@@ -16,6 +16,10 @@ function resetdrawing(txt)
 	{
 		var stagewidth=parseInt(params[0]);
 		var stageheight=parseInt(params[1]);
+	}
+	while ($("shapestage").childNodes.length>0)
+	{
+		$("shapestage").childNodes.pop();
 	}
 	setStage(stagewidth,stageheight);
 	SHAPES={};
@@ -32,36 +36,139 @@ function resetdrawing(txt)
 	ZNEG=-1;
 }
 
-function resetnewcanv(txt)
+function resetcanv2(shapetxt,grouptxt)
 {
-	var params=txt.split('*');
-	resetdrawing(params[0]);alert(params[1])	
-	for (var c=0; c<canvases; c++)
+	var shape,group;
+	var shapeparams=shapetxt.split('*');
+	resetshapestage(shapeparams.shift());	
+	while (shapeparams.length>0)
 	{
-		drawline(paramstocanvas(c,params[c+1]));
+		shape=paramstoshape(shapeparams.shift());
+		shape.addTo($("shapestage"));
 	}
-	zpos=zmax+1;
-	zneg=zmin-1;
-	var cdiv=$('canvasdiv');
-	var ptrlist=[];
-	for (var i=0; i<cdiv.childNodes.length; i++)
+	var groupparams=grouptxt.split('*');
+	while(groupparams.length>0)
 	{
-		cgroup=cdiv.childNodes[i].group;
-		for (var j=0; j<cgroup.length; j++)
+		group=paramstogroup(groupparams.shift());
+	}
+	for(var name in GROUPS)
+	{
+		group=GROUPS[name];
+		for(var i=0; i<group.members.length; i++)
 		{
-			ptr=cgroup[j];
-			if (ptrlist.indexOf(ptr)==-1)
+			if(group.members[i][0]=="s")
 			{
-				ptrlist.push(ptr);
-				gp[ptr]=[];
-				
+				group.members[i]=SHAPES[group.members[i][1]];
 			}
-			gp[ptr].push(cdiv.childNodes[i])	
+			else
+			{
+				group.members[i]=GROUPS[group.members[i][1]];
+			}
 		}
 	}
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e))};
+	for(var name in SHAPES)
+	{
+		SHAPES[name].draw();
+	}
 }
 
+function paramstoshape(p)
+{
+	var nodedata,point,ctrl1,ctrl2;
+	var node;
+	p=p.split('|');
+	var shape=new Shape(p[0],p[1]=="1",p[2]=="1",p[3]);
+	shape.tplftcrnr.x = parseInt(p[4]);
+	shape.tplftcrnr.y = parseInt(p[5]);
+	shape.btmrgtcrnr.x = parseInt(p[6]);
+	shape.btmrgtcrnr.y = parseInt(p[7]);
+	shape.strokeStyle = p[8].split(',');
+	for (var i=0;i<shape.strokeStyle.length;i++)
+	{
+		shape.strokeStyle[i]=parseInt(shape.strokeStyle[i]);	
+	}	
+	shape.fillStyle = p[9].split(',');
+	for (var i=0;i<shape.fillStyle.length;i++)
+	{
+		shape.fillStyle[i]=parseInt(shape.fillStyle[i])	
+	}	
+	shape.lineWidth = parseInt(p[10]);
+	shape.lineCap = p[11];
+	shape.lineJoin = p[12];
+	shape.justfill = p[13]=='1';
+	shape.linearfill = p[14]=='1';
+	shape.lineGrad = p[15].split(',');
+	for (var i=0;i<shape.lineGrad.length;i++)
+	{
+		shape.lineGrad[i]=parseInt(shape.lineGrad[i])	
+	}	
+	shape.radGrad = p[16].split(',');
+	for (var i=0;i<shape.radGrad.length;i++)
+	{
+		shape.radGrad[i]=parseInt(shape.radGrad[i])	
+	}	
+	carray=p[17].split(':');
+	shape.colorStops = [];
+	for (var i=0; i<carray.length; i++)
+	{
+		shape.colorStops[i]=carray[i].split(',');
+		for (var j=0;j<shape.colorStops[i].length;j++)
+		{
+			shape.colorStops[i][j]=parseFloat(shape.colorStops[i][j])	
+		}		
+	}
+	shape.stopn = parseInt(p[18]);
+	shape.shadow = p[19]=='1';
+	shape.shadowOffsetX = parseInt(p[20]);
+	shape.shadowOffsetY = parseInt(p[21]);
+	shape.shadowBlur = parseFloat(p[22]);
+	shape.shadowColor = p[23].split(',');
+	for (var i=0;i<shape.shadowColor.length;i++)
+	{
+		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
+	}	
+	shape.zIndex = parseFloat(p[24]);
+	shape.group = p[26];
+	var path=p[25].split("!");
+	
+	while (path.length>0)
+	{
+		nodedata=path.pop().split(":");
+		point=new Point(parseInt(nodedata[2]),parseInt(nodedata[3]));
+		node=new Node(point);
+		node.vertex=nodedata[0];
+		node.corner=nodedata[1];
+		node.point.x=nodedata[4];
+		node.point.y=nodedata[5];
+		node.ctrl1.x=nodedata[6];
+		node.ctrl1.y=nodedata[7];
+		node.ctrl2.x=nodedata[8];
+		node.ctrl2.y=nodedata[9];
+		shape.addNode(node);
+	}
+	return shape;
+}
+
+function paramstogroup(p)
+{
+	var members,member;
+	p=p.split('|');
+	var group=new Group(p[0]);
+	group.left=parseInt(p[1]);
+	group.top=parseInt(p[2]);
+	group.width=parseInt(p[3]);
+	group.height=parseInt(p[4]);
+	group.centreOfRotation.x=parseInt(p[5]);
+	group.centreOfRotation.y=parseInt(p[6]);
+	group.phi=parseFloat(p[7]);
+	members=p[8].split(":");
+	while(members.length>0)
+	{
+		member=members.pop();
+		member=member.split("!");
+		group.members.push(member);
+	}
+}
 
 function resetcanv(txt)
 {
@@ -207,172 +314,22 @@ function paramstocanvas(n,canv)
 	return ncanv;
 }
 
-function fromtext()
+function fromText()
 {
 	
-	cancelfromtext();	
-	box=document.createElement('div');
-	box.id='boxfrom';
-	box.style.zIndex=20000024
-	box.style.top=screen.availHeight*0.10;
-	box.style.left=screen.availWidth*0.10;
-	box.style.height=screen.availHeight*0.30;
-	box.style.width=screen.availWidth*0.30;
-	box.style.backgroundColor='#000080';
-	box.style.border='solid 1px black';
-	document.getElementsByTagName('body')[0].appendChild(box);
-
-	headbox=document.createElement('div');
-	headbox.style.top=10;
-	headbox.style.left=10;
-	headbox.style.height=50;
-	headbox.style.color='#000066';
-	headbox.style.width=parseInt(box.style.width)-20;
-	headbox.style.backgroundColor='#66FFFF';
-	headbox.style.fontSize=24;
-	headbox.style.paddingTop=8;
-	headbox.innerHTML='&nbsp;&nbsp;Open';
-	box.appendChild(headbox);
-	innerbox=document.createElement('div');
-	innerbox.style.top=70;
-	innerbox.style.left=10;
-	innerbox.style.height=parseInt(box.style.height)-80;
-	innerbox.style.width=parseInt(box.style.width)-20;
-	innerbox.style.backgroundColor='#FFFFFF';
-	innerbox.style.border='solid 1px black';
-	box.appendChild(innerbox);
-	msgbx=document.createElement('div');
-	msgbx.style.fontSize=14;
-	msgbx.style.left=5;
-	msgbx.style.top=5;
-	msgbx.style.width=parseInt(box.style.width)-10;
-	innerbox.appendChild(msgbx);
 	if (window.File && window.FileReader && window.FileList && window.Blob && !iop) 
 	{
-
-		box.style.height=screen.availHeight*0.50;
-		innerbox.style.height=parseInt(box.style.height)-80;
-		msgtxt='Drag Files into box below';
-		msgbx.innerHTML=msgtxt;
-		dropindiv=document.createElement('div');
-		dropindiv.id='drop_zone';
-		dropindiv.style.fontSize=14;
-		dropindiv.style.left=5;
-		dropindiv.style.backgroundColor='#66FFFF';
-		dropindiv.style.border='solid 1px black';
-		dropindiv.style.top=30;
-		dropindiv.style.height=parseInt(innerbox.style.height)-70;
-		dropindiv.style.width=parseInt(innerbox.style.width)-10;
-		dropindiv.style.overflow='auto';
-		innerbox.appendChild(dropindiv);
-		cin=document.createElement('input');
-		cin.style.position='absolute'
-		cin.style.left=10;
-		cin.style.top=parseInt(innerbox.style.height)-25;
-		cin.type='button';
-		cin.value='Close';
-		cin.onclick=function () {cancelfromtext()};
-		innerbox.appendChild(cin);	
-		var dropZone = document.getElementById('drop_zone');
+		$("filetextbox").style.visibility="visible";
+		var dropZone = $('drop_zone');
 		dropZone.addEventListener('dragover', handleDragOver, false);
 		dropZone.addEventListener('drop', handleFileSelect, false);
-	} 
-	else 
+	}
+	else
 	{
-		msgtxt='Paste text from file into box below and click Create';
-		msgbx.innerHTML=msgtxt;
-		
-
-		formdiv=document.createElement('div');
-		formdiv.style.fontSize=18;
-		formdiv.style.left=5;
-		formdiv.style.backgroundColor='white';
-		formdiv.style.top=45;
-		formdiv.style.height=50;
-		formdiv.style.width=parseInt(innerbox.style.width)-10;
-		innerbox.appendChild(formdiv);
-		bform=document.createElement('form');
-		bform.style.width=parseInt(formdiv.style.width);
-		formdiv.appendChild(bform);
-
-		cin=document.createElement('input');
-		cin.style.position='absolute'
-		cin.style.left=10;
-		cin.style.top=5;
-		cin.id='ctext';
-		cin.name='ctext';
-		cin.type='textarea';
-		cin.size=40;
-		cin.value='';
-		bform.appendChild(cin);
-		cin=document.createElement('input');
-		cin.style.position='absolute'
-		cin.style.left=10;
-		cin.style.top=70;
-		cin.type='button';
-		cin.value='Create';
-		cin.onclick=function () {	
-								//resetcanv($('ctext').value.trim());
-								extract($('ctext').value.trim())
-								cancelfromtext()								
-							}
-		bform.appendChild(cin);
-		cin=document.createElement('input');
-		cin.style.position='absolute'
-		cin.style.left=140;
-		cin.style.top=70;
-		cin.type='button';
-		cin.value='Cancel';
-		cin.onclick=function () {cancelfromtext()};
-		bform.appendChild(cin);	
+		$("fromtextbox").style.visibility="visible";
 	}
 }
 
-function clearall()
-{
-	$('shapemenu').style.visibility='hidden';
-	$('group').style.visibility='hidden';
-	$('ungroup').style.visibility='hidden';
-	$('stylelines').style.visibility='hidden';
-	$('collines').style.visibility='hidden';	
-	$('colfill').style.visibility='hidden';
-	$('gradfill').style.visibility='hidden';
-	$('rotate').style.visibility='hidden';
-	$('front').style.visibility='hidden';
-	$('back').style.visibility='hidden';
-	$('del').style.visibility='hidden';
-	$('copy').style.visibility='hidden';
-	$('editlines').style.visibility='hidden';
-	$('vert').style.visibility='hidden';
-	$('horz').style.visibility='hidden';
-	$('alntop').style.visibility='hidden';
-	$('alnbot').style.visibility='hidden';
-	$('alnleft').style.visibility='hidden';
-	$('alnright').style.visibility='hidden';
-	$('shadow').style.visibility='hidden';
-	$('sname').style.visibility='hidden';
-	closeColor();
-	removeGradLine();
-	removeRotate();
-	var bd=$('bodydiv');
-	var bdc=$('bodydiv').childNodes;
-	while(bdc.length>0)
-	{
-		if (bd.firstChild.id.substr(0,8)=='boundary')
-		{
-			bd.firstChild.canvas.boundary='empty';
-		}
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=$('bodydiv').childNodes;
-	}
-	bd=$('canvasdiv');
-	bdc=bd.childNodes;
-	while(bdc.length>0)
-	{
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=bd.childNodes;
-	}		
-}
 
 function handleDragOver(evt) 
 {
@@ -399,7 +356,7 @@ function handleFileSelect(evt)
 		var r = new FileReader();
 		r.onloadend = function(e) {extract(e.target.result) }
 		r.readAsText(f);
-		document.getElementById('drop_zone').innerHTML +='<br>'+f.name;
+		document.getElementById('drop_zone').innerHTML +=f.name+'<br>';
 	} 
 	else 
 	{ 
@@ -418,7 +375,7 @@ function handleFileSelect(evt)
 		 case 'canvas2':
 		 	try
 			{
-				resetnewcanv(t[1]);
+				resetcanv2(t[1],t[2]);
 			}
 			catch(e)
 			{
@@ -426,11 +383,11 @@ function handleFileSelect(evt)
 				alert('File data not recognised');
 				return;
 			}
-		 break
+		 break		 
 		 case 'canvas':
 		 	try
 			{
-				resetoldcanv(t[1]);
+				resetcanv(t[1]);
 			}
 			catch(e)
 			{

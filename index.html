@@ -181,6 +181,31 @@ img.marker {
 	font-weight: bold;
 }
 
+#drop_zone {
+	left:10px;
+	width:330px;
+	top:35px;
+	height:270px;
+	font-size: 12pt;
+	font-weight: normal;
+	border: solid 1px black;
+	overflow: auto;
+}
+
+#message {
+	left:10px;
+	top:5px;
+	width:330px;
+	background-color: transparent;
+}
+
+#fileButtons {
+	left:10px;
+	top:315px;
+	width:330px;
+	background-color: transparent;
+}
+
 #shdirect{
 	top:5px;
 	height:20px;
@@ -262,7 +287,6 @@ img.marker {
 	width: 100%;
 	height:100%;
 	z-index:1;
-	background-image: url(assets/clear.png);
 }
 
 #hidecanvas {
@@ -962,8 +986,10 @@ var flmovetop;
 var flmoveleft;
 var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes
-var SELECTED={}; //list of selected shapes
+var SELECTED={}; //list of selected shapes and groups;
 var SELECTEDSHAPE; //shape clicked on
+var DELETED={}; //list of deleted shapes and groups;
+var DELETES=[]; //array of DELETED 
 var GROUPS={}; //list of groups
 var SCRW; //actual screen width
 var SCRH; //actual screen height
@@ -973,7 +999,6 @@ var SCOUNT=0; //counter for shapes
 var GCOUNT=0; //counter for groups
 var ZPOS=1; //zindex for each shape as created or set to front
 var ZNEG=-1; //zindex for shapes when zindex sent to back
-var ZSTART,ZOFFSET; //ensure z-order maintained when copying shapes;
 var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 var ROTATIONRADIUS=100; //radius for rotation marker;
 var DEFAULTKEYDOWN=document.onkeydown;
@@ -981,6 +1006,7 @@ var BACKDROP; // object where backstage canvas is added for bezguides, gradient 
 var BOXES; //array of dialogue boxes;
 var BOXNAME; //name of dialogue box, id with box dropped from end;
 var DD=[]; //array of drag and drop elements for dialogue boxes;
+
 temptrack={};
 tracks = {};
 scenes = {};
@@ -1037,6 +1063,7 @@ function str_rep(n)
 }
 
 String.prototype.repeat = str_rep;
+var SPACES =" ".repeat(100);
 
 function eventcap(e)
 {
@@ -1130,42 +1157,41 @@ function shapedelete()
 	closeColor();
 	removeGradLine();
 	removeRotate();	
-	var bd=$('bodydiv');
-	var bdc=$('bodydiv').childNodes;
-	while(bdc.length>0)
+	closeStops();
+	for(var groupName in SELECTED)
 	{
-		bd.firstChild.canvas.boundary='empty';
-		bd.firstChild.parentNode.removeChild(bd.firstChild);
-		bdc=$('bodydiv').childNodes;
+		DELETED[groupName]=SELECTED[groupName];
+		var members=SELECTED[groupName].memberShapes();
+		for(var shapeName in members)
+		{
+			var shape=members[shapeName];
+			shape.Canvas.style.visibility="hidden";
+			delete SHAPES[shape.name];
+		}
 	}
-	var canv;
-	undo.push('bottom');
-	while (selected.length>0)
-	{
-		canv=selected.pop();
-		undo.push(canv);
-		canv.parentNode.removeChild(canv);
-		
-	}
+	DELETES.push(DELETED);
+	SELECTED={};
+	clear($("boundarydrop"));
 	$('lundo').style.visibility='visible';
 }
 
 
-
-
-
-
-
 function undolast()
 {
-	var canv=undo.pop();
-	while (canv!='bottom')
+	var selection=DELETES.pop();
+	for(var groupName in selection)
 	{
-		$('canvasdiv').appendChild(canv);
-		drawline(canv);
-		canv=undo.pop();
+		var group=selection[groupName];
+		var members=group.memberShapes();
+		for(shapeName in members)
+		{
+			var shape=members[shapeName];
+			shape.Canvas.style.visibility="visible";
+			SHAPES[shape.name]=shape
+		}
+		
 	}
-	if (undo.length==0) {$('lundo').style.visibility='hidden'};
+	if (DELETES.length==0) {$('lundo').style.visibility='hidden'};
 }
 
 function clear(stage)
@@ -1508,15 +1534,15 @@ function movenotfilm()
 		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotfilm()},10)}
 }
 
-function setStage()
+function setStage(stagewidth,stageheight)
 {
 	var stages=["area","frame"];
 	for(var i=0; i<stages.length; i++)
 	{
-		$('stage'+stages[i]).style.top=((SCRH-$('stageheight').value)/2 - 52)+"px";
-		$('stage'+stages[i]).style.left=((SCRW-$('stagewidth').value)/2)+"px";
-		$('stage'+stages[i]).style.width=($('stagewidth').value)+"px";
-		$('stage'+stages[i]).style.height=$('stageheight').value+"px";
+		$('stage'+stages[i]).style.top=((SCRH-stageheight)/2 - 52)+"px";
+		$('stage'+stages[i]).style.left=((SCRW-stagewidth)/2)+"px";
+		$('stage'+stages[i]).style.width=stagewidth+"px";
+		$('stage'+stages[i]).style.height=stageheight+"px";
 		$('stage'+stages[i]).style.visibility="visible";
 	}
 	$('stagebox').style.visibility="hidden";
@@ -1551,6 +1577,13 @@ function main()
 	BACKDROP.zIndex=0;
 	BACKDROP.addTo=addTo;
 	BACKDROP.addTo($("backstage"));
+	GRIDDROP={};
+	GRIDDROP.zindex=0;
+	GRIDDROP.width=30;
+	GRIDDROP.height=30;
+	GRIDDROP.addTo=addTo;
+	GRIDDROP.addTo($("griddrop"));
+	$("griddrop").style.zIndex=0;
 	$("markerdrop").style.visibility="visible";
 	$("markerdrop").onclick=function(e) {
 	   										noBubble(e);
@@ -1574,8 +1607,8 @@ function main()
 	gridcanv=$('gridcanvas');
 	$('filmdivhandle').style.top=(masterheight/2-25)+"px";
 	$('filmdivhandle').style.left=(masterwidth/2-25)+"px";
-	fhtfix=masterheight/2-25;
-	fhlfix=masterwidth/2-25;
+	//fhtfix=masterheight/2-25;
+	//fhlfix=masterwidth/2-25;
 
 	
 	if (!ieb)
@@ -1590,9 +1623,9 @@ function main()
 	$('filmsbar').style.top=60+"px";
 	$('anibar').style.left=(screen.availWidth-125)+"px";
 	$('anibar').style.top=60+"px";
-	$('canvasdiv').style.height=(maxheight-52)+"px";
+/*	$('canvasdiv').style.height=(maxheight-52)+"px";
 	$('canvasdiv').style.width=maxwidth+"px";
-	//$('canvasdiv').style.zIndex=2;
+	$('canvasdiv').style.zIndex=2;*/
 
 	$('animationdiv').style.height=(maxheight-52)+"px";
 	$('animationdiv').style.width=maxwidth+"px";
@@ -1618,9 +1651,23 @@ function main()
 	$('gradfillbox').style.height=170+"px";
 	$("linear").checked="checked";
 	
+	//gridbox
+	$('gridbox').style.width=200+"px";
+	$('gridbox').style.height=250+"px";
+	$("gridoff").checked="checked";
+	$("gridhide").checked="checked";
+	
 	//rotatebox
 	$('rotatebox').style.width=130+"px";
 	$('rotatebox').style.height=120+"px";
+	
+	//fromtextbox
+	$("fromtextbox").style.width=350+"px";
+	$("fromtextbox").style.height=140+"px";
+	
+	//filetextbox
+	$("filetextbox").style.width=350+"px";
+	$("filetextbox").style.height=375+"px";
 	
 	//rotation markers
 	$("rotateCentre").style.width=12+"px";
@@ -1773,6 +1820,16 @@ function main()
 		DD[i].setHandleElId(BOXNAME+"head");
 	}
 	
+	if(ieb)
+	{
+		DROPS=getElementsByClassName("theatre_style");
+		for(var i=0; i<DROPS.length; i++)
+		{
+			DROPS[i].style.backgroundImage="url(assets/clear.png)";
+		}
+		
+	}
+	
 	$("colorbox").style.clip="rect(1px,550px,430px,0px)";
 	$("colorbox").style.left=(3*(SCRW-parseInt($("colorbox").style.width))/4)+"px";	
 		
@@ -1882,14 +1939,14 @@ function main()
 	
 
 	
-    if (gridcanv.getContext)
+ /*   if (gridcanv.getContext)
 	{
         gridcanv.ctx = gridcanv.getContext('2d');
     }
 	gridcanv.style.position='absolute';
 	gridcanv.style.left=0+"px";
 	gridcanv.style.top=52+"px";
-	//gridcanv.style.zIndex=2;
+	gridcanv.style.zIndex=2; */
 	
 	$('vecdiv').style.left=500+"px";
 	$('vecdiv').style.top=200+"px";
@@ -2024,7 +2081,7 @@ function main()
 
 
 
-<div id="canvasdiv"></div>
+<!--<div id="canvasdiv"></div>-->
 <div id="hidecanvas"></div>
 <div id='animationdiv'></div>
 <div id="bodydiv"></div>
@@ -2044,7 +2101,7 @@ function main()
 
 <div id="stageframe"></div>
 
-<canvas id='gridcanvas'> </canvas>
+<div id="griddrop" class="theatre_style"></div>
 <div id="backstage" class="theatre_style"></div>
 <div id="markerdrop" class="theatre_style" ></div>
 <div id="boundarydrop" class="theatre_style" ></div>
@@ -2068,7 +2125,7 @@ function main()
 			<label for="stageheight">Height</label> <input type="text" name="stageheight" id="stageheight" value=500 size=5 /><span>px</span>
 		</p>
 		
-		<input type="button" value=" OK " id="stageOK" onclick="setStage()" />
+		<input type="button" value=" OK " id="stageOK" onclick="setStage($('stagewidth').value,$('stageheight').value)" />
 	</div>	
 </div>
 
@@ -2234,6 +2291,7 @@ function main()
 	</div>	
 </div>
 
+<!--dialogue box rotation value -->
 <div id='rotatebox' class="dialoguebox">
 	<div id='rotatecontent' class='content'>
 		<p class="text_input">
@@ -2248,6 +2306,7 @@ function main()
 	</div>
 </div>
 
+<!--dialogue box name value-->
 <div id='namebox' class="dialoguebox">
 	<div id='namecontent' class='content'>
 		<p class="text_input">
@@ -2259,6 +2318,65 @@ function main()
 	<div id='namehead' class='head'>&nbsp; Shape
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"namecontent")'/>
+	</div>
+</div>
+
+<!--dialogue box grid settings-->
+<div id='gridbox' class="dialoguebox">
+	<div id='gridcontent' class='content'>
+		<p class="chk_radio_input">
+			Grid<br>
+			 <input type="radio" name="gridonoff" id="gridon"  /><label for="gridon">On</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <input type="radio" name="gridonoff" id="gridoff" /><label for="gridoff">Off</label>
+		</p>
+		 <p class="chk_radio_input">
+			 <input type="radio" name="gridshowhide" id="gridshow"  /><label for="gridshow">Show</label>&nbsp;&nbsp;
+			 <input type="radio" name="gridshowhide" id="gridhide" /><label for="gridhide">Hide</label>
+		</p>
+		<p class="text_input">
+			<label for="gridwidth">Width</label> <input type="text" name="gridwidth" id="gridwidth" value=30 size=5 /><span >pixels</span>
+		</p>
+		<p class="text_input">	
+			<label for="gridheight">height</label> <input type="text" name="gridheight" id="gridheight" value=30 size=5 /><span >pixels</span>
+		</p>
+		<input type="button" value=" OK " onclick="updategrid()" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='gridhead' class='head'>&nbsp; Grid Settings
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"gridcontent")'/>
+	</div>	
+</div>
+
+<!--dialogue from text box -->
+<div id='fromtextbox' class="dialoguebox">
+	<div id='fromtextcontent' class='content'>
+		<p class="text_input">
+			<label for="fromtext">Paste text from file into box below and click Create</label><br> <input type="textarea" name="fromtext" id="fromtext" value="" size=40 style="left:15px; text-align: left; "/>
+		</p>
+		<input type="button" value=" Create " onclick="extract($('fromtext').value.trim());closedialogue(this)" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>	
+	<div id='fromtexthead' class='head'>&nbsp; Open File
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"fromtextcontent")'/>
+	</div>
+</div>
+
+<!--dialogue file text box -->
+<div id='filetextbox' class="dialoguebox">
+	<div id='filetextcontent' class='content'>
+		<div id="message">Drag Files into box below</div>
+		<div id="drop_zone">
+			
+		</div>
+		<div id="fileButtons">
+			<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
+		</div>
+	</div>	
+	<div id='filetexthead' class='head'>&nbsp; Open Files
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filetextcontent")'/>
 	</div>
 </div>
 
@@ -2298,11 +2416,11 @@ function main()
 		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('track')">&nbsp; Tracks </div>
 		<div id='trackhold'></div>
 	</div>
-	
-		
    </div>
-   <div id='msggroup'> </div>
-   <div id='msgblank'> </div>
+   
+   <div id='msggroup'> </div>   
+   <div id='msgblank'> </div>  
+   
 	<div id='buildgroup'>
 		<div id='anibuild'>&nbsp; Creator</div>	
 		<div id='buildhold'>
@@ -2363,7 +2481,7 @@ Film Elements from back to front.<br>
   <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
   <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
 	
-  <div id='fopts'><a href='#' onClick="writeCanvas();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="totext();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromtext(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
+  <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>
 <div id='vecdiv'>
   

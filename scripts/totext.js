@@ -4,21 +4,50 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function totext()
+function groupToText()
 {
-	undobld();
-	totextbox();
+	var groupAsText="";
+	groupAsText+=this.name+'|';
+	groupAsText+=this.left+'|';
+	groupAsText+=this.top+'|';
+	groupAsText+=this.width+'|';
+	groupAsText+=this.height+'|';
+	groupAsText+=this.centreOfRotation.x+'|';
+	groupAsText+=this.centreOfRotation.y+'|';
+	groupAsText+=this.phi+'|';
+	for(var i=0; i<this.members.length; i++)
+	{
+		if(this.members[i].elType()=="shape")
+		{
+			groupAsText+="s!";
+		}
+		else
+		{
+			groupAsText+="g!";
+		}
+		groupAsText+=this.members[i].name+":";
+	}
+	
+	return groupAsText.slice(0,-1);
 }
 
 function CanvasToText()
 {
 	var params='canvas2^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
+	
 	for(var name in SHAPES)
 	{
 		var shape=SHAPES[name];
 		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
+	params+="^";
+	for(var name in GROUPS)
+	{
+		var group=GROUPS[name];
+		params+=group.groupToText()+'*';
+	}
+	params=params.slice(0,-2);
 	var newwindow=window.open('','_blank');
  	newwindow.document.write(params);
 	newwindow.document.close();
@@ -182,6 +211,7 @@ function ShapeToText()
 	{
 		shapeAsText+=-1+'|';
 	}
+	shapeAsText+=this.type+'|';
 	shapeAsText+=this.tplftcrnr.x+'|';
 	shapeAsText+=this.tplftcrnr.y+'|';
 	shapeAsText+=this.btmrgtcrnr.x+'|';
@@ -255,12 +285,12 @@ function ShapeToText()
 		shapeAsText+=node.ctrl1.x+':';
 		shapeAsText+=node.ctrl1.y+':';
 		shapeAsText+=node.ctrl2.x+':';
-		shapeAsText+=node.ctrl2.y+':';
+		shapeAsText+=node.ctrl2.y+'!';
 		node=node.next;
 	}
 	shapeAsText=shapeAsText.slice(0,-1);
 	shapeAsText+='|';
-	shapeAsText+= this.group.name+'|';
+	shapeAsText+= this.group.name;
 	
 	return shapeAsText;
 }

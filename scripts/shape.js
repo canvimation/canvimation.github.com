@@ -207,7 +207,7 @@ function Shape(name,open,editable,type)
    	this.path=new Node(p);
    	this.path.next=this.path;
    	this.path.prev=this.path;
-   	this.group=new Group(this);
+   	this.group=new Group("group"+(GCOUNT++),this);
    	
    	SHAPES[this.name]=this;
    	

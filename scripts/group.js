@@ -5,10 +5,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-function Group(shape)   //Group object contains shapes and groups in group
+function Group(name,shape)   //Group object contains shapes and groups in group
 {
 	this.type="_GROUP";
-	this.name="group"+(GCOUNT++);
+	this.name=name;
 	this.members=[];
 	this.left;
 	this.top;
@@ -19,7 +19,9 @@ function Group(shape)   //Group object contains shapes and groups in group
    	this.phi=0;  //angle of rotation
 	//this.showmembers=showmembers;
 	
-	if(arguments.length>0)
+	GROUPS[this.name]=this;
+	
+	if(arguments.length>1)
 	{
 		this.members.push(shape);
 	}
@@ -30,6 +32,7 @@ function Group(shape)   //Group object contains shapes and groups in group
 	this.groupRotate=groupRotate;
 	this.update=update;
 	this.elType=elType;
+	this.groupToText=groupToText;
 }
 
 
@@ -100,7 +103,7 @@ function Union(A,B)
 
 function groupJoin()  //groups together array of  groups  place $("boundarydrop").childNodes[].group into any array SELgroup before using for group by boundaries
 {
-	var group=new Group();
+	var group=new Group("group"+(GCOUNT++));
 	var SELgroup;
 	var left=1000000;
 	var top=1000000;
@@ -145,7 +148,7 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 
 function copyGroup(group,offset,theatre)
 {
-	var groupcopy=new Group();
+	var groupcopy=new Group("group"+(GCOUNT++));
 	groupcopy.left=group.left+offset;
 	groupcopy.top=group.top+offset;
 	groupcopy.width=group.width;
