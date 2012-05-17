@@ -304,7 +304,7 @@ img.marker {
 	width: 100%;
 	height:50px;
 	background-color:#66FFFF;
-	z-index:2;
+	z-index:1;
 }
 
 
@@ -374,20 +374,13 @@ img.marker {
 	height:25px;
 }
 
-div.bar {
-	background-color:#66FFFF;
-	top: 0px;
-	left:0px;
-	height:29px;
-	width:107px;
-}
 
 #anibar {
 	top: 60px;
-	left:5px;
-	width: 115px;
-	height:520px;
-
+	left:200px;
+	width: 95px;
+	height:240px;
+	z-index:1;
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
@@ -396,212 +389,58 @@ div.bar {
 #anibarhd {
 	top: 0px;
 	left:0px;
-	width: 115px;
-	height:25px;
-
+	width: 100%;
+	height:23px;
+	text-align:center;
 	border-bottom:solid 1px #000000;
 	background-color:#000099;
 	color:#FFFFFF;
 }
 
-#anigroup {
-	top:260px;
-	left:5px;
-	width:107px;
-	height:480px;
-	clip:rect(0, 107, 250, 0);
-}
-
-#msggroup {
-	top:2px;
+#anicontent {
+	top:25px;
 	left:0px;
-	width:97px;
-	height:110px;
-	font-size:12px;
-	padding:4px 4px 4px 4px;
-	border:solid 1px #000000;
-	background-color:#66FFFF;
-	visibility:hidden;
-
+	width:100%;
+	height:210px;
 }
 
-#msgblank {
-	top:0px;
-	left:0px;
-	width:107px;
-	height:250px;
-	background-color:#66FFFF;
-	visibility:hidden;
-
-}
-
-#buildgroup {
-	top: 30px;
-	left:5px;
-	width: 107px;
-	height:220px;
-	background-color:#66FFFF;
-}
-
-#anibuild {
-	top: 0px;
-	left:0px;
-	width: 105px;
+#anishape, #anigroup, #aniscene, #anisprite, #anitween, #anitrack, #anifilm {
+	left:2%;
+	width: 92%;
 	height:25px;
-	background-color:#FFFFFF;
-	background-color:#000099;
+	background-color:#000000;
 	color:#FFFFFF;
 	border:solid 1px black;
+	text-align: center;
+	cursor: arrow;
 }
 
-#scenegroup{
-	top: 0px;
-	left:0px;
-	width: 107px;
-	height:130px;
+#anishape {
+	top: 2px;
+}
+
+#anigroup {
+	top: 32px;
 }
 
 #aniscene {
-	top: 4px;
-	left:0px;
-	width: 105px;
-	height:25px;
-	background-color:#000099;
-	color:#FFFFFF;
-	border:solid 1px black;
-}
-
-#spritegroup{
-	top: 130px;
-	left:0px;
-	width: 107px;
-	height:130px;
+	top: 62px;
 }
 
 #anisprite {
-	top: 4px;
-	left:0px;
-	width: 105px;
-	height:25px;
-	background-color:#000099;
-	color:#FFFFFF;
-	border:solid 1px black;
+	top: 92px;
 }
-
-#tweengroup{
-	top: 335px;
-	left:0px;
-	width: 107px;
-	height:345px;
-}
-
 
 #anitween {
-	top: 4px;
-	left:0px;
-	width: 105px;
-	height:25px;
-	background-color:#000099;
-	color:#FFFFFF;
-	filter:alpha(opacity=60);
-	opacity:0.6;
-	border:solid 1px black;
-}
-
-#trackgroup{
-	top: 395px;
-	left:0px;
-	width: 107px;
-	height:130px;
+	top: 122px;
 }
 
 #anitrack {
-	top: 4px;
-	left:0px;
-	width: 105px;
-	height:25px;
-	background-color:#000099;
-	color:#FFFFFF;
-	filter:alpha(opacity=60);
-	opacity:0.6;
-	border:solid 1px black;
-}
-
-#filmgroup{
-	top: 395px;
-	left:0px;
-	width: 107px;
-	height:345px;
+	top: 152px;
 }
 
 #anifilm {
-	top: 4px;
-	left:0px;
-	width: 105px;
-	height:25px;
-	background-color:#000099;
-	color:#FFFFFF;
-	filter:alpha(opacity=60);
-	opacity:0.6;
-	border:solid 1px black;
-}
-
-#filmhold {
-	top: 31px;
-	left:0px;
-	width: 105px;
-	height:97px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
-	overflow:auto;
-}
-#trackhold {
-	top:31px;
-	left:0px;
-	width: 105px;
-	height:97px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
-	overflow:auto;
-}
-
-#spritehold {
-	top: 31px;
-	left:0px;
-	width: 105px;
-	height:97px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
-	overflow:auto;
-}
-
-#tweenhold {
-	top: 31px;
-	left:0px;
-	width: 105px;
-	height:97px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
-	overflow:auto;
-}
-
-#scenehold {
-	top: 31px;
-	left:0px;
-	width: 105px;
-	height:97px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
-	overflow:auto;
-}
-
-#buildhold {
-	top: 26px;
-	left:0px;
-	width: 105px;
-	height:190px;
-	background-color:#FFFFFF;
-	border:solid 1px black;
+	top: 182px;
 }
 
 #gradcanvas {
@@ -1017,7 +856,7 @@ films = {};
 EXCANVASUSED = !document.createElement("canvas").getContext;
 
 
-String.prototype.elType=elType;
+//String.prototype.elType=elType;
 
 if(typeof String.prototype.trim !== 'function') {
   String.prototype.trim = function() {
@@ -1254,285 +1093,7 @@ function showmenu()
 	}
 }
 
-function animenuset(id)
-{
-	$('aniscene').style.opacity=0.6;
-	$('anisprite').style.opacity=0.6;
-	$('anitween').style.opacity=0.6;
-	$('anitrack').style.opacity=0.6;
-	$('anifilm').style.opacity=0.6;
-	if (EXCANVASUSED)
-	{
-		$('aniscene').filters.alpha.opacity=60;
-		$('anisprite').filters.alpha.opacity=60;
-		$('anitween').filters.alpha.opacity=60;
-		$('anitrack').filters.alpha.opacity=60;
-		$('anifilm').filters.alpha.opacity=60;
-	}
-	$('aniscene').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('aniscene').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};	
-	$('anisprite').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('anisprite').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
-	$('anitween').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('anitween').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
-	$('anitrack').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('anitrack').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
-	$('anifilm').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('anifilm').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};
-	$('ani'+id).style.opacity=1;
-	if (EXCANVASUSED) {$('ani'+id).filters.alpha.opacity=100};
-	$('ani'+id).onmouseover=function() {};
-	$('ani'+id).onmouseout=function() {};
-	switch(id)
-	{
-		case "scene":
-			movenotscene();
-		break;
-		case "sprite":
-			movenotsprite();
-		break;
-		case "tween":
-			movenottween()
-		break;
-		case "track":
-			movenottrack()
-		break
-		case "film":
-			movenotfilm()
-		break
-	} 
 
-}
-
-function movenotscene()
-{
-		var finishedfilm=false;
-		var finishedtrack=false;
-		var finishedtween=false;
-		var finishedsprite=false;
-		if (parseInt($('trackgroup').style.top)<220)
-		{
-			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
-		}
-		else
-		{
-			$('trackgroup').style.top=220;
-			finishedtrack=true;
-		}
-		if (parseInt($('filmgroup').style.top)<190)
-		{
-			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
-		}
-		else
-		{
-			$('filmgroup').style.top=190;
-			finishedfilm=true;
-		}
-
-		if (parseInt($('tweengroup').style.top)<160)
-		{
-			$('tweengroup').style.top=parseInt($('tweengroup').style.top)+10
-		}
-		else
-		{
-			$('tweengroup').style.top=160;
-			finishedtween=true;
-		}
-		if (parseInt($('spritegroup').style.top)<130)
-		{
-			$('spritegroup').style.top=parseInt($('spritegroup').style.top)+10
-		}
-		else
-		{
-			$('spritegroup').style.top=130;
-			finishedsprite=true;
-		}		
-		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotscene()},10)}			
-}
-
-function movenotsprite()
-{
-		var finishedfilm=false;
-		var finishedtrack=false;
-		var finishedtween=false;
-		var finishedsprite=false;
-		if (parseInt($('trackgroup').style.top)<220)
-		{
-			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
-		}
-		else
-		{
-			$('trackgroup').style.top=220;
-			finishedtrack=true;
-		}
-		if (parseInt($('filmgroup').style.top)<190)
-		{
-			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
-		}
-		else
-		{
-			$('filmgroup').style.top=190;
-			finishedfilm=true;
-		}
-		
-		if (parseInt($('tweengroup').style.top)<160)
-		{
-			$('tweengroup').style.top=parseInt($('tweengroup').style.top)+10
-		}
-		else
-		{
-			$('tweengroup').style.top=160;
-			finishedtween=true;
-		}
-		if (parseInt($('spritegroup').style.top)>30)
-		{
-			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
-		}
-		else
-		{
-			$('spritegroup').style.top=30;
-			finishedsprite=true;
-		}		
-		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotsprite()},10)}			
-}
-
-function movenottween()
-{
-		var finishedfilm=false;
-		var finishedtrack=false;
-		var finishedtween=false;
-		var finishedsprite=false;
-		if (parseInt($('trackgroup').style.top)<220)
-		{
-			$('trackgroup').style.top=parseInt($('trackgroup').style.top)+10
-		}
-		else
-		{
-			$('trackgroup').style.top=220;
-			finishedtrack=true;
-		}
-		if (parseInt($('filmgroup').style.top)<190)
-		{
-			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
-		}
-		else
-		{
-			$('filmgroup').style.top=190;
-			finishedfilm=true;
-		}
-		
-		if (parseInt($('tweengroup').style.top)>60)
-		{
-			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
-		}
-		else
-		{
-			$('tweengroup').style.top=60;
-			finishedtween=true;
-		}
-		if (parseInt($('spritegroup').style.top)>30)
-		{
-			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
-		}
-		else
-		{
-			$('spritegroup').style.top=30;
-			finishedsprite=true;
-		}		
-		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenottween()},10)}			
-}
-
-function movenottrack()
-{
-		var finishedfilm=false;
-		var finishedtrack=false;
-		var finishedtween=false;
-		var finishedsprite=false;
-		if (parseInt($('trackgroup').style.top)>120)
-		{
-			$('trackgroup').style.top=parseInt($('trackgroup').style.top)-10
-		}
-		else
-		{
-			$('trackgroup').style.top=120;
-			finishedtrack=true;
-		}
-		if (parseInt($('filmgroup').style.top)<90)
-		{
-			$('filmgroup').style.top=parseInt($('filmgroup').style.top)+10
-		}
-		else
-		{
-			$('filmgroup').style.top=90;
-			finishedfilm=true;
-		}
-		
-		if (parseInt($('tweengroup').style.top)>60)
-		{
-			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
-		}
-		else
-		{
-			$('tweengroup').style.top=60;
-			finishedtween=true;
-		}
-		if (parseInt($('spritegroup').style.top)>30)
-		{
-			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
-		}
-		else
-		{
-			$('spritegroup').style.top=30;
-			finishedsprite=true;
-		}
-		if (!(finishedfilm && finishedtween && finishedtrack  && finishedsprite)) {setTimeout(function() {movenottrack()},10)}			
-}
-
-function movenotfilm()
-{
-		var finishedfilm=false;
-		var finishedtrack=false;
-		var finishedtween=false;
-		var finishedsprite=false;
-		if (parseInt($('trackgroup').style.top)>220)
-		{
-			$('trackgroup').style.top=parseInt($('trackgroup').style.top)-10
-		}
-		else
-		{
-			$('trackgroup').style.top=220;
-			finishedtrack=true;
-		}
-		if (parseInt($('filmgroup').style.top)>90)
-		{
-			$('filmgroup').style.top=parseInt($('filmgroup').style.top)-10
-		}
-		else
-		{
-			$('filmgroup').style.top=90;
-			finishedfilm=true;
-		}
-		
-		if (parseInt($('tweengroup').style.top)>60)
-		{
-			$('tweengroup').style.top=parseInt($('tweengroup').style.top)-10
-		}
-		else
-		{
-			$('tweengroup').style.top=60;
-			finishedtween=true;
-		}
-		if (parseInt($('spritegroup').style.top)>30)
-		{
-			$('spritegroup').style.top=parseInt($('spritegroup').style.top)-10
-		}
-		else
-		{
-			$('spritegroup').style.top=30;
-			finishedsprite=true;
-		}
-		if (!(finishedfilm && finishedtween && finishedtrack && finishedsprite)) {setTimeout(function() {movenotfilm()},10)}
-}
 
 function setStage(stagewidth,stageheight)
 {
@@ -1617,12 +1178,10 @@ function main()
 		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
 	}
 		
-	$('toolbar').style.left=10+"px";
+	$('toolbar').style.left=20+"px";
 	$('toolbar').style.top=60+"px";
-	$('filmsbar').style.left=10+"px";
-	$('filmsbar').style.top=60+"px";
-	$('anibar').style.left=(screen.availWidth-125)+"px";
-	$('anibar').style.top=60+"px";
+	$('anibar').style.left=(SCRW-120)+"px";
+	$('anibar').style.top="60px";
 /*	$('canvasdiv').style.height=(maxheight-52)+"px";
 	$('canvasdiv').style.width=maxwidth+"px";
 	$('canvasdiv').style.zIndex=2;*/
@@ -1837,14 +1396,6 @@ function main()
 	$('visit').style.visibility='visible';
 	$('help').style.visibility='visible';
 	
-	$('filmgroup').style.top=190+"px";	
-	$('trackgroup').style.top=220+"px";	
-	$('tweengroup').style.top=160+"px";
-	$('spritegroup').style.top=130+"px";	
-	$('scenegroup').style.top=0+"px";
-	
-	$('anibuild').onmouseover = function() {this.style.opacity=1;this.filters.alpha.opacity=100};
-	$('anibuild').onmouseout = function() {this.style.opacity=0.6;this.filters.alpha.opacity=60};		
 	
 	DDtlbr=new YAHOO.util.DD('toolbar');
 	DDtlbr.setHandleElId('tlbrhead');	
@@ -2028,14 +1579,6 @@ function main()
 	$('spritecentre').style.left=500+"px";
 	$('spritecentre').style.top=200+"px";
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
-
-	
-	
-
-
-	$('msg').innerHTML=flname+fstar;
-	$('sceneradio').checked='checked';
-	$('scenehold').innerHTML='';
 	
 	if (window.File && window.FileReader && window.FileList && window.Blob && !iop) 
 	{
@@ -2380,69 +1923,31 @@ function main()
 	</div>
 </div>
 
+<!--Header bar ............................................................... -->
+<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px; '> </div>
+ <div id='logo'><img alt="" src="assets/logo.png"></div>
+  
+  <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
+  <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
+  <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
+	
+  <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
+</div>
+
 <!--toolbars ............................................................... -->
 <div id='anibar'>
   <div id='anibarhd'> &nbsp; Animation </div>
   
-   <div id='anigroup'>	
-
-	<div id='scenegroup'>
-		<div class="bar"></div>	
-		<div id='aniscene' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('scene')">&nbsp; Scenery </div>
-		<div id='scenehold'></div>
-	</div>
-	<div id='spritegroup'>
-		<div class="bar"></div>	
-		<div id='anisprite' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('sprite')">&nbsp; Sprites </div>
-		<div id='spritehold'></div>
-	</div>
-	<div id='tweengroup'>
-		<div class="bar"></div>		
-		<div id='anitween' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('tween')">&nbsp; Tweens </div>
-		<div id='tweenhold'></div>
-	</div>
-	<div id='filmgroup'>
-		<div class="bar"></div>	
-		<div id='anifilm' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('film')">&nbsp; Films </div>
-		<div id='filmhold'></div>
-	</div>
-	<div id='trackgroup'>
-		<div class="bar"></div>	
-		<div id='anitrack' onMouseOver="this.style.opacity=1;this.filters.alpha.opacity=100"
-		onmouseout="this.style.opacity=0.6;this.filters.alpha.opacity=60" onClick="animenuset('track')">&nbsp; Tracks </div>
-		<div id='trackhold'></div>
-	</div>
+   <div id='anicontent'>
+   		<div id='anishape' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('scene')">&nbsp;&nbsp;Shapes </div>
+		<div id='anigroup' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('sprite')">&nbsp;&nbsp;Groups </div>	
+		<div id='aniscene' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('scene')">&nbsp;&nbsp;Scenery </div>
+		<div id='anisprite' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('sprite')">&nbsp;&nbsp;Sprites </div>
+		<div id='anitween' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('tween')">&nbsp;&nbsp;Tweens </div>
+		<div id='anifilm' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('film')">&nbsp;&nbsp;Films </div>
+		<div id='anitrack' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('track')">&nbsp;&nbsp;Tracks </div>
    </div>
-   
-   <div id='msggroup'> </div>   
-   <div id='msgblank'> </div>  
-   
-	<div id='buildgroup'>
-		<div id='anibuild'>&nbsp; Creator</div>	
-		<div id='buildhold'>
-		    <p>
-			<input type="radio" id="sceneradio" name="buildradio" onChange="aniobj='scene'" checked="checked"> Scenery<br> 
-			<input type="radio" name="buildradio" onChange="aniobj='sprite'"> Sprite<br>
-			<input type="radio" name="buildradio" onChange="aniobj='tween'"> Tween<br>
-			<input type="radio" name="buildradio" onChange="aniobj='track'"> Track<br>
-			<input type="radio" name="buildradio" onChange="aniobj='film'"> Film<br><p>
-			&nbsp;&nbsp;&nbsp;<input type="button" onClick="buildobj()" value="Build">
-		</div> 
-	</div>	
 </div>
-
-<div id='filmsbar'>
-  <div id='filmsbrhead'> Film Elements </div>
-  <div id='filmsholder'>
-Film Elements from back to front.<br>
-<ul id="anielmorder" style="list-style-type:none;padding:2px;text-align:left"></ul>
-</div>
-<div id='filmsmove'> <img alt="" src="assets/uparw.png" onClick="moveliup()">&nbsp; &nbsp;&nbsp;<img alt="" src="assets/downarw.png" onClick="movelidown()"></div>
- </div>
 
 <div id='toolbar'>
   <div id='tlbrhead'> &nbsp; Tools </div>
@@ -2474,15 +1979,7 @@ Film Elements from back to front.<br>
 
 
 
-<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px; '> </div>
- <div id='logo'><img alt="" src="assets/logo.png"></div>
-  
-  <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
-  <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
-  <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
-	
-  <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
-</div>
+
 <div id='vecdiv'>
   
   <canvas id='vecanv'></canvas>
