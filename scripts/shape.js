@@ -178,6 +178,7 @@ function Shape(name,open,editable,type)
    	this.type=type;
    	var p=new Point(0,0);
    	this.tplftcrnr=p; //coordinates of top left of boundary box;
+   	p=new Point(0,0);
    	this.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
    	this.strokeStyle=[0,0,0,1];
    	this.fillStyle=[255,255,255,1];
@@ -208,6 +209,7 @@ function Shape(name,open,editable,type)
    	this.path.next=this.path;
    	this.path.prev=this.path;
    	this.group=new Group("group"+(GCOUNT++),this);
+   	this.elType="_SHAPE";
    	
    	SHAPES[this.name]=this;
    	
@@ -225,7 +227,6 @@ function Shape(name,open,editable,type)
    	this.inAgroup=inAgroup;
    	this.isOn=isOn;
    	this.isIn=isIn;
-   	this.elType=elType;
 	this.addAllMarks=addAllMarks; 
 	this.ShapeToText=ShapeToText; 	
    	return this;

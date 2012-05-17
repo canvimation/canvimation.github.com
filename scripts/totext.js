@@ -17,7 +17,7 @@ function groupToText()
 	groupAsText+=this.phi+'|';
 	for(var i=0; i<this.members.length; i++)
 	{
-		if(this.members[i].elType()=="shape")
+		if(this.members[i].elType=="_SHAPE")
 		{
 			groupAsText+="s!";
 		}
@@ -27,7 +27,6 @@ function groupToText()
 		}
 		groupAsText+=this.members[i].name+":";
 	}
-	
 	return groupAsText.slice(0,-1);
 }
 
@@ -47,7 +46,7 @@ function CanvasToText()
 		var group=GROUPS[name];
 		params+=group.groupToText()+'*';
 	}
-	params=params.slice(0,-2);
+	params=params.slice(0,-1);
 	var newwindow=window.open('','_blank');
  	newwindow.document.write(params);
 	newwindow.document.close();

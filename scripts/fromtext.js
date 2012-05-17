@@ -11,17 +11,17 @@ function resetshapestage(txt)
 	{
 		var stagewidth=parseInt(params[3]);
 		var stageheight=parseInt(params[4]);
+		var c=parseInt(params[5]);
 	}
 	else
 	{
 		var stagewidth=parseInt(params[0]);
 		var stageheight=parseInt(params[1]);
+		var c=0;
 	}
-	while ($("shapestage").childNodes.length>0)
-	{
-		$("shapestage").childNodes.pop();
-	}
+	clear($("shapestage"));
 	setStage(stagewidth,stageheight);
+	$("boundarydrop").style.visibility="visible";
 	SHAPES={};
 	SELECTED={};
 	SELECTEDSHAPE;
@@ -34,18 +34,25 @@ function resetshapestage(txt)
 	GCOUNT=0;
 	ZPOS=1;
 	ZNEG=-1;
+	return c;
 }
 
 function resetcanv2(shapetxt,grouptxt)
 {
 	var shape,group;
 	var shapeparams=shapetxt.split('*');
-	resetshapestage(shapeparams.shift());	
+	resetshapestage(shapeparams.shift());
+	var zmax=0;
+	var zmin=10000000	
 	while (shapeparams.length>0)
 	{
 		shape=paramstoshape(shapeparams.shift());
+		if(shape.zIndex>zmax) {zmax=shape.zIndex};
+		if(shape.zIndex<zmin) {zmin=shape.zIndex};
 		shape.addTo($("shapestage"));
 	}
+	ZPOS=zmax+1;
+	ZNEG=zmin-1;
 	var groupparams=grouptxt.split('*');
 	while(groupparams.length>0)
 	{
@@ -68,7 +75,9 @@ function resetcanv2(shapetxt,grouptxt)
 	}
 	for(var name in SHAPES)
 	{
-		SHAPES[name].draw();
+		shape=SHAPES[name];
+		shape.group=GROUPS[shape.group]; //change shape.group from group.name to actual group
+		shape.draw();
 	}
 }
 
@@ -107,7 +116,7 @@ function paramstoshape(p)
 	{
 		shape.radGrad[i]=parseInt(shape.radGrad[i])	
 	}	
-	carray=p[17].split(':');
+	var carray=p[17].split(':');
 	shape.colorStops = [];
 	for (var i=0; i<carray.length; i++)
 	{
@@ -128,24 +137,40 @@ function paramstoshape(p)
 		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
 	}	
 	shape.zIndex = parseFloat(p[24]);
-	shape.group = p[26];
-	var path=p[25].split("!");
+	shape.crnrradius = parseInt(p[25])
+	shape.group = p[27];
+	var path=p[26].split("!");
 	
 	while (path.length>0)
 	{
-		nodedata=path.pop().split(":");
-		point=new Point(parseInt(nodedata[2]),parseInt(nodedata[3]));
+		nodedata=path.shift().split(":");
+		point=new Point(parseFloat(nodedata[2]),parseFloat(nodedata[3]));
 		node=new Node(point);
 		node.vertex=nodedata[0];
 		node.corner=nodedata[1];
-		node.point.x=nodedata[4];
-		node.point.y=nodedata[5];
-		node.ctrl1.x=nodedata[6];
-		node.ctrl1.y=nodedata[7];
-		node.ctrl2.x=nodedata[8];
-		node.ctrl2.y=nodedata[9];
+		node.ctrl1.x=nodedata[4];
+		if(node.ctrl1.x !="non")
+		{
+			node.ctrl1.x=parseFloat(node.ctrl1.x)
+		}
+		node.ctrl1.y=nodedata[5];
+		if(node.ctrl1.y !="non")
+		{
+			node.ctrl1.y=parseFloat(node.ctrl1.y)
+		}
+		node.ctrl2.x=nodedata[6];
+		if(node.ctrl2.x !="non")
+		{
+			node.ctrl2.x=parseFloat(node.ctrl2.x)
+		}
+		node.ctrl2.y=nodedata[7];
+		if(node.ctrl2.y !="non")
+		{
+			node.ctrl2.y=parseFloat(node.ctrl2.y)
+		}
 		shape.addNode(node);
 	}
+	
 	return shape;
 }
 
@@ -164,7 +189,7 @@ function paramstogroup(p)
 	members=p[8].split(":");
 	while(members.length>0)
 	{
-		member=members.pop();
+		member=members.shift();
 		member=member.split("!");
 		group.members.push(member);
 	}
@@ -172,147 +197,222 @@ function paramstogroup(p)
 
 function resetcanv(txt)
 {
+	var shape,group,subgroup;
+	var ptr;
+	var right,bottom;
+	var ptrlist=[];
+	var namelist=[];
 	var params=txt.split('*');
-	resetdrawing(params[0]);
-	zmax=0;
-	zmin=10000000	
+	var canvases=resetshapestage(params[0]);
+	var zmax=0;
+	var zmin=10000000	
 	for (var c=0; c<canvases; c++)
 	{
-		drawline(paramstocanvas(c,params[c+1]));
+		shape=oldparamstoshape(params[c+1]);
+		if(shape.zIndex>zmax) {zmax=shape.zIndex};
+		if(shape.zIndex<zmin) {zmin=shape.zIndex};
+		shape.addTo($("shapestage"));
+		delete GROUPS[shape.group.name];
 	}
-	zpos=zmax+1;
-	zneg=zmin-1;
-	var cdiv=$('canvasdiv');
-	var ptrlist=[];
-	for (var i=0; i<cdiv.childNodes.length; i++)
+	GCOUNT=0;
+	ZPOS=zmax+1;
+	ZNEG=zmin-1;
+	for (var name in SHAPES)
 	{
-		cgroup=cdiv.childNodes[i].group;
-		for (var j=0; j<cgroup.length; j++)
+		var shape=SHAPES[name];
+		shape.setCorners();
+		if(shape.grouplist!="shape")
 		{
-			ptr=cgroup[j];
+			grouplist=shape.grouplist;
+			ptr=grouplist[0];
 			if (ptrlist.indexOf(ptr)==-1)
 			{
 				ptrlist.push(ptr);
-				gp[ptr]=[];
-				
+				group=new Group("Group"+ptr);
+				GROUPS["Group"+ptr]=group;
+				group.members.push(shape);
+				group.left=shape.group.left;
+				group.top=shape.group.top;
+				group.width=shape.group.width;
+				group.height=shape.group.height;
 			}
-			gp[ptr].push(cdiv.childNodes[i])	
+			else
+			{
+				group=GROUPS["Group"+ptr];
+				group.members.push(shape);
+			}
+			group.members.push(shape);
+			group.left=shape.group.left;
+			group.top=shape.group.top;
+			group.width=shape.group.width;
+			group.height=shape.group.height;
+			group.centreOfRotation.x=group.left+group.width/2;
+			group.centreOfRotation.y=group.top+group.height/2;
+			group.phi=0;
+			for(i=1;i<grouplist.length;i++)
+			{
+				ptr=grouplist[i];
+				if (ptrlist.indexOf(ptr)==-1)
+				{
+					ptrlist.push(ptr);
+					group=new Group("Group"+ptr);
+					GROUPS["Group"+ptr]=group;
+					subgroup=GROUPS["Group"+grouplist[i-1]];
+					group.members.push(subgroup);
+					
+				}
+				else
+				{
+					group=GROUPS["Group"+ptr];
+					subgroup=GROUPS["Group"+grouplist[i-1]];
+					if(!(group.contains(subgroup)))
+					{
+						group.members.push(subgroup);
+					}
+				}
+			
+				group.left=Math.min(shape.group.left,subgroup.left)
+				group.top=Math.min(shape.group.top,subgroup.top);
+				right=Math.max(shape.group.left+shape.group.width,subgroup.left+subgroup.width);
+				bottom=Math.max(shape.group.top+shape.group.height,subgroup.top+subgroup.height);
+				group.width=right-group.left;
+				group.height=bottom-group.top;
+				group.centreOfRotation.x=group.left+group.width/2;
+				group.centreOfRotation.y=group.top+group.height/2;
+				group.phi=0;
+			}	
+			shape.group=group;
 		}
 	}
-	$('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e))};
+	for(var name in SHAPES)
+	{
+		shape=SHAPES[name];
+		alert(shape.group.showmembers());
+		shape.setCorners();
+		delete shape["bleft"];
+		delete shape["btop"];
+		delete shape["bwidth"];
+		delete shape["bheight"];
+		delete shape["cx"];
+		delete shape["cy"];
+		delete shape["phi"];
+		delete shape["grouplist"];
+		shape.draw();
+	}
 }
 
-function cancelfromtext()
+function oldparamstoshape(p)
 {
-	if ($('boxfrom')) {$('boxfrom').parentNode.removeChild($('boxfrom'))};
-}
-
-function paramstocanvas(n,canv)
-{
-	canv=canv.split('|');
-	var pathdef = canv[44].split(',');
-	var ncanv=new Canvasdiv(n,pathdef);
-	ncanv.bleft = parseInt(canv[0]);
-	ncanv.btop = parseInt(canv[1]);
-	ncanv.bwidth = parseInt(canv[2]);
-	ncanv.bheight = parseInt(canv[3]);
-	ncanv.scleft = parseInt(canv[4]);
-	ncanv.sctop = parseInt(canv[5]);
-	ncanv.scx = parseInt(canv[6]);
-	ncanv.scy = parseInt(canv[7]);
-	ncanv.sox = parseInt(canv[8]);
-	ncanv.soy = parseInt(canv[9]);
-	ncanv.ox = parseInt(canv[10]);
-	ncanv.oy = parseInt(canv[11]);
-	ncanv.sox = parseInt(canv[12]);
-	ncanv.cx = parseInt(canv[13]);
-	ncanv.cy = parseInt(canv[14]);
-	ncanv.rr = parseInt(canv[15]);
-	ncanv.phi = parseFloat(canv[16]);
-	ncanv.rotated = canv[17]=='1';
-	ncanv.ratio = parseFloat(canv[18]);
-	ncanv.strokeStyle = canv[19].split(',');
-	for (var i=0;i<ncanv.strokeStyle.length;i++)
+	var nodedata,point,ctrl1,ctrl2;
+	var node;
+	p=p.split('|');
+	var pathdef = p[44].split(',');
+	var re=/square/;
+	var type=pathdef[2].replace(re,"rectangle");
+	re=/circle/;
+	type=type.replace(re,"ellipse");
+	var shape=new Shape(p[47],pathdef[0]=="open",pathdef[1]=="edit",type);
+	shape.bleft = parseInt(p[0]);
+	shape.btop = parseInt(p[1]);
+	shape.bwidth = parseInt(p[2]);
+	shape.bheight = parseInt(p[3]);
+	shape.cx = parseInt(p[13]);
+	shape.cy = parseInt(p[14]);
+	shape.phi = parseFloat(p[16]);
+	shape.strokeStyle = p[19].split(',');
+	for (var i=0;i<shape.strokeStyle.length;i++)
 	{
-		ncanv.strokeStyle[i]=parseInt(ncanv.strokeStyle[i])	
+		shape.strokeStyle[i]=parseInt(shape.strokeStyle[i])	
 	}	
-	ncanv.fillStyle = canv[20].split(',');
-	for (var i=0;i<ncanv.fillStyle.length;i++)
+	shape.fillStyle = p[20].split(',');
+	for (var i=0;i<shape.fillStyle.length;i++)
 	{
-		ncanv.fillStyle[i]=parseInt(ncanv.fillStyle[i])	
+		shape.fillStyle[i]=parseInt(shape.fillStyle[i])	
 	}	
-	ncanv.lineWidth = parseInt(canv[21]);
-	ncanv.lineCap = canv[22];
-	ncanv.lineJoin = canv[23];
-	ncanv.justfill = canv[24]=='1';
-	ncanv.linearfill = canv[25]=='1';
-	ncanv.lineGrad = canv[26].split(',');
-	for (var i=0;i<ncanv.lineGrad.length;i++)
+	shape.lineWidth = parseInt(p[21]);
+	shape.lineCap = p[22];
+	shape.lineJoin = p[23];
+	shape.justfill = p[24]=='1';
+	shape.linearfill = p[25]=='1';
+	shape.lineGrad = p[26].split(',');
+	for (var i=0;i<shape.lineGrad.length;i++)
 	{
-		ncanv.lineGrad[i]=parseInt(ncanv.lineGrad[i])	
+		shape.lineGrad[i]=parseInt(shape.lineGrad[i])	
 	}	
-	ncanv.radGrad = canv[27].split(',');
-	for (var i=0;i<ncanv.radGrad.length;i++)
+	shape.radGrad = p[27].split(',');
+	for (var i=0;i<shape.radGrad.length;i++)
 	{
-		ncanv.radGrad[i]=parseInt(ncanv.radGrad[i])	
+		shape.radGrad[i]=parseInt(shape.radGrad[i])	
 	}	
-	carray=canv[28].split(':');
-	ncanv.colorStops = [];
+	var carray=p[28].split(':');
+	shape.colorStops = [];
 	for (var i=0; i<carray.length; i++)
 	{
-		ncanv.colorStops[i]=carray[i].split(',');
-		for (var j=0;j<ncanv.colorStops[i].length;j++)
+		shape.colorStops[i]=carray[i].split(',');
+		for (var j=0;j<shape.colorStops[i].length;j++)
 		{
-			ncanv.colorStops[i][j]=parseFloat(ncanv.colorStops[i][j])	
+			shape.colorStops[i][j]=parseFloat(shape.colorStops[i][j])	
 		}		
 	}
-	ncanv.stopn = parseInt(canv[29]);
-	ncanv.shadow = canv[30]=='1';
-	ncanv.shadowOffsetX = parseInt(canv[31]);
-	ncanv.shadowOffsetY = parseInt(canv[32]);
-	ncanv.shadowBlur = parseFloat(canv[33]);
-	ncanv.shadowColor = canv[34].split(',');
-	for (var i=0;i<ncanv.shadowColor.length;i++)
+	shape.stopn = parseInt(p[29]);
+	shape.shadow = p[30]=='1';
+	shape.shadowOffsetX = parseInt(p[31]);
+	shape.shadowOffsetY = parseInt(p[32]);
+	shape.shadowBlur = parseFloat(p[33]);
+	shape.shadowColor = p[34].split(',');
+	for (var i=0;i<shape.shadowColor.length;i++)
 	{
-		ncanv.shadowColor[i]=parseInt(ncanv.shadowColor[i])	
+		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
 	}	
-	ncanv.ScaleX = parseFloat(canv[35]);
-	ncanv.ScaleY = parseFloat(canv[36]);
-	ncanv.zIndex = parseInt(canv[37]);
-	ncanv.style.zIndex=ncanv.zIndex;
-	if(ncanv.zIndex>zmax) {zmax=ncanv.zIndex};
-	if(ncanv.zIndex<zmin) {zmin=ncanv.zIndex};
-	ncanv.rotate = parseInt(canv[38]);
-	ncanv.clockw = canv[39]=='1';
-	ncanv.complete = canv[40]=='1';
-	ncanv.group = [];
-	if (canv[41] != '')
+	shape.zIndex = parseInt(p[37]);
+	
+	shape.grouplist="shape"; //if left then only member of group is the shape itself created when shape created
+	if (p[41] != '') //not in a group
 	{
-		ncanv.group=canv[41].split(',');
-		for (var i=0;i<ncanv.group.length;i++)
+		shape.grouplist=p[41].split(',');
+		for (var i=0;i<shape.grouplist.length;i++)
 		{
-			ncanv.group[i]=parseInt(ncanv.group[i])	
+			shape.grouplist[i]=parseInt(shape.grouplist[i])	
 		}		
 	}
-	ncanv.boundary = canv[42];
-	ncanv.beztypes = [];
-	if (canv[43] != '')
+	shape.boundary = p[42];
+	shape.beztypes = [];
+	if (p[43] != '')
 	{
-		ncanv.beztypes=canv[43].split(',');
-	};
-	carray=canv[45].split(':');
+		var beztypes=p[43].split(',');
+	}
+	carray=p[45].split(':');
 	for (var i=0; i<carray.length; i++)
 	{
-		ncanv.path[i+3]=carray[i].split(',');
-		for(var j=1; j<ncanv.path[i+3].length; j++)
+		nodedata=carray[i].split(',');
+		point=new Point(nodedata[1],nodedata[2]);
+		node=new Node(point);
+		if (p[43] != '')
 		{
-			ncanv.path[i+3][j]=parseFloat(ncanv.path[i+3][j]);
+			node.corner=beztypes[i];
 		}
+		else
+		{
+			node.corner="corner";
+		}
+		if(nodedata[0]=="M" || nodedata[0]=="L")
+		{
+			point=new Point(nodedata[1],nodedata[2]);
+			node=new Node(point);
+		}
+		else
+		{
+			point=new Point(nodedata[5],nodedata[6]);
+			ctrl1=new Point(nodedata[1],nodedata[2]);
+			ctrl2=new Point(nodedata[3],nodedata[4]);
+			node=new Node(point,ctrl1,ctrl2);
+		} 
+		shape.addNode(node);
 	}
-	ncanv.radius = parseFloat(canv[46]);
-	ncanv.id=canv[47];
-	return ncanv;
+	shape.crnradius = parseFloat(p[46]);
+	return shape;
 }
+
 
 function fromText()
 {
@@ -321,6 +421,7 @@ function fromText()
 	{
 		$("filetextbox").style.visibility="visible";
 		var dropZone = $('drop_zone');
+		dropZone.innerHTML="";
 		dropZone.addEventListener('dragover', handleDragOver, false);
 		dropZone.addEventListener('drop', handleFileSelect, false);
 	}

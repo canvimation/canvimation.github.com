@@ -7,7 +7,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 function Group(name,shape)   //Group object contains shapes and groups in group
 {
-	this.type="_GROUP";
+	this.elType="_GROUP";
 	this.name=name;
 	this.members=[];
 	this.left;
@@ -17,7 +17,7 @@ function Group(name,shape)   //Group object contains shapes and groups in group
 	p=new Point(200,200);
    	this.centreOfRotation=p;
    	this.phi=0;  //angle of rotation
-	//this.showmembers=showmembers;
+	this.showmembers=showmembers;
 	
 	GROUPS[this.name]=this;
 	
@@ -31,8 +31,8 @@ function Group(name,shape)   //Group object contains shapes and groups in group
 	this.removeBoundary=removeBoundary;
 	this.groupRotate=groupRotate;
 	this.update=update;
-	this.elType=elType;
 	this.groupToText=groupToText;
+	this.contains=contains;
 }
 
 
@@ -41,21 +41,6 @@ function inAgroup()
 	return (this.group.members.length>1)
 }
 
-function elType()
-{
-	if(this.type=="_GROUP")
-	{
-		return "group";
-	}
-	else if(this.name in SHAPES)
-	{
-		return "shape";
-	}
-	else
-	{
-		return "undefined";
-	}
-}
 
 function memberShapes()
 {
@@ -75,7 +60,7 @@ function separate(list)
 	for(var i=0;i<list.length; i++)
 	{
 		collection=list[i];
-		if(collection.elType()=="group")
+		if(collection.elType=="_GROUP")
 		{
 			set=Union(set,separate(collection.members));
 		}
@@ -159,7 +144,7 @@ function copyGroup(group,offset,theatre)
 
 	for(var i=0; i<group.members.length; i++)
 	{
-		if(group.members[i].elType()=="group")
+		if(group.members[i].elType=="_GROUP")
 		{
 			groupcopy.members.push(copyGroup(group.members[i],offset,theatre));
 		}
@@ -198,6 +183,7 @@ function ungroup()
 		}
 		group.drawBoundary();
 	}
+	setTools();
 	$('ungroup').style.visibility="hidden";
 	$('editlines').style.visibility="hidden";
 	$('group').style.visibility="visible";
@@ -224,7 +210,7 @@ function update(l,t,dx,dy,scalew,scaleh)
 	this.centreOfRotation.y=t+(this.centreOfRotation.y-t)*scaleh;
 	for(var i=0;i<this.members.length;i++)
 	{
-		if(this.members[i].elType()=="group")
+		if(this.members[i].elType=="_GROUP")
 		{
 			this.members[i].update(l,t,dx,dy,scalew,scaleh); 
 		}
@@ -298,23 +284,39 @@ function groupRotate(phi)
 	this.drawBoundary();
 }
 
-/*
+function contains(subgroup)
+{
+	var group;
+	for(var i=0; i<this.members.length; i++)
+	{
+		if(this.members[i].elType=="_GROUP")
+		{
+			group=this.members[i];
+			if(group.name == subgroup.name)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 function showmembers()
 {
 	var mem="[";
 		for(var i=0; i<this.members.length; i++)
 		{
-			if(this.members[i].elType()=="group")
+			if(this.members[i].elType=="_GROUP")
 			{
 				mem+=this.members[i].showmembers();
 			}
 			else
 			{
 				var shape=this.members[i];
-				mem+=shape.name;
+				mem+=shape.name+",";
 			}
 		}
 		return mem+="]";
 
 }
-*/
+

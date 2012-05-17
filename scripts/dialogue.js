@@ -522,7 +522,7 @@ function updatename(name)
 	var shape=SELECTEDSHAPE;
 	var group=shape.group;
 	var members=group.members;
-	if(members[0].elType()=="shape")
+	if(members[0].elType=="_SHAPE")
 	{
 		if(name in SHAPES)
 		{
