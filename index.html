@@ -227,14 +227,14 @@ img.marker {
 .lbar {
 	left:0px;
 	width:2px;
-	height:100%;
+	height:50px;
 	background-color: #000000;
 }
 
 .rbar {
 	right:0px;
 	width:2px;
-	height:100%;
+	height:50px;
 	background-color: #000000;
 }
 
@@ -250,7 +250,6 @@ img.marker {
 	width:2px;
 	height:100%;
 	background-color: #000000;
-	cursor: w-resize;
 }
 
 .rightbar {
@@ -274,17 +273,8 @@ img.marker {
 	right:0px;
 	height:2px;
 	width:2px;
-	background-color: #000000;
+	background-color: #FFFFFF;
 	cursor: nw-resize;
-}
-
-.lcornerbar {
-	bottom:0px;
-	left:0px;
-	height:2px;
-	width:2px;
-	background-color: #000000;
-	cursor: ne-resize;
 }
 
 #drop_zone {
@@ -447,8 +437,8 @@ img.marker {
 	top: 60px;
 	left:200px;
 	width: 95px;
-	height:240px;
-	z-index:1;
+	height:180px;
+	z-index:4;
 	border:solid 1px #000000;
 	background-color:#FFFFFF;
 	visibility:hidden;
@@ -470,7 +460,7 @@ img.marker {
 	top:25px;
 	left:0px;
 	width:100%;
-	height:210px;
+	height:150px;
 }
 
 #anishape, #anigroup, #aniscene, #anisprite, #anitween, #anitrack, #anifilm {
@@ -908,12 +898,10 @@ var BOXES; //array of class dialogue boxes;
 var BOXNAME; //name of dialogue box, id with box dropped from end;
 var DD=[]; //array of drag and drop elements for dialogue boxes;
 
-var BARS=["left","right","bottom","rcorner","lcorner"]; //array for edge classes;
-var	ANIELS=["scene","sprite","track","tween","film"];
-var	MDOWN;
-var	MNWSE;
-var	MNESW;
-
+var BARS=["right","bottom","rcorner"]; //array for edge classes;
+var	ANIELS=["sc","sp","tr","tw","fm"];
+var ED=[]; //array of drag and drop elements for element boxes;
+var EDCOUNT=0; //counter for ED
 temptrack={};
 tracks = {};
 scenes = {};
@@ -1432,10 +1420,6 @@ function main()
 	$("p_paths").style.color="#95B3D7";
 	$("p_close").style.top=250+"px";
 	
-	$('scenebox').style.width=250+"px";
-	$('scenebox').style.height=250+"px";	
-	
-	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
 	{
@@ -1455,8 +1439,10 @@ function main()
 	for(var i=0; i<BOXES.length; i++)
 	{
 		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
-		BOXES[i].style.top=((SCRH-parseInt(BOXES[i].style.height))/2 - 52)+"px";
-		BOXES[i].style.left=((SCRW-parseInt(BOXES[i].style.width))/4)+"px";
+		BOXES[i].style.top=(60+i*30)+"px";
+		BOXES[i].style.left=(SCRW-600+i*30)+"px";
+		BOXES[i].style.width=250+"px";
+		BOXES[i].style.height=250+"px";
 		BOXES[i].style.clip="rect(1px,"+(parseInt(BOXES[i].style.width)+2)+"px,"+(parseInt(BOXES[i].style.height)+2)+"px,0px)";
 		BOXES[i].style.visibility="hidden";
 		$(BOXNAME+"content").style.height=(parseInt(BOXES[i].style.height)-50)+"px";
@@ -1466,21 +1452,18 @@ function main()
 		DD[i].setHandleElId(BOXNAME+"head");
 	}
 	
-/*	MLEFT=getElementsByClassName("leftbar");
-	BARS.push("left";
-	MRIGHT=getElementsByClassName("rightbar");
-	MDOWN=getElementsByClassName("bottombar");
-	MNWSE=getElementsByClassName("rcornerbar");
-	MNESW=getElementsByClassName("lcornerbar");
-	
 	for(var i=0;i<ANIELS.length;i++)
 	{
-		for(var j=0;j<MLEFT.length;j++)
+		for(var j=0;j<BARS.length;j++)
 		{
-			BOXNAME=
+			BOXNAME=BARS[j]+"bar"+ANIELS[i];
+			ED[EDCOUNT]=new YAHOO.util.DD(BOXNAME);
+			ED[EDCOUNT++].onDrag=function(e) {
+												resize(this.id);
+											}
 		}
-	}
-*/	
+	} 
+	
 	if(ieb)
 	{
 		DROPS=getElementsByClassName("theatre_style");
@@ -1588,8 +1571,7 @@ function main()
 	$('hueBarDiv').onclick=function(e) {
 											HueBarmoveTo(getPosition(e))
 										};															
-
-$('scenebox').style.visibility="visible";	
+	
  /*   if (gridcanv.getContext)
 	{
         gridcanv.ctx = gridcanv.getContext('2d');
@@ -2035,18 +2017,6 @@ $('scenebox').style.visibility="visible";
 </div>
 
 <!--toolbars ............................................................... -->
-<div id='anibar'>
-  <div id='anibarhd'>Elements</div>
-  
-   <div id='anicontent'>
-		<div id='aniscene' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('scene')">&nbsp;&nbsp;Scenery </div>
-		<div id='anisprite' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('sprite')">&nbsp;&nbsp;Sprites </div>
-		<div id='anitween' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('tween')">&nbsp;&nbsp;Tweens </div>
-		<div id='anifilm' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('film')">&nbsp;&nbsp;Films </div>
-		<div id='anitrack' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('track')">&nbsp;&nbsp;Tracks </div>
-   </div>
-</div>
-
 <div id='toolbar'>
   <div id='tlbrhead'> &nbsp; Tools </div>
   <div class="choice40" id='menushape'   onclick="showmenu()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="insert shapes" title="insert shapes" src="assets/menushapes.png"> </div>
@@ -2077,13 +2047,11 @@ $('scenebox').style.visibility="visible";
 
 <!--element boxes ............................................................... -->
 <div id='scenebox' class="elementsbox">
-	
 	<div id='scenecontent' class='allcontent'>
-		<div id="sceneleftbar" class="leftbar"></div>
-		<div id="scenerightbar" class="rightbar"></div>
-		<div id="scenebottombar" class="bottombar"></div>
-		<div id="scenelcornerbar" class="lcornerbar"></div>
-		<div id="scenercornerbar" class="rcornerbar"></div>
+		<div class="leftbar"></div>
+		<div id="rightbarsc" class="rightbar"></div>
+		<div id="bottombarsc" class="bottombar"></div>
+		<div id="rcornerbarsc" class="rcornerbar"></div>
 	</div>
 	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
 	<div class="lbar"></div>
@@ -2093,6 +2061,86 @@ $('scenebox').style.visibility="visible";
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
 	</div>
+</div>
+
+<div id='spritebox' class="elementsbox">
+	<div id='spritecontent' class='allcontent'>
+		<div class="leftbar"></div>
+		<div id="rightbarsp" class="rightbar"></div>
+		<div id="bottombarsp" class="bottombar"></div>
+		<div id="rcornerbarsp" class="rcornerbar"></div>
+	</div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='spritehead' class='head'>&nbsp; Sprites
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
+	</div>
+</div>
+
+<div id='tweenbox' class="elementsbox">
+	<div id='tweencontent' class='allcontent'>
+		<div class="leftbar"></div>
+		<div id="rightbartw" class="rightbar"></div>
+		<div id="bottombartw" class="bottombar"></div>
+		<div id="rcornerbartw" class="rcornerbar"></div>
+	</div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='tweenhead' class='head'>&nbsp; Tweens
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweencontent")'/>
+	</div>
+</div>
+
+<div id='trackbox' class="elementsbox">
+	<div id='trackcontent' class='allcontent'>
+		<div class="leftbar"></div>
+		<div id="rightbartr" class="rightbar"></div>
+		<div id="bottombartr" class="bottombar"></div>
+		<div id="rcornerbartr" class="rcornerbar"></div>
+	</div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='trackhead' class='head'>&nbsp; Tracks
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
+	</div>
+</div>
+
+<div id='filmbox' class="elementsbox">
+	<div id='filmcontent' class='allcontent'>
+		<div class="leftbar"></div>
+		<div id="rightbarfm" class="rightbar"></div>
+		<div id="bottombarfm" class="bottombar"></div>
+		<div id="rcornerbarfm" class="rcornerbar"></div>
+	</div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='filmhead' class='head'>&nbsp; Films
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmcontent")'/>
+	</div>
+</div>
+
+<div id='anibar'>
+  <div id='anibarhd'>Elements</div>
+  
+   <div id='anicontent'>
+		<div id='aniscene' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('scene')">&nbsp;&nbsp;Scenery </div>
+		<div id='anisprite' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('sprite')">&nbsp;&nbsp;Sprites </div>
+		<div id='anitween' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('tween')">&nbsp;&nbsp;Tweens </div>
+		<div id='anifilm' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('film')">&nbsp;&nbsp;Films </div>
+		<div id='anitrack' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('track')">&nbsp;&nbsp;Tracks </div>
+   </div>
 </div>
 
 <!--vectors for track ............................................................... -->

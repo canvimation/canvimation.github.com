@@ -27,11 +27,13 @@ function updialogue(img,content)
 		else
 		{
 			holder.style.height=gap+"px";
+			box.style.visibility="hidden";
 		}
 	}
 	
 	function open()
 	{
+		box.style.visibility="visible";
 		if (parseInt(holder.style.height)<holder.height)
 		{
 			box.style.top=(parseInt(box.style.top)+10)+"px";
@@ -550,4 +552,54 @@ function updatename(name)
 function setgrid()
 {
 	$("gridbox").style.visibility="visible";
+}
+
+function resize(el)
+{
+	var holder=$(el).parentNode.parentNode;
+	var type=el.substr(el.length-2,2);
+	var bar=el.substr(0,el.length-5);$("msg").innerHTML=el+"..."+type+"..."+bar;
+	switch (bar)
+	{
+		case "right":
+			$(el).style.top=0+"px";
+			if(parseInt($(el).style.left)<125)
+			{
+				$(el).style.left="125px";
+			}
+			holder.style.width=(parseInt($(el).style.left)+2)+"px";
+			$("rcornerbar"+type).style.left=(parseInt(holder.style.width)-2)+"px";
+		break
+		case "bottom":
+			$(el).style.left=0+"px";
+			if(parseInt($(el).style.top)<50)
+			{
+				$(el).style.top="50px";
+			}
+			holder.style.height=(parseInt($(el).style.top)+52)+"px";
+			$(el).parentNode.style.height=(parseInt(holder.style.height)-50)+"px";
+			$("rcornerbar"+type).style.top=(parseInt(holder.style.height)-52)+"px";
+		break
+		case "rcorner":
+			if(parseInt($(el).style.left)<125)
+			{
+				$(el).style.left="125px";
+			}
+			holder.style.width=(parseInt($(el).style.left)+2)+"px";
+			if(parseInt($(el).style.top)<50)
+			{
+				$(el).style.top="50px";
+			}
+			holder.style.height=(parseInt($(el).style.top)+52)+"px";
+			$(el).parentNode.style.height=(parseInt(holder.style.height)-50)+"px";
+			$("rightbar"+type).style.left=(parseInt(holder.style.width)-2)+"px";
+			$("bottombar"+type).style.top=(parseInt(holder.style.height)-52)+"px";
+		break
+	}
+	holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+2)+"px,0px)";
+}
+
+function anidialogue(el)
+{
+	$(el+"box").style.visibility="visible";
 }
