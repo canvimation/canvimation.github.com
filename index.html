@@ -116,7 +116,7 @@ img.marker {
 
 .head {
 	background-color: #000000;
-
+	cursor:default;
 	color: #FFFFFF;
 	font-size:12pt;
 	font-weight: bold;
@@ -179,6 +179,112 @@ img.marker {
 	height:25px;
 	background-color:#FFFFFF;
 	font-weight: bold;
+}
+
+.elementsbox {
+	border: 1px solid #000000;
+	border-top:1px solid #000000;
+	visibility:hidden;
+	background-color:#FFFFFF;
+	z-index:4;
+}
+
+.newbuild40 {
+	top:25px;
+	width:100%;
+	height:25px;
+	background-color:#000000;
+	font-weight: bold;
+	font-size:12pt;
+	color: #FFFFFF;
+	opacity:0.20;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=20)";
+    filter:alpha(opacity=20);
+	cursor:default;
+}
+
+.newbuild80 {
+	top:25px;
+	width:100%;
+	height:25px;
+	background-color:#000000;
+	font-weight: bold;
+	font-size:12pt;
+	color: #FFFFFF;
+	opacity:0.50;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=50)";
+    filter:alpha(opacity=50);
+	cursor:default;
+	text-decoration:underline;
+}
+
+.allcontent {
+	top:50px;
+	width:100%;
+	background-color:#FFFFFF;
+}
+
+.lbar {
+	left:0px;
+	width:2px;
+	height:100%;
+	background-color: #000000;
+}
+
+.rbar {
+	right:0px;
+	width:2px;
+	height:100%;
+	background-color: #000000;
+}
+
+.bbar {
+	top:50px;
+	height:2px;
+	width:100%;
+	background-color: #000000;
+}
+
+.leftbar {
+	left:0px;
+	width:2px;
+	height:100%;
+	background-color: #000000;
+	cursor: w-resize;
+}
+
+.rightbar {
+	right:0px;
+	width:2px;
+	height:100%;
+	background-color: #000000;
+	cursor:e-resize;
+}
+
+.bottombar {
+	bottom:0px;
+	height:2px;
+	width:100%;
+	background-color: #000000;
+	cursor:s-resize;
+}
+
+.rcornerbar {
+	bottom:0px;
+	right:0px;
+	height:2px;
+	width:2px;
+	background-color: #000000;
+	cursor: nw-resize;
+}
+
+.lcornerbar {
+	bottom:0px;
+	left:0px;
+	height:2px;
+	width:2px;
+	background-color: #000000;
+	cursor: ne-resize;
 }
 
 #drop_zone {
@@ -330,48 +436,10 @@ img.marker {
 	left:0px;
 	width: 95px;
 	height:25px;
-
+	cursor:default;
 	border-bottom:solid 1px #000000;
 	background-color:#000099;
 	color:#FFFFFF;
-}
-
-#filmsbar {
-	top: 60px;
-	left:10px;
-	width: 115px;
-	height:515px;
-
-	border:solid 1px #000000;
-	background-color:#66FFFF;
-	visibility:hidden;
-	text-align:center;
-}
-
-#filmsbrhead {
-	top: 0px;
-	left:0px;
-	width: 115px;
-	height:25px;
-	border-bottom:solid 1px #000000;
-	background-color:#000099;
-	color:#FFFFFF;
-}
-
-#filmsholder {
-	top: 26px;
-	left:0px;
-	width: 115px;
-	height:450px;
-	color:#000000;
-	overflow:auto;
-}
-
-#filmsmove {
-	top: 484px;
-	left:0px;
-	width: 115px;
-	height:25px;
 }
 
 
@@ -382,7 +450,7 @@ img.marker {
 	height:240px;
 	z-index:1;
 	border:solid 1px #000000;
-	background-color:#66FFFF;
+	background-color:#FFFFFF;
 	visibility:hidden;
 }
 
@@ -393,8 +461,9 @@ img.marker {
 	height:23px;
 	text-align:center;
 	border-bottom:solid 1px #000000;
-	background-color:#000099;
+	background-color:#000000;
 	color:#FFFFFF;
+	cursor:default;
 }
 
 #anicontent {
@@ -408,39 +477,31 @@ img.marker {
 	left:2%;
 	width: 92%;
 	height:25px;
-	background-color:#000000;
+	background-color:#666666;
 	color:#FFFFFF;
 	border:solid 1px black;
 	text-align: center;
-	cursor: arrow;
-}
-
-#anishape {
-	top: 2px;
-}
-
-#anigroup {
-	top: 32px;
+	cursor: default;
 }
 
 #aniscene {
-	top: 62px;
+	top: 2px;
 }
 
 #anisprite {
-	top: 92px;
+	top: 32px;
 }
 
 #anitween {
-	top: 122px;
+	top: 62px;
 }
 
 #anitrack {
-	top: 152px;
+	top: 92px;
 }
 
 #anifilm {
-	top: 182px;
+	top: 122px;
 }
 
 #gradcanvas {
@@ -604,6 +665,7 @@ img.marker {
 .notext {
 	cursor: default;
 }
+
 #export {
 	left:110px;
 	top:4px;
@@ -842,9 +904,15 @@ var K=4*(Math.SQRT2-1)/3; //constant for circles using Bezier curve.
 var ROTATIONRADIUS=100; //radius for rotation marker;
 var DEFAULTKEYDOWN=document.onkeydown;
 var BACKDROP; // object where backstage canvas is added for bezguides, gradient stops, rotation markers;
-var BOXES; //array of dialogue boxes;
+var BOXES; //array of class dialogue boxes;
 var BOXNAME; //name of dialogue box, id with box dropped from end;
 var DD=[]; //array of drag and drop elements for dialogue boxes;
+
+var BARS=["left","right","bottom","rcorner","lcorner"]; //array for edge classes;
+var	ANIELS=["scene","sprite","track","tween","film"];
+var	MDOWN;
+var	MNWSE;
+var	MNESW;
 
 temptrack={};
 tracks = {};
@@ -1364,6 +1432,10 @@ function main()
 	$("p_paths").style.color="#95B3D7";
 	$("p_close").style.top=250+"px";
 	
+	$('scenebox').style.width=250+"px";
+	$('scenebox').style.height=250+"px";	
+	
+	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
 	{
@@ -1379,6 +1451,36 @@ function main()
 		DD[i].setHandleElId(BOXNAME+"head");
 	}
 	
+	BOXES=getElementsByClassName("elementsbox");
+	for(var i=0; i<BOXES.length; i++)
+	{
+		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
+		BOXES[i].style.top=((SCRH-parseInt(BOXES[i].style.height))/2 - 52)+"px";
+		BOXES[i].style.left=((SCRW-parseInt(BOXES[i].style.width))/4)+"px";
+		BOXES[i].style.clip="rect(1px,"+(parseInt(BOXES[i].style.width)+2)+"px,"+(parseInt(BOXES[i].style.height)+2)+"px,0px)";
+		BOXES[i].style.visibility="hidden";
+		$(BOXNAME+"content").style.height=(parseInt(BOXES[i].style.height)-50)+"px";
+		$(BOXNAME+"content").style.top=50+"px";
+		
+		DD[i]=new YAHOO.util.DD(BOXES[i].id);
+		DD[i].setHandleElId(BOXNAME+"head");
+	}
+	
+/*	MLEFT=getElementsByClassName("leftbar");
+	BARS.push("left";
+	MRIGHT=getElementsByClassName("rightbar");
+	MDOWN=getElementsByClassName("bottombar");
+	MNWSE=getElementsByClassName("rcornerbar");
+	MNESW=getElementsByClassName("lcornerbar");
+	
+	for(var i=0;i<ANIELS.length;i++)
+	{
+		for(var j=0;j<MLEFT.length;j++)
+		{
+			BOXNAME=
+		}
+	}
+*/	
 	if(ieb)
 	{
 		DROPS=getElementsByClassName("theatre_style");
@@ -1487,9 +1589,7 @@ function main()
 											HueBarmoveTo(getPosition(e))
 										};															
 
-	
-
-	
+$('scenebox').style.visibility="visible";	
  /*   if (gridcanv.getContext)
 	{
         gridcanv.ctx = gridcanv.getContext('2d');
@@ -1936,16 +2036,14 @@ function main()
 
 <!--toolbars ............................................................... -->
 <div id='anibar'>
-  <div id='anibarhd'> &nbsp; Animation </div>
+  <div id='anibarhd'>Elements</div>
   
    <div id='anicontent'>
-   		<div id='anishape' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('scene')">&nbsp;&nbsp;Shapes </div>
-		<div id='anigroup' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('sprite')">&nbsp;&nbsp;Groups </div>	
-		<div id='aniscene' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('scene')">&nbsp;&nbsp;Scenery </div>
-		<div id='anisprite' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('sprite')">&nbsp;&nbsp;Sprites </div>
-		<div id='anitween' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('tween')">&nbsp;&nbsp;Tweens </div>
-		<div id='anifilm' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('film')">&nbsp;&nbsp;Films </div>
-		<div id='anitrack' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="animenuset('track')">&nbsp;&nbsp;Tracks </div>
+		<div id='aniscene' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('scene')">&nbsp;&nbsp;Scenery </div>
+		<div id='anisprite' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('sprite')">&nbsp;&nbsp;Sprites </div>
+		<div id='anitween' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('tween')">&nbsp;&nbsp;Tweens </div>
+		<div id='anifilm' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('film')">&nbsp;&nbsp;Films </div>
+		<div id='anitrack' class="choice40" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'" onClick="anidialogue('track')">&nbsp;&nbsp;Tracks </div>
    </div>
 </div>
 
@@ -1977,9 +2075,27 @@ function main()
 	
 </div>
 
+<!--element boxes ............................................................... -->
+<div id='scenebox' class="elementsbox">
+	
+	<div id='scenecontent' class='allcontent'>
+		<div id="sceneleftbar" class="leftbar"></div>
+		<div id="scenerightbar" class="rightbar"></div>
+		<div id="scenebottombar" class="bottombar"></div>
+		<div id="scenelcornerbar" class="lcornerbar"></div>
+		<div id="scenercornerbar" class="rcornerbar"></div>
+	</div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'">&nbsp;&nbsp;&nbsp;&nbsp;Build New</div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='scenehead' class='head'>&nbsp; Scenery
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
+	</div>
+</div>
 
-
-
+<!--vectors for track ............................................................... -->
 <div id='vecdiv'>
   
   <canvas id='vecanv'></canvas>

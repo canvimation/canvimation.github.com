@@ -1,9 +1,11 @@
 function updialogue(img,content)
 {
+	var gap=25;
 	var box=$(content);
 	var holder=box.parentNode;
+	if(holder.className=="elementsbox") {gap=50}
 	var height=parseInt(holder.style.height);
-	if(height>25)
+	if(height>gap)
 	{
 		img.src='assets/down.png';
 		holder.height=height;
@@ -16,7 +18,7 @@ function updialogue(img,content)
 	}
 	function close()
 	{
-		if (parseInt(holder.style.height)>25)
+		if (parseInt(holder.style.height)>gap)
 		{
 			box.style.top=(parseInt(box.style.top)-10)+"px";
 			holder.style.height=(parseInt(holder.style.height)-10)+"px";
@@ -24,7 +26,7 @@ function updialogue(img,content)
 		}
 		else
 		{
-			holder.style.height=25+"px";
+			holder.style.height=gap+"px";
 		}
 	}
 	
