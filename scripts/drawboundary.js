@@ -634,30 +634,4 @@ function sqdistance(p,q)
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
 }
 
-function drawboundaries()
-{
-	var group;
-	removeGradLine();
-	closeStops();
-	removeRotate();
-	$("rotatebox").style.visibility="hidden";
-	$("gradfillbox").style.visibility="hidden";
-	hideTools();
-	closeColor();
-	SELECTED={};
-	BCOUNT=0;
-	clear($("markerdrop"));
-	clear($("boundarydrop"));
-
-	for(var name in this.groups)
-	{
-		group=this.groups[name];
-		//group.drawBoundary();
-		SELECTED[group.name]=group;
-		showTools();
-		setTools(true);
-	}
-	$("boundarydrop").style.visibility="visible";
-}
-
 

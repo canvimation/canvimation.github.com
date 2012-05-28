@@ -21,7 +21,7 @@ function Scene(name)
 	this.cars=[];
 	
 	//methods
-	this.drawboundaries=drawboundaries;
+	this.setScene=setScene;
 }
 
 function Track(name)

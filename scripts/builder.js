@@ -82,7 +82,7 @@ function buildScene()
 	writescenelist();
 	$("shapestage").style.visibility="hidden";
 	$("scenestage").style.visibility="visible";
-	scene.drawboundaries();
+	scene.setScene();
 	CURRENT=scene.shapes;
 	$("scenebuildbox").visibility="hidden";
 	$("innerls").innerHTML=shapeNamesToHTML();
@@ -97,7 +97,7 @@ function writescenelist()
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="aniedit(this)" /> <span class="innertext">'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span class="innertext">'+scene.name+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
 }
@@ -131,6 +131,7 @@ function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative a
 		shape.Canvas.style.zIndex=shape.zIndex;
 		shape.draw();
 	}
+	return groupcopy;
 }
 
 
@@ -198,7 +199,11 @@ function addgrouptoscene(g)
 	var group=GROUPS[name];
 	SELECTED={};
 	SELECTED[group.name]=group;
-	elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"))
+	var groupcopy=elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
+	SELECTED={};
+	SELECTED[groupcopy.name]=groupcopy;
+	clear($("boundarydrop"));
+	group.drawBoundary();
 }
 
 function addshapetoscene(s)
@@ -210,7 +215,9 @@ function addshapetoscene(s)
 	if(group.members.length==1)
 	{
 		SELECTED[group.name]=group;
-		elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"))
+		elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
+		clear($("boundarydrop"));
+		group.drawBoundary();
 	}
 	else
 	{	 
@@ -220,7 +227,53 @@ function addshapetoscene(s)
 		copy.zIndex=ZPOS++;
 		copy.Canvas.style.zIndex=copy.zIndex;
 		copy.draw();
+		SELECTED[copy.group.name]=copy.group;
+		clear($("boundarydrop"))
+		copy.group.drawBoundary();
 	}
 }
 
+function sceneEdit(n)
+{
+	var shape;
+	var name=n.parentNode.id;
+	$("shapestage").style.visibility="hidden";
+	$("scenestage").style.visibility="visible";
+	var scene=SCENES[name];
+	scene.setScene();
+	CURRENT=scene.shapes;
+	for(var shapename in CURRENT)
+	{
+		shape=CURRENT[shapename];
+		shape.draw();
+	}
+	$("scenebuildbox").visibility="hidden";
+	$("innerls").innerHTML=shapeNamesToHTML();
+	openStage('scene');
+}
 
+function setScene()
+{
+	var group;
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	SELECTED={};
+	BCOUNT=0;
+	clear($("markerdrop"));
+	clear($("boundarydrop"));
+
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		//group.drawBoundary();
+		SELECTED[group.name]=group;
+		showTools();
+		setTools(true);
+	}
+	$("boundarydrop").style.visibility="visible";
+}
