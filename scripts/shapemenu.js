@@ -4,7 +4,53 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function shapeMenu()
+function showmenu()
+{
+	if($("done").style.visibility=="hidden")
+	{
+		var smenu=$('shapemenu');
+	}
+	else
+	{
+		var smenu=$('listshapebox');
+	}
+	if (parseInt($('toolbar').style.left)>0.85*maxwidth)
+	{
+		smenu.style.left=-65;
+	}
+	smenu.style.visibility='visible';
+	$('markerdrop').style.visibility='hidden';
+	clear($("markerdrop"));
+	MCOUNT=0;
+	$('group').style.visibility='hidden';
+	$('ungroup').style.visibility='hidden';
+	$('stylelines').style.visibility='hidden';
+	$('collines').style.visibility='hidden';	
+	$('colfill').style.visibility='hidden';
+	$('gradfill').style.visibility='hidden';
+	$('rotate').style.visibility='hidden';
+	$('front').style.visibility='hidden';
+	$('back').style.visibility='hidden';
+	$('del').style.visibility='hidden';
+	$('copy').style.visibility='hidden';
+	$('editlines').style.visibility='hidden';
+	$('vert').style.visibility='hidden';
+	$('horz').style.visibility='hidden';
+	$('alntop').style.visibility='hidden';
+	$('alnbot').style.visibility='hidden';
+	$('alnleft').style.visibility='hidden';
+	$('alnright').style.visibility='hidden';
+	$('shadow').style.visibility='hidden';
+	$('sname').style.visibility='hidden';
+	$('fopts').style.visibility='hidden';
+	closeColor();
+	removeGradLine();
+	removeRotate();
+	clear($('bodydiv'));
+	SELECTED={};
+}
+
+function imageShapeMenu()
 {
    this.elmRef = document.createElement('div');
    this.elmRef.id  = 'shapemenu';
@@ -32,14 +78,16 @@ function shapeMenu()
 	   this.img.open=shapes[i][0];
 	   this.img.edit=shapes[i][1];
 	   this.img.alt=shapes[i][2];
-	   this.img.title=shapes[i][2];
+	   this.img.type=shapes[i][2];
 	   this.img.onmouseover=function(e){noBubble(e);this.src=this.srcin};
 	   this.img.onmouseout=function(){this.src=this.srcout};
 	   this.img.onclick=function(e) 
 	   					{
 	   							$("shapemenu").style.visibility="hidden";
 	   							noBubble(e);
-	   							var shape=new Shape("Shape"+(SCOUNT++),this.open,this.edit,this.title);
+	   							var shape=new Shape("Shape"+SCOUNT,"Shape"+(SCOUNT++),this.open,this.edit,this.type,SHAPES);
+	   							shape.group=new Group(GROUPS,"Group"+GCOUNT,"Group"+(GCOUNT++),shape);  							
+	   							shape.zIndex=ZPOS++;
 	   							$("markerdrop").style.visibility="hidden";
 	   							$("frontmarkerdrop").style.visibility="hidden";
 	   							clear($("markerdrop"));

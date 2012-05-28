@@ -6,13 +6,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function checkBoundary(shiftdown,cursor)
 {
-	//if (doingani) {return};
 	removeGradLine();
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
-	//if($('pmenu')) {$('pmenu').parentNode.removeChild($('pmenu'))};
 	hideTools();
 	
 	if (!shiftdown)
@@ -25,9 +23,9 @@ function checkBoundary(shiftdown,cursor)
 	}
 	var shape, foundshape;
 	var shapefound=false;
-	for(var name in SHAPES)
+	for(var name in CURRENT)
 	{
-		shape=SHAPES[name];
+		shape=CURRENT[name];//alert([shape.name,shape.tplftcrnr.x-4,cursor.x ,(shape.btmrgtcrnr.x+4) , (shape.tplftcrnr.y-4), cursor.y,(shape.btmrgtcrnr.y+4)]);
 		if((shape.tplftcrnr.x-4)<=cursor.x && cursor.x<=(shape.btmrgtcrnr.x+4) && (shape.tplftcrnr.y-4)<=cursor.y && cursor.y<=(shape.btmrgtcrnr.y+4))
 		{ 
 			if (!shapefound || (shapefound && shape.zIndex>foundshape.zIndex)) 
@@ -52,7 +50,7 @@ function checkBoundary(shiftdown,cursor)
 		}
 	}
 	if (shapefound)
-	{
+	{//alert(["boundary",foundshape.name]);
 		$("boundarydrop").style.visibility="visible";
 		if(shiftdown)
 		{
@@ -66,8 +64,8 @@ function checkBoundary(shiftdown,cursor)
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
 				SELECTEDSHAPE=foundshape;
-				showTools(foundshape);
-				setTools();
+				showTools();
+				setTools(!(CURRENT===SHAPES));
 			}
 		}
 		else
@@ -77,12 +75,12 @@ function checkBoundary(shiftdown,cursor)
 				foundshape.group.drawBoundary();
 				SELECTED[foundshape.group.name]=foundshape.group;
 				SELECTEDSHAPE=foundshape;
-				showTools(foundshape);
-				setTools();
+				showTools();
+				setTools(!(CURRENT===SHAPES));
 			}
 		}
 	}
-
+//alert(["out",SELECTEDSHAPE.name]);
 }
 
 function removeBoundary()
@@ -635,4 +633,31 @@ function sqdistance(p,q)
 {
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
 }
+
+function drawboundaries()
+{
+	var group;
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	SELECTED={};
+	BCOUNT=0;
+	clear($("markerdrop"));
+	clear($("boundarydrop"));
+
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		//group.drawBoundary();
+		SELECTED[group.name]=group;
+		showTools();
+		setTools(true);
+	}
+	$("boundarydrop").style.visibility="visible";
+}
+
 

@@ -170,8 +170,9 @@ function translate(x,y)
 	}
 }
 
-function Shape(name,open,editable,type) 
+function Shape(name,title,open,editable,type,STORE) 
 {
+   	this.title=title;
    	this.name=name;
    	this.open=open;
    	this.editable=editable;
@@ -196,23 +197,17 @@ function Shape(name,open,editable,type)
    	this.shadowOffsetY = 15;   
    	this.shadowBlur = 0;   
    	this.shadowColor = [0, 0, 0, 0];
-   	//this.ScaleX=1;
-   	//this.ScaleY=1;
-   	this.zIndex=ZPOS++;
-   	//this.rotate=0;
-   	//this.clockw=true;
-   	//this.complete=false;
-   	//this.beztypes=[];
+   	this.zIndex=0;
    	this.crnradius=10;
    	p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
    	this.path.prev=this.path;
-   	this.group=new Group("group"+(GCOUNT++),this);
+   	this.group;
    	this.elType="_SHAPE";
    	
-   	SHAPES[this.name]=this;
-   	
+   	STORE[this.name]=this;
+   	   	
    	//methods
    	this.addTo=addTo;
    	this.setPath=setPath;
@@ -616,8 +611,8 @@ function drawEnd(cursor)
 		SELECTED[this.group.name]=this.group;
 		SELECTEDSHAPE=this;
 		hideTools();
-		showTools(this);
-		setTools();
+		showTools();
+		setTools(false);
    	}
 }
 
@@ -813,7 +808,7 @@ function fixCorners()
 	this.btmrgtcrnr.y=Math.max(ty,by);
 }
 
-function showTools(shape)
+function showTools()
 {
 	$('stylelines').style.visibility='visible';
 	$('collines').style.visibility='visible';
@@ -830,15 +825,32 @@ function showTools(shape)
 	$('shadow').style.visibility='visible';	
 }
 
-function setTools()
+function setTools(scene)
 {
+	var agroup=false;
+	var boundary,members,memlen;
 	var slctd=$("boundarydrop").childNodes;
+	for(var i=0;i<slctd.length;i++)
+	{
+		boundary=slctd[i];
+		members=boundary.group.memberShapes();
+		memlen=0;
+		for(var name in members)
+		{
+			memlen++;
+		}
+		if(memlen>1)
+		{
+			agroup=true;
+			i=slctd.length
+		}
+	}
 	var nslctd=slctd.length; 
 	if(nslctd==1)
 	{
-		var boundary=slctd[0];
-		var members=boundary.group.memberShapes();
-		var memlen=0;
+		boundary=slctd[0];
+		members=boundary.group.memberShapes();
+		memlen=0;
 		for(var name in members)
 		{
 			memlen++;
@@ -897,12 +909,28 @@ function setTools()
 			$('alnright').style.top=380+"px";
 		}
 	}
+	if(scene)
+	{
+		$("sname").style.visibility="hidden";
+		$('ungroup').style.visibility="hidden";
+		$('group').style.visibility="hidden";
+		$('copy').style.visibility='hidden';
+		if(agroup)
+		{
+			$('colfill').style.visibility='hidden';
+			$('gradfill').style.visibility='hidden';
+			$('stylelines').style.visibility='hidden';
+			$('collines').style.visibility='hidden';
+			$('shadow').style.visibility='hidden';
+		}
+	}
 }
       
 function hideTools()
 {
 	$('editlines').style.visibility='hidden';
 	$('shapemenu').style.visibility='hidden';
+	$('listshapebox').style.visibility='hidden';
 	$('group').style.visibility='hidden';
 	$('ungroup').style.visibility='hidden';
 	$('stylelines').style.visibility='hidden';
@@ -933,7 +961,7 @@ function shapecopy(offset)
 	for(var i=0;i<$("boundarydrop").childNodes.length;i++)  //child nodes are drawn boundaries
 	{
 		var group=$("boundarydrop").childNodes[i].group;
-		var groupcopy=copyGroup(group,offset,$("shapestage"));
+		var groupcopy=copyGroup(group,offset,$("shapestage"),SHAPES,GROUPS);
 		var members=groupcopy.memberShapes();
 		for(var shape in members)
 		{
@@ -961,18 +989,19 @@ function shapecopy(offset)
 	}
 }
 
-function makeCopy(shape,offset,theatre)
+function makeCopy(shape,offset,theatre,STORE,COLLECTION) 
 {
 	var p,n,c1,c2;
 	var non=new Point("non","non");
-	var copy=new Shape("Shape"+(SCOUNT++),shape.open,shape.editable,shape.type);
-/*	copy.scx = shape.scx;
-	copy.scy = shape.scy;
-	copy.sox = shape.sox;
-	copy.soy = shape.soy;
-	copy.ox = shape.ox;
-	copy.oy = shape.oy;
-	copy.rotated = shape.rotated; */
+	if(theatre.id=="shapestage")
+	{
+		var name="Shape"+(SCOUNT++);
+	}
+	else
+	{
+		var name="Subshape"+(NCOUNT++);
+	}
+	var copy=new Shape(name,shape.title,shape.open,shape.editable,shape.type,STORE);  		
 	copy.lineWidth  = shape.lineWidth ;
 	copy.lineCap  = shape.lineCap ;
 	copy.lineJoin  = shape.lineJoin ;
@@ -983,12 +1012,7 @@ function makeCopy(shape,offset,theatre)
 	copy.shadowOffsetX  = shape.shadowOffsetX ;
 	copy.shadowOffsetY  = shape.shadowOffsetY ;
 	copy.shadowBlur  = shape.shadowBlur ;
-	copy.ScaleX = shape.ScaleX;
-	copy.ScaleY = shape.ScaleY;
 	copy.zIndex = shape.zIndex;
-	copy.rotate = shape.rotate;
-	//copy.clockw = shape.clockw;
-	//copy.complete = shape.complete;
 	copy.crnradius = shape.crnradius;
 
 	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
@@ -1016,10 +1040,6 @@ function makeCopy(shape,offset,theatre)
 			copy.colorStops[i][j]=shape.colorStops[i][j];
 		}
 	}
-//	for(var i=0;i<shape.beztypes.length;i++)
-//	{
-//		copy.beztypes[i]=shape.beztypes[i];
-//	}
 	var node=shape.path.next;
 	while(node.point.x!="end")
 	{
@@ -1253,8 +1273,8 @@ function bringfront()
 	for (var i=0; i<shapelist.length;i++)
 	{
 		name=shapelist[i][0];
-		SHAPES[name].zIndex=ZPOS++;
-		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
+		CURRENT[name].zIndex=ZPOS++;
+		CURRENT[name].Canvas.style.zIndex=CURRENT[name].zIndex;
 	}
 }
 
@@ -1284,8 +1304,8 @@ function sendback()
 	for (var i=0; i<shapelist.length;i++)
 	{
 		name=shapelist[i][0];
-		SHAPES[name].zIndex=ZNEG--;
-		SHAPES[name].Canvas.style.zIndex=SHAPES[name].zIndex;
+		CURRENT[name].zIndex=ZNEG--;
+		CURRENT[name].Canvas.style.zIndex=CURRENT[name].zIndex;
 	}
 	function zindn(a,b)
 	{

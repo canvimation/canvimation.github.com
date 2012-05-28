@@ -54,6 +54,35 @@ function closedialogue(img)
 	holder.style.visibility="hidden";
 }
 
+function openStage(theatre)
+{
+	var box=theatre+"box";
+	$(box).style.visibility="hidden";
+	box=theatre+"buildbox";
+	$(box).style.visibility="hidden";
+	$("anibar").style.visibility="hidden";
+	$("done").value="Finish "+theatre+" building";
+	$("done").style.visibility="visible";
+}
+
+function closedone()
+{
+	$("anibar" ).style.visibility="visible";
+	$("shapestage" ).style.visibility="visible";
+	$("scenestage" ).style.visibility="hidden";
+	$("spritestage" ).style.visibility="hidden";
+	$("trackstage" ).style.visibility="hidden";
+	$("tweenstage" ).style.visibility="hidden";
+	$("filmstage" ).style.visibility="hidden";
+	$("done" ).style.visibility="hidden";
+	clear($("boundarydrop"));
+	CURRENT=SHAPES;
+	showTools();
+	hideTools();
+	SELECTED={};
+	$("listshapebox").style.visibility="hidden";
+}
+
 function colexpand()
 {
 	if(parseInt($("colorbox").style.width)<531)
@@ -511,18 +540,30 @@ function shapeName()
 	if(members.length>1)
 	{
 		$("namehead").innerHTML="&nbsp; Group";
+		$("shname").value=group.name;
 	}
 	else
 	{
 		$("namehead").innerHTML="&nbsp; Shape";
+		$("shname").value=shape.name;
 	}
 	var nc="namecontent";
 	$("namehead").innerHTML+="<img src='assets/x.png' onclick='closedialogue(this)'/><img src='assets/up.png' onclick='updialogue(this,"+nc+")'/>";
-	$("shname").value=members[0].name;
 }
 
 function updatename(name)
 {
+	var re = /\W/;
+	if (name=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test(name))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
 	var shape=SELECTEDSHAPE;
 	var group=shape.group;
 	var members=group.members;
@@ -558,7 +599,12 @@ function resize(el)
 {
 	var holder=$(el).parentNode.parentNode;
 	var type=el.substr(el.length-2,2);
-	var bar=el.substr(0,el.length-5);$("msg").innerHTML=el+"..."+type+"..."+bar;
+	var bar=el.substr(0,el.length-5);
+	var dt=50;
+	if(type=="ls")
+	{
+		dt=0;
+	}
 	switch (bar)
 	{
 		case "right":
@@ -576,9 +622,9 @@ function resize(el)
 			{
 				$(el).style.top="50px";
 			}
-			holder.style.height=(parseInt($(el).style.top)+52)+"px";
-			$(el).parentNode.style.height=(parseInt(holder.style.height)-50)+"px";
-			$("rcornerbar"+type).style.top=(parseInt(holder.style.height)-52)+"px";
+			holder.style.height=(parseInt($(el).style.top)+dt+2)+"px";
+			$(el).parentNode.style.height=(parseInt(holder.style.height)-(dt+0))+"px";
+			$("rcornerbar"+type).style.top=(parseInt(holder.style.height)-(dt+2))+"px";
 		break
 		case "rcorner":
 			if(parseInt($(el).style.left)<125)
@@ -590,10 +636,10 @@ function resize(el)
 			{
 				$(el).style.top="50px";
 			}
-			holder.style.height=(parseInt($(el).style.top)+52)+"px";
-			$(el).parentNode.style.height=(parseInt(holder.style.height)-50)+"px";
+			holder.style.height=(parseInt($(el).style.top)+dt+2)+"px";
+			$(el).parentNode.style.height=(parseInt(holder.style.height)-(dt+0))+"px";
 			$("rightbar"+type).style.left=(parseInt(holder.style.width)-2)+"px";
-			$("bottombar"+type).style.top=(parseInt(holder.style.height)-52)+"px";
+			$("bottombar"+type).style.top=(parseInt(holder.style.height)-(dt+2))+"px";
 		break
 	}
 	holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+2)+"px,0px)";

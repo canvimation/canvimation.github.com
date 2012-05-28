@@ -5,9 +5,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-function Group(name,shape)   //Group object contains shapes and groups in group
+function Group(COLLECTION,name,title,shape)   //Group object contains shapes and groups in group
 {
 	this.elType="_GROUP";
+	this.title=title;
 	this.name=name;
 	this.members=[];
 	this.left;
@@ -17,11 +18,12 @@ function Group(name,shape)   //Group object contains shapes and groups in group
 	p=new Point(200,200);
    	this.centreOfRotation=p;
    	this.phi=0;  //angle of rotation
+   	this.expanded=false;
 	this.showmembers=showmembers;
 	
-	GROUPS[this.name]=this;
+	COLLECTION[this.name]=this;
 	
-	if(arguments.length>1)
+	if(arguments.length>3)
 	{
 		this.members.push(shape);
 	}
@@ -88,7 +90,7 @@ function Union(A,B)
 
 function groupJoin()  //groups together array of  groups  place $("boundarydrop").childNodes[].group into any array SELgroup before using for group by boundaries
 {
-	var group=new Group("group"+(GCOUNT++));
+	var group=new Group(GROUPS,"Group"+GCOUNT,"Group"+(GCOUNT++));
 	var SELgroup;
 	var left=1000000;
 	var top=1000000;
@@ -131,9 +133,17 @@ function groupJoin()  //groups together array of  groups  place $("boundarydrop"
 	group.drawBoundary();
 }
 
-function copyGroup(group,offset,theatre)
+function copyGroup(group,offset,theatre,STORE,COLLECTION)
 {
-	var groupcopy=new Group("group"+(GCOUNT++));
+	if(theatre.id=="shapestage")
+	{
+		var name="Group"+(GCOUNT++);
+	}
+	else
+	{
+		var name="group"+(NCOUNT++);
+	}
+	var groupcopy=new Group(COLLECTION,name,group.title);	
 	groupcopy.left=group.left+offset;
 	groupcopy.top=group.top+offset;
 	groupcopy.width=group.width;
@@ -146,22 +156,22 @@ function copyGroup(group,offset,theatre)
 	{
 		if(group.members[i].elType=="_GROUP")
 		{
-			groupcopy.members.push(copyGroup(group.members[i],offset,theatre));
+			groupcopy.members.push(copyGroup(group.members[i],offset,theatre,STORE,COLLECTION));
 		}
 		else
 		{
 			var shape=group.members[i];
-			var copy=makeCopy(shape,offset,theatre);
+			
+			var copy=makeCopy(shape,offset,theatre,STORE); 
+		
 			groupcopy.members.push(copy);
 			copy.group=groupcopy;
-			
-			if(theatre.id=="shapestage")
+			if(theatre.id=="shapestage" || theatre.id=="scenestage")
 			{
 				copy.draw();
 			}
 		}
 	}
-
 	return groupcopy;
 }
 
@@ -183,7 +193,7 @@ function ungroup()
 		}
 		group.drawBoundary();
 	}
-	setTools();
+	setTools(false);
 	$('ungroup').style.visibility="hidden";
 	$('editlines').style.visibility="hidden";
 	$('group').style.visibility="visible";
@@ -308,15 +318,15 @@ function showmembers()
 		{
 			if(this.members[i].elType=="_GROUP")
 			{
-				mem+=this.members[i].showmembers();
+				mem+=this.members[i].name +"="+this.members[i].showmembers();
 			}
 			else
 			{
 				var shape=this.members[i];
-				mem+=shape.name+",";
+				mem+=shape.name;
 			}
 		}
-		return mem+="]";
+		return mem+="]  ";
 
 }
 
