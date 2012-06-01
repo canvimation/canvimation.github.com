@@ -6,6 +6,14 @@ function sbb()
 	$('scenetitle').value="Scene"+(SCCOUNT++);
 }
 
+function tbb()
+{
+	$('trackbuildbox').style.top=(parseInt($("trackbox").style.top)+60)+"px";
+	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+60)+"px";
+	$('trackbuildbox').style.visibility='visible';
+	$('tracktitle').value="Track"+(TRCOUNT++);
+}
+
 function buildScene()
 {
 	var group,shape;
@@ -82,14 +90,63 @@ function buildScene()
 	writescenelist();
 	$("shapestage").style.visibility="hidden";
 	$("scenestage").style.visibility="visible";
-	scene.setScene();
+	scene.setAniStage();
 	CURRENT=scene.shapes;
 	$("scenebuildbox").visibility="hidden";
 	$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
 }
 
-//<img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> 
+function buildTrack()
+{
+	var group,shape;
+	var re = /\W/;
+	if ($('tracktitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('tracktitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if (checkname($('tracktitle').value.trim(),'track')) 
+	{
+		alert('There is already track with the name '+$('tracktitle').value.trim());
+		return;
+	};
+	var i=0;
+	for(var name in SELECTED)
+	{
+		i++
+	}
+	if(i==0)
+	{
+		alert("No shapes selected");
+		return;
+	}
+	else if (i>1)
+	{
+		alert("Too many shapes selected");
+		return;
+	}
+	else
+	{
+		var track=new Track($('tracktitle').value.trim());
+		TRACKS[track.name]=track;
+		elementShapeCopy(SELECTED,track.groups,track.shapes,0,$("trackstage"))
+	}
+	writetracklist();
+	$("shapestage").style.visibility="hidden";
+	$("trackstage").style.visibility="visible";
+	track.setAniStage();
+	CURRENT=track.shapes;
+	$("trackbuildbox").visibility="hidden";
+	openStage('track');
+}
+
+ //<img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) />
 
 function writescenelist()
 {
@@ -97,9 +154,20 @@ function writescenelist()
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span class="innertext">'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span class="innertext" >'+scene.name+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
+}
+
+function writetracklist()
+{
+	$("innertr").innerHTML="<ul>";
+	for(var name in TRACKS)
+	{
+		track=TRACKS[name];
+		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span class="innertext">'+track.name+'</span></li>';
+	}
+	$("innertr").innerHTML+="</ul>";
 }
 
 function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative array of groups, TO is target associative array of groups
@@ -204,6 +272,9 @@ function addgrouptoscene(g)
 	SELECTED[groupcopy.name]=groupcopy;
 	clear($("boundarydrop"));
 	group.drawBoundary();
+	showTools();
+	setTools(true)
+	$("listshapebox").style.visibility="hidden";
 }
 
 function addshapetoscene(s)
@@ -231,6 +302,9 @@ function addshapetoscene(s)
 		clear($("boundarydrop"))
 		copy.group.drawBoundary();
 	}
+	showTools();
+	setTools(true);
+	$("listshapebox").style.visibility="hidden";
 }
 
 function sceneEdit(n)
@@ -240,7 +314,14 @@ function sceneEdit(n)
 	$("shapestage").style.visibility="hidden";
 	$("scenestage").style.visibility="visible";
 	var scene=SCENES[name];
-	scene.setScene();
+	scene.setAniStage();
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
 	CURRENT=scene.shapes;
 	for(var shapename in CURRENT)
 	{
@@ -252,7 +333,32 @@ function sceneEdit(n)
 	openStage('scene');
 }
 
-function setScene()
+function trackEdit(n)
+{
+	var shape;
+	var name=n.parentNode.id;
+	$("shapestage").style.visibility="hidden";
+	$("trackstage").style.visibility="visible";
+	var track=TRACKS[name];
+	track.setAniStage();
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	CURRENT=track.shapes;
+	for(var shapename in CURRENT)
+	{
+		shape=CURRENT[shapename];
+		shape.draw();
+	}
+	$("trackbuildbox").visibility="hidden";
+	openStage('track');
+}
+
+function setAniStage()
 {
 	var group;
 	removeGradLine();

@@ -827,6 +827,7 @@ function showTools()
 
 function setTools(scene)
 {
+	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	var agroup=false;
 	var boundary,members,memlen;
 	var slctd=$("boundarydrop").childNodes;
@@ -857,6 +858,7 @@ function setTools(scene)
 		}
 		if(memlen==1)
 		{
+			$("tracktext").innerHTML="&nbsp;&nbsp;From selected shape.";
 			for(var name in members)
 			{
 				shape=members[name];

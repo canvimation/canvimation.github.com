@@ -145,6 +145,11 @@ img.marker {
 
 }
 
+.content p.justtext {
+	position:relative;
+	left:5px;
+}
+
 .content p.text_input label, p.select_input label{
 	position:relative;
 	left:5px;
@@ -185,6 +190,56 @@ img.marker {
 	height:25px;
 	background-color:#FFFFFF;
 	font-weight: bold;
+}
+
+#spritediv {
+	top:2px;
+	left:2px;
+	width:96%;
+	height:75px;
+	background-color: #DDDDDD;
+}
+
+#spritedropel {
+	top:0px;
+	left:0px;
+	width:50%;
+	height:20px;
+	border:solid 1px black;
+	text-align: center;
+}
+
+#spritedroptrack {
+	top:0px;
+	left:50%;
+	width:50%;
+	height:20px;
+	border:solid 1px black;
+	text-align: center;
+}
+
+#eldrop {
+	top:20px;
+	left:0px;
+	width:50%;
+	height:40px;
+	border:solid 1px black;
+}
+
+#trackdrop {
+	top:20px;
+	left:50%;
+	width:50%;
+	height:40px;
+	border:solid 1px black;
+}
+
+#spritechoice {
+	top:65px;
+	left:2px;
+	width:96%;
+	height:90px;
+	background-color: #DDDDDD;
 }
 
 .elementsbox {
@@ -237,6 +292,9 @@ img.marker {
 	background-color:#FFFFFF;
 }
 
+.allcontent img {
+	cursor:pointer;
+}
 .buildhead {
 	padding-left:20px;
 	cursor:pointer;
@@ -1120,6 +1178,16 @@ function visitgallery()
 
 function shapedelete()
 {
+	var i=0;
+	for(var name in CURRENT)
+	{
+		i++;
+	}
+	if(i==1 && !(CURRENT===SHAPES))
+	{
+		alert("It is not possible to delete the last shape." );
+		return;
+	}
 	$('shapemenu').style.visibility='hidden';
 	$('listshapebox').style.visibility='hidden';
 	$('group').style.visibility='hidden';
@@ -1154,7 +1222,7 @@ function shapedelete()
 		{
 			var shape=members[shapeName];
 			shape.Canvas.style.visibility="hidden";
-			delete SHAPES[shape.name];
+			delete CURRENT[shape.name];
 		}
 	}
 	DELETES.push(DELETED);
@@ -1187,6 +1255,10 @@ function clear(stage)
 	while(stage.childNodes.length>0)
 	{
 		stage.removeChild(stage.firstChild)
+	}
+	if(stage.id=="boundarydrop")
+	{
+		$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	}
 }
 
@@ -1466,6 +1538,13 @@ function main()
 	$("scenebuildbox").style.width="200px";
 	$("scenebuildbox").style.height="220px";
 	$("scblank").checked="checked";
+	
+	$("trackbuildbox").style.width="200px";
+	$("trackbuildbox").style.height="155px";
+	
+	$("spritebuildbox").style.width="250px";
+	$("spritebuildbox").style.height="180px";
+
 	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
@@ -2162,9 +2241,10 @@ function main()
 		<div id="rightbartr" class="rightbar"></div>
 		<div id="bottombartr" class="bottombar"></div>
 		<div id="rcornerbartr" class="rcornerbar"></div>
+		<div id="innertr" class="inner"></div>
 	</div>
 	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="$('trackbuildbox').style.visibility='visible'"><span class="buildhead">Build New</span></div>	
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="tbb()"><span class="buildhead">Build New</span></div>	
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
@@ -2210,10 +2290,10 @@ function main()
 		<p class="chk_radio_input">
 			<input type="radio" name="scbld" id="scblank"  /><label for="scblank">Blank</label><br>
 			<input type="radio" name="scbld" id="sccanvas" /><label for="sccanvas">Current Canvas</label><br>
-			<input type="radio" name="scbld" id="scsel" /><label for="sccanvas">Selected Shapes</label>
+			<input type="radio" name="scbld" id="scsel" /><label for="sccanvas">Selection</label>
 		</p>
 		<p class="text_input">
-			<label for="sctitle">Title</label> <input class="title" type="text" name="scenetitle" id="scenetitle" size=15 />
+			<label for="scenetitle">Title</label> <input class="title" type="text" name="scenetitle" id="scenetitle" size=15 />
 		</p>
 		<input type="button" value=" OK " onclick="buildScene()" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
@@ -2223,6 +2303,47 @@ function main()
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenebuildcontent")'/>
 	</div>	
 </div>
+
+<div id='trackbuildbox' class="dialoguebox">
+	<div id='trackbuildcontent' class='content'>
+		<p class"=justtext" id="tracktext">
+			&nbsp;&nbsp;Select just one shape.
+		</p>
+		<p class="text_input">
+			<label for="tracktitle">Title</label> <input class="title" type="text" name="tracktitle" id="tracktitle" size=15 />
+		</p>
+		<input type="button" value=" OK " onclick="buildTrack()" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='trackbuildhead' class='head'>&nbsp; Build A Track
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackbuildcontent")'/>
+	</div>	
+</div>
+
+<div id='spritebuildbox' class="dialoguebox">
+	<div id='spritebuildcontent' class='content'>
+		<div id="spritediv" >
+			<div id="spritedropel">Drop Element</div><div id="spritedroptrack">Drop Track</div>
+			<div id="eldrop"></div><div id="trackdrop"></div>
+		</div>
+		<div id="spritechoice">
+		<p class="text_input">
+			<label for="spritetitle">Title</label> <input class="title" type="text" name="spritetitle" id="spritetitle" size=15 />
+		</p>
+		
+		<input type="button" value=" OK " onclick="buildsprite()" />
+		<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
+		</div>
+	</div>
+	<div id='spritebuildhead' class='head'>&nbsp; Build A Sprite
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"spritebuildcontent")'/>
+	</div>	
+</div>
+
+
+
 <!--animation toolbar ............................................................... -->
 <div id='anibar'>
   <div id='anibarhd'>Elements</div>
@@ -2245,6 +2366,5 @@ function main()
 <div id='spritecentre'>
 	<canvas id='spritemidiv'></canvas>
 </div> 
- 
 </body>
 </html>

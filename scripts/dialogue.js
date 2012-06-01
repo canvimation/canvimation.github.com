@@ -63,6 +63,12 @@ function openStage(theatre)
 	$("anibar").style.visibility="hidden";
 	$("done").value="Finish "+theatre+" building";
 	$("done").style.visibility="visible";
+	$(hideTools());
+	if(theatre=="track")
+	{
+		$("menushape").style.visibility="hidden";
+		$("del").style.visibility="hidden";
+	}
 }
 
 function closedone()
@@ -75,6 +81,7 @@ function closedone()
 	$("tweenstage" ).style.visibility="hidden";
 	$("filmstage" ).style.visibility="hidden";
 	$("done" ).style.visibility="hidden";
+	$("menushape").style.visibility="visible";
 	clear($("boundarydrop"));
 	CURRENT=SHAPES;
 	showTools();

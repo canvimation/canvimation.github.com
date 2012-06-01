@@ -21,13 +21,18 @@ function Scene(name)
 	this.cars=[];
 	
 	//methods
-	this.setScene=setScene;
+	this.setAniStage=setAniStage;
 }
 
 function Track(name)
 {
 	this.name=name;
+	this.shapes={};
+	this.groups={};
 	this.repeats=0;
 	this.yoyo=false;
 	this.line=null;
+	
+	//methods
+	this.setAniStage=setAniStage;
 }
