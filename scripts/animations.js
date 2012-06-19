@@ -30,6 +30,7 @@ function Track(name)
 	this.shapes={};
 	this.groups={};
 	this.repeats=0;
+	this.visible=false;
 	this.yoyo=false;
 	this.line=null;
 	

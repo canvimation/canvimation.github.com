@@ -27,13 +27,13 @@ function updialogue(img,content)
 		else
 		{
 			holder.style.height=gap+"px";
-			box.style.visibility="hidden";
+			//box.style.visibility="hidden";
 		}
 	}
 	
 	function open()
 	{
-		box.style.visibility="visible";
+		//box.style.visibility="visible";
 		if (parseInt(holder.style.height)<holder.height)
 		{
 			box.style.top=(parseInt(box.style.top)+10)+"px";
@@ -52,6 +52,7 @@ function closedialogue(img)
 {
 	holder=img.parentNode.parentNode;
 	holder.style.visibility="hidden";
+	
 }
 
 function openStage(theatre)
@@ -82,6 +83,11 @@ function closedone()
 	$("filmstage" ).style.visibility="hidden";
 	$("done" ).style.visibility="hidden";
 	$("menushape").style.visibility="visible";
+	$("sceneeditbox").style.visibility="hidden";
+	$("trackeditbox").style.visibility="hidden";
+	$("spriteeditbox").style.visibility="hidden";
+	//$("tweeneditbox").style.visibility="hidden";
+	//$("filmeditbox").style.visibility="hidden";
 	clear($("boundarydrop"));
 	CURRENT=SHAPES;
 	showTools();

@@ -185,11 +185,28 @@ img.marker {
 	left:10px;
 }
 
+.content p.check_input input{
+	left:5px;
+}
+
+.content p.check_input label {
+	position:relative;
+	left:10px;
+}
+
 .content div {
 	width:100%;
 	height:25px;
 	background-color:#FFFFFF;
 	font-weight: bold;
+}
+
+.dragger {
+	top:-10px;
+	left:-10px;
+	visibility:hidden;
+	z-index: 15;
+	cursor: pointer;
 }
 
 #spritediv {
@@ -224,6 +241,7 @@ img.marker {
 	width:50%;
 	height:40px;
 	border:solid 1px black;
+	text-align: center;
 }
 
 #trackdrop {
@@ -232,6 +250,7 @@ img.marker {
 	width:50%;
 	height:40px;
 	border:solid 1px black;
+	text-align: center;
 }
 
 #spritechoice {
@@ -1540,11 +1559,17 @@ function main()
 	$("scblank").checked="checked";
 	
 	$("trackbuildbox").style.width="200px";
-	$("trackbuildbox").style.height="155px";
+	$("trackbuildbox").style.height="270px";
+	
 	
 	$("spritebuildbox").style.width="250px";
 	$("spritebuildbox").style.height="180px";
+	DDeldrop=new YAHOO.util.DDTarget("eldrop","ELGROUP");
+	DDtrackdrop=new YAHOO.util.DDTarget("trackdrop","TRGROUP");
 
+//Editor dialogue boxes
+	$("sceneeditbox").style.width="200px";
+	$("sceneeditbox").style.height="120px";
 	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
@@ -1706,14 +1731,6 @@ function main()
 											HueBarmoveTo(getPosition(e))
 										};															
 	
- /*   if (gridcanv.getContext)
-	{
-        gridcanv.ctx = gridcanv.getContext('2d');
-    }
-	gridcanv.style.position='absolute';
-	gridcanv.style.left=0+"px";
-	gridcanv.style.top=52+"px";
-	gridcanv.style.zIndex=2; */
 	
 	$('vecdiv').style.left=500+"px";
 	$('vecdiv').style.top=200+"px";
@@ -1795,6 +1812,7 @@ function main()
 	$('spritecentre').style.left=500+"px";
 	$('spritecentre').style.top=200+"px";
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
+	
 	
 	if (window.File && window.FileReader && window.FileList && window.Blob && !iop) 
 	{
@@ -2189,7 +2207,7 @@ function main()
 		<div id="innersc" class="inner"></div>
 	</div>
 	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="sbb()"><span class="buildhead">Build New</span></div>	
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="scbb()"><span class="buildhead">Build New</span></div>	
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
@@ -2213,7 +2231,7 @@ function main()
 	<div class="bbar"></div>
 	<div id='spritehead' class='head'>&nbsp; Sprites
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"spritecontent")'/>
 	</div>
 </div>
 
@@ -2244,13 +2262,13 @@ function main()
 		<div id="innertr" class="inner"></div>
 	</div>
 	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="tbb()"><span class="buildhead">Build New</span></div>	
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="trbb()"><span class="buildhead">Build New</span></div>	
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
 	<div id='trackhead' class='head'>&nbsp; Tracks
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenecontent")'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackcontent")'/>
 	</div>
 </div>
 
@@ -2283,7 +2301,11 @@ function main()
 	</div>
 </div>
 
-<!--build dialogues ............................................................... -->
+<!--build draggable ............................................................... -->
+
+<div id="dragdiv" class="dragger"></div>
+
+<!--build builder dialogues ............................................................... -->
 <div id='scenebuildbox' class="dialoguebox">
 	<div id='scenebuildcontent' class='content'>
 		From
@@ -2298,7 +2320,7 @@ function main()
 		<input type="button" value=" OK " onclick="buildScene()" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
-	<div id='scenebuildhead' class='head'>&nbsp; Build A Scene
+	<div id='scenebuildhead' class='head'><span>&nbsp; Build Scenery</span>
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"scenebuildcontent")'/>
 	</div>	
@@ -2312,6 +2334,15 @@ function main()
 		<p class="text_input">
 			<label for="tracktitle">Title</label> <input class="title" type="text" name="tracktitle" id="tracktitle" size=15 />
 		</p>
+		<p class="text_input">
+			<label for="trackreps">Repetitions.</label><input type=text id="trackreps" value="0" size=7>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="yoyo"><label for="yoyo">Yoyo.</label>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="viewselect"><label for="viewselect">Visible.</label>
+		</p>
 		<input type="button" value=" OK " onclick="buildTrack()" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
@@ -2324,7 +2355,7 @@ function main()
 <div id='spritebuildbox' class="dialoguebox">
 	<div id='spritebuildcontent' class='content'>
 		<div id="spritediv" >
-			<div id="spritedropel">Drop Element</div><div id="spritedroptrack">Drop Track</div>
+			<div id="spritedropel">Element</div><div id="spritedroptrack">Track</div>
 			<div id="eldrop"></div><div id="trackdrop"></div>
 		</div>
 		<div id="spritechoice">
@@ -2339,6 +2370,69 @@ function main()
 	<div id='spritebuildhead' class='head'>&nbsp; Build A Sprite
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"spritebuildcontent")'/>
+	</div>	
+</div>
+
+
+<!--edit dialogues ............................................................... -->
+<div id='sceneeditbox' class="dialoguebox">
+	<div id='sceneeditcontent' class='content'>
+		<p class="text_input">
+			<label for="editscenetitle">Title</label> <input class="title" type="text" name="editscenetitle" id="editscenetitle" size=15 onclick="$('scbutton').style.visibility='inherit'"/>
+		</p>
+		<input type="button" value=" Change Name " id="scbutton" scene="" onclick="editScene(this)" style="visibility:hidden"/>
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='sceneedithead' class='head'><span>&nbsp; Edit Scenery</span>
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"sceneeditcontent")'/>
+	</div>	
+</div>
+
+<div id='trackeditbox' class="dialoguebox">
+	<div id='trackeditcontent' class='content'>
+		<p class"=justtext" id="tracktext">
+			&nbsp;&nbsp;Select just one shape.
+		</p>
+		<p class="text_input">
+			<label for="tracktitle">Title</label> <input class="title" type="text" name="tracktitle" id="tracktitle" size=15 />
+		</p>
+		<p class="text_input">
+			<label for="trackreps">Repetitions.</label><input type=text id="trackreps" value="0" size=7>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="yoyo"><label for="yoyo">Yoyo.</label>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="viewselect"><label for="viewselect">Visible.</label>
+		</p>
+		<input type="button" value=" OK " onclick="editTrack()" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='trackedithead' class='head'>&nbsp; Edit A Track
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackeditcontent")'/>
+	</div>	
+</div>
+
+<div id='spriteeditbox' class="dialoguebox">
+	<div id='spriteeditcontent' class='content'>
+		<div id="spritediv" >
+			<div id="spritedropel">Element</div><div id="spritedroptrack">Track</div>
+			<div id="eldrop"></div><div id="trackdrop"></div>
+		</div>
+		<div id="spritechoice">
+		<p class="text_input">
+			<label for="spritetitle">Title</label> <input class="title" type="text" name="spritetitle" id="spritetitle" size=15 />
+		</p>
+		
+		<input type="button" value=" OK " onclick="editsprite()" />
+		<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
+		</div>
+	</div>
+	<div id='spriteedithead' class='head'>&nbsp; Edit A Sprite
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"spriteeditcontent")'/>
 	</div>	
 </div>
 

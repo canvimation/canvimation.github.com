@@ -1,4 +1,4 @@
-function sbb()
+function scbb()
 {
 	$('scenebuildbox').style.top=(parseInt($("scenebox").style.top)+60)+"px";
 	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+60)+"px";
@@ -6,7 +6,7 @@ function sbb()
 	$('scenetitle').value="Scene"+(SCCOUNT++);
 }
 
-function tbb()
+function trbb()
 {
 	$('trackbuildbox').style.top=(parseInt($("trackbox").style.top)+60)+"px";
 	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+60)+"px";
@@ -115,7 +115,18 @@ function buildTrack()
 	{
 		alert('There is already track with the name '+$('tracktitle').value.trim());
 		return;
-	};
+	}
+	var n = parseInt($('trackreps').value);
+	if (isNaN(n) && !($('trackreps').value.toLowerCase()=="c"))
+	{
+		alert('Repetitons is neither a number nor continuous - c -');
+		repeat;		  
+	}
+	if (n<0)
+	{
+		alert('Repetitons must be positive.');
+		repeat
+	}
 	var i=0;
 	for(var name in SELECTED)
 	{
@@ -135,7 +146,10 @@ function buildTrack()
 	{
 		var track=new Track($('tracktitle').value.trim());
 		TRACKS[track.name]=track;
-		elementShapeCopy(SELECTED,track.groups,track.shapes,0,$("trackstage"))
+		elementShapeCopy(SELECTED,track.groups,track.shapes,0,$("trackstage"));
+		track.repeats=n;
+		track.yoyo=$('yoyo').checked;
+		track.visible=$('viewselect').checked;
 	}
 	writetracklist();
 	$("shapestage").style.visibility="hidden";
@@ -150,24 +164,67 @@ function buildTrack()
 
 function writescenelist()
 {
+	var n=0;
+	var DDSC=[];
+	var el;
 	$("innersc").innerHTML="<ul>";
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span class="innertext" >'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /><img src="assets/delete.gif" alt="delete" title="delete" onclick="scenedelete(this)" /> <span id="SC'+(n++)+'" class="innertext">'+scene.name+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
+	for(var i=0;i<n;i++)
+	{
+		DDSC[i]=new YAHOO.util.DD("SC"+i,"ELGROUP");
+		DDSC[i].setDragElId("dragdiv");
+		DDSC[i].onMouseDown=function() {
+										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").style.visibility="visible";
+									};
+		DDSC[i].onDragDrop=function() {
+										if(DDeldrop.cursorIsOver)
+										{
+											el=DDeldrop.getEl();
+											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+										}
+										$("dragdiv").style.visibility="hidden";
+									   };
+		DDSC[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden"}
+	}
 }
 
 function writetracklist()
 {
+	var n=0;
+	var DDTR=[];
+	var el;
 	$("innertr").innerHTML="<ul>";
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span class="innertext">'+track.name+'</span></li>';
+		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(n++)+'" class="innertext">'+track.name+'</span></li>';
 	}
 	$("innertr").innerHTML+="</ul>";
+	for(var i=0;i<n;i++)
+	{
+		DDTR[i]=new YAHOO.util.DD("TR"+i,"TRGROUP");
+		DDTR[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
+		DDTR[i].onMouseDown=function() {
+										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").style.visibility="visible";
+									};
+		DDTR[i].onDragDrop=function() {
+										if(DDtrackdrop.cursorIsOver)
+										{
+											el=DDtrackdrop.getEl();
+											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+										}
+										$("dragdiv").style.visibility="hidden";
+									   };
+		DDTR[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden"} 
+	}
+	
 }
 
 function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative array of groups, TO is target associative array of groups
@@ -328,9 +385,47 @@ function sceneEdit(n)
 		shape=CURRENT[shapename];
 		shape.draw();
 	}
-	$("scenebuildbox").visibility="hidden";
 	$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
+	$('editscenetitle').value=scene.name;
+	$("sceneeditbox").style.top=$("scenebuildbox").style.top;
+	$("sceneeditbox").style.left=$("scenebuildbox").style.left;
+	$("sceneeditbox").style.visibility="visible";
+	$("scbutton").scene=scene.name;
+	$("scbutton").style.visibility="hidden";
+}
+
+function editScene(OKbutton)
+{
+	var scene=SCENES[OKbutton.scene];
+	var group,shape;
+	var re = /\W/;
+	if ($('editscenetitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('editscenetitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if($('editscenetitle').value.trim()!=scene.name)
+	{
+		if (checkname($('editscenetitle').value.trim(),'scene')) 
+		{
+			alert('There is already scenery with the name '+$('editscenetitle').value.trim());
+			return;
+		}
+		else
+		{
+			scene.name=$('editscenetitle').value.trim();
+			SCENES[scene.name]=scene;
+			delete SCENES[OKbutton.scene];
+			writescenelist();
+		}
+	}
+	
 }
 
 function trackEdit(n)
@@ -382,4 +477,11 @@ function setAniStage()
 		setTools(true);
 	}
 	$("boundarydrop").style.visibility="visible";
+}
+
+function copydrag(cursor)
+{
+	$("dragdiv").style.visibility="visible";
+	$("dragdiv").style.top=(cursor.y)-1+"px";
+	$("dragdiv").style.left=(cursor.x)-1+"px";
 }
