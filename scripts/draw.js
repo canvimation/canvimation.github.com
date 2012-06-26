@@ -94,6 +94,40 @@ function draw()
 	 }
 }
 
+function drawjustpath()
+{
+	this.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	this.Canvas.ctx.save();
+   	var rule='rgba('
+	this.Canvas.ctx.strokeStyle="rgb(0,0,0)";
+	this.Canvas.ctx.lineWidth = 1;
+	this.Canvas.ctx.lineCap = this.lineCap;
+	this.Canvas.ctx.lineJoin = this.lineJoin;
+	
+	this.Canvas.ctx.beginPath();
+	var node=this.path.next;
+	this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+	while (node.next.point.x !="end")
+	{
+	   	node=node.next;
+	   	if (node.vertex=="L")
+	   	{ 
+		    this.Canvas.ctx.lineTo(node.point.x,node.point.y);
+	   	}
+	   	else 
+	   	{
+			this.Canvas.ctx.bezierCurveTo(node.ctrl1.x,node.ctrl1.y,node.ctrl2.x,node.ctrl2.y,node.point.x,node.point.y)
+	   	}
+	} 
+
+	if (!this.open) 
+	{
+		this.Canvas.ctx.closePath()
+	}
+	this.Canvas.ctx.stroke();
+	this.Canvas.ctx.restore();
+}
+
 
 function drawBezGuides()
 {

@@ -437,6 +437,13 @@ inner img {
 	top:5px;
 	visibility:hidden;
 }
+
+#spbuttons {
+	left:500px;
+	top:5px;
+	visibility:hidden;
+}
+
 #drop_zone {
 	left:10px;
 	width:330px;
@@ -937,6 +944,9 @@ inner img {
 <script type="text/javascript" src = "scripts/gradmenu.js" ></script>
 <script type="text/javascript" src = "scripts/gradientmarker.js" ></script>
 <script type="text/javascript" src = "scripts/builder.js" ></script>
+<script type="text/javascript" src = "scripts/sprites.js" ></script>
+<script type="text/javascript" src = "scripts/tracks.js" ></script>
+<script type="text/javascript" src = "scripts/alongpath.js" ></script>
 
 <script type="text/javascript" src = "scripts/export.js" ></script>
 <script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
@@ -946,7 +956,7 @@ inner img {
 <script type="text/javascript" src = "scripts/canvashtml.js" ></script>
 <script type="text/javascript" src = "scripts/totext.js" ></script>
 <script type="text/javascript" src = "scripts/fromtext.js" ></script>
-<script type="text/javascript" src = "scripts/alongpath.js" ></script>
+
 <script type="text/javascript" src = "scripts/animations.js" ></script>
 <script type="text/javascript" src = "scripts/filmpropmenu.js" ></script>
 <!--[IF LT IE 9]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
@@ -1011,7 +1021,7 @@ var picfile=[];
 var picfilenum=0;
 var pctf=[];
 var aniselect=[];
-var minivect;
+
 var vector={xs:0, xe:0,ys:0, ye:0};
 var vecanv;
 var vecphi;
@@ -1027,13 +1037,13 @@ var trackcount=0;
 var spritecount=0;
 var tweencount=0;
 var filmcount=0;
-var stopchecking=false;
 var canvases;
 var elmsadded;
 var editcheck=false;
 var trackcheck=false;
 var flmovetop;
 var flmoveleft;
+var MINIVECT={xs:0, xe:100,ys:0, ye:0}; //vector direction of sprite vector
 var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes
 var SELECTED={}; //list of selected shapes and groups;
@@ -1077,6 +1087,7 @@ var FMCOUNT=0; //counter for films
 var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
+var STOPCHECKING=false;
 
 EXCANVASUSED = !document.createElement("canvas").getContext;
 
@@ -1563,13 +1574,16 @@ function main()
 	
 	
 	$("spritebuildbox").style.width="250px";
-	$("spritebuildbox").style.height="180px";
+	$("spritebuildbox").style.height="250px";
 	DDeldrop=new YAHOO.util.DDTarget("eldrop","ELGROUP");
 	DDtrackdrop=new YAHOO.util.DDTarget("trackdrop","TRGROUP");
 
 //Editor dialogue boxes
 	$("sceneeditbox").style.width="200px";
 	$("sceneeditbox").style.height="120px";
+	
+	$("trackeditbox").style.width="200px";
+	$("trackeditbox").style.height="240px";
 	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
@@ -1591,7 +1605,7 @@ function main()
 	{
 		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
 		BOXES[i].style.top=(60+i*30)+"px";
-		BOXES[i].style.left=(SCRW-600+i*30)+"px";
+		BOXES[i].style.left=(100+i*220)+"px";
 		BOXES[i].style.width=250+"px";
 		BOXES[i].style.height=250+"px";
 		BOXES[i].style.clip="rect(1px,"+(parseInt(BOXES[i].style.width)+2)+"px,"+(parseInt(BOXES[i].style.height)+2)+"px,0px)";
@@ -1734,7 +1748,7 @@ function main()
 	
 	$('vecdiv').style.left=500+"px";
 	$('vecdiv').style.top=200+"px";
-	
+	$('vecdiv').style.zIndex=100;
 	vecanv=$('vecanv')
     if (vecanv.getContext)
 	{
@@ -1751,11 +1765,12 @@ function main()
 	vecanv.ctx.lineTo(100,0);
 	vecanv.ctx.lineTo(90,10);
 	vecanv.ctx.stroke();
-	minivect={xs:0, xe:100,ys:0, ye:0};
+	
 	
 	DDvecdiv=new YAHOO.util.DD('vecdiv');
 	
 	vecirc=$('vecircdiv')
+	$("vecrotate").style.zIndex=100;
     if (vecirc.getContext)
 	{
         vecirc.ctx = vecirc.getContext('2d');
@@ -1772,11 +1787,11 @@ function main()
 	DDvecrotate=new YAHOO.util.DD('vecrotate');
 	DDvecrotate.onDrag = function()
 						 {
-						 		var phi=arctan(parseInt($('vecrotate').style.left)-105,parseInt($('vecrotate').style.top)-105);
+						 		var phi=arctan(parseInt($('vecrotate').style.top)-105,parseInt($('vecrotate').style.left)-105);
 								$('vecrotate').style.left=(105+105*Math.cos(phi))+"px";
 								$('vecrotate').style.top=(105+105*Math.sin(phi))+"px";
-								minivect.xe=100*Math.cos(phi);
-								minivect.ye=100*Math.sin(phi);
+								MINIVECT.xe=100*Math.cos(phi);
+								MINIVECT.ye=100*Math.sin(phi);
 								vecanv.ctx.rotate(-vecphi);
 								vecanv.ctx.clearRect(-220,-220,440,440);
 								
@@ -1792,7 +1807,7 @@ function main()
 								vecanv.ctx.stroke();
 						 }
 
-	spritemid=$('spritemidiv')
+	spritemid=$('spritemidiv');
     if (spritemid.getContext)
 	{
         spritemid.ctx = spritemid.getContext('2d');
@@ -1811,6 +1826,7 @@ function main()
 
 	$('spritecentre').style.left=500+"px";
 	$('spritecentre').style.top=200+"px";
+	$('spritecentre').style.zIndex=100;
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
 	
 	
@@ -2158,13 +2174,17 @@ function main()
 </div>
 
 <!--Header bar ............................................................... -->
-<div id="heading"><div id='msg' style='top:2px; left:550px; width:300px ;height:40px; '> </div>
+<div id="heading"><div id='msg' style='top:2px; left:750px; width:300px ;height:40px; '> </div>
  <div id='logo'><img alt="" src="assets/logo.png"></div>
   
   <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
   <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
   <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
   <input id="done" type="button" value="" onclick="closedone()" />
+  <div id="spbuttons">
+  	<input sprite="" id="checksp" type="button" value="Check Sprite" onclick="checksprite(this.sprite)" /> 
+  	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
+  </div>
   <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>
 
@@ -2223,9 +2243,10 @@ function main()
 		<div id="rightbarsp" class="rightbar"></div>
 		<div id="bottombarsp" class="bottombar"></div>
 		<div id="rcornerbarsp" class="rcornerbar"></div>
+		<div id="innersp" class="inner"></div>
 	</div>
 	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="$('spritebuildbox').style.visibility='visible'"><span class="buildhead">Build New</span></div>	
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="spbb()"><span class="buildhead">Build New</span></div>	
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
@@ -2356,14 +2377,19 @@ function main()
 	<div id='spritebuildcontent' class='content'>
 		<div id="spritediv" >
 			<div id="spritedropel">Element</div><div id="spritedroptrack">Track</div>
-			<div id="eldrop"></div><div id="trackdrop"></div>
+			<div id="eldrop" source=""></div><div id="trackdrop"></div>
 		</div>
 		<div id="spritechoice">
 		<p class="text_input">
 			<label for="spritetitle">Title</label> <input class="title" type="text" name="spritetitle" id="spritetitle" size=15 />
 		</p>
-		
-		<input type="button" value=" OK " onclick="buildsprite()" />
+		<p class="text_input">
+			<label for="spritetime">Time over path.</label><input type=text id="spritetime" value="5" size=5><span>Secs.</span>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="spritevector"><label for="spritevector">Position by Vector.</label>
+		</p>
+		<input type="button" value=" OK " onclick="buildSprite()" />
 		<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
 		</div>
 	</div>
@@ -2380,7 +2406,7 @@ function main()
 		<p class="text_input">
 			<label for="editscenetitle">Title</label> <input class="title" type="text" name="editscenetitle" id="editscenetitle" size=15 onclick="$('scbutton').style.visibility='inherit'"/>
 		</p>
-		<input type="button" value=" Change Name " id="scbutton" scene="" onclick="editScene(this)" style="visibility:hidden"/>
+		<input type="button" value=" Change Name " id="scbutton" OKname="" onclick="editScene(this)" style="visibility:hidden"/>
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='sceneedithead' class='head'><span>&nbsp; Edit Scenery</span>
@@ -2391,22 +2417,19 @@ function main()
 
 <div id='trackeditbox' class="dialoguebox">
 	<div id='trackeditcontent' class='content'>
-		<p class"=justtext" id="tracktext">
-			&nbsp;&nbsp;Select just one shape.
+		<p class="text_input">
+			<label for="edittracktitle">Title</label> <input class="title" type="text" name="edittracktitle" id="edittracktitle" size=15 onclick="$('trbutton').style.visibility='inherit'" />
 		</p>
 		<p class="text_input">
-			<label for="tracktitle">Title</label> <input class="title" type="text" name="tracktitle" id="tracktitle" size=15 />
-		</p>
-		<p class="text_input">
-			<label for="trackreps">Repetitions.</label><input type=text id="trackreps" value="0" size=7>
+			<label for="edittrackreps">Repetitions.</label><input type=text id="edittrackreps" value="0" size=7 onclick="$('trbutton').style.visibility='inherit'" />
 		</p>
 		<p class="check_input">
-			<input type="checkbox" id="yoyo"><label for="yoyo">Yoyo.</label>
+			<input type="checkbox" id="edityoyo" onclick="$('trbutton').style.visibility='inherit'"><label for="edityoyo">Yoyo.</label>
 		</p>
 		<p class="check_input">
-			<input type="checkbox" id="viewselect"><label for="viewselect">Visible.</label>
+			<input type="checkbox" id="editviewselect" onclick="$('trbutton').style.visibility='inherit'"><label for="editviewselect">Visible.</label>
 		</p>
-		<input type="button" value=" OK " onclick="editTrack()" />
+		<input type="button" id="trbutton" value=" Change " onclick="editTrack()" OKname="" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='trackedithead' class='head'>&nbsp; Edit A Track

@@ -12,6 +12,21 @@ function trbb()
 	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+60)+"px";
 	$('trackbuildbox').style.visibility='visible';
 	$('tracktitle').value="Track"+(TRCOUNT++);
+	$('trackreps').value=0;
+	$("yoyo").checked=false;
+	$("viewselect").checked=false;
+}
+
+function spbb()
+{
+	$('spritebuildbox').style.top=(parseInt($("spritebox").style.top)+60)+"px";
+	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)+60)+"px";
+	$('spritebuildbox').style.visibility='visible';
+	$('spritetitle').value="Sprite"+(SPCOUNT++);
+	$('spritetime').value=5;
+	$("spritevector").checked=false;
+	$("eldrop").innerHTML="";
+	$("trackdrop").innerHTML="";
 }
 
 function buildScene()
@@ -37,6 +52,7 @@ function buildScene()
 	{
 		var scene=new Scene($('scenetitle').value.trim());
 		SCENES[scene.name]=scene;
+		scene.title=scene.name;
 	}
 	else if($("sccanvas").checked)
 	{
@@ -54,6 +70,7 @@ function buildScene()
 		{
 			var scene=new Scene($('scenetitle').value.trim());
 			SCENES[scene.name]=scene;
+			scene.title=scene.name;
 			var doneshapes={};
 			SELECTED={};
 			for(var name in SHAPES)
@@ -65,7 +82,7 @@ function buildScene()
 					doneshapes[name]=shape;
 				}
 			}
-			elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"))
+			elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
 		}
 	}
 	else
@@ -84,15 +101,17 @@ function buildScene()
 		{
 			var scene=new Scene($('scenetitle').value.trim());
 			SCENES[scene.name]=scene;
-			elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"))
+			elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));		
 		}
 	}
 	writescenelist();
 	$("shapestage").style.visibility="hidden";
+	clear($("scenestage"));
+	scene.addToStage($("scenestage"));
+	scene.drawscene("scene");
 	$("scenestage").style.visibility="visible";
 	scene.setAniStage();
 	CURRENT=scene.shapes;
-	$("scenebuildbox").visibility="hidden";
 	$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
 }
@@ -146,6 +165,7 @@ function buildTrack()
 	{
 		var track=new Track($('tracktitle').value.trim());
 		TRACKS[track.name]=track;
+		track.title=track.name;
 		elementShapeCopy(SELECTED,track.groups,track.shapes,0,$("trackstage"));
 		track.repeats=n;
 		track.yoyo=$('yoyo').checked;
@@ -153,14 +173,105 @@ function buildTrack()
 	}
 	writetracklist();
 	$("shapestage").style.visibility="hidden";
+	clear($("trackstage"));
+	track.getShape().addTo($("trackstage"));
+	track.drawtrack(false);
 	$("trackstage").style.visibility="visible";
 	track.setAniStage();
 	CURRENT=track.shapes;
-	$("trackbuildbox").visibility="hidden";
 	openStage('track');
 }
 
- //<img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) />
+function buildSprite()
+{
+	var scene,sprite;
+	var groups,shapes;
+	var re = /\W/;
+	if ($('spritetitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('spritetitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if (checkname($('spritetitle').value.trim(),'sprite')) 
+	{
+		alert('There is already sprite with the name '+$('spritetitle').value.trim());
+		return;
+	}
+	var n = parseFloat($('spritetime').value);
+	if (isNaN(n))
+	{
+		alert('Time is not a number');
+		return;		  
+	}
+	if (n<0)
+	{
+		alert('Time must be positive.');
+		return
+	}
+	var elname=$("eldrop").innerHTML.substr(4);
+	var engine=$("eldrop").source;
+	var elexists;
+	switch (engine)
+	{
+		case 'scene':
+			scene=SCENES[elname];
+			train=scene.copyscene("sprite");
+		break
+		case 'sprite':
+			sprite=SPRITES[elname];
+			train=sprite.copysprite("sprite");
+		break
+	}
+	var trname=$("trackdrop").innerHTML.substr(4);
+	var track=TRACKS[trname].copytrack("sprite");
+	sprite=new Sprite($('spritetitle').value.trim());
+	SPRITES[sprite.name]=sprite;
+	sprite.title=sprite.name;
+	sprite.track=track;
+	sprite.ptime=n;
+	sprite.usevec=$('spritevector').checked;
+	sprite.engine=engine;
+	sprite.train=train;
+	writespritelist();
+	$("shapestage").style.visibility="hidden";
+	clear($("spritestage"));
+	sprite.inTheatre($("spritestage"));
+	switch (sprite.engine)
+	{
+		case "scene":
+			sprite.train.drawscene();
+		break
+		case "sprite":
+			sprite.train.drawsprite();
+		break
+	}
+	$("spritestage").style.visibility="visible";
+	sprite.setAniStage();
+	CURRENT=sprite.shapes;
+	$("checksp").sprite=sprite.name;
+	$("savesp").sprite=sprite.name;
+	openStage('sprite');
+	if($('spritevector').checked)
+	{
+		alert('Vector now available for positioning');
+		addvector();
+	}
+	else
+	{
+		alert('Centre marker now available for positioning');
+		$('spritecentre').style.left=500;
+		$('spritecentre').style.top=200;
+		$('spritecentre').style.visibility='visible';
+	}
+
+		
+	
+}
 
 function writescenelist()
 {
@@ -171,7 +282,7 @@ function writescenelist()
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /><img src="assets/delete.gif" alt="delete" title="delete" onclick="scenedelete(this)" /> <span id="SC'+(n++)+'" class="innertext">'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(n++)+'" class="innertext">'+scene.name+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
 	for(var i=0;i<n;i++)
@@ -187,10 +298,12 @@ function writescenelist()
 										{
 											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.source="scene";
 										}
 										$("dragdiv").style.visibility="hidden";
+										$("dragdiv").style.top="-50px";
 									   };
-		DDSC[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden"}
+		DDSC[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";}
 	}
 }
 
@@ -203,7 +316,7 @@ function writetracklist()
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(n++)+'" class="innertext">'+track.name+'</span></li>';
+		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(n++)+'" class="innertext">'+track.name+'</span></li>';
 	}
 	$("innertr").innerHTML+="</ul>";
 	for(var i=0;i<n;i++)
@@ -221,10 +334,52 @@ function writetracklist()
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
 										}
 										$("dragdiv").style.visibility="hidden";
+										$("dragdiv").style.top="-50px";
 									   };
-		DDTR[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden"} 
+		DDTR[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
 	}
-	
+}
+
+function writespritelist()
+{
+	var n=0;
+	var DDSP=[];
+	var el;
+	$("innersp").innerHTML="<ul>";
+	for(var name in SPRITES)
+	{
+		sprite=SPRITES[name];
+		if(sprite.expanded)
+		{
+			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(n++)+'" class="innertext">'+sprite.name+'</span></li>';
+			sprite.expandlist();
+		}
+		else
+		{
+			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(n++)+'" class="innertext">'+sprite.name+'</span></li>';
+		}
+	}
+	$("innersp").innerHTML+="</ul>";
+	for(var i=0;i<n;i++)
+	{
+		DDSP[i]=new YAHOO.util.DD("SP"+i,"ELGROUP");
+		DDSP[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
+		DDSP[i].onMouseDown=function() {
+										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").style.visibility="visible";
+									};
+		DDSP[i].onDragDrop=function() {
+										if(DDeldrop.cursorIsOver)
+										{
+											el=DDeldrop.getEl();
+											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.source="sprite";
+										}
+										$("dragdiv").style.visibility="hidden";
+										$("dragdiv").style.top="-50px";
+									   };
+		DDSP[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
+	}
 }
 
 function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative array of groups, TO is target associative array of groups
@@ -364,6 +519,23 @@ function addshapetoscene(s)
 	$("listshapebox").style.visibility="hidden";
 }
 
+function sceneDelete(n)
+{
+	var name=n.parentNode.id;
+	var doit = confirm('Do you really want to delete '+name+'?');
+	if (doit)
+	{
+		var scene=SCENES[name];
+		for(var props in scene)
+		{
+			delete scene[props];
+		}
+		delete SCENES[name];
+		closedone();
+		writescenelist();
+	}
+}
+
 function sceneEdit(n)
 {
 	var shape;
@@ -397,7 +569,7 @@ function sceneEdit(n)
 
 function editScene(OKbutton)
 {
-	var scene=SCENES[OKbutton.scene];
+	var scene=SCENES[OKbutton.OKname];
 	var group,shape;
 	var re = /\W/;
 	if ($('editscenetitle').value.trim()=="")
@@ -421,11 +593,28 @@ function editScene(OKbutton)
 		{
 			scene.name=$('editscenetitle').value.trim();
 			SCENES[scene.name]=scene;
-			delete SCENES[OKbutton.scene];
+			delete SCENES[OKbutton.OKname];
 			writescenelist();
 		}
 	}
 	
+}
+
+function trackDelete(n)
+{
+	var name=n.parentNode.id;
+	var doit = confirm('Do you really want to delete '+name+'?');
+	if (doit)
+	{
+		var track=TRACKS[name];
+		for(var props in track)
+		{
+			delete track[props];
+		}
+		delete TRACKS[name];
+		closedone();
+		writetracklist();
+	}
 }
 
 function trackEdit(n)
@@ -451,32 +640,61 @@ function trackEdit(n)
 	}
 	$("trackbuildbox").visibility="hidden";
 	openStage('track');
+	$('edittracktitle').value=track.name;
+	$('edittrackreps').value=track.repeats;
+	$('edityoyo').checked=track.yoyo;
+	$('editviewselect').checked=track.visible;
+	$("trackeditbox").style.top=$("trackbuildbox").style.top;
+	$("trackeditbox").style.left=$("trackbuildbox").style.left;
+	$("trackeditbox").style.visibility="visible";
+	$("trbutton").track=track.name;
+	$("trbutton").style.visibility="hidden";
 }
 
-function setAniStage()
+function editTrack(OKbutton)
 {
-	var group;
-	removeGradLine();
-	closeStops();
-	removeRotate();
-	$("rotatebox").style.visibility="hidden";
-	$("gradfillbox").style.visibility="hidden";
-	hideTools();
-	closeColor();
-	SELECTED={};
-	BCOUNT=0;
-	clear($("markerdrop"));
-	clear($("boundarydrop"));
-
-	for(var name in this.groups)
+	var track=TRACKSS[OKbutton.OKname];
+	var group,shape;
+	var re = /\W/;
+	if ($('edittracktitle').value.trim()=="")
 	{
-		group=this.groups[name];
-		//group.drawBoundary();
-		SELECTED[group.name]=group;
-		showTools();
-		setTools(true);
+		alert('No name given ');
+		return;
 	}
-	$("boundarydrop").style.visibility="visible";
+	if (re.test($('edittracktitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if($('edittracktitle').value.trim()!=track.name)
+	{
+		if (checkname($('edittracktitle').value.trim(),'track')) 
+		{
+			alert('There is already trackry with the name '+$('edittracktitle').value.trim());
+			return;
+		}
+		else
+		{
+			track.name=$('edittracktitle').value.trim();
+			trackS[track.name]=track;
+			delete trackS[OKbutton.OKname];
+			writetracklist();
+		}
+	}
+	var n = parseInt($('edittrackreps').value);
+	if (isNaN(n) && !($('edittrackreps').value.toLowerCase()=="c"))
+	{
+		alert('Repetitons is neither a number nor continuous - c -');
+		repeat;		  
+	}
+	if (n<0)
+	{
+		alert('Repetitons must be positive.');
+		repeat
+	}
+	track.repeats=n;
+	track.yoyo=$('edityoyo').checked;
+	track.visible=$('editviewselect').checked;
 }
 
 function copydrag(cursor)
@@ -484,4 +702,55 @@ function copydrag(cursor)
 	$("dragdiv").style.visibility="visible";
 	$("dragdiv").style.top=(cursor.y)-1+"px";
 	$("dragdiv").style.left=(cursor.x)-1+"px";
+}
+
+function addvector()
+{
+	$('vecdiv').style.left=500;
+	$('vecdiv').style.top=200;
+	$('vecrotate').style.left=210;
+	$('vecrotate').style.top=105;
+	vecphi=0;
+	vecanvdraw(0);
+	$('vecdiv').style.visibility='visible';
+}
+
+function vecanvdraw(phi)
+{
+	
+	vecanv.ctx.restore();
+	vecanv.ctx.save();
+	vecanv.ctx.clearRect(-220,-220,440,440);
+	vecanv.ctx.beginPath();
+	vecanv.ctx.rotate(phi);
+	vecanv.ctx.moveTo(0,0);	
+	vecanv.ctx.lineTo(100,0);
+	vecanv.ctx.moveTo(90,-10);
+	vecanv.ctx.lineTo(100,0);
+	vecanv.ctx.lineTo(90,10);
+	vecanv.ctx.stroke();
+	vecirc.ctx.beginPath();
+	vecirc.ctx.arc(0,0,5,0,2*Math.PI, false);
+	vecirc.ctx.stroke();
+}
+
+
+function expand(spexp)
+{
+	var spritename=spexp.parentNode.id;
+	sprite=SPRITES[spritename];
+	if (sprite.expanded)
+	{
+		sprite.expanded=false;
+	}
+	else
+	{
+		sprite.expanded=false;
+	}
+	writespritelist();
+}
+
+function expandlist()
+{
+	
 }

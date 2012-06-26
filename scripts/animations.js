@@ -9,31 +9,73 @@ function Film(name)
 	this.name=name;
 }
 
-function Sprite()
-{
-}
+//Scene object
 
 function Scene(name)
 {
 	this.name=name;
+	this.title;
 	this.groups={};
 	this.shapes={};
-	this.cars=[];
 	
 	//methods
 	this.setAniStage=setAniStage;
+	this.copyscene=copyscene;
+	this.drawscene=drawscene;
+	this.addToStage=addToStage;
 }
 
-function Track(name)
+function copyscene(theatre)
 {
-	this.name=name;
-	this.shapes={};
-	this.groups={};
-	this.repeats=0;
-	this.visible=false;
-	this.yoyo=false;
-	this.line=null;
-	
-	//methods
-	this.setAniStage=setAniStage;
+	theatre+="stage";
+	var scene=new Scene("SUBSC"+(NCOUNT++));
+	elementShapeCopy(this.groups,scene.groups,scene.shapes,0,$(theatre));
+	return scene;
 }
+
+function drawscene()
+{
+	for(var name in this.shapes)
+	{
+		this.shapes[name].draw();
+		this.shapes[name].Canvas.ctx.restore();
+		this.shapes[name].Canvas.ctx.save();
+	}
+}
+
+function addToStage(theatre)
+{
+	for(var name in this.shapes)
+	{
+		shape=this.shapes[name];
+		shape.addTo(theatre);
+	}
+}
+
+function setAniStage()
+{
+	var group;
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	SELECTED={};
+	BCOUNT=0;
+	clear($("markerdrop"));
+	clear($("boundarydrop"));
+
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		SELECTED[group.name]=group;
+		showTools();
+		setTools(true);
+	}
+	$("boundarydrop").style.visibility="visible";
+}
+
+
+

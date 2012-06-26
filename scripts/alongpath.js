@@ -4,13 +4,14 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function curvelength(p0,p1,p2,p3)
+function curvelength(node) //from node to node.next
 {
+	var next=node.next;
 	var dt=0.1;
 	var s=0;
 	var t=0;
-	var cx = x(t);
-	var cy = y(t);
+	var cx = x(t); //current x
+	var cy = y(t); //current y
 	while (t<1)
 	{
 		t +=dt;
@@ -24,73 +25,63 @@ function curvelength(p0,p1,p2,p3)
 	function x(t)
 	{
 	
-		return (1-t)*(1-t)*(1-t)*parseInt(p0.x) + 3*(1-t)*(1-t)*t*parseInt(p1.x) + 3*(1-t)*t*t*parseInt(p2.x) + t*t*t*parseInt(p3.x)
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.x) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.x) + 3*(1-t)*t*t*parseInt(node.ctrl2.x) + t*t*t*parseInt(next.point.x)
 	}
 	
 	function y(t)
 	{
 	
-		return (1-t)*(1-t)*(1-t)*parseInt(p0.y) + 3*(1-t)*(1-t)*t*parseInt(p1.y) + 3*(1-t)*t*t*parseInt(p2.y) + t*t*t*parseInt(p3.y)
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.y) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.y) + 3*(1-t)*t*t*parseInt(node.ctrl2.y) + t*t*t*parseInt(next.point.y)
 	}
 }
 
-function linelength(p0,p3)
+function linelength(node) //from node to node.next
 {
-	return Math.sqrt((p3.x-p0.x)*(p3.x-p0.x)+(p3.y-p0.y)*(p3.y-p0.y));	
+	var next=node.next;
+	return Math.sqrt((node.next.point.x-node.point.x)*(node.next.point.x-node.point.x)+(node.next.point.y-node.point.y)*(node.next.point.y-node.point.y));	
 }
 
-function arclength(r,theta)
+function sectionlengths(path)
 {
-	return r*theta;	
-}
-
-function intvlengths(linetofollow)
-{
-	var cum=[];
-	var cumtot=0
-	var cl;
-	pnow={x:linetofollow.path[3][1], y:linetofollow.path[3][2]};
-	for(var i=4; i<linetofollow.path.length; i++)
+	var seclengths=[];
+	var cumltot=0; //cummulative total of section lengths
+	var sl;  //section length
+	var node=path.next; // from first node
+	while(node.next.point.x!="end")  // check if next node is a point or end node, if point calculate length of path between nodes
 	{
-	  switch (linetofollow.path[i][0])
+	  switch (node.vertex)
 	  {
 		case 'B':
-			p0=pnow;
-			p1={x:linetofollow.path[i][1], y:linetofollow.path[i][2]};
-			p2={x:linetofollow.path[i][3], y:linetofollow.path[i][4]};
-			p3={x:linetofollow.path[i][5], y:linetofollow.path[i][6]};
-			cl = curvelength(p0,p1,p2,p3);
+			sl = curvelength(node);
 			
 		break
 		case 'L':
-			p0=pnow;
-			p3={x:linetofollow.path[i][1], y:linetofollow.path[i][2]};
-			cl=linelength(p0,p3);
+			sl=linelength(node);
 		break
 	  }
-	  cumtot += cl;
-	  cum.push(cl);
-	  pnow=p3;
+	  cumltot += sl;
+	  seclengths.push(sl);
+	  node=node.next;
 	}
-	cum.push(cumtot)
-	return cum;	
+	seclengths.push(cumltot)
+	return seclengths;	
 }
 
-function intvtimes(c,T) //c cumulative distance array, T total time
+function cumltimes(sl,T) //sl section length array, T total time for path
 {
-	var v=c.pop()/T;
-	var tott=0;
+	var v=sl.pop()/T;
+	var cumltot_t=0;
 	var t;
-	var itv=[0];
-	for (var i=0; i<c.length; i++)
+	var cuml_t=[0];
+	for (var i=0; i<sl.length; i++)
 	{
-		t=c[i]/v;
-		tott +=t;
-		itv.push(tott);
+		t=sl[i]/v; //time over section
+		cumltot_t +=t;
+		cuml_t.push(cumltot_t);
 	}
-	return itv;  //cumulative time array
+	return cuml_t;  //cumulative time array
 }
-
+/*
 function lineposition(linetofollow, cp,ct, t)
 {
 	switch (linetofollow.path[cp-1][0])
@@ -151,7 +142,7 @@ function pathposition(linetofollow, cp,ct, t)  //cp, current bezier, pt current 
     var y = (1-pt)*(1-pt)*(1-pt)*parseInt(p0.y) + 3*(1-pt)*(1-pt)*pt*parseInt(p1.y) + 3*(1-pt)*pt*pt*parseInt(p2.y) + pt*pt*pt*parseInt(p3.y);
 	var dx = -3*(1-pt)*(1-pt)*parseInt(p0.x) + (3*(1-pt)*(1-pt) - 6*(1-pt)*pt)*parseInt(p1.x) + (6*(1-pt)*pt - 3*pt*pt)*parseInt(p2.x) + 3*pt*pt*parseInt(p3.x);
 	var dy = -3*(1-pt)*(1-pt)*parseInt(p0.y) + (3*(1-pt)*(1-pt) - 6*(1-pt)*pt)*parseInt(p1.y) + (6*(1-pt)*pt - 3*pt*pt)*parseInt(p2.y) + 3*pt*pt*parseInt(p3.y);
-	var phi = arctan(dx,dy);
+	var phi = arctan(dy,dx);
 	return {x:x, y:y, cp:cp, phi:phi}
 }
 
@@ -577,3 +568,4 @@ function restoretracksprops(sprite)
 	}
 }
 
+*/

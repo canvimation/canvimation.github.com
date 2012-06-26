@@ -223,7 +223,8 @@ function Shape(name,title,open,editable,type,STORE)
    	this.isOn=isOn;
    	this.isIn=isIn;
 	this.addAllMarks=addAllMarks; 
-	this.ShapeToText=ShapeToText; 	
+	this.ShapeToText=ShapeToText; 
+	this.drawjustpath=drawjustpath;	
    	return this;
    	
 }
@@ -314,7 +315,7 @@ function setPath(cursor)
 												};
 		break
 		case "rectangle":
-			for(var i=0;i<3;i++)
+			for(var i=0;i<4;i++)
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 				node=new Node(point);
@@ -338,7 +339,7 @@ function setPath(cursor)
 			}
 		break
 		case "triangle":
-			for(var i=0;i<2;i++)
+			for(var i=0;i<3;i++)
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 				node=new Node(point);
@@ -346,7 +347,7 @@ function setPath(cursor)
 			}
 		break
 		case "right_triangle":
-			for(var i=0;i<2;i++)
+			for(var i=0;i<3;i++)
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 				node=new Node(point);
@@ -403,6 +404,10 @@ function drawGuide(cursor)
 			node=node.next;
 			p.x=start.point.x;
 			p.y=cursor.y;
+			node.setNode(p);
+			node=node.next;
+			p.x=start.point.x;
+			p.y=start.point.y;
 			node.setNode(p);
 		break
 		case "ellipse":
@@ -463,6 +468,10 @@ function drawGuide(cursor)
 			p.x=start.point.x-dx; 
 			node=node.next;
 			node.setNode(p);
+			node=node.next;
+			p.x=start.point.x;
+			p.y=start.point.y;
+			node.setNode(p);
 		break
 		case "right_triangle":
 			var start=this.path.next;  
@@ -471,6 +480,10 @@ function drawGuide(cursor)
 			node.setNode(p);   
 			p.x=start.point.x; 
 			node=node.next;
+			node.setNode(p);
+			node=node.next;
+			p.x=start.point.x;
+			p.y=start.point.y;
 			node.setNode(p);
 		break
 	}
