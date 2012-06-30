@@ -241,7 +241,11 @@ function buildSprite()
 	$("shapestage").style.visibility="hidden";
 	clear($("spritestage"));
 	sprite.inTheatre($("spritestage"));
-	switch (sprite.engine)
+	sprite.saveCanvases();
+	sprite.setPoints();
+	sprite.drawrailway(true);
+	sprite.restoreCanvases();
+/*	switch (sprite.engine)
 	{
 		case "scene":
 			sprite.train.drawscene();
@@ -250,6 +254,7 @@ function buildSprite()
 			sprite.train.drawsprite();
 		break
 	}
+*/
 	$("spritestage").style.visibility="visible";
 	sprite.setAniStage();
 	CURRENT=sprite.shapes;

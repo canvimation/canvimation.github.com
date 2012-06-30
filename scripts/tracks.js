@@ -91,35 +91,27 @@ function setTimes()
 
 function drawtrack(showpathline)
 {
-	for(var name in this.shapes)
+	var shape=this.getShape()
+	if(showpathline)
 	{
-		if(showpathline)
-		{
-			this.shapes[name].drawjustpath();
-		}
-		else
-		{
-			this.shapes[name].draw();
-		}
-		this.shapes[name].Canvas.ctx.restore();
-		this.shapes[name].Canvas.ctx.save();
+		shape.drawjustpath();
 	}
+	else
+	{
+		shape.draw();
+	}
+	shape.Canvas.ctx.restore();
+	shape.Canvas.ctx.save();
 }
 
 function saveTrack()
 {
-	for(var name in this.shapes)
-	{
-		var shape=this.shapes[name];
-		shape.Canvas.ctx.save();
-	}
+	var shape=this.getShape();
+	shape.Canvas.ctx.save();
 }
 
 function restoreTrack()
 {
-	for(var name in this.shapes)
-	{
-		var shape=this.shapes[name];
-		shape.Canvas.ctx.restore();
-	}
+	var shape=this.getShape();
+	shape.Canvas.ctx.restore();
 }

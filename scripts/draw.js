@@ -9,7 +9,7 @@ function draw()
 	
 	shapestarted=false;
 	worksaved='false';
-	this.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
 	
    	var rule='rgba('
 	for (var j=0;j<3;j++)
@@ -96,9 +96,8 @@ function draw()
 
 function drawjustpath()
 {
-	this.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
 	this.Canvas.ctx.save();
-   	var rule='rgba('
 	this.Canvas.ctx.strokeStyle="rgb(0,0,0)";
 	this.Canvas.ctx.lineWidth = 1;
 	this.Canvas.ctx.lineCap = this.lineCap;

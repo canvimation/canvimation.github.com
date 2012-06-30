@@ -57,13 +57,34 @@ function closedialogue(img)
 
 function openStage(theatre)
 {
-	var box=theatre+"box";
-	$(box).style.visibility="hidden";
-	box=theatre+"buildbox";
-	$(box).style.visibility="hidden";
+	$("scenebox").style.visibility="hidden";
+	$("spritebox").style.visibility="hidden";
+	$("trackbox").style.visibility="hidden";
+	$("tweenbox").style.visibility="hidden";
+	$("filmbox").style.visibility="hidden";
+	$("scenebuildbox").style.visibility="hidden";
+	$("spritebuildbox").style.visibility="hidden";
+	$("trackbuildbox").style.visibility="hidden";
+	//$("tweenbuildbox").style.visibility="hidden";
+	//$("filmbuildbox").style.visibility="hidden";
+	$("sceneeditbox").style.visibility="hidden";
+	$("spriteeditbox").style.visibility="hidden";
+	$("trackeditbox").style.visibility="hidden";
+	//$("tweeneditbox").style.visibility="hidden";
+	//$("filmeditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
-	$("done").value="Finish "+theatre+" building";
-	$("done").style.visibility="visible";
+	if(theatre=="scene" || theatre=="track")
+	{
+		$("done").value="Finish "+theatre+" building";
+		$("done").style.visibility="visible";
+	}
+	else if (theatre=="sprite")
+	{
+		$("spbuttons").style.visibility="visible";
+		$("toolbar").style.visibility="hidden";
+		$("menushape").style.visibility="hidden";
+		$("grid").style.visibility="hidden";
+	}
 	$(hideTools());
 	if(theatre=="track")
 	{
@@ -82,12 +103,17 @@ function closedone()
 	$("tweenstage" ).style.visibility="hidden";
 	$("filmstage" ).style.visibility="hidden";
 	$("done" ).style.visibility="hidden";
+	$("spbuttons").style.visibility="hidden";
+	$("toolbar").style.visibility="visible";
 	$("menushape").style.visibility="visible";
+	$("grid").style.visibility="visible";
 	$("sceneeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
 	$("spriteeditbox").style.visibility="hidden";
 	//$("tweeneditbox").style.visibility="hidden";
 	//$("filmeditbox").style.visibility="hidden";
+	$("vecdiv").style.visibility="hidden";
+	$("spritecentre").style.visibility="hidden";
 	clear($("boundarydrop"));
 	CURRENT=SHAPES;
 	showTools();

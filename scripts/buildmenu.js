@@ -597,10 +597,10 @@ function setvector()
 {
 	if (sprite.vec)
 	{
-		vector.xs = minivect.xs+parseInt($('vecdiv').style.left)+110;
-		vector.xe = minivect.xe+parseInt($('vecdiv').style.left)+110;
-		vector.ys = minivect.ys+parseInt($('vecdiv').style.top)+58;
-		vector.ye = minivect.ye+parseInt($('vecdiv').style.top)+58;
+		vector.xs = MINIVECT.xs+parseInt($('vecdiv').style.left)+110;
+		vector.xe = MINIVECT.xe+parseInt($('vecdiv').style.left)+110;
+		vector.ys = MINIVECT.ys+parseInt($('vecdiv').style.top)+58;
+		vector.ye = MINIVECT.ye+parseInt($('vecdiv').style.top)+58;
 		var psi = arctan(vector.ye - vector.ys,vector.xe - vector.xs);
 	}
 	else
@@ -609,7 +609,6 @@ function setvector()
 		vector.ys=parseInt($('spritecentre').style.top)-42;
 		var psi = 0;
 	}
-	sprite.vector = {xs:0,ys:0,xe:0,ye:0,psi:0};
 	sprite.vector.xs=vector.xs;
 	sprite.vector.xe=vector.xe;
 	sprite.vector.ys=vector.ys;
@@ -1060,8 +1059,7 @@ function renamescene()
 
 function editscenedel()
 {
-	var doit = confirm('Do you really want to delete '+scene.name+'?');
-	if (doit)
+
 	{
 		delete scenes[scene.name];
 		var sid = $('scene|'+scene.name);

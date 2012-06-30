@@ -166,7 +166,7 @@ function copyGroup(group,offset,theatre,STORE,COLLECTION)
 		
 			groupcopy.members.push(copy);
 			copy.group=groupcopy;
-			if(theatre.id=="shapestage" || theatre.id=="scenestage")
+			if(theatre.id=="shapestage")
 			{
 				copy.draw();
 			}
