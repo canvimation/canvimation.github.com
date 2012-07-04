@@ -438,6 +438,13 @@ inner img {
 	visibility:hidden;
 }
 
+#checkdone {
+	position:absolute;
+	left:500px;
+	top:5px;
+	visibility:hidden;
+}
+
 #spbuttons {
 	left:500px;
 	top:5px;
@@ -1088,6 +1095,8 @@ var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
 var STOPCHECKING=false;
+var SPANCOUNT=0; //counter for spans in list
+var LIMARGIN;
 
 EXCANVASUSED = !document.createElement("canvas").getContext;
 
@@ -1635,7 +1644,8 @@ function main()
 	$("listshapebox").style.width=140+"px";
 	$("listshapebox").style.height=200+"px";
 	
-	$("done").style.visibility="hidden"
+	$("done").style.visibility="hidden";
+	$("checkdone").style.visibility="hidden";
 	
 	if(ieb)
 	{
@@ -2181,10 +2191,12 @@ function main()
   <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
   <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
   <input id="done" type="button" value="" onclick="closedone()" />
+  
   <div id="spbuttons">
   	<input sprite="" id="checksp" type="button" value="Check Sprite" onclick="checksprite(this.sprite)" /> 
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
   </div>
+  <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>
 

@@ -245,16 +245,6 @@ function buildSprite()
 	sprite.setPoints();
 	sprite.drawrailway(true);
 	sprite.restoreCanvases();
-/*	switch (sprite.engine)
-	{
-		case "scene":
-			sprite.train.drawscene();
-		break
-		case "sprite":
-			sprite.train.drawsprite();
-		break
-	}
-*/
 	$("spritestage").style.visibility="visible";
 	sprite.setAniStage();
 	CURRENT=sprite.shapes;
@@ -280,17 +270,17 @@ function buildSprite()
 
 function writescenelist()
 {
-	var n=0;
+	SPANCOUNT=0;
 	var DDSC=[];
 	var el;
 	$("innersc").innerHTML="<ul>";
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(n++)+'" class="innertext">'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.name+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
-	for(var i=0;i<n;i++)
+	for(var i=0;i<SPANCOUNT;i++)
 	{
 		DDSC[i]=new YAHOO.util.DD("SC"+i,"ELGROUP");
 		DDSC[i].setDragElId("dragdiv");
@@ -314,17 +304,17 @@ function writescenelist()
 
 function writetracklist()
 {
-	var n=0;
+	SPANCOUNT=0;
 	var DDTR=[];
 	var el;
 	$("innertr").innerHTML="<ul>";
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(n++)+'" class="innertext">'+track.name+'</span></li>';
+		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.name+'</span></li>';
 	}
 	$("innertr").innerHTML+="</ul>";
-	for(var i=0;i<n;i++)
+	for(var i=0;i<SPANCOUNT;i++)
 	{
 		DDTR[i]=new YAHOO.util.DD("TR"+i,"TRGROUP");
 		DDTR[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
@@ -347,25 +337,26 @@ function writetracklist()
 
 function writespritelist()
 {
-	var n=0;
+	SPANCOUNT=0;
 	var DDSP=[];
 	var el;
+	LIMARGIN="&nbsp;&nbsp;&nbsp;";
 	$("innersp").innerHTML="<ul>";
 	for(var name in SPRITES)
 	{
 		sprite=SPRITES[name];
 		if(sprite.expanded)
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(n++)+'" class="innertext">'+sprite.name+'</span></li>';
-			sprite.expandlist();
+			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.name+'</span></li>';
+			sprite.expandspritelist();
 		}
 		else
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(n++)+'" class="innertext">'+sprite.name+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.name+'</span></li>';
 		}
 	}
 	$("innersp").innerHTML+="</ul>";
-	for(var i=0;i<n;i++)
+	for(var i=0;i<SPANCOUNT;i++)
 	{
 		DDSP[i]=new YAHOO.util.DD("SP"+i,"ELGROUP");
 		DDSP[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
@@ -750,12 +741,7 @@ function expand(spexp)
 	}
 	else
 	{
-		sprite.expanded=false;
+		sprite.expanded=true;
 	}
 	writespritelist();
-}
-
-function expandlist()
-{
-	
 }

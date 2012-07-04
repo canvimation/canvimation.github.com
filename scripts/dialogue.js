@@ -81,6 +81,8 @@ function openStage(theatre)
 	else if (theatre=="sprite")
 	{
 		$("spbuttons").style.visibility="visible";
+		$("checksp").style.visibility="visible";
+		$("savesp").style.visibility="visible";
 		$("toolbar").style.visibility="hidden";
 		$("menushape").style.visibility="hidden";
 		$("grid").style.visibility="hidden";

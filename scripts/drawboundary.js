@@ -517,18 +517,6 @@ function isIn(cursor)
 		}
 	node=node.next;	
 	}
-	if(this.type=="sector" || this.type=="segment" || this.type=="rectangle") //check intersection with closing line
-	{
-		var start=this.path.next;
-		var last=this.path.prev;
-		A=new Point(last.point.x-cursor.x,last.point.y-cursor.y);
-		B=new Point(start.point.x-cursor.x,start.point.y-cursor.y);
-		if (A.y==B.y) {B.y +=0.01};
-		if (A.y==0) {A.y +=0.01};
-		if (B.y==0) {B.y +=0.01};
-		if (A.y==B.y) {B.y +=0.01};
-		updatecrosses(A,B);
-	}
 	if ((crosses % 2)==0)
 	{
 		return false;

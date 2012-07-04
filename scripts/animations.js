@@ -14,7 +14,7 @@ function Film(name)
 function Scene(name)
 {
 	this.name=name;
-	this.title;
+	this.title=name;
 	this.groups={};
 	this.shapes={};
 	
@@ -29,6 +29,7 @@ function copyscene(theatre)
 {
 	theatre+="stage";
 	var scene=new Scene("SUBSC"+(NCOUNT++));
+	scene.title=this.title;
 	elementShapeCopy(this.groups,scene.groups,scene.shapes,0,$(theatre));
 	return scene;
 }

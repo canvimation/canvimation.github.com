@@ -38,6 +38,7 @@ function Sprite(name)
 	this.transformTrack=transformTrack;
 	this.nextPointer=nextPointer;
 	this.getShapes=getShapes;
+	this.expandspritelist=expandspritelist;
 }
 
 function copysprite()
@@ -143,6 +144,9 @@ function checksprite(spritename)
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
+	$('checksp').style.visibility="hidden";
+	$('savesp').style.visibility="hidden";
+	$('checkdone').style.visibility="visible";
 	sprite.setPoints();
 	sprite.followPath(true);
 }
@@ -152,6 +156,8 @@ function savesprite(spritename)
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	sprite.setPoints();
+	$("checksp").style.visibility="hidden";
+	$("savesp").style.visibility="hidden";
 	closedone();
 }
 
@@ -261,7 +267,12 @@ function moveSprite(showpathline)
 	{
 		//$("msg").innerHTML=HTMLmsg;
 		alert('Check completed');
+		$("checkdone").style.visibility="hidden";
+		STOPCHECKING=false;
+		$("checksp").style.visibility="visible";
+		$("savesp").style.visibility="visible";
 		this.restoreCanvases();
+		this.zeroPointers();
 
 		if (1==2) //editcheck
 		{
@@ -456,5 +467,39 @@ function getShapes()
 		case "sprite":
 			return this.train.getShapes();
 		break
+	}
+}
+
+function expandspritelist()
+{
+	LIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	switch(this.engine)
+	{
+		case "scene":
+			var scene=this.train;
+			$("innersp").innerHTML+='<li sprite='+this.name+'id='+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+			var track=this.track;
+			$("innersp").innerHTML+='<li sprite='+this.name+'id='+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /><span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+		break
+		case "sprite":
+			var sprite=this.train;
+			if(sprite.expanded)
+			{
+				$("innersp").innerHTML+='<li sprite='+this.name+'id='+sprite.name+' >'+LIMARGIN+'  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+				sprite.expandspritelist();
+			}
+			else
+			{
+				$("innersp").innerHTML+='<li sprite='+this.name+'id='+sprite.name+' >'+LIMARGIN+'  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+			}
+		break
+	}
+}
+
+function getspritefromname(name)
+{
+	if(this.engine!="sprite")
+	{
+		return 
 	}
 }
