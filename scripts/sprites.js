@@ -38,6 +38,9 @@ function Sprite(name)
 	this.transformTrack=transformTrack;
 	this.nextPointer=nextPointer;
 	this.getShapes=getShapes;
+	this.getSprite=getSprite;
+	this.getScene=getScene;
+	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
 }
 
@@ -470,36 +473,62 @@ function getShapes()
 	}
 }
 
-function expandspritelist()
+function getScene()
+{
+	switch(this.engine)
+	{
+		case "scene":
+			return {path:this.title,scene:this.train};
+		break
+		case "sprite":
+			var scdata=this.train.getScene();
+			return {path:"/"+scdata.path,scene:scdata.track};;
+		break
+	}
+}
+
+function getTrack(trackname)
+{alert([this.track.name,trackname]);
+	if(this.track.name==trackname)
+	{
+		return {path:this.title,track:this.track};
+	}
+	else
+	{
+		var trdata=this.train.getTrack(trackname)
+		return {path:"/"+trdata.path,track:trdata.track};
+	}
+}
+
+function getSprite(spritename)
+{
+	if(this.name==spritename)
+	{
+		return this;
+	}
+	else
+	{
+		return this.train.getSprite(spritename);
+	}
+}
+
+function expandspritelist(sn)
 {
 	LIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 	switch(this.engine)
 	{
 		case "scene":
 			var scene=this.train;
-			$("innersp").innerHTML+='<li sprite='+this.name+'id='+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
 			var track=this.track;
-			$("innersp").innerHTML+='<li sprite='+this.name+'id='+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /><span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
 		break
 		case "sprite":
 			var sprite=this.train;
-			if(sprite.expanded)
-			{
-				$("innersp").innerHTML+='<li sprite='+this.name+'id='+sprite.name+' >'+LIMARGIN+'  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
-				sprite.expandspritelist();
-			}
-			else
-			{
-				$("innersp").innerHTML+='<li sprite='+this.name+'id='+sprite.name+' >'+LIMARGIN+'  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
-			}
+			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+			sprite.expandspritelist(sn);
 		break
 	}
 }
 
-function getspritefromname(name)
-{
-	if(this.engine!="sprite")
-	{
-		return 
-	}
-}
+

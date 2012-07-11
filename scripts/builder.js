@@ -213,7 +213,7 @@ function buildSprite()
 		alert('Time must be positive.');
 		return
 	}
-	var elname=$("eldrop").innerHTML.substr(4);
+	var elname=$("eldrop").name;
 	var engine=$("eldrop").source;
 	var elexists;
 	switch (engine)
@@ -227,7 +227,7 @@ function buildSprite()
 			train=sprite.copysprite("sprite");
 		break
 	}
-	var trname=$("trackdrop").innerHTML.substr(4);
+	var trname=$("trackdrop").name;
 	var track=TRACKS[trname].copytrack("sprite");
 	sprite=new Sprite($('spritetitle').value.trim());
 	SPRITES[sprite.name]=sprite;
@@ -277,7 +277,7 @@ function writescenelist()
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id='+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.name+'</span></li>';
+		$("innersc").innerHTML+='<li id=non!!!!,'+scene.title+','+scene.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -285,7 +285,8 @@ function writescenelist()
 		DDSC[i]=new YAHOO.util.DD("SC"+i,"ELGROUP");
 		DDSC[i].setDragElId("dragdiv");
 		DDSC[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
 										$("dragdiv").style.visibility="visible";
 									};
 		DDSC[i].onDragDrop=function() {
@@ -294,6 +295,7 @@ function writescenelist()
 											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
 											el.source="scene";
+											el.name=$("dragdiv").name
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
@@ -311,7 +313,7 @@ function writetracklist()
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id='+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.name+'</span></li>';
+		$("innertr").innerHTML+='<li id=non!!!!,'+track.title+','+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
 	}
 	$("innertr").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -319,7 +321,8 @@ function writetracklist()
 		DDTR[i]=new YAHOO.util.DD("TR"+i,"TRGROUP");
 		DDTR[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
 		DDTR[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
 										$("dragdiv").style.visibility="visible";
 									};
 		DDTR[i].onDragDrop=function() {
@@ -327,6 +330,7 @@ function writetracklist()
 										{
 											el=DDtrackdrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
@@ -347,12 +351,12 @@ function writespritelist()
 		sprite=SPRITES[name];
 		if(sprite.expanded)
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.name+'</span></li>';
-			sprite.expandspritelist();
+			$("innersp").innerHTML+='<li id='+sprite.name+','+sprite.title+','+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+			sprite.expandspritelist(sprite.name);
 		}
 		else
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.name+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sprite.name+','+sprite.title+','+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
 		}
 	}
 	$("innersp").innerHTML+="</ul>";
@@ -361,7 +365,8 @@ function writespritelist()
 		DDSP[i]=new YAHOO.util.DD("SP"+i,"ELGROUP");
 		DDSP[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
 		DDSP[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id;
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
 										$("dragdiv").style.visibility="visible";
 									};
 		DDSP[i].onDragDrop=function() {
@@ -370,6 +375,7 @@ function writespritelist()
 											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
 											el.source="sprite";
+											el.name=$("dragdiv").name;
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
@@ -532,13 +538,27 @@ function sceneDelete(n)
 	}
 }
 
-function sceneEdit(n)
+function sceneEdit(n)  //edits the selected scene shapes
 {
 	var shape;
-	var name=n.parentNode.id;
+	var idarray=n.parentNode.id.split(",");
+	var topsprite=idarray[0]
+	var name=idarray[2];
+	if(topsprite=="non!!!!")
+	{
+		var scene=SCENES[name];
+		var path="";
+	}
+	else
+	{
+		var sprite=SPRITES[topsprite];
+		var data=sprite.getScene()
+		var scene=data.scene;
+		var path=data.path;
+	}
 	$("shapestage").style.visibility="hidden";
+	clear($("scenestage"));
 	$("scenestage").style.visibility="visible";
-	var scene=SCENES[name];
 	scene.setAniStage();
 	removeGradLine();
 	closeStops();
@@ -551,20 +571,22 @@ function sceneEdit(n)
 	for(var shapename in CURRENT)
 	{
 		shape=CURRENT[shapename];
+		shape.addTo($("scenestage"));
 		shape.draw();
 	}
 	$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
-	$('editscenetitle').value=scene.name;
+	$('editscenetitle').value=scene.title;
 	$("sceneeditbox").style.top=$("scenebuildbox").style.top;
 	$("sceneeditbox").style.left=$("scenebuildbox").style.left;
 	$("sceneeditbox").style.visibility="visible";
-	$("scbutton").scene=scene.name;
+	$("scpath").innerHTML=path;
+	$("scbutton").OKname=scene.name;
 	$("scbutton").style.visibility="hidden";
 }
 
-function editScene(OKbutton)
-{
+function editScene(OKbutton)  //sets edit box for scene
+{alert(OKbutton.OKname)
 	var scene=SCENES[OKbutton.OKname];
 	var group,shape;
 	var re = /\W/;
@@ -578,22 +600,9 @@ function editScene(OKbutton)
 		alert('Name should contain only letters and numbers.');
 		return;
 	}
-	if($('editscenetitle').value.trim()!=scene.name)
-	{
-		if (checkname($('editscenetitle').value.trim(),'scene')) 
-		{
-			alert('There is already scenery with the name '+$('editscenetitle').value.trim());
-			return;
-		}
-		else
-		{
-			scene.name=$('editscenetitle').value.trim();
-			SCENES[scene.name]=scene;
-			delete SCENES[OKbutton.OKname];
-			writescenelist();
-		}
-	}
-	
+	scene.title=$('editscenetitle').value.trim();
+	writescenelist();
+	OKbutton.style.visibility="hidden";
 }
 
 function trackDelete(n)
@@ -616,10 +625,24 @@ function trackDelete(n)
 function trackEdit(n)
 {
 	var shape;
-	var name=n.parentNode.id;
+	var idarray=n.parentNode.id.split(",");
+	var topsprite=idarray[0]
+	var name=idarray[2];alert(name)
+	if(topsprite=="non!!!!")
+	{
+		var track=TRACKS[name];
+		var path="";
+	}
+	else
+	{
+		var sprite=SPRITES[topsprite];
+		var data=sprite.getTrack(name);
+		var track=data.track;
+		var path=data.path;
+	}
 	$("shapestage").style.visibility="hidden";
+	clear($("trackstage"));
 	$("trackstage").style.visibility="visible";
-	var track=TRACKS[name];
 	track.setAniStage();
 	removeGradLine();
 	closeStops();
@@ -632,24 +655,26 @@ function trackEdit(n)
 	for(var shapename in CURRENT)
 	{
 		shape=CURRENT[shapename];
+		shape.addTo($("trackstage"));
 		shape.draw();
 	}
 	$("trackbuildbox").visibility="hidden";
 	openStage('track');
-	$('edittracktitle').value=track.name;
+	$('edittracktitle').value=track.title;
 	$('edittrackreps').value=track.repeats;
 	$('edityoyo').checked=track.yoyo;
 	$('editviewselect').checked=track.visible;
 	$("trackeditbox").style.top=$("trackbuildbox").style.top;
 	$("trackeditbox").style.left=$("trackbuildbox").style.left;
+	$("trpath").innerHTML=path;
 	$("trackeditbox").style.visibility="visible";
-	$("trbutton").track=track.name;
+	$("trbutton").OKname=track.name;
 	$("trbutton").style.visibility="hidden";
 }
 
 function editTrack(OKbutton)
-{
-	var track=TRACKSS[OKbutton.OKname];
+{alert(["OK",OKbutton.OKname]);
+	var track=TRACKS[OKbutton.OKname];
 	var group,shape;
 	var re = /\W/;
 	if ($('edittracktitle').value.trim()=="")
@@ -662,21 +687,8 @@ function editTrack(OKbutton)
 		alert('Name should contain only letters and numbers.');
 		return;
 	}
-	if($('edittracktitle').value.trim()!=track.name)
-	{
-		if (checkname($('edittracktitle').value.trim(),'track')) 
-		{
-			alert('There is already trackry with the name '+$('edittracktitle').value.trim());
-			return;
-		}
-		else
-		{
-			track.name=$('edittracktitle').value.trim();
-			trackS[track.name]=track;
-			delete trackS[OKbutton.OKname];
-			writetracklist();
-		}
-	}
+	track.title=$('edittracktitle').value.trim();
+	writetracklist();
 	var n = parseInt($('edittrackreps').value);
 	if (isNaN(n) && !($('edittrackreps').value.toLowerCase()=="c"))
 	{
@@ -691,6 +703,7 @@ function editTrack(OKbutton)
 	track.repeats=n;
 	track.yoyo=$('edityoyo').checked;
 	track.visible=$('editviewselect').checked;
+	OKbutton.style.visibility="hidden";
 }
 
 function copydrag(cursor)
@@ -733,8 +746,9 @@ function vecanvdraw(phi)
 
 function expand(spexp)
 {
-	var spritename=spexp.parentNode.id;
-	sprite=SPRITES[spritename];
+	var idarray=spexp.parentNode.id.split(",");
+	var spritename=idarray[2];
+	var sprite=SPRITES[spritename];
 	if (sprite.expanded)
 	{
 		sprite.expanded=false;

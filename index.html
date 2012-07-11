@@ -269,6 +269,11 @@ img.marker {
 	z-index:4;
 }
 
+.pathtext {
+	padding-left: 2px;
+	font-size: 8pt;
+}
+
 .white {
 	top:25px;
 	width:100%;
@@ -2255,7 +2260,7 @@ function main()
 		<div id="rightbarsp" class="rightbar"></div>
 		<div id="bottombarsp" class="bottombar"></div>
 		<div id="rcornerbarsp" class="rcornerbar"></div>
-		<div id="innersp" class="inner"></div>
+		<div id="innersp" class="inner" path=""></div>
 	</div>
 	<div class="white"></div>
 	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="spbb()"><span class="buildhead">Build New</span></div>	
@@ -2292,7 +2297,7 @@ function main()
 		<div id="rightbartr" class="rightbar"></div>
 		<div id="bottombartr" class="bottombar"></div>
 		<div id="rcornerbartr" class="rcornerbar"></div>
-		<div id="innertr" class="inner"></div>
+		<div id="innertr" class="inner" path=""></div>
 	</div>
 	<div class="white"></div>
 	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="trbb()"><span class="buildhead">Build New</span></div>	
@@ -2415,6 +2420,7 @@ function main()
 <!--edit dialogues ............................................................... -->
 <div id='sceneeditbox' class="dialoguebox">
 	<div id='sceneeditcontent' class='content'>
+		<p id="scpath" class="pathtext"></p>
 		<p class="text_input">
 			<label for="editscenetitle">Title</label> <input class="title" type="text" name="editscenetitle" id="editscenetitle" size=15 onclick="$('scbutton').style.visibility='inherit'"/>
 		</p>
@@ -2429,6 +2435,7 @@ function main()
 
 <div id='trackeditbox' class="dialoguebox">
 	<div id='trackeditcontent' class='content'>
+		<p id="trpath" class="pathtext"></p>
 		<p class="text_input">
 			<label for="edittracktitle">Title</label> <input class="title" type="text" name="edittracktitle" id="edittracktitle" size=15 onclick="$('trbutton').style.visibility='inherit'" />
 		</p>
@@ -2441,7 +2448,7 @@ function main()
 		<p class="check_input">
 			<input type="checkbox" id="editviewselect" onclick="$('trbutton').style.visibility='inherit'"><label for="editviewselect">Visible.</label>
 		</p>
-		<input type="button" id="trbutton" value=" Change " onclick="editTrack()" OKname="" />
+		<input type="button" id="trbutton" value=" Change " onclick="editTrack(this)" OKname="" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='trackedithead' class='head'>&nbsp; Edit A Track
