@@ -552,7 +552,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var sprite=SPRITES[topsprite];
-		var data=sprite.getScene()
+		var data=sprite.getScene();
 		var scene=data.scene;
 		var path=data.path;
 	}
@@ -581,13 +581,13 @@ function sceneEdit(n)  //edits the selected scene shapes
 	$("sceneeditbox").style.left=$("scenebuildbox").style.left;
 	$("sceneeditbox").style.visibility="visible";
 	$("scpath").innerHTML=path;
-	$("scbutton").OKname=scene.name;
+	$("scbutton").OKname=scene;
 	$("scbutton").style.visibility="hidden";
 }
 
 function editScene(OKbutton)  //sets edit box for scene
-{alert(OKbutton.OKname)
-	var scene=SCENES[OKbutton.OKname];
+{
+	var scene=OKbutton.OKname;
 	var group,shape;
 	var re = /\W/;
 	if ($('editscenetitle').value.trim()=="")
@@ -602,6 +602,7 @@ function editScene(OKbutton)  //sets edit box for scene
 	}
 	scene.title=$('editscenetitle').value.trim();
 	writescenelist();
+	writespritelist();
 	OKbutton.style.visibility="hidden";
 }
 
@@ -627,7 +628,7 @@ function trackEdit(n)
 	var shape;
 	var idarray=n.parentNode.id.split(",");
 	var topsprite=idarray[0]
-	var name=idarray[2];alert(name)
+	var name=idarray[2];alert(["trackedit",topsprite,idarray[1], name])
 	if(topsprite=="non!!!!")
 	{
 		var track=TRACKS[name];
@@ -668,13 +669,13 @@ function trackEdit(n)
 	$("trackeditbox").style.left=$("trackbuildbox").style.left;
 	$("trpath").innerHTML=path;
 	$("trackeditbox").style.visibility="visible";
-	$("trbutton").OKname=track.name;
+	$("trbutton").OKname=track;
 	$("trbutton").style.visibility="hidden";
 }
 
 function editTrack(OKbutton)
-{alert(["OK",OKbutton.OKname]);
-	var track=TRACKS[OKbutton.OKname];
+{
+	var track=OKbutton.OKname;
 	var group,shape;
 	var re = /\W/;
 	if ($('edittracktitle').value.trim()=="")
@@ -689,6 +690,7 @@ function editTrack(OKbutton)
 	}
 	track.title=$('edittracktitle').value.trim();
 	writetracklist();
+	writespritelist();
 	var n = parseInt($('edittrackreps').value);
 	if (isNaN(n) && !($('edittrackreps').value.toLowerCase()=="c"))
 	{
