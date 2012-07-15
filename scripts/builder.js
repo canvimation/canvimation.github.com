@@ -344,10 +344,11 @@ function writespritelist()
 	SPANCOUNT=0;
 	var DDSP=[];
 	var el;
-	LIMARGIN="&nbsp;&nbsp;&nbsp;";
+	
 	$("innersp").innerHTML="<ul>";
 	for(var name in SPRITES)
 	{
+		LIMARGIN="&nbsp;&nbsp;&nbsp;";
 		sprite=SPRITES[name];
 		if(sprite.expanded)
 		{
@@ -539,7 +540,7 @@ function sceneDelete(n)
 }
 
 function sceneEdit(n)  //edits the selected scene shapes
-{
+{alert(n.parentNode.id);
 	var shape;
 	var idarray=n.parentNode.id.split(",");
 	var topsprite=idarray[0]
@@ -552,7 +553,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var sprite=SPRITES[topsprite];
-		var data=sprite.getScene();
+		var data=sprite.getScene();alert(["a sprite",data.scene,data.path])
 		var scene=data.scene;
 		var path=data.path;
 	}
@@ -628,7 +629,7 @@ function trackEdit(n)
 	var shape;
 	var idarray=n.parentNode.id.split(",");
 	var topsprite=idarray[0]
-	var name=idarray[2];alert(["trackedit",topsprite,idarray[1], name])
+	var name=idarray[2];
 	if(topsprite=="non!!!!")
 	{
 		var track=TRACKS[name];

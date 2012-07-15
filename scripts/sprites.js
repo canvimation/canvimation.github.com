@@ -482,13 +482,13 @@ function getScene()
 		break
 		case "sprite":
 			var scdata=this.train.getScene();
-			return {path:"/"+scdata.path,scene:scdata.track};;
+			return {path:"/"+scdata.path,scene:scdata.scene};;
 		break
 	}
 }
 
 function getTrack(trackname)
-{alert([this.track.name,this.track.title,trackname]);
+{
 	if(this.track.name==trackname)
 	{
 		return {path:this.title,track:this.track};
@@ -519,16 +519,16 @@ function expandspritelist(sn)
 	{
 		case "scene":
 			var scene=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'">'+scene.title+'</span></li>';
 			var track=this.track;
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'">'+track.title+'</span></li>';
 		break
 		case "sprite":
 			var sprite=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'">'+sprite.title+'</span></li>';
 			var track=this.track;
 			LIMARGIN+="&nbsp;&nbsp;&nbsp;";
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'">'+track.title+'</span></li>';
 			sprite.expandspritelist(sn);
 		break
 	}
