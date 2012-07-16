@@ -141,18 +141,20 @@ function setVector()
 	this.vector.psi = psi;
 }
 
-function checksprite(spritename)
+function checksprite(spritename,showpathline)
 {
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
 	$('checksp').style.visibility="hidden";
+	$('fullchecksp').style.visibility="hidden";
 	$('savesp').style.visibility="hidden";
 	$('checkdone').style.visibility="visible";
 	sprite.setPoints();
-	sprite.followPath(true);
+	sprite.followPath(showpathline);
 }
+
 
 function savesprite(spritename)
 {
@@ -160,6 +162,7 @@ function savesprite(spritename)
 	sprite.setVector();
 	sprite.setPoints();
 	$("checksp").style.visibility="hidden";
+	$("fullchecksp").style.visibility="hidden";
 	$("savesp").style.visibility="hidden";
 	closedone();
 }
@@ -173,7 +176,6 @@ function followPath(showpathline)
 	this.inTheatre($("spritestage"));
 	this.saveCanvases();
 	this.track.drawtrack(showpathline);
-	//HTMLmsg="";
   	this.moveSprite(showpathline);
 }
 
@@ -273,6 +275,7 @@ function moveSprite(showpathline)
 		$("checkdone").style.visibility="hidden";
 		STOPCHECKING=false;
 		$("checksp").style.visibility="visible";
+		$("fullchecksp").style.visibility="visible";
 		$("savesp").style.visibility="visible";
 		this.restoreCanvases();
 		this.zeroPointers();
