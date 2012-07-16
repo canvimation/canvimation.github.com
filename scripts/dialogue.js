@@ -75,7 +75,7 @@ function openStage(theatre)
 	$("anibar").style.visibility="hidden";
 	if(theatre=="scene" || theatre=="track")
 	{
-		$("done").value="Finish "+theatre+" building";
+		$("done").value="Save "+theatre;
 		$("done").style.visibility="visible";
 	}
 	else if (theatre=="sprite")

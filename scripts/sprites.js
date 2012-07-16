@@ -378,6 +378,7 @@ function restoreCanvases()
 
 function transform()
 {
+	var shape;
 	var curptr=this.pointer % this.points.length;
 	this.nextPointer();
 	var p = this.points[curptr];
@@ -397,7 +398,8 @@ function transform()
 			}
 		break
 		case "sprite":
-			this.transformTrack(p);
+			var v=this.vector;
+			this.transformTrack(p,v);
 			var shapes=this.train.getShapes();
 			for(var name in shapes)
 			{	
@@ -415,7 +417,7 @@ function transform()
 	}
 }
 
-function transformTrack(p)
+function transformTrack(p,v)
 {
 	if (this.engine !='scene')
 	{
@@ -423,11 +425,11 @@ function transformTrack(p)
 		shape.Canvas.ctx.translate(p.x,p.y);//$("msg").innerHTML+=p.x+".."+p.y+"..."+p.phi*180/Math.PI+"<br>";
 		if (this.usevec)
 		{
-			var psi=p.phi-this.vector.psi;
+			var psi=p.phi-v.psi;
 			shape.Canvas.ctx.rotate(psi);
 		}
-		shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
-		this.train.transformTrack(p);
+		shape.Canvas.ctx.translate(-v.xs, -v.ys);
+		this.train.transformTrack(p,v);
 	}
 }
 
@@ -482,7 +484,7 @@ function getScene()
 		break
 		case "sprite":
 			var scdata=this.train.getScene();
-			return {path:"/"+scdata.path,scene:scdata.scene};;
+			return {path:this.title+"/"+scdata.path,scene:scdata.scene};;
 		break
 	}
 }
@@ -496,7 +498,7 @@ function getTrack(trackname)
 	else
 	{
 		var trdata=this.train.getTrack(trackname)
-		return {path:"/"+trdata.path,track:trdata.track};
+		return {path:this.title+"/"+trdata.path,track:trdata.track};
 	}
 }
 
@@ -519,16 +521,16 @@ function expandspritelist(sn)
 	{
 		case "scene":
 			var scene=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span id="SC'+(SPANCOUNT++)+'">'+scene.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>'+scene.title+'</span></li>';
 			var track=this.track;
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'">'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
 		break
 		case "sprite":
 			var sprite=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'">'+sprite.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span>'+sprite.title+'</span></li>';
 			var track=this.track;
 			LIMARGIN+="&nbsp;&nbsp;&nbsp;";
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span id="TR'+(SPANCOUNT++)+'">'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
 			sprite.expandspritelist(sn);
 		break
 	}
