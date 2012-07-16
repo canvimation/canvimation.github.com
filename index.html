@@ -2198,7 +2198,8 @@ function main()
   <input id="done" type="button" value="" onclick="closedone()" />
   
   <div id="spbuttons">
-  	<input sprite="" id="checksp" type="button" value="Check Sprite" onclick="checksprite(this.sprite)" /> 
+  	<input sprite="" id="checksp" type="button" value="Track Check" onclick="checksprite(this.sprite,true)" /> 
+  	<input sprite="" id="fullchecksp" type="button" value="Full Check" onclick="checksprite(this.sprite,false)" />
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
   </div>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />

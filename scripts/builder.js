@@ -174,8 +174,9 @@ function buildTrack()
 	writetracklist();
 	$("shapestage").style.visibility="hidden";
 	clear($("trackstage"));
-	track.getShape().addTo($("trackstage"));
-	track.drawtrack(false);
+	shape=track.getShape()
+	shape.addTo($("trackstage"));
+	shape.draw();
 	$("trackstage").style.visibility="visible";
 	track.setAniStage();
 	CURRENT=track.shapes;
@@ -249,6 +250,7 @@ function buildSprite()
 	sprite.setAniStage();
 	CURRENT=sprite.shapes;
 	$("checksp").sprite=sprite.name;
+	$("fullchecksp").sprite=sprite.name;
 	$("savesp").sprite=sprite.name;
 	openStage('sprite');
 	if($('spritevector').checked)
@@ -524,8 +526,10 @@ function addshapetoscene(s)
 
 function sceneDelete(n)
 {
-	var name=n.parentNode.id;
-	var doit = confirm('Do you really want to delete '+name+'?');
+	var idarray=n.parentNode.id.split(",");
+	var title=idarray[1]
+	var name=idarray[2];
+	var doit = confirm('Do you really want to delete '+title+'?');
 	if (doit)
 	{
 		var scene=SCENES[name];
@@ -540,7 +544,7 @@ function sceneDelete(n)
 }
 
 function sceneEdit(n)  //edits the selected scene shapes
-{alert(n.parentNode.id);
+{
 	var shape;
 	var idarray=n.parentNode.id.split(",");
 	var topsprite=idarray[0]
@@ -553,7 +557,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var sprite=SPRITES[topsprite];
-		var data=sprite.getScene();alert(["a sprite",data.scene,data.path])
+		var data=sprite.getScene();
 		var scene=data.scene;
 		var path=data.path;
 	}
@@ -609,8 +613,10 @@ function editScene(OKbutton)  //sets edit box for scene
 
 function trackDelete(n)
 {
-	var name=n.parentNode.id;
-	var doit = confirm('Do you really want to delete '+name+'?');
+	var idarray=n.parentNode.id.split(",");
+	var title=idarray[1]
+	var name=idarray[2];
+	var doit = confirm('Do you really want to delete '+title+'?');
 	if (doit)
 	{
 		var track=TRACKS[name];

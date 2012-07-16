@@ -98,7 +98,10 @@ function drawtrack(showpathline)
 	}
 	else
 	{
-		shape.draw();
+		if(this.visible)
+		{
+			shape.draw();
+		}
 	}
 	shape.Canvas.ctx.restore();
 	shape.Canvas.ctx.save();

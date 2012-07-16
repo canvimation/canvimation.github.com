@@ -82,6 +82,7 @@ function openStage(theatre)
 	{
 		$("spbuttons").style.visibility="visible";
 		$("checksp").style.visibility="visible";
+		$("fullchecksp").style.visibility="visible";
 		$("savesp").style.visibility="visible";
 		$("toolbar").style.visibility="hidden";
 		$("menushape").style.visibility="hidden";
