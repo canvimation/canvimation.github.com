@@ -18,3 +18,4 @@ shapes[7]=[false,false,'triangle'];
 shapes[8]=[false,true,'sector'];
 shapes[9]=[false,true,'segment'];
 shapes[10]=[false,false,'right_triangle'];
+//shapes[11]=[false,false,'image']; to be added in the future

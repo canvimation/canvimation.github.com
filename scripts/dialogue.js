@@ -66,7 +66,7 @@ function openStage(theatre)
 	$("spritebuildbox").style.visibility="hidden";
 	$("trackbuildbox").style.visibility="hidden";
 	//$("tweenbuildbox").style.visibility="hidden";
-	//$("filmbuildbox").style.visibility="hidden";
+	$("filmbuildbox").style.visibility="hidden";
 	$("sceneeditbox").style.visibility="hidden";
 	$("spriteeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
@@ -643,17 +643,22 @@ function resize(el)
 	var type=el.substr(el.length-2,2);
 	var bar=el.substr(0,el.length-5);
 	var dt=50;
+	var dl=0;
 	if(type=="ls")
 	{
 		dt=0;
+	}
+	if(type="fl")
+	{
+		dl=150;
 	}
 	switch (bar)
 	{
 		case "right":
 			$(el).style.top=0+"px";
-			if(parseInt($(el).style.left)<125)
+			if(parseInt($(el).style.left)<125+dl)
 			{
-				$(el).style.left="125px";
+				$(el).style.left=(125+dl)+"px";
 			}
 			holder.style.width=(parseInt($(el).style.left)+2)+"px";
 			$("rcornerbar"+type).style.left=(parseInt(holder.style.width)-2)+"px";
@@ -669,9 +674,9 @@ function resize(el)
 			$("rcornerbar"+type).style.top=(parseInt(holder.style.height)-(dt+2))+"px";
 		break
 		case "rcorner":
-			if(parseInt($(el).style.left)<125)
+			if(parseInt($(el).style.left)<125+dl)
 			{
-				$(el).style.left="125px";
+				$(el).style.left=(125+dl)+"px";
 			}
 			holder.style.width=(parseInt($(el).style.left)+2)+"px";
 			if(parseInt($(el).style.top)<50)
@@ -685,6 +690,16 @@ function resize(el)
 		break
 	}
 	holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+2)+"px,0px)";
+	if(type="fl")
+	{
+		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
+		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
+		$("filmbuildlines").style.clip="rect(1px,"+(parseInt($("filmbuildlines").style.width)-2)+"px,"+(parseInt($("filmbuildlines").style.height)-2)+"px,0px)";
+		$("filmbuildboard").style.width=parseInt(holder.style.width)+"px";
+		$("filmbuildboard").style.height=parseInt(holder.style.height)+"px";
+		$("filmbuildboard").style.clip="rect(1px,"+(parseInt($("filmbuildboard").style.width)-2)+"px,"+(parseInt($("filmbuildboard").style.height)-2)+"px,0px)";
+	}
+	
 }
 
 function anidialogue(el)

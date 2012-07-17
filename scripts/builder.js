@@ -29,6 +29,17 @@ function spbb()
 	$("trackdrop").innerHTML="";
 }
 
+function flbb()
+{
+	$('filmtitle').value="Film"+(FMCOUNT++);
+	$("filmbuildbox").style.visibility="visible";
+	$("filmbuildboard").innerHTML="";
+	$("filmbuildlines").innerHTML="";
+	ELCOUNT=0;
+	FLELTOP=15;
+	FILMBOARD={};
+}
+
 function buildScene()
 {
 	var group,shape;
@@ -297,7 +308,15 @@ function writescenelist()
 											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
 											el.source="scene";
-											el.name=$("dragdiv").name
+											el.name=$("dragdiv").name;
+										}
+										else if(DDelfilmdrop.cursorIsOver)
+										{
+											el=DDelfilmdrop.getEl();
+											el.source="scene";
+											el.title=$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
+											addToFilmBoard(el,"scene");
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
