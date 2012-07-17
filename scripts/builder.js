@@ -715,6 +715,118 @@ function editTrack(OKbutton)
 	OKbutton.style.visibility="hidden";
 }
 
+function spriteDelete(n)
+{
+	var idarray=n.parentNode.id.split(",");
+	var title=idarray[1]
+	var name=idarray[2];
+	var doit = confirm('Do you really want to delete '+title+'?');
+	if (doit)
+	{
+		var sprite=SPRITES[name];
+		for(var props in sprite)
+		{
+			delete sprite[props];
+		}
+		delete SPRITES[name];
+		closedone();
+		writespritelist();
+	}
+}
+
+function spriteEdit(n)
+{
+	var idarray=n.parentNode.id.split(",");
+	var topsprite=idarray[0]
+	var name=idarray[2];
+	var sprite=SPRITES[topsprite];
+	var data=sprite.getSprite(name);
+	var sprite=data.sprite;
+	var path=data.path;
+	$("shapestage").style.visibility="hidden";
+	sprite.setAniStage();
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	sprite.zeroPointers();
+	sprite.saveCanvases();
+	clear($("spritestage"));
+	sprite.inTheatre($("spritestage"));
+	$("spritestage").style.visibility="visible";
+	sprite.drawrailway(true);
+	sprite.restoreCanvases();
+	if (sprite.usevec)
+	{
+		$('vecdiv').style.visibility='visible';
+	}
+	else
+	{
+		$('spritecentre').style.visibility='visible';
+	}
+	$("spritebuildbox").visibility="hidden";
+	openStage('sprite');
+	$('editspritetitle').value=sprite.title;
+	$('editspritetime').value=sprite.ptime;
+	$('editspritevector').checked=sprite.usevec;
+	$("spriteeditbox").style.top=$("spritebuildbox").style.top;
+	$("spriteeditbox").style.left=$("spritebuildbox").style.left;
+	$("sppath").innerHTML=path;
+	$("spriteeditbox").style.visibility="visible";
+	$("spbutton").OKname=sprite;
+	$("spbutton").style.visibility="hidden";
+}
+
+function editSprite(OKbutton)
+{
+	var sprite=OKbutton.OKname;
+	var group,shape;
+	var re = /\W/;
+	if ($('editspritetitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('editspritetitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	sprite.title=$('editspritetitle').value.trim();
+	writespritelist();
+	var n = parseFloat($('editspritetime').value);
+	if (isNaN(n))
+	{
+		alert("Time is not a number");
+		repeat;		  
+	}
+	if (n<0)
+	{
+		alert('Time must be positive.');
+		repeat
+	}
+	sprite.ptime=n;
+	if(sprite.usevec !=$('editspritevector').checked)
+	{
+		sprite.usevec=$('editspritevector').checked
+		if(sprite.usevec)
+		{
+			$('spritecentre').style.visibility='hidden';
+			$('vecdiv').style.visibility='visible';
+		}
+		else
+		{
+			$('vecdiv').style.visibility='hidden';
+			$('spritecentre').style.visibility='visible';
+		}
+	}
+	OKbutton.style.visibility="hidden";
+}
+
+
 function copydrag(cursor)
 {
 	$("dragdiv").style.visibility="visible";

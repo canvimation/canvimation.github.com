@@ -279,30 +279,18 @@ function moveSprite(showpathline)
 		$("savesp").style.visibility="visible";
 		this.restoreCanvases();
 		this.zeroPointers();
-
-		if (1==2) //editcheck
+		this.saveCanvases();
+		clear($("spritestage"));
+		this.inTheatre($("spritestage"));
+		this.drawrailway(true);
+		this.restoreCanvases();
+		if (this.usevec)
 		{
-			if (trackcheck)
-			{
-				restoretracksprops(sprite);
-			}
-			editsprite();
+			$('vecdiv').style.visibility='visible';
 		}
 		else
 		{
-			this.saveCanvases();
-			clear($("spritestage"));
-			this.inTheatre($("spritestage"));
-			this.drawrailway(true);
-			this.restoreCanvases();
-			if (this.usevec)
-			{
-				$('vecdiv').style.visibility='visible';
-			}
-			else
-			{
-				$('spritecentre').style.visibility='visible';
-			}
+			$('spritecentre').style.visibility='visible';
 		}
 	}
 }
@@ -509,11 +497,12 @@ function getSprite(spritename)
 {
 	if(this.name==spritename)
 	{
-		return this;
+		return {path:"",sprite:this};
 	}
 	else
 	{
-		return this.train.getSprite(spritename);
+		var spdata=this.train.getSprite(spritename);
+		return {path:this.title+"/"+spdata.path,sprite:spdata.sprite};
 	}
 }
 

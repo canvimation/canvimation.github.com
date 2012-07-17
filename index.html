@@ -1599,6 +1599,9 @@ function main()
 	$("trackeditbox").style.width="200px";
 	$("trackeditbox").style.height="260px";
 	
+	$("spriteeditbox").style.width="250px";
+	$("spriteeditbox").style.height="230px";
+	
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
 	{
@@ -1763,7 +1766,7 @@ function main()
 	
 	$('vecdiv').style.left=500+"px";
 	$('vecdiv').style.top=200+"px";
-	$('vecdiv').style.zIndex=100;
+	$('vecdiv').style.zIndex=1;
 	vecanv=$('vecanv')
     if (vecanv.getContext)
 	{
@@ -1841,7 +1844,7 @@ function main()
 
 	$('spritecentre').style.left=500+"px";
 	$('spritecentre').style.top=200+"px";
-	$('spritecentre').style.zIndex=100;
+	$('spritecentre').style.zIndex=1;
 	DDspritecentre=new YAHOO.util.DD('spritecentre');
 	
 	
@@ -2460,18 +2463,18 @@ function main()
 
 <div id='spriteeditbox' class="dialoguebox">
 	<div id='spriteeditcontent' class='content'>
-		<div id="spritediv" >
-			<div id="spritedropel">Element</div><div id="spritedroptrack">Track</div>
-			<div id="eldrop"></div><div id="trackdrop"></div>
-		</div>
-		<div id="spritechoice">
+		<p id="sppath" class="pathtext"></p>
 		<p class="text_input">
-			<label for="spritetitle">Title</label> <input class="title" type="text" name="spritetitle" id="spritetitle" size=15 />
+			<label for="editspritetitle">Title</label> <input class="title" type="text" name="editspritetitle" id="editspritetitle" size=15 onclick="$('spbutton').style.visibility='inherit'" />
 		</p>
-		
-		<input type="button" value=" OK " onclick="editsprite()" />
-		<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
-		</div>
+		<p class="text_input">
+			<label for="editspritetime">Time over path.</label><input type=text id="editspritetime" value="5" size=5 onclick="$('spbutton').style.visibility='inherit'" ><span>Secs.</span>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="editspritevector" onclick="$('spbutton').style.visibility='inherit'" ><label for="editspritevector">Position by Vector.</label>
+		</p>
+		<input type="button" id="spbutton" value=" Change " onclick="editSprite(this)" OKname=""/>
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='spriteedithead' class='head'>&nbsp; Edit A Sprite
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
