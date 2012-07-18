@@ -22,7 +22,7 @@ function addToFilmBoard(el,source)
 	{
 		flen++;
 	}
-	$("timeline").style.top=((flen+2)*25)+"px";;
+	$("timeline").style.top=((flen+2)*25)+"px";
 	flel.name=name;
 	flel.title=el.title;
 	flel.source=el.source;

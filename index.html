@@ -321,7 +321,7 @@ img.marker {
 	top:50px;
 	left:5px;
 	height:2px;
-	width:100%;
+	width:1000px;
 	background-color: #000000;
 
 }
@@ -329,6 +329,27 @@ img.marker {
 #filmbuildboard {
 	color:#000000;
 }
+
+#scrollrightholder {
+	background-color:#DDDDDD;
+	width:20px;
+	height:100%;
+	right:0px;
+}
+#scrollbottomholder{
+	background-color:#DDDDDD;
+	width:100%;
+	height:20px;
+	bottom:0px;
+}
+#scrollcorner{
+	background-color:#555555;
+	width:20px;
+	height:20px;
+	bottom:0px;
+	right:0px;
+}	
+		
 .allcontent {
 	top:50px;
 	width:100%;
@@ -1675,13 +1696,16 @@ function main()
 	$("filmbuildbox").style.height="220px";
 	$("filmbuildbox").style.clip="rect(1px,277px,222px,0px)";
 	$("filmbuildcontent").style.height="170px";
+	$("filmbuildstory").style.backgroundColor="red";
+	$("filmbuildstory").style.width="1000px";
+	$("filmbuildstory").style.height="500px";
 	$("filmbuildlines").style.width="275px";
 	$("filmbuildlines").style.height="170px";
 	$("filmbuildlines").style.clip="rect(1px,273px,168px,0px)";
 	$("filmbuildboard").style.width="275px";
 	$("filmbuildboard").style.height="170px";
 	$("filmbuildboard").style.clip="rect(1px,273px,168px,0px)";
-	$("filmbuildboard").style.zIndex=1;
+	$("filmbuildboard").style.zIndex=1;	
 	DDelfilmdrop=new YAHOO.util.DDTarget("filmbuildboard","ELGROUP");
 	
 	for(var i=0;i<ANIELS.length;i++)
@@ -2475,13 +2499,21 @@ function main()
 
 <div id='filmbuildbox' class="elementsbox">
 	<div id='filmbuildcontent'class='allcontent'>
-		<div id="filmbuildlines"></div>
-		<div id="filmbuildboard" source=""></div>
+		<div id="filmbuildstory">
+			<div id="filmbuildlines">
+				<div id="timeline"></div>
+			</div>
+			<div id="filmbuildboard" source=""></div>
+			
+		</div>
+		<div id="scrollrightholder"></div>
+		<div id="scrollbottomholder"></div>
+		<div id="scrollcorner"></div>
 		<div class="leftbar"></div>
 		<div id="rightbarfl" class="rightbar"></div>
 		<div id="bottombarfl" class="bottombar"></div>
 		<div id="rcornerbarfl" class="rcornerbar"></div>
-		<div id="timeline"></div>
+		
 	</div>
 	<div class="white"></div>
 	<div class="lbar"></div>

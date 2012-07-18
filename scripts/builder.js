@@ -34,7 +34,7 @@ function flbb()
 	$('filmtitle').value="Film"+(FMCOUNT++);
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="";
-	$("filmbuildlines").innerHTML="";
+	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
 	ELCOUNT=0;
 	FLELTOP=15;
 	FILMBOARD={};
