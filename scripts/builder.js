@@ -35,6 +35,7 @@ function flbb()
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
+	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 	ELCOUNT=0;
 	FLELTOP=15;
 	FLELWIDTH="350px"

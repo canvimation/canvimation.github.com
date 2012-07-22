@@ -651,6 +651,7 @@ function resize(el)
 	if(type="fl")
 	{
 		dl=150;
+		dt=75;
 	}
 	switch (bar)
 	{
@@ -698,6 +699,7 @@ function resize(el)
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
 		$("filmbuildlines").style.clip="rect(1px,"+(parseInt($("filmbuildlines").style.width)-2)+"px,"+(parseInt($("filmbuildlines").style.height)-2)+"px,0px)";
+		$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 		$("filmbuildboard").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildboard").style.height=parseInt(holder.style.height)+"px";
 		$("filmbuildboard").style.clip="rect(1px,"+(parseInt($("filmbuildboard").style.width)-2)+"px,"+(parseInt($("filmbuildboard").style.height)-2)+"px,0px)";
