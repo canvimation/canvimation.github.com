@@ -692,8 +692,9 @@ function resize(el)
 	holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+2)+"px,0px)";
 	if(type="fl")
 	{
-		//$("filmbuildstory").style.width=(parseInt(holder.style.width)-5)+"px";
-		//$("filmbuildstory").style.height=(parseInt(holder.style.height)-55)+"px";
+		holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+27)+"px,0px)";
+		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),parseInt(FLELWIDTH))+"px";
+		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),parseInt(FLELHEIGHT))+"px";
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
 		$("filmbuildlines").style.clip="rect(1px,"+(parseInt($("filmbuildlines").style.width)-2)+"px,"+(parseInt($("filmbuildlines").style.height)-2)+"px,0px)";

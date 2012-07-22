@@ -37,6 +37,8 @@ function flbb()
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
 	ELCOUNT=0;
 	FLELTOP=15;
+	FLELWIDTH="350px"
+	FLELHEIGHT="250px"
 	FILMBOARD={};
 }
 

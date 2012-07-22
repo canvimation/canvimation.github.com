@@ -317,11 +317,19 @@ img.marker {
 	cursor:default;
 }
 
+.current {
+	top:50px;
+	width:100%;
+	height:25px;
+	cursor:default;
+	border:1px solid #666666;
+}
+
 #timeline{
 	top:50px;
 	left:5px;
 	height:2px;
-	width:1000px;
+	width:100%;
 	background-color: #000000;
 
 }
@@ -349,6 +357,22 @@ img.marker {
 	bottom:0px;
 	right:0px;
 }	
+#scup {
+	position:absolute;
+	top:2px;
+}
+#scdw {
+	position:absolute;
+	bottom:22px;
+}	
+#sclf {
+	position:absolute;
+	left:2px;
+}
+#scrt {
+	position:absolute;
+	right:22px;
+}
 		
 .allcontent {
 	top:50px;
@@ -1152,6 +1176,8 @@ var FMCOUNT=0; //counter for films
 var ELCOUNT=0; //counter for elements on filmbuildboard;
 
 var FLELTOP=5; //top position of element on filmboard;
+var FLELWIDTH;
+var FLELHEIGHT;
 
 var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
@@ -1693,19 +1719,20 @@ function main()
 	
 	$("filmbuildbox").style.left="200px";
 	$("filmbuildbox").style.width="275px";
-	$("filmbuildbox").style.height="220px";
-	$("filmbuildbox").style.clip="rect(1px,277px,222px,0px)";
-	$("filmbuildcontent").style.height="170px";
-	$("filmbuildstory").style.backgroundColor="red";
-	$("filmbuildstory").style.width="1000px";
-	$("filmbuildstory").style.height="500px";
+	$("filmbuildbox").style.height="245px";
+	$("filmbuildbox").style.clip="rect(1px,277px,275px,0px)";
+	$("filmbuildcontent").style.height="195px";
+	$("filmbuildcontent").style.top="75px";
+	$("filmbuildstory").style.width="350px";
+	$("filmbuildstory").style.height="295px";
 	$("filmbuildlines").style.width="275px";
-	$("filmbuildlines").style.height="170px";
-	$("filmbuildlines").style.clip="rect(1px,273px,168px,0px)";
+	$("filmbuildlines").style.height="195px";
+	$("filmbuildlines").style.clip="rect(1px,273px,222px,0px)";
 	$("filmbuildboard").style.width="275px";
-	$("filmbuildboard").style.height="170px";
-	$("filmbuildboard").style.clip="rect(1px,273px,168px,0px)";
-	$("filmbuildboard").style.zIndex=1;	
+	$("filmbuildboard").style.height="195px";
+	$("filmbuildboard").style.clip="rect(1px,273px,222px,0px)";
+	FLELWIDTH="350px"
+	FLELHEIGHT="295px"
 	DDelfilmdrop=new YAHOO.util.DDTarget("filmbuildboard","ELGROUP");
 	
 	for(var i=0;i<ANIELS.length;i++)
@@ -2506,8 +2533,8 @@ function main()
 			<div id="filmbuildboard" source=""></div>
 			
 		</div>
-		<div id="scrollrightholder"></div>
-		<div id="scrollbottomholder"></div>
+		<div id="scrollrightholder" onmouseover="$('scup').src='assets/scupin.png';$('scdw').src='assets/scdwin.png'" onmouseout="$('scup').src='assets/scupout.png';$('scdw').src='assets/scdwout.png'" ><img id="scup" src="assets/scupout.png" onmouseover="this.src='assets/scupover.png'" onmouseout="this.src='assets/scupout.png'"  /><img id="scdw" src="assets/scdwout.png" onmouseover="this.src='assets/scdwover.png'" onmouseout="this.src='assets/scdwout.png'"   /></div>
+		<div id="scrollbottomholder" onmouseover="$('sclf').src='assets/sclfin.png';$('scrt').src='assets/scrtin.png'" onmouseout="$('sclf').src='assets/sclfout.png';$('scrt').src='assets/scrtout.png'" ><img id="sclf" src="assets/sclfout.png" onmouseover="this.src='assets/sclfover.png'" onmouseout="this.src='assets/sclfout.png'"  /><img id="scrt" src="assets/scrtout.png" onmouseover="this.src='assets/scrtover.png'" onmouseout="this.src='assets/scrtout.png'" /></div>
 		<div id="scrollcorner"></div>
 		<div class="leftbar"></div>
 		<div id="rightbarfl" class="rightbar"></div>
@@ -2518,7 +2545,9 @@ function main()
 	<div class="white"></div>
 	<div class="lbar"></div>
 	<div class="filmline"><label for="filmtitle"> Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> <input type="button" value=" OK " onclick="buildfilm()" />
-		<input type="button" value=" Close " onclick="closedialogue(this)" /></div>	
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div class="current">Current Element:</div>		
 	<div class="rbar"></div>
 	<div class="bbar"></div>
 	<div id='filmbuildhead' class='head'>&nbsp; Build A Film
