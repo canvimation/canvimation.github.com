@@ -639,19 +639,21 @@ function setgrid()
 
 function resize(el)
 {
-	var holder=$(el).parentNode.parentNode;
+	var holder=$(el).parentNode.parentNode;$("msg").innerHTML=holder.id;
 	var type=el.substr(el.length-2,2);
 	var bar=el.substr(0,el.length-5);
 	var dt=50;
 	var dl=0;
+	var du=0;
 	if(type=="ls")
 	{
 		dt=0;
 	}
-	if(type="fl")
+	if(type=="fl")
 	{
 		dl=150;
 		dt=75;
+		du=50;
 	}
 	switch (bar)
 	{
@@ -666,9 +668,9 @@ function resize(el)
 		break
 		case "bottom":
 			$(el).style.left=0+"px";
-			if(parseInt($(el).style.top)<50)
+			if(parseInt($(el).style.top)<50+du)
 			{
-				$(el).style.top="50px";
+				$(el).style.top=(50+du)+"px";
 			}
 			holder.style.height=(parseInt($(el).style.top)+dt+2)+"px";
 			$(el).parentNode.style.height=(parseInt(holder.style.height)-(dt+0))+"px";
@@ -680,9 +682,9 @@ function resize(el)
 				$(el).style.left=(125+dl)+"px";
 			}
 			holder.style.width=(parseInt($(el).style.left)+2)+"px";
-			if(parseInt($(el).style.top)<50)
+			if(parseInt($(el).style.top)<50+du)
 			{
-				$(el).style.top="50px";
+				$(el).style.top=(50+du)+"px";
 			}
 			holder.style.height=(parseInt($(el).style.top)+dt+2)+"px";
 			$(el).parentNode.style.height=(parseInt(holder.style.height)-(dt+0))+"px";
@@ -696,13 +698,14 @@ function resize(el)
 		holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+27)+"px,0px)";
 		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),parseInt(FLELWIDTH))+"px";
 		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),parseInt(FLELHEIGHT))+"px";
+		$("filmbuildstory").style.clip="rect(1px,"+(parseInt(holder.style.width)-22)+"px,"+(parseInt(holder.style.height)-97)+"px,0px)";
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
-		$("filmbuildlines").style.clip="rect(1px,"+(parseInt($("filmbuildlines").style.width)-2)+"px,"+(parseInt($("filmbuildlines").style.height)-2)+"px,0px)";
+		//$("filmbuildstory").style.backgroundColor="red";
 		$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 		$("filmbuildboard").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildboard").style.height=parseInt(holder.style.height)+"px";
-		$("filmbuildboard").style.clip="rect(1px,"+(parseInt($("filmbuildboard").style.width)-2)+"px,"+(parseInt($("filmbuildboard").style.height)-2)+"px,0px)";
+		$("scrollud").style.height=((parseInt(holder.style.height)-115)*(parseInt(holder.style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
 	}
 	
 }

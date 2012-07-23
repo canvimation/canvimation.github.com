@@ -320,6 +320,8 @@ function writescenelist()
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
 											addToFilmBoard(el,"scene");
+											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),parseInt(FLELHEIGHT))+"px";
+											$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-115)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
