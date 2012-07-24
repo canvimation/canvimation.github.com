@@ -33,14 +33,17 @@ function flbb()
 {
 	$('filmtitle').value="Film"+(FMCOUNT++);
 	$("filmbuildbox").style.visibility="visible";
-	$("filmbuildboard").innerHTML="";
+	$("filmbuildboard").innerHTML="<input id='Ain' type='text' value='' size='4' /><input id='Din'  type='text' value='' size='4' />";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
+	$("Ain").style.visibility="hidden";
+	$("Din").style.visibility="hidden";
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 	ELCOUNT=0;
 	FLELTOP=15;
 	FLELWIDTH="350px"
 	FLELHEIGHT="250px"
 	FILMBOARD={};
+	FLELINDX=-10000000;
 }
 
 function buildScene()
@@ -153,12 +156,12 @@ function buildTrack()
 	if (isNaN(n) && !($('trackreps').value.toLowerCase()=="c"))
 	{
 		alert('Repetitons is neither a number nor continuous - c -');
-		repeat;		  
+		return;		  
 	}
 	if (n<0)
 	{
 		alert('Repetitons must be positive.');
-		repeat
+		return;
 	}
 	var i=0;
 	for(var name in SELECTED)
@@ -321,7 +324,7 @@ function writescenelist()
 											el.name=$("dragdiv").name;
 											addToFilmBoard(el,"scene");
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),parseInt(FLELHEIGHT))+"px";
-											$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-115)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+											$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-117)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";

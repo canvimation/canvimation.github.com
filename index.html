@@ -318,10 +318,13 @@ img.marker {
 
 .current {
 	top:50px;
-	width:100%;
+	width:500px;
 	height:25px;
 	cursor:default;
-	border:1px solid #666666;
+	background-color: #FFFFFF;
+}
+.current input{
+	text-align: right;
 }
 
 #timeline{
@@ -336,25 +339,47 @@ img.marker {
 #filmbuildboard {
 	color:#000000;
 }
+#filmbuildboard input{
+	position:absolute;
+	text-align: right;
+	cursor:default;
+}
 
+#scrollrightmask {
+	background-color:#FFFFFF;
+	width:20px;
+	height:100%;
+	right:0px;
+}
+#scrollbottommask{
+	background-color:#FFFFFF;
+	width:100%;
+	height:20px;
+	bottom:0px;
+}
 #scrollrightholder {
 	background-color:#DDDDDD;
 	width:20px;
 	height:100%;
 	right:0px;
-	opacity:0.20;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=20)";
-    filter:alpha(opacity=20);
 }
 #scrollbottomholder{
 	background-color:#DDDDDD;
 	width:100%;
 	height:20px;
 	bottom:0px;
+}
+.out20 {
 	opacity:0.20;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=20)";
     filter:alpha(opacity=20);
 }
+.in100 {
+	opacity:1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=100)";
+    filter:alpha(opacity=100);
+}
+
 #scrollcorner{
 	background-color:#555555;
 	width:20px;
@@ -365,11 +390,7 @@ img.marker {
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=20)";
     filter:alpha(opacity=20);
 }
-#scrollbottomholder:hover, 	#scrollrightholder:hover {
-	opacity:1;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=100)";
-    filter:alpha(opacity=100);	
-}
+
 #scup {
 	position:absolute;
 	top:2px;
@@ -411,6 +432,7 @@ img.marker {
 	top:50px;
 	width:100%;
 	background-color:#FFFFFF;
+	z-index:-100000000;
 }
 
 .allcontent img {
@@ -444,8 +466,8 @@ img.marker {
 }
 
 .scrbar {
-	right:0px;
-	width:2px;
+	right:-1px;
+	width:3px;
 	height:75px;
 	background-color: #000000;
 }
@@ -471,6 +493,9 @@ img.marker {
 	background-color: #000000;
 	cursor:e-resize;
 }
+.flel100pct {
+	width:100%
+}
 
 .topbar {
 	left:0px;
@@ -493,7 +518,6 @@ img.marker {
 	width:100%;
 	background-color: #000000;
 	cursor:s-resize;
-
 }
 
 .rcornerbar {
@@ -503,6 +527,7 @@ img.marker {
 	width:2px;
 	background-color: #FFFFFF;
 	cursor: nw-resize;
+	zindex:10000003;
 }
 
 .inner {
@@ -1225,7 +1250,7 @@ var ELCOUNT=0; //counter for elements on filmbuildboard;
 var FLELTOP=5; //top position of element on filmboard;
 var FLELWIDTH;
 var FLELHEIGHT;
-
+var FLELINDX=0; //z-index for elements on filmlines
 var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
@@ -1767,7 +1792,7 @@ function main()
 	$("filmbuildbox").style.left="200px";
 	$("filmbuildbox").style.width="275px";
 	$("filmbuildbox").style.height="270px";
-	$("filmbuildbox").style.clip="rect(1px,277px,277px,0px)";
+	$("filmbuildbox").style.clip="rect(1px,277px,272px,0px)";
 	$("filmbuildcontent").style.height="195px";
 	$("filmbuildcontent").style.top="75px";
 	$("filmbuildstory").style.width="350px";
@@ -1779,9 +1804,36 @@ function main()
 	$("filmbuildboard").style.width="275px";
 	$("filmbuildboard").style.height="195px";
 	//$("filmbuildboard").style.clip="rect(1px,273px,222px,0px)";
-	$("filmbuildstory").style.clip="rect(1px,"+(parseInt($("filmbuildbox").style.width)-22)+"px,"+(parseInt($("filmbuildbox").style.height)-97)+"px,0px)";
-	$("filmbuildstory").style.height="210px";
-	$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-115)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+	//$("filmbuildstory").style.clip="rect(1px,"+(parseInt($("filmbuildbox").style.width)-22)+"px,"+(parseInt($("filmbuildbox").style.height)-97)+"px,0px)";
+	$("filmbuildstory").style.height="230px";
+	$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-117)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+	$("scrollud").height=parseInt($("scrollud").style.height);
+	$("scrollud").style.top="21px";
+	$("scrollud").top=parseInt($("scrollud").style.top);
+	DDscrollud=new YAHOO.util.DD("scrollud");
+	DDscrollud.onDrag=function() {
+										$("scrollud").style.left="2px";
+										if(parseInt($("scrollud").style.top)<=21)
+										{
+											$("scrollud").style.top="21px";
+										}
+										if(parseInt($("scrollud").style.top)+parseInt($("scrollud").style.height)>=(parseInt($("filmbuildbox").style.height)-117))
+										{
+											$("scrollud").style.top=$("scrollud").top+"px";
+										}
+										$("scrollud").top=parseInt($("scrollud").style.top);
+										$("scrollrightholder").className="in100";
+										var sctop=$("scrollud").top-21;
+										var barheight=(parseInt($("filmbuildbox").style.height)-117);
+										var storyheight=parseInt($("filmbuildstory").style.height);
+										var storytop=storyheight*sctop/barheight;
+										$("filmbuildstory").style.top=-storytop+"px";
+										//$("filmbuildstory").style.clip="rect("+sctop+"px,"+(parseInt(holder.style.width)-22)+"px,"+(parseInt(holder.style.height)-97)+"px,0px)";
+		
+									}
+	DDscrollud.endDrag=function() {
+									$("scrollrightholder").className="out20";
+								  }								
 	FLELWIDTH="350px"
 	FLELHEIGHT="295px"
 	DDelfilmdrop=new YAHOO.util.DDTarget("filmbuildboard","ELGROUP");
@@ -2584,11 +2636,13 @@ function main()
 			<div id="filmbuildboard" source=""></div>
 			
 		</div>
-		<div id="scrollrightholder">
+		<div id="scrollrightmask"></div>
+		<div id="scrollbottommask"></div>
+		<div id="scrollrightholder" class="out20" onmouseover="this.className='in100'" onmouseout="this.className='out20'">
 			<img id="scup" src="assets/scupin.png" />
 			<div id="scrollud" class="scrollbar"></div>
 			<img id="scdw" src="assets/scdwin.png" /></div>
-		<div id="scrollbottomholder">
+		<div id="scrollbottomholder" class="out20" onmouseover="this.className='in100'" onmouseout="this.className='out20'">
 			<img id="sclf" src="assets/sclfin.png" />
 			<div id="scrolllr" class="scrollbar"></div>
 			<img id="scrt" src="assets/scrtin.png" /></div>
@@ -2600,11 +2654,12 @@ function main()
 		
 	</div>
 	<div class="white"></div>
-	<div class="sclbar"></div>
-	<div class="filmline"><label for="filmtitle"> Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> <input type="button" value=" OK " onclick="buildfilm()" />
+	
+	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> <input type="button" value=" OK " onclick="buildfilm()" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
-	<div class="current">Current Element:</div>		
+	<div id="currentel" class="current"> &nbsp;Current Element:</div>
+	<div class="sclbar"></div>		
 	<div class="scrbar"></div>
 	<div class="bbar"></div>
 	<div id='filmbuildhead' class='head'>&nbsp; Build A Film
