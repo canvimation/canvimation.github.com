@@ -3,7 +3,8 @@ function updialogue(img,content)
 	var gap=25;
 	var box=$(content);
 	var holder=box.parentNode;
-	if(holder.className=="elementsbox") {gap=50}
+	if(holder.className=="elementsbox") {gap=50};
+	if(holder.id=="filmbuildbox") {gap=100};
 	var height=parseInt(holder.style.height);
 	if(height>gap)
 	{
@@ -703,8 +704,8 @@ function resize(el)
 		$("filmbuildboard").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildboard").style.height=parseInt(holder.style.height)+"px";
 		$("viewport").style.width=(parseInt(holder.style.width)-120)+"px";
-		$("viewport").style.height=(parseInt(holder.style.height)-95)+"px";
-		$("flellist").style.height=(parseInt($("viewport").style.height)+19)+"px";
+		$("viewport").style.height=(parseInt(holder.style.height)-100)+"px";
+		$("flellistholder").style.height=(parseInt($("viewport").style.height)+22)+"px";
 		$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 		$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 		var barheight=(parseInt($("viewport").style.height)-42);

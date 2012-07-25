@@ -316,10 +316,10 @@ img.marker {
 	cursor:default;
 }
 
-#flellist {
+#flellistholder {
 	width:100px;
 	background-color:#FFFFFF;
-	overflow:auto;
+	overflow:hidden;
 	border:1px solid black;
 }
 #viewport {
@@ -362,7 +362,7 @@ img.marker {
 	right:0px;
 }
 #scrollbottommask{
-	background-color:#FFFFFF;
+	background-color:#00FFFF;
 	width:100%;
 	height:20px;
 	bottom:0px;
@@ -519,12 +519,11 @@ img.marker {
 	height:100%;
 	background-color: #000000;
 	cursor:e-resize;
-	z-index:10;
 }
 
 .bottombar {
 	bottom:0px;
-	height:2px;
+	height:3px;
 	width:100%;
 	background-color: #000000;
 	cursor:s-resize;
@@ -1810,7 +1809,7 @@ function main()
 	$("filmbuildlines").style.height="195px";
 	//$("filmbuildlines").style.zIndex=-10000000;
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
-	$("flellist").style.height="194px";
+	$("flellistholder").style.height="174px";
 	$("viewport").style.width="275px";
 	$("viewport").style.height="175px";
 	$("filmbuildboard").style.width="275px";
@@ -1836,7 +1835,8 @@ function main()
 										var barheight=(parseInt($("viewport").style.height)-42);
 										var storyheight=parseInt($("filmbuildstory").style.height);
 										var storytop=storyheight*sctop/barheight;
-										$("filmbuildstory").style.top=-storytop+"px";	
+										$("filmbuildstory").style.top=-storytop+"px";
+										$("flellist").style.top=parseInt($("filmbuildstory").style.top)+"px";	
 									}
 	DDscrollud.endDrag=function() {
 									$("scrollrightholder").className="out20";
@@ -2685,7 +2685,9 @@ function main()
 			<div id="scrolllr" class="scrollbar"></div>
 			<img id="scrt" src="assets/scrtin.png" />
 		</div>
-		<div id="flellist"></div>
+		<div id="flellistholder">
+			<div id="flellist"></div>
+		</div>
 		<div id="scrollcorner"></div>
 		<div class="leftbar"></div>
 		<div id="rightbarfl" class="rightbar"></div>

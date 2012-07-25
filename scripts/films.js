@@ -47,6 +47,7 @@ function addToFilmBoard(el,source)
 	flel.text=document.createElement("div");
 	flel.text.innerHTML=el.title;
 	flel.text.id="fl"+(ELCOUNT++);
+	flel.text.nid=flel.text.id
 	flel.text.style.textAlign="center";
 	flel.text.style.fontSize="12pt";
 	flel.text.style.height="20px";
@@ -56,16 +57,33 @@ function addToFilmBoard(el,source)
 	flel.text.style.width=width+"px";
 	flel.text.style.border="1px solid black";
 	flel.text.style.cursor="pointer";
+	filmboard.appendChild(flel.text);
 	flel.text.onclick =function() {setflel(this)};
+	flel.label=document.createElement("div");
+	flel.label.innerHTML=el.title;
+	flel.label.nid=flel.text.id;
+	flel.label.style.labelAlign="center";
+	flel.label.style.fontSize="12pt";
+	flel.label.style.height="20px";
+	flel.label.style.left="5px";
+	flel.label.style.top=(FLELTOP-10)+"px";
+	flel.label.style.backgroundColor="white";
+	flel.label.style.width=width+"px";
+	flel.label.style.border="1px solid black";
+	flel.label.style.cursor="pointer";
+	flel.label.onclick =function() {setflel(this)};
+	$("flellist").appendChild(flel.label);
 	FLELTOP+=25;
 	FLELHEIGHT+=25;
-	filmboard.appendChild(flel.text);
+	
 	for(var name in FILMBOARD)
 	{
 		FILMBOARD[name].seen.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].seen.style.top))+"px";
 		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
 	}
 	flel.text.style.backgroundColor="yellow";
+	flel.label.style.backgroundColor="yellow";
 	switch (el.source)
 	{
 		case "scene":
@@ -141,6 +159,14 @@ function setA(inp)
 	FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
 	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
 	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
+	$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
+	for(var name in FILMBOARD)
+	{
+		if(isNaN(FILMBOARD[name].D))
+		{
+			FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+		}
+	}
 }
 
 function setD(inp)
@@ -202,16 +228,26 @@ function setD(inp)
 	}
 	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
 	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
+	$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
+	for(var name in FILMBOARD)
+	{
+		if(isNaN(FILMBOARD[name].D))
+		{
+			FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+		}
+	}
 }
 
 function setflel(el)
 {
-	var flel=FILMBOARD[el.id];
+	var flel=FILMBOARD[el.nid];
 	for(var name in FILMBOARD)
 	{
 		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
 	}
 	flel.text.style.backgroundColor="yellow";
+	flel.label.style.backgroundColor="yellow";
 	flel.seen.style.zIndex=++FLELINDX;
 	switch (flel.source)
 	{
