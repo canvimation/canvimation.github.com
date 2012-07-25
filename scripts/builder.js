@@ -40,8 +40,8 @@ function flbb()
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 	ELCOUNT=0;
 	FLELTOP=15;
-	FLELWIDTH="350px"
-	FLELHEIGHT="250px"
+	FLELWIDTH=350;
+	FLELHEIGHT=350;
 	FILMBOARD={};
 	FLELINDX=-10000000;
 }
@@ -323,8 +323,8 @@ function writescenelist()
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
 											addToFilmBoard(el,"scene");
-											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),parseInt(FLELHEIGHT))+"px";
-											$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-117)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
+											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";

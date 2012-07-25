@@ -316,6 +316,16 @@ img.marker {
 	cursor:default;
 }
 
+#flellist {
+	width:100px;
+	background-color:#FFFFFF;
+	overflow:auto;
+	border:1px solid black;
+}
+#viewport {
+	left:100px;
+	oveflow:hidden;
+}
 .current {
 	top:50px;
 	width:500px;
@@ -333,7 +343,7 @@ img.marker {
 	height:2px;
 	width:100%;
 	background-color: #000000;
-
+	z-index:0;
 }
 
 #filmbuildboard {
@@ -365,6 +375,7 @@ img.marker {
 }
 #scrollbottomholder{
 	background-color:#DDDDDD;
+	left:100px;
 	width:100%;
 	height:20px;
 	bottom:0px;
@@ -484,6 +495,7 @@ img.marker {
 	width:2px;
 	height:100%;
 	background-color: #000000;
+	
 }
 
 .fleftbar {
@@ -492,9 +504,6 @@ img.marker {
 	height:100%;
 	background-color: #000000;
 	cursor:e-resize;
-}
-.flel100pct {
-	width:100%
 }
 
 .topbar {
@@ -510,6 +519,7 @@ img.marker {
 	height:100%;
 	background-color: #000000;
 	cursor:e-resize;
+	z-index:10;
 }
 
 .bottombar {
@@ -527,7 +537,6 @@ img.marker {
 	width:2px;
 	background-color: #FFFFFF;
 	cursor: nw-resize;
-	zindex:10000003;
 }
 
 .inner {
@@ -1250,7 +1259,7 @@ var ELCOUNT=0; //counter for elements on filmbuildboard;
 var FLELTOP=5; //top position of element on filmboard;
 var FLELWIDTH;
 var FLELHEIGHT;
-var FLELINDX=0; //z-index for elements on filmlines
+var FLELINDX; //z-index for elements on filmlines
 var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
@@ -1790,23 +1799,23 @@ function main()
 	}
 	
 	$("filmbuildbox").style.left="200px";
-	$("filmbuildbox").style.width="275px";
+	$("filmbuildbox").style.width="375px";
 	$("filmbuildbox").style.height="270px";
-	$("filmbuildbox").style.clip="rect(1px,277px,272px,0px)";
+	$("filmbuildbox").style.clip="rect(1px,377px,272px,0px)";
 	$("filmbuildcontent").style.height="195px";
 	$("filmbuildcontent").style.top="75px";
-	$("filmbuildstory").style.width="350px";
+	$("filmbuildstory").style.width="450px";
 	$("filmbuildstory").style.height="295px";
-	$("filmbuildlines").style.width="275px";
-	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
+	$("filmbuildlines").style.width="375px";
 	$("filmbuildlines").style.height="195px";
-	//$("filmbuildlines").style.clip="rect(1px,273px,222px,0px)";
+	//$("filmbuildlines").style.zIndex=-10000000;
+	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
+	$("flellist").style.height="194px";
+	$("viewport").style.width="275px";
+	$("viewport").style.height="175px";
 	$("filmbuildboard").style.width="275px";
 	$("filmbuildboard").style.height="195px";
-	//$("filmbuildboard").style.clip="rect(1px,273px,222px,0px)";
-	//$("filmbuildstory").style.clip="rect(1px,"+(parseInt($("filmbuildbox").style.width)-22)+"px,"+(parseInt($("filmbuildbox").style.height)-97)+"px,0px)";
-	$("filmbuildstory").style.height="230px";
-	$("scrollud").style.height=((parseInt($("filmbuildbox").style.height)-117)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+	$("scrollud").style.height=((parseInt($("viewport").style.height)-40)*(parseInt($("filmbuildbox").style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
 	$("scrollud").height=parseInt($("scrollud").style.height);
 	$("scrollud").style.top="21px";
 	$("scrollud").top=parseInt($("scrollud").style.top);
@@ -1817,25 +1826,51 @@ function main()
 										{
 											$("scrollud").style.top="21px";
 										}
-										if(parseInt($("scrollud").style.top)+parseInt($("scrollud").style.height)>=(parseInt($("filmbuildbox").style.height)-117))
+										if(parseInt($("scrollud").style.top)+parseInt($("scrollud").style.height)>=(parseInt($("viewport").style.height)-22))
 										{
 											$("scrollud").style.top=$("scrollud").top+"px";
 										}
 										$("scrollud").top=parseInt($("scrollud").style.top);
 										$("scrollrightholder").className="in100";
 										var sctop=$("scrollud").top-21;
-										var barheight=(parseInt($("filmbuildbox").style.height)-117);
+										var barheight=(parseInt($("viewport").style.height)-42);
 										var storyheight=parseInt($("filmbuildstory").style.height);
 										var storytop=storyheight*sctop/barheight;
-										$("filmbuildstory").style.top=-storytop+"px";
-										//$("filmbuildstory").style.clip="rect("+sctop+"px,"+(parseInt(holder.style.width)-22)+"px,"+(parseInt(holder.style.height)-97)+"px,0px)";
-		
+										$("filmbuildstory").style.top=-storytop+"px";	
 									}
 	DDscrollud.endDrag=function() {
 									$("scrollrightholder").className="out20";
-								  }								
-	FLELWIDTH="350px"
-	FLELHEIGHT="295px"
+								  }	
+								  
+	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*(parseInt($("filmbuildbox").style.width))/parseInt($("filmbuildstory").style.width))+"px";
+	$("scrolllr").width=parseInt($("scrolllr").style.width);
+	$("scrolllr").style.left="21px";
+	$("scrolllr").left=parseInt($("scrolllr").style.left);
+	DDscrolllr=new YAHOO.util.DD("scrolllr");
+	DDscrolllr.onDrag=function() {
+										$("scrolllr").style.top="2px";
+										if(parseInt($("scrolllr").style.left)<=21)
+										{
+											$("scrolllr").style.left="21px";
+										}
+										if(parseInt($("scrolllr").style.left)+parseInt($("scrolllr").style.width)>=(parseInt($("viewport").style.width)-22))
+										{
+											$("scrolllr").style.left=$("scrolllr").left+"px";
+										}
+										$("scrolllr").left=parseInt($("scrolllr").style.left);
+										$("scrollbottomholder").className="in100";
+										var scleft=$("scrolllr").left-21;
+										var barwidth=(parseInt($("viewport").style.width)-42);
+										var storywidth=parseInt($("filmbuildstory").style.width);
+										var storyleft=storywidth*scleft/barwidth;
+										$("filmbuildstory").style.left=-storyleft+"px";	
+									}
+	DDscrolllr.endDrag=function() {
+									$("scrollbottomholder").className="out20";
+								  }								  
+								  							
+	FLELWIDTH=350;
+	FLELHEIGHT=295;
 	DDelfilmdrop=new YAHOO.util.DDTarget("filmbuildboard","ELGROUP");
 	
 	for(var i=0;i<ANIELS.length;i++)
@@ -2629,23 +2664,28 @@ function main()
 
 <div id='filmbuildbox' class="elementsbox">
 	<div id='filmbuildcontent'class='allcontent'>
-		<div id="filmbuildstory">
-			<div id="filmbuildlines">
-				<div id="timeline"></div>
-			</div>
-			<div id="filmbuildboard" source=""></div>
-			
+		<div id="viewport">
+			<div id="filmbuildstory">
+				<div id="filmbuildlines">
+					<div id="timeline"></div>
+				</div>
+				<div id="filmbuildboard" source=""></div>
+		 	</div>	
 		</div>
+		
 		<div id="scrollrightmask"></div>
 		<div id="scrollbottommask"></div>
 		<div id="scrollrightholder" class="out20" onmouseover="this.className='in100'" onmouseout="this.className='out20'">
 			<img id="scup" src="assets/scupin.png" />
 			<div id="scrollud" class="scrollbar"></div>
-			<img id="scdw" src="assets/scdwin.png" /></div>
+			<img id="scdw" src="assets/scdwin.png" />
+		</div>
 		<div id="scrollbottomholder" class="out20" onmouseover="this.className='in100'" onmouseout="this.className='out20'">
 			<img id="sclf" src="assets/sclfin.png" />
 			<div id="scrolllr" class="scrollbar"></div>
-			<img id="scrt" src="assets/scrtin.png" /></div>
+			<img id="scrt" src="assets/scrtin.png" />
+		</div>
+		<div id="flellist"></div>
 		<div id="scrollcorner"></div>
 		<div class="leftbar"></div>
 		<div id="rightbarfl" class="rightbar"></div>

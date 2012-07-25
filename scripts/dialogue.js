@@ -695,17 +695,34 @@ function resize(el)
 	holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+2)+"px,0px)";
 	if(type="fl")
 	{
-		//holder.style.clip="rect(1px,"+(parseInt(holder.style.width)+2)+"px,"+(parseInt(holder.style.height)+25)+"px,0px)";
-		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),parseInt(FLELWIDTH))+"px";
-		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),parseInt(FLELHEIGHT))+"px";
-		//$("filmbuildstory").style.clip="rect("+($("scrollud").top-21)+"px,"+(parseInt(holder.style.width)-22)+"px,"+(parseInt(holder.style.height)-97)+"px,0px)";
+		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),FLELWIDTH)+"px";
+		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),FLELHEIGHT)+"px";
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
-		//$("filmbuildstory").style.backgroundColor="red";
 		$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 		$("filmbuildboard").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildboard").style.height=parseInt(holder.style.height)+"px";
-		$("scrollud").style.height=((parseInt(holder.style.height)-117)*(parseInt(holder.style.height)-75)/parseInt($("filmbuildstory").style.height))+"px";
+		$("viewport").style.width=(parseInt(holder.style.width)-120)+"px";
+		$("viewport").style.height=(parseInt(holder.style.height)-95)+"px";
+		$("flellist").style.height=(parseInt($("viewport").style.height)+19)+"px";
+		$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
+		$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
+		var barheight=(parseInt($("viewport").style.height)-42);
+		var storyheight=parseInt($("filmbuildstory").style.height);
+		var storytop=parseInt($("filmbuildstory").style.top);
+		$("scrollud").top=barheight*storytop/storyheight;
+		var barwidth=(parseInt($("viewport").style.width)-42);
+		var storywidth=parseInt($("filmbuildstory").style.width);
+		var storyleft=parseInt($("filmbuildstory").style.left);
+		$("scrolllr").top=barwidth*storyleft/storywidth;
+		$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
+		for(var name in FILMBOARD)
+		{
+			if(isNaN(FILMBOARD[name].D))
+			{
+				FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+			}
+		}
 	}
 	
 }

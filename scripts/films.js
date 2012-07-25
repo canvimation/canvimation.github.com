@@ -31,7 +31,7 @@ function addToFilmBoard(el,source)
 	flel.D="Never";
 	var width = 10*el.title.length; //width for flel.text
 	flel.seen=document.createElement("div");
-	flel.seen.className="flel100pct";
+	flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 	flel.seen.style.left="55px";
 	flel.seen.rgbar=document.createElement("div");
 	flel.seen.rgbar.className="rightbar";
@@ -58,6 +58,7 @@ function addToFilmBoard(el,source)
 	flel.text.style.cursor="pointer";
 	flel.text.onclick =function() {setflel(this)};
 	FLELTOP+=25;
+	FLELHEIGHT+=25;
 	filmboard.appendChild(flel.text);
 	for(var name in FILMBOARD)
 	{
@@ -137,6 +138,9 @@ function setA(inp)
 		}
 		$("Din").style.left=(parseInt(flel.seen.style.left)+parseInt(flel.seen.style.width)+2)+"px";
 	}
+	FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
+	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
+	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 }
 
 function setD(inp)
@@ -175,7 +179,7 @@ function setD(inp)
 	{
 		flel.seen.parentNode.removeChild(flel.seen);
 		flel.seen=document.createElement("div");
-		flel.seen.className="flel100pct";
+		flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 		flel.seen.style.left=(flel.A+55)+"px";
 		flel.seen.rgbar=document.createElement("div");
 		flel.seen.rgbar.className="rightbar";
@@ -188,12 +192,16 @@ function setD(inp)
 		flel.seen.style.height=(parseInt($("timeline").style.top)-parseInt(flel.seen.style.top))+"px";
 		$("filmbuildlines").appendChild(flel.seen);
 		$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
+		FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
 	}
 	else
 	{
 		flel.seen.style.width=(flel.D-flel.A)+"px";
 		$("Din").style.left=(parseInt(flel.seen.style.left)+parseInt(flel.seen.style.width)+2)+"px";
+		FLELWIDTH=Math.max(FLELWIDTH,flel.D)
 	}
+	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
+	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 }
 
 function setflel(el)
