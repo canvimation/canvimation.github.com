@@ -698,6 +698,7 @@ function resize(el)
 	{
 		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),FLELWIDTH)+"px";
 		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),FLELHEIGHT)+"px";
+		$("currentel").style.width=$("filmbuildstory").style.width;
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
 		$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";

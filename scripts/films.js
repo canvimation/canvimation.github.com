@@ -42,14 +42,10 @@ function addToFilmBoard(el,source)
 	flel.seen=document.createElement("div");
 	flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 	flel.seen.style.left="55px";
-	flel.seen.rgbar=document.createElement("div");
-	flel.seen.rgbar.className="rightbar";
-	flel.seen.appendChild(flel.seen.rgbar);
-	flel.seen.lfbar=document.createElement("div");
-	flel.seen.lfbar.className="fleftbar";
-	flel.seen.appendChild(flel.seen.lfbar);
 	flel.seen.style.top=FLELTOP+"px";
 	flel.seen.style.borderTop="2px solid black";
+	flel.seen.style.borderLeft="2px solid black";
+	flel.seen.style.borderRight="2px solid black";
 	flel.seen.style.height=(parseInt($("timeline").style.top)-parseInt(flel.seen.style.top))+"px";
 	filmlines.appendChild(flel.seen);
 	
