@@ -17,6 +17,14 @@ function addToFilmBoard(el,source)
 	var filmlines=$("filmbuildlines");
 	FILMBOARD["fl"+ELCOUNT]={};
 	flel=FILMBOARD["fl"+ELCOUNT];
+	flel.next=FLELHEAD;
+	flel.prev=FLELHEAD.prev;
+	FLELHEAD.el=flel;
+	flel.head=FLELHEAD;
+	FLELHEAD.prev.next=flel;
+	FLELHEAD.prev=flel;
+	flel.head=FLELHEAD;
+	flel.prev.head="null";
 	var flen=0;
 	for(var name in FILMBOARD)
 	{
@@ -27,6 +35,7 @@ function addToFilmBoard(el,source)
 	flel.name=name;
 	flel.title=el.title;
 	flel.source=el.source;
+	flel.layer=ELCOUNT;
 	flel.A=0;
 	flel.D="Never";
 	var width = 10*el.title.length; //width for flel.text
@@ -271,3 +280,66 @@ function setflel(el)
 	}
 }
 
+function flelup()
+{
+	var flel=FILMBOARD[$("currentel").el];
+	var prev=flel.prev;
+	if(prev.name=="&head!")
+	{
+		return;
+		//prev=prev.prev
+	}
+	var prevdata=prev.layer;
+	prev.layer=flel.layer;
+	flel.layer=prevdata;
+	prevdata=prev.text.style.top;
+	prev.text.style.top=flel.text.style.top;
+	flel.text.style.top=prevdata;
+	prevdata=prev.label.style.top;
+	prev.label.style.top=flel.label.style.top;
+	flel.label.style.top=prevdata;
+	prevdata=prev.seen.style.top;
+	prev.seen.style.top=flel.seen.style.top;
+	flel.seen.style.top=prevdata;
+	prevdata=prev.seen.style.height;
+	prev.seen.style.height=flel.seen.style.height;
+	flel.seen.style.height=prevdata;
+	flel.prev.prev.next=flel;
+	flel.next.prev=flel.prev;
+	flel.prev.next=flel.next;
+	flel.prev=flel.prev.prev;
+	flel.next.prev.prev=flel;
+	flel.next=flel.next.prev;
+}
+
+function fleldown()
+{
+	var flel=FILMBOARD[$("currentel").el];
+	var next=flel.next;
+	if(next.name=="&head!")
+	{
+		return;
+		//next=next.next
+	}
+	var nextdata=next.layer;
+	next.layer=flel.layer;
+	flel.layer=nextdata;
+	nextdata=next.text.style.top;
+	next.text.style.top=flel.text.style.top;
+	flel.text.style.top=nextdata;
+	nextdata=next.label.style.top;
+	next.label.style.top=flel.label.style.top;
+	flel.label.style.top=nextdata;
+	nextdata=next.seen.style.top;
+	next.seen.style.top=flel.seen.style.top;
+	flel.seen.style.top=nextdata;
+	nextdata=next.seen.style.height;
+	next.seen.style.height=flel.seen.style.height;
+	flel.seen.style.height=nextdata;
+	flel.next.next.prev=flel;
+	flel.prev.next=flel.next;
+	flel.next.prev=flel.prev;
+	flel.next=flel.next.next;
+	flel.prev.next.next=flel;
+	flel.prev=flel.prev.next;
+}

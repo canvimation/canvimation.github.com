@@ -35,6 +35,7 @@ function flbb()
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="<input id='Ain' type='text' value='' size='4' /><input id='Din'  type='text' value='' size='4' />";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
+	$("flellist").innerHTML="";
 	$("Ain").style.visibility="hidden";
 	$("Din").style.visibility="hidden";
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
@@ -44,6 +45,10 @@ function flbb()
 	FLELHEIGHT=350;
 	FILMBOARD={};
 	FLELINDX=-10000000;
+	FLELHEAD={};
+	FLELHEAD.prev=FLELHEAD;
+	FLELHEAD.next=FLELHEAD;
+	FLELHEAD.name="&head!"
 }
 
 function buildScene()
