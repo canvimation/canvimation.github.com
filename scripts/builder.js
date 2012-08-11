@@ -34,10 +34,19 @@ function flbb()
 	$('filmtitle').value="Film"+(FMCOUNT++);
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="<input id='Ain' type='text' value='' size='4' /><input id='Din'  type='text' value='' size='4' />";
+	$("filmbuildboard").innerHTML+="<input id='Rin' type='text' value='' size='4' /><input id='Sin'  type='text' value='' size='4' />";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
 	$("flellist").innerHTML="";
 	$("Ain").style.visibility="hidden";
 	$("Din").style.visibility="hidden";
+	$("Rin").style.border="1px groove blue";
+	$("Sin").style.border="1px ridge blue";
+	$("Rin").style.paddingLeft="1px";
+	$("Sin").style.paddingLeft="1px";
+	$("Rin").style.paddingRight="1px";
+	$("Sin").style.paddingRight="1px";
+	$("Rin").style.visibility="hidden";
+	$("Sin").style.visibility="hidden";
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 	ELCOUNT=0;
 	FLELTOP=15;
@@ -287,9 +296,51 @@ function buildSprite()
 		$('spritecentre').style.top=200;
 		$('spritecentre').style.visibility='visible';
 	}
+}
 
-		
-	
+function buildFilm()
+{
+	var flel,fbel;
+	var re = /\W/;
+	if ($('filmtitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('filmtitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if (checkname($('filmtitle').value.trim(),'film')) 
+	{
+		alert('There is already film with the name '+$('filmtitle').value.trim());
+		return;
+	}
+	var film=new Film($('filmtitle').value.trim());
+	film.title=film.name;
+	for(var name in FILMBOARD)
+	{
+		fbel=FILMBOARD[name];
+		film.elements[name]={};
+		flel=film.elements[name];
+		flel.name=fbel.name;
+		flel.title=fbel.title;
+		flel.source=fbel.source;
+		flel.layer=fbel.layer;
+		flel.A=fbel.A;
+		flel.D=fbel.D;
+		switch (flel.source)
+		{
+			case "sprite":
+				flel.R=fbel.R;
+				flel.S=fbel.S;
+			break
+		}
+	}
+	FILMS[film.name]=film;
+	FILMBOARD={};
+	writefilmlist();
 }
 
 function writescenelist()
@@ -412,10 +463,66 @@ function writespritelist()
 											el.source="sprite";
 											el.name=$("dragdiv").name;
 										}
+										else if(DDelfilmdrop.cursorIsOver)
+										{
+											el=DDelfilmdrop.getEl();
+											el.source="sprite";
+											el.title=$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
+											addToFilmBoard(el,"sprite");
+											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
+											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
+										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
 									   };
 		DDSP[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
+	}
+}
+
+function writefilmlist()
+{
+	SPANCOUNT=0;
+	var DDSC=[];
+	var el;
+	$("innerfl").innerHTML="<ul>";
+	for(var name in FILMS)
+	{
+		film=FILMS[name];
+		$("innerfl").innerHTML+='<li id=non!!!!,'+film.title+','+film.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+	}
+	$("innerfl").innerHTML+="</ul>";
+	for(var i=0;i<SPANCOUNT;i++)
+	{
+		DDSC[i]=new YAHOO.util.DD("FL"+i,"ELGROUP");
+		DDSC[i].setDragElId("dragdiv");
+		DDSC[i].onMouseDown=function() {
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").style.visibility="visible";
+									};
+		DDSC[i].onDragDrop=function() {
+										if(DDeldrop.cursorIsOver)
+										{
+											el=DDeldrop.getEl();
+											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.source="film";
+											el.name=$("dragdiv").name;
+										}
+										else if(DDelfilmdrop.cursorIsOver)
+										{
+											el=DDelfilmdrop.getEl();
+											el.source="film";
+											el.title=$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
+											addToFilmBoard(el,"film");
+											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
+											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
+										}
+										$("dragdiv").style.visibility="hidden";
+										$("dragdiv").style.top="-50px";
+									   };
+		DDSC[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";}
 	}
 }
 

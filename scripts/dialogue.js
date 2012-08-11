@@ -698,7 +698,7 @@ function resize(el)
 	{
 		$("filmbuildstory").style.width=Math.max((parseInt(holder.style.width)+10),FLELWIDTH)+"px";
 		$("filmbuildstory").style.height=Math.max((parseInt(holder.style.height)+10),FLELHEIGHT)+"px";
-		$("currentel").style.width=$("filmbuildstory").style.width;
+		$("currentel").style.width=Math.max(parseInt($("filmbuildstory").style.width),700)+"px";
 		$("filmbuildlines").style.width=parseInt(holder.style.width)+"px";
 		$("filmbuildlines").style.height=parseInt(holder.style.height)+"px";
 		$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
@@ -723,6 +723,11 @@ function resize(el)
 			if(isNaN(FILMBOARD[name].D))
 			{
 				FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+			
+				if(isNaN(FILMBOARD[name].S) && FILMBOARD[name].source=="sprite")
+				{
+					FILMBOARD[name].run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+				}
 			}
 		}
 	}
