@@ -11,7 +11,7 @@ function Film(name)
 	this.elements={};
 }
 
-function addToFilmBoard(el,source)
+function addToFilmBoard(el)
 {
 	var filmboard=$("filmbuildboard");
 	var filmlines=$("filmbuildlines");
@@ -43,12 +43,11 @@ function addToFilmBoard(el,source)
 	flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 	flel.seen.style.left="55px";
 	flel.seen.style.top=FLELTOP+"px";
+	flel.seen.style.height=(parseInt($("timeline").style.top)-parseInt(flel.seen.style.top))+"px";
 	flel.seen.style.borderTop="2px solid black";
 	flel.seen.style.borderLeft="2px solid black";
 	flel.seen.style.borderRight="2px solid black";
-	flel.seen.style.height=(parseInt($("timeline").style.top)-parseInt(flel.seen.style.top))+"px";
 	filmlines.appendChild(flel.seen);
-	
 	flel.text=document.createElement("div");
 	flel.text.innerHTML=el.title;
 	flel.text.id="fl"+(ELCOUNT++);
@@ -78,15 +77,6 @@ function addToFilmBoard(el,source)
 	flel.label.style.cursor="pointer";
 	flel.label.onclick =function() {setflel(this)};
 	$("flellist").appendChild(flel.label);
-
-	for(var name in FILMBOARD)
-	{
-		FILMBOARD[name].seen.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].seen.style.top))+"px";
-		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
-		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
-	}
-	flel.text.style.backgroundColor="yellow";
-	flel.label.style.backgroundColor="yellow";
 	$("currentel").innerHTML=" &nbsp;Current Element: "+el.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
 	$("currentel").el=flel.text.id;
@@ -103,7 +93,8 @@ function addToFilmBoard(el,source)
 	switch (el.source)
 	{
 		case "scene":
-			
+			$("Rin").style.visibility="hidden";
+			$("Sin").style.visibility="hidden";
 		break
 		case "sprite":
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
@@ -144,6 +135,18 @@ function addToFilmBoard(el,source)
 			$("Sin").style.visibility="inherit";
 		break
 	}
+	for(var name in FILMBOARD)
+	{
+		FILMBOARD[name].seen.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].seen.style.top))+"px";
+		if(FILMBOARD[name].source=="sprite")
+		{
+			FILMBOARD[name].run.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].run.style.top))+"px";
+		}
+		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
+	}
+	flel.text.style.backgroundColor="yellow";
+	flel.label.style.backgroundColor="yellow";
 	FLELTOP+=25;
 	FLELHEIGHT+=25;
 }
@@ -248,8 +251,8 @@ function setD(inp)
 		flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 		$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
 		FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
-		if(flel.source="sprite")
-		{
+		if(flel.source=="sprite")
+		{alert(["sprite name", flel.name])
 			var sprite=SPRITES[flel.name];
 			if(isNaN(sprite.track.repeats))
 			{
@@ -390,7 +393,7 @@ function setS(inp)
 		}
 		else
 		{
-			alert("Sprite is set to stop after "+flel.maxruntime+" seconds. Stop At time must be a number.");
+			alert("Maximum running time is "+flel.maxruntime+" seconds. Stop At time must be a number.");
 			inp.value=flel.S
 			return;
 		}
@@ -401,6 +404,12 @@ function setS(inp)
 		{
 			alert('Stop At time must be greater than Run At time.');
 			inp.value=flel.S;
+			return;
+		}
+		if (n>flel.maxruntime)
+		{
+			alert("Sprite is set to stop after the maximum running time "+flel.maxruntime+" seconds.");
+			inp.value=flel.S
 			return;
 		}
 	}
@@ -482,7 +491,8 @@ function setflel(el)
 	switch (flel.source)
 	{
 		case "scene":
-			
+			$("Rin").style.visibility="hidden";
+			$("Sin").style.visibility="hidden";
 		break
 		case "sprite":
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
@@ -490,11 +500,16 @@ function setflel(el)
 			$("Rin").value=flel.R;
 			$("Rcin").value=flel.R;
 			$("Rin").style.left=(parseInt(flel.run.style.left)-48)+"px";
-			//$("Ain").style.top=(parseInt($("timeline").style.top)+5)+"px";
-			$("Din").value=flel.D;
-			$("Dcin").value=flel.D;
-			$("Din").style.left=(parseInt(flel.run.style.left)+2)+"px";
-			//$("Din").style.top=(parseInt($("timeline").style.top)+5)+"px";
+			$("Sin").value=flel.S;
+			$("Scin").value=flel.S;
+			$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
+			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			$("Sin").style.visibility="inherit";
+			$("Rin").style.visibility="inherit";
+			flel.run.style.borderTop="2px solid blue";
+			flel.run.style.borderLeft="2px solid blue";
+			flel.run.style.borderRight="2px solid blue";
 		break
 	}
 }
@@ -523,6 +538,20 @@ function flelup()
 	prevdata=prev.seen.style.height;
 	prev.seen.style.height=flel.seen.style.height;
 	flel.seen.style.height=prevdata;
+	switch (flel.source)
+	{
+		case "sprite":
+			flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
+			flel.run.style.height=(parseInt(flel.seen.style.height)-5)+"px";
+		break
+	}
+	switch (prev.source)
+	{
+		case "sprite":
+			prev.run.style.top=(parseInt(prev.seen.style.top)+5)+"px";
+			prev.run.style.height=(parseInt(prev.seen.style.height)-5)+"px";
+		break
+	}
 	flel.prev.prev.next=flel;
 	flel.next.prev=flel.prev;
 	flel.prev.next=flel.next;
@@ -555,6 +584,20 @@ function fleldown()
 	nextdata=next.seen.style.height;
 	next.seen.style.height=flel.seen.style.height;
 	flel.seen.style.height=nextdata;
+	switch (flel.source)
+	{
+		case "sprite":
+			flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
+			flel.run.style.height=(parseInt(flel.seen.style.height)-5)+"px";
+		break
+	}
+	switch (next.source)
+	{
+		case "sprite":
+			next.run.style.top=(parseInt(next.seen.style.top)+5)+"px";
+			next.run.style.height=(parseInt(next.seen.style.height)-5)+"px";
+		break
+	}
 	flel.next.next.prev=flel;
 	flel.prev.next=flel.next;
 	flel.next.prev=flel.prev;

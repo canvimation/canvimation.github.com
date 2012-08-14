@@ -335,6 +335,7 @@ function buildFilm()
 			case "sprite":
 				flel.R=fbel.R;
 				flel.S=fbel.S;
+				flel.maxruntime=fbel.maxruntime;
 			break
 		}
 	}
@@ -378,7 +379,7 @@ function writescenelist()
 											el.source="scene";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,"scene");
+											addToFilmBoard(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -469,7 +470,7 @@ function writespritelist()
 											el.source="sprite";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,"sprite");
+											addToFilmBoard(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -489,7 +490,7 @@ function writefilmlist()
 	for(var name in FILMS)
 	{
 		film=FILMS[name];
-		$("innerfl").innerHTML+='<li id=non!!!!,'+film.title+','+film.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+		$("innerfl").innerHTML+='<li id=non!!!!,'+film.title+','+film.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
 	}
 	$("innerfl").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -515,7 +516,7 @@ function writefilmlist()
 											el.source="film";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,"film");
+											addToFilmBoard(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -965,6 +966,68 @@ function editSprite(OKbutton)
 	OKbutton.style.visibility="hidden";
 }
 
+function filmDelete(n)
+{
+	var idarray=n.parentNode.id.split(",");
+	var title=idarray[1]
+	var name=idarray[2];
+	var doit = confirm('Do you really want to delete '+title+'?');
+	if (doit)
+	{
+		var film=FILMS[name];
+		for(var props in film)
+		{
+			delete film[props];
+		}
+		delete FILMS[name];
+		closedone();
+		writefilmlist();
+	}
+}
+
+function filmEdit(n)  //edits the selected scene shapes
+{
+	var el,flel,fbel;
+	var filmboard,filmlines;
+	var flist=[];
+	var flay=[];
+	var idarray=n.parentNode.id.split(",");
+	var topfilm=idarray[0]
+	var name=idarray[2];
+	if(topfilm=="non!!!!")
+	{
+		var film=FILMS[name];
+	}
+	flbb();
+	FMCOUNT--;
+	$('filmtitle').value=film.title;
+	for(var name in film.elements)
+	{
+		flel=film.elements[name];
+		flay=[name,flel.layer];
+		flist.push(flay);
+	}
+	flist.sort(zindp);
+	for(var i=0;i<flist.length;i++)
+	{
+		flel=film.elements[flist[i][0]];
+		el={title:flel.title,source:flel.source,name:flel.name};
+		addToFilmBoard(el);
+		$("Acin").value=flel.A
+		setA($("Acin"));
+		$("Dcin").value=flel.D
+		setD($("Dcin"));
+		switch(flel.source)
+		{
+			case "sprite":
+				$("Rcin").value=flel.R
+				setR($("Rcin"));
+				$("Scin").value=flel.S
+				setS($("Scin"));
+			break
+		}
+	}
+}
 
 function copydrag(cursor)
 {
