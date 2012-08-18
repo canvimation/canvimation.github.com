@@ -14,7 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 <title>Canvas Draw</title>
 <style type="text/css">
-div {
+div, button {
 	position: absolute;
 }
 
@@ -625,6 +625,12 @@ inner img {
 	left:500px;
 	top:5px;
 	visibility:hidden;
+}
+
+#fmbuttons {
+	left:500px;
+	top:5px;
+	visibility:visible;
 }
 
 #drop_zone {
@@ -2458,12 +2464,19 @@ function main()
   <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
   <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
   <input id="done" type="button" value="" onclick="closedone()" />
-  
-  <div id="spbuttons">
+  <button id="fmbuttons">
+  	<input film="" id="tempfm" type="button" value="  " onclick="playfilm(this.film)" /> 
+  	<input film="" id="playfm" type="button" value="Run" onclick="playfilm(this.film)" /> 
+  	<input film="" id="pausefm" type="button" value="Pause" onclick="pausefilm(this.film)" />
+  	<input film="" id="playonfm" type="button" value="Run" onclick="playonfilm(this.film)" />
+  	<input film="" id="stopfm" type="button" value="Stop" onclick="stopfilm(this.film)" /> 
+  	<input film="" id="closefm" type="button" value="Close" onclick="closefilm(this.film)" /> 
+  </button>
+  <button id="spbuttons">
   	<input sprite="" id="checksp" type="button" value="Track Check" onclick="checksprite(this.sprite,true)" /> 
   	<input sprite="" id="fullchecksp" type="button" value="Full Check" onclick="checksprite(this.sprite,false)" />
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
-  </div>
+  </button>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>

@@ -11,7 +11,7 @@ function Film(name)
 	this.elements={};
 }
 
-function addToFilmBoard(el)
+function addToFilmBoard(el,editing)
 {
 	var filmboard=$("filmbuildboard");
 	var filmlines=$("filmbuildlines");
@@ -101,7 +101,14 @@ function addToFilmBoard(el)
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
 			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
-			var sprite=SPRITES[el.name];
+			if(editing)
+			{
+				var sprite=el.elm;
+			}
+			else
+			{
+				var sprite=SPRITES[el.name];
+			}
 			if(isNaN(sprite.track.repeats))
 			{
 				flel.maxruntime="c"; //continuous

@@ -44,12 +44,12 @@ function Sprite(name)
 	this.expandspritelist=expandspritelist;
 }
 
-function copysprite()
+function copysprite(theatre)
 {
 	var sprite=new Sprite("SUBSP"+(NCOUNT++));
 	sprite.title=this.title;
 	sprite.engine=this.engine;
-	sprite.track=this.track.copytrack("sprite");
+	sprite.track=this.track.copytrack(theatre);
 	sprite.ptime=this.ptime;
 	sprite.finishmove=this.finishmove;
 	sprite.points=[];
@@ -71,10 +71,10 @@ function copysprite()
 	switch (this.engine)
 	{
 		case "scene":
-			sprite.train=this.train.copyscene("sprite");
+			sprite.train=this.train.copyscene(theatre);
 		break
 		case "sprite":
-			sprite.train=this.train.copysprite("sprite");
+			sprite.train=this.train.copysprite(theatre);
 		break
 	}
 	return sprite;

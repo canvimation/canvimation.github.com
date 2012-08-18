@@ -198,7 +198,14 @@ function buildTrack()
 		TRACKS[track.name]=track;
 		track.title=track.name;
 		elementShapeCopy(SELECTED,track.groups,track.shapes,0,$("trackstage"));
-		track.repeats=n;
+		if(isNaN(n))
+		{
+			track.repeats="c"
+		}
+		else
+		{
+			track.repeats=n;
+		}
 		track.yoyo=$('yoyo').checked;
 		track.visible=$('viewselect').checked;
 	}
@@ -332,7 +339,11 @@ function buildFilm()
 		flel.D=fbel.D;
 		switch (flel.source)
 		{
+			case "scene":
+				flel.elm=SCENES[flel.name].copyscene("film");
+			break
 			case "sprite":
+				flel.elm=SPRITES[flel.name].copysprite("film");
 				flel.R=fbel.R;
 				flel.S=fbel.S;
 				flel.maxruntime=fbel.maxruntime;
@@ -379,7 +390,7 @@ function writescenelist()
 											el.source="scene";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -470,7 +481,7 @@ function writespritelist()
 											el.source="sprite";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -516,7 +527,7 @@ function writefilmlist()
 											el.source="film";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -849,7 +860,14 @@ function editTrack(OKbutton)
 		alert('Repetitons must be positive.');
 		repeat
 	}
-	track.repeats=n;
+	if(isNaN(n))
+	{
+		track.repeats="c"
+	}
+	else
+	{
+		track.repeats=n;
+	}
 	track.yoyo=$('edityoyo').checked;
 	track.visible=$('editviewselect').checked;
 	OKbutton.style.visibility="hidden";
@@ -1011,8 +1029,7 @@ function filmEdit(n)  //edits the selected scene shapes
 	for(var i=0;i<flist.length;i++)
 	{
 		flel=film.elements[flist[i][0]];
-		el={title:flel.title,source:flel.source,name:flel.name};
-		addToFilmBoard(el);
+		addToFilmBoard(flel,true);
 		$("Acin").value=flel.A
 		setA($("Acin"));
 		$("Dcin").value=flel.D
