@@ -630,7 +630,41 @@ inner img {
 #fmbuttons {
 	left:500px;
 	top:5px;
+	width:140px;
+	height:35px;
 	visibility:visible;
+}
+
+#rewindfm {
+	position:absolute;
+	top:4px;
+	left:15px;
+	cursor:pointer;
+}
+
+#playfm {
+	position:absolute;
+	top:4px;
+	left:55px;
+	cursor:pointer;
+}
+#pausefm {
+	position:absolute;
+	top:4px;
+	left:55px;
+	cursor:pointer;
+}
+ #playonfm {
+ 	position:absolute;
+	top:4px;
+	left:55px;
+	cursor:pointer;
+}
+ #stopfm {
+ 	position:absolute;
+	top:4px;
+	left:95px;
+	cursor:pointer;
 }
 
 #drop_zone {
@@ -2464,19 +2498,18 @@ function main()
   <div class='choice40' id='visit' onclick='visitgallery()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="Visit Gallery" title="Visit Gallery" src='assets/visit.png'> </div>
   <div class='choice40' id='help' onclick='openhelp()' onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img  alt="help" title="help" src='assets/help.png'> </div>	
   <input id="done" type="button" value="" onclick="closedone()" />
-  <button id="fmbuttons">
-  	<input film="" id="tempfm" type="button" value="  " onclick="playfilm(this.film)" /> 
-  	<input film="" id="playfm" type="button" value="Run" onclick="playfilm(this.film)" /> 
-  	<input film="" id="pausefm" type="button" value="Pause" onclick="pausefilm(this.film)" />
-  	<input film="" id="playonfm" type="button" value="Run" onclick="playonfilm(this.film)" />
-  	<input film="" id="stopfm" type="button" value="Stop" onclick="stopfilm(this.film)" /> 
-  	<input film="" id="closefm" type="button" value="Close" onclick="closefilm(this.film)" /> 
-  </button>
-  <button id="spbuttons">
+  <div id="fmbuttons">
+  	<img film="" id="rewindfm" src="assets/startplay.png" onclick="rewindfilm(this.film)" alt="rewind" title="rewind" /> 
+  	<img film="" id="playfm" src="assets/runplay.png" onclick="playfilm(this.film)" alt="play" title="play" /> 
+  	<img film="" id="pausefm"  src="assets/pauseplay.png" onclick="pausefilm(this.film)"  alt="pause" title="pause" />
+  	<img film="" id="playonfm" src="assets/runplay.png" onclick="playonfilm(this.film)"  alt="continue" title="continue" />
+  	<img film="" id="stopfm"  src="assets/stopplay.png" onclick="stopfilm(this.film)"  alt="stop and close" title="stop and close" /> 
+  </div>
+  <div id="spbuttons">
   	<input sprite="" id="checksp" type="button" value="Track Check" onclick="checksprite(this.sprite,true)" /> 
   	<input sprite="" id="fullchecksp" type="button" value="Full Check" onclick="checksprite(this.sprite,false)" />
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
-  </button>
+  </div>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
 </div>
