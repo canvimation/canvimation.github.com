@@ -11,7 +11,7 @@ function Film(name)
 	this.elements={};
 }
 
-function addToFilmBoard(el,editing)
+function addToFilmBoard(el)
 {
 	var filmboard=$("filmbuildboard");
 	var filmlines=$("filmbuildlines");
@@ -95,20 +95,18 @@ function addToFilmBoard(el,editing)
 		case "scene":
 			$("Rin").style.visibility="hidden";
 			$("Sin").style.visibility="hidden";
+			flel.elm=SCENES[flel.name].copyscene("film");
+			flel.elm.drawscene();
 		break
 		case "sprite":
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
 			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
-			if(editing)
-			{
-				var sprite=el.elm;
-			}
-			else
-			{
-				var sprite=SPRITES[el.name];
-			}
+			flel.elm=SPRITES[flel.name].copysprite("film");
+			flel.elm.transform();
+			flel.elm.drawalltracks(true);
+			flel.elm.drawsprite();
 			if(isNaN(sprite.track.repeats))
 			{
 				flel.maxruntime="c"; //continuous
@@ -613,3 +611,16 @@ function fleldown()
 	flel.prev=flel.prev.next;
 }
 
+function cancelFilmBuild(child)
+{
+	cancel=confirm("Do you really want to delete this Film Build?")
+	if(cancel)
+	{
+		FILMBOARD={};
+		holder=child.parentNode.parentNode;
+		holder.style.visibility="hidden";
+		clear($("filmstage"));
+		$("shapestage").style.visibility="visible";
+		$("filmstage").style.visibility="hidden";
+	}
+}

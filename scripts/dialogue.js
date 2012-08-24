@@ -53,7 +53,6 @@ function closedialogue(img)
 {
 	holder=img.parentNode.parentNode;
 	holder.style.visibility="hidden";
-	
 }
 
 function openStage(theatre)

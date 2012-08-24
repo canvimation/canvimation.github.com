@@ -632,7 +632,7 @@ inner img {
 	top:5px;
 	width:140px;
 	height:35px;
-	visibility:visible;
+	visibility:hidden;
 }
 
 #rewindfm {
@@ -2762,15 +2762,16 @@ function main()
 	</div>
 	<div class="white"></div>
 	
-	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> <input type="button" value=" Save " onclick="buildFilm()" />
-		<input type="button" value=" Cancel " onclick="FILMBOARD={};closedialogue(this)" />
+	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> 
+		<input type="button" value=" Save " onclick="buildFilm(this)" />
+		<input type="button" value=" Cancel " onclick="cancelFilmBuild(this)" />
 	</div>
 	<div id="currentel" class="current"> &nbsp;Current Element:</div>
 	<div class="sclbar"></div>		
 	<div class="scrbar"></div>
 	<div class="bbar"></div>
 	<div id='filmbuildhead' class='head'>&nbsp; Build A Film
-		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+		<img alt="" src='assets/x.png' onclick='cancelFilmBuild(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmbuildcontent")'/>
 	</div>	
 </div>
