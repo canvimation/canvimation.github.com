@@ -139,10 +139,6 @@ function drawBoundary()
 									for(var name in shapeNames)
 									{
 										shape=shapeNames[name];
-										//shape.ox +=dx;
-										//shape.oy +=dy;
-										//shape.sox +=dx;
-										//shape.soy +=dy;
 										node=shape.path.next;
 										while(node.point.x!="end")
 										{
@@ -161,8 +157,6 @@ function drawBoundary()
 										shape.btmrgtcrnr.x+=dx;
 										shape.tplftcrnr.y +=dy;
 										shape.btmrgtcrnr.y+=dy;
-										//shape.scleft=shape.bleft;
-										//shape.sctop=shape.btop;
 										shape.lineGrad[0] +=dx;
 										shape.lineGrad[1] +=dy;
 										shape.lineGrad[2] +=dx;

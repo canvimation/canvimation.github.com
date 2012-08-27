@@ -32,6 +32,7 @@ function addToFilmBoard(el)
 	}
 	$("timeline").style.top=((flen+2)*25)+"px";
 	FLELHEIGHT=(flen+2)*25+75;
+	flel.id="fl"+ELCOUNT;
 	flel.name=el.name;
 	flel.title=el.title;
 	flel.source=el.source;
@@ -90,12 +91,20 @@ function addToFilmBoard(el)
 	$("Din").onchange=function() {setD(this)};
 	$("Ain").style.visibility="inherit";
 	$("Din").style.visibility="inherit";
+	var eldiv=document.createElement("div");
+	eldiv.id="div"+flel.id+"stage";
+	eldiv.style.top=(el.yOffset||0)+"px";
+	eldiv.style.left=(el.xOffset||0)+"px";
+	eldiv.style.width=SCRW;
+	eldiv.style.height=SCRH;
+	$("filmstage").appendChild(eldiv);
+	flel.DD=new YAHOO.util.DD(eldiv.id);
 	switch (el.source)
 	{
 		case "scene":
 			$("Rin").style.visibility="hidden";
 			$("Sin").style.visibility="hidden";
-			flel.elm=SCENES[flel.name].copyscene("film");
+			flel.elm=SCENES[flel.name].copyscene("div"+flel.id);
 			flel.elm.drawscene();
 		break
 		case "sprite":
@@ -103,7 +112,7 @@ function addToFilmBoard(el)
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
 			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
-			flel.elm=SPRITES[flel.name].copysprite("film");
+			flel.elm=SPRITES[flel.name].copysprite("div"+flel.id);
 			flel.elm.transform();
 			flel.elm.drawalltracks(true);
 			flel.elm.drawsprite();
@@ -149,11 +158,29 @@ function addToFilmBoard(el)
 		}
 		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
 		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].DD.unreg();
 	}
 	flel.text.style.backgroundColor="yellow";
 	flel.label.style.backgroundColor="yellow";
 	FLELTOP+=25;
 	FLELHEIGHT+=25;
+	flel.DD.setOuterHandleElId($("dragstage"));
+	flel.DD.onMouseUp=function() {
+									this.clearConstraints();
+									flel.xOffset=parseInt($(this.id).style.left);
+									flel.yOffset=parseInt($(this.id).style.top);
+								}
+	flel.DD.onMouseDown=function() {
+										if(xgrid>1)
+										{
+											this.setXConstraint(2*SCRW,2*SCRW,xgrid);
+										}
+										if(ygrid>1)
+										{
+											this.setYConstraint(2*SCRH,2*SCRW,xgrid);
+										}
+									}
+	$("dragstage").style.visibility="visible";
 }
 
 function setA(inp)
@@ -257,7 +284,7 @@ function setD(inp)
 		$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
 		FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
 		if(flel.source=="sprite")
-		{alert(["sprite name", flel.name])
+		{
 			var sprite=SPRITES[flel.name];
 			if(isNaN(sprite.track.repeats))
 			{
@@ -480,6 +507,7 @@ function setflel(el)
 	{
 		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
 		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].DD.unreg();
 	}
 	flel.text.style.backgroundColor="yellow";
 	flel.label.style.backgroundColor="yellow";
@@ -517,6 +545,23 @@ function setflel(el)
 			flel.run.style.borderRight="2px solid blue";
 		break
 	}
+	flel.DD=new YAHOO.util.DD("div"+flel.id+"stage");
+	flel.DD.setOuterHandleElId($("dragstage"));
+	flel.DD.onMouseUp=function() {
+									this.clearConstraints();
+									flel.xOffset=parseInt($(this.id).style.left);
+									flel.yOffset=parseInt($(this.id).style.top);
+								}
+	flel.DD.onMouseDown=function() {
+										if(xgrid>1)
+										{
+											this.setXConstraint(2*SCRW,2*SCRW,xgrid);
+										}
+										if(ygrid>1)
+										{
+											this.setYConstraint(2*SCRH,2*SCRW,xgrid);
+										}
+									}
 }
 
 function flelup()
@@ -616,11 +661,20 @@ function cancelFilmBuild(child)
 	cancel=confirm("Do you really want to delete this Film Build?")
 	if(cancel)
 	{
+		for(var name in FILMBOARD)
+		{
+			for(var prop in FILMBOARD[name].elm)
+			{
+				delete FILMBOARD[name].elm[prop];
+			}
+			FILMBOARD[name].DD.unreg();
+		}
 		FILMBOARD={};
 		holder=child.parentNode.parentNode;
 		holder.style.visibility="hidden";
 		clear($("filmstage"));
 		$("shapestage").style.visibility="visible";
 		$("filmstage").style.visibility="hidden";
+		$("dragstage").style.visibility="hidden";
 	}
 }

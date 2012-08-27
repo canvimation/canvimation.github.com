@@ -755,6 +755,14 @@ inner img {
 	visibility:hidden;
 }
 
+#dragstage {
+	background-color:#FFFFFF;
+	opacity:0.01;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=1)";
+    filter:alpha(opacity=1);
+    z-index:4;
+}
+
 #stageframe {
 	visibility:hidden;
 	border:1px solid black;
@@ -805,7 +813,7 @@ inner img {
 	left:10px;
 	width: 95px;
 	height:515px;
-	z-index:1;
+	z-index:10;
 	border:solid 1px #000000;
 	background-color:#66FFFF;
 	visibility:hidden;
@@ -1320,10 +1328,13 @@ var FLELINDX; //z-index for elements on filmlines
 var NCOUNT=0; //counter for element shapes
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
+var DDDIVS={};
+
+
 var STOPCHECKING=false;
 var SPANCOUNT=0; //counter for spans in list
 var LIMARGIN;
-
+var ZBOX=10; //z-index for tool bars and dialogueboxes;
 EXCANVASUSED = !document.createElement("canvas").getContext;
 
 
@@ -1834,8 +1845,9 @@ function main()
 		$(BOXNAME+"content").style.height=(parseInt(BOXES[i].style.height)-25)+"px";
 		$(BOXNAME+"content").style.top=25+"px";
 		
-		DD[i]=new YAHOO.util.DD(BOXES[i].id);
-		DD[i].setHandleElId(BOXNAME+"head");
+		DD=new YAHOO.util.DD(BOXES[i].id);
+		DD.setHandleElId(BOXNAME+"head");
+		DD.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
 	}
 	
 	BOXES=getElementsByClassName("elementsbox");
@@ -1851,8 +1863,9 @@ function main()
 		$(BOXNAME+"content").style.height=(parseInt(BOXES[i].style.height)-50)+"px";
 		$(BOXNAME+"content").style.top=50+"px";
 		
-		DD[i]=new YAHOO.util.DD(BOXES[i].id);
-		DD[i].setHandleElId(BOXNAME+"head");
+		DD=new YAHOO.util.DD(BOXES[i].id);
+		DD.setHandleElId(BOXNAME+"head");
+		DD.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
 	}
 	
 	$("filmbuildbox").style.left="200px";
@@ -1973,13 +1986,16 @@ function main()
 	
 	
 	DDtlbr=new YAHOO.util.DD('toolbar');
-	DDtlbr.setHandleElId('tlbrhead');	
+	DDtlbr.setHandleElId('tlbrhead');
+	DDtlbr.onMouseDown=onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};	
 	
-	DDtlbr=new YAHOO.util.DD('filmsbar');
-	DDtlbr.setHandleElId('filmsbrhead');
+/*	DDtlbr=new YAHOO.util.DD('filmsbar');
+	DDtlbr.setHandleElId('filmsbarhead');
+	DDtlbr.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++}; */
 
 	DDanibr=new YAHOO.util.DD('anibar');
 	DDanibr.setHandleElId('anibarhd');
+	DDanibr.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
 	
 	DDcircle=new YAHOO.util.DD('circle');
 	DDcircle.onDrag = function () {
@@ -2208,6 +2224,7 @@ function main()
 <div id="trackstage" class="theatre_style"></div>
 <div id="tweenstage" class="theatre_style"></div>
 <div id="filmstage" class="theatre_style"></div>
+<div id="dragstage" class="theatre_style"></div>
 
 <div id="stageframe"></div>
 

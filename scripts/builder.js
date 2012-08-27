@@ -2,6 +2,7 @@ function scbb()
 {
 	$('scenebuildbox').style.top=(parseInt($("scenebox").style.top)+60)+"px";
 	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+60)+"px";
+	$('scenebuildbox').style.zIndex=ZBOX++;
 	$('scenebuildbox').style.visibility='visible';
 	$('scenetitle').value="Scene"+(SCCOUNT++);
 }
@@ -10,6 +11,7 @@ function trbb()
 {
 	$('trackbuildbox').style.top=(parseInt($("trackbox").style.top)+60)+"px";
 	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+60)+"px";
+	$('trackbuildbox').style.zIndex=ZBOX++;
 	$('trackbuildbox').style.visibility='visible';
 	$('tracktitle').value="Track"+(TRCOUNT++);
 	$('trackreps').value=0;
@@ -21,6 +23,7 @@ function spbb()
 {
 	$('spritebuildbox').style.top=(parseInt($("spritebox").style.top)+60)+"px";
 	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)+60)+"px";
+	$('spritebuildbox').style.zIndex=ZBOX++;
 	$('spritebuildbox').style.visibility='visible';
 	$('spritetitle').value="Sprite"+(SPCOUNT++);
 	$('spritetime').value=5;
@@ -32,6 +35,7 @@ function spbb()
 function flbb()
 {
 	$('filmtitle').value="Film"+(FMCOUNT++);
+	$("filmbuildbox").style.zIndex=ZBOX++;
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="<input id='Ain' type='text' value='' size='4' /><input id='Din'  type='text' value='' size='4' />";
 	$("filmbuildboard").innerHTML+="<input id='Rin' type='text' value='' size='4' /><input id='Sin'  type='text' value='' size='4' />";
@@ -61,6 +65,7 @@ function flbb()
 	clear($("filmstage"));
 	$("shapestage").style.visibility="hidden";
 	$("filmstage").style.visibility="visible";
+	$("menushape").style.visibility="hidden";
 }
 
 function buildScene()
@@ -324,22 +329,37 @@ function buildFilm(child)
 	}
 	if (checkname($('filmtitle').value.trim(),'film')) 
 	{
-		alert('There is already film with the name '+$('filmtitle').value.trim());
-		return;
+		cnfrm=confirm('There is already film with the name '+$('filmtitle').value.trim()+"\nOK to overwrite.");
+		if(cnfrm)
+		{
+			var film=FILMS[$('filmtitle').value.trim()];
+		}
+		else
+		{
+			return;
+		}
 	}
-	var film=new Film($('filmtitle').value.trim());
-	film.title=film.name;
+	else
+	{
+		var film=new Film($('filmtitle').value.trim());
+		film.title=film.name;
+	}
 	for(var name in FILMBOARD)
 	{
 		fbel=FILMBOARD[name];
+		fbel.elm={};
 		film.elements[name]={};
 		flel=film.elements[name];
+		flel.id=fbel.id;
 		flel.name=fbel.name;
 		flel.title=fbel.title;
 		flel.source=fbel.source;
 		flel.layer=fbel.layer;
 		flel.A=fbel.A;
 		flel.D=fbel.D;
+		flel.xOffset=parseInt($(fbel.DD.id).style.left);
+		flel.yOffset=parseInt($(fbel.DD.id).style.top);
+		fbel.DD.unreg();
 		switch (flel.source)
 		{
 			case "scene":
@@ -358,6 +378,8 @@ function buildFilm(child)
 	clear($("filmstage"));
 	$("shapestage").style.visibility="visible";
 	$("filmstage").style.visibility="hidden";
+	$("dragstage").style.visibility="hidden";
+	$("menushape").style.visibility="inherit";
 	writefilmlist();
 }
 
@@ -380,6 +402,7 @@ function writescenelist()
 		DDSC[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
 		DDSC[i].onDragDrop=function() {
@@ -426,6 +449,7 @@ function writetracklist()
 		DDTR[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
 		DDTR[i].onDragDrop=function() {
@@ -471,6 +495,7 @@ function writespritelist()
 		DDSP[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
 		DDSP[i].onDragDrop=function() {
@@ -517,6 +542,7 @@ function writefilmlist()
 		DDSC[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
 		DDSC[i].onDragDrop=function() {
