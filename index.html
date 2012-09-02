@@ -1203,9 +1203,9 @@ inner img {
 <script type="text/javascript" src = "scripts/sprites.js" ></script>
 <script type="text/javascript" src = "scripts/films.js" ></script>
 <script type="text/javascript" src = "scripts/alongpath.js" ></script>
-
+<script type="text/javascript" src = "scripts/exportfilms.js" ></script>
 <script type="text/javascript" src = "scripts/export.js" ></script>
-<script type="text/javascript" src = "scripts/exportfilmall.js" ></script>
+
 <script type="text/javascript" src = "scripts/linemarker.js" ></script>
 <script type="text/javascript" src = "scripts/rotate.js" ></script>
 <script type="text/javascript" src = "scripts/grid.js" ></script>
@@ -2793,7 +2793,10 @@ function main()
 				<div id="flellistholder">
 			<div id="flellist"></div>
 		</div>
-		<div id="flelorder"><span class="arr" onclick="flelup()">&#11014;</span >&nbsp;&nbsp;&nbsp;&nbsp; <span class="arr" onclick="fleldown()">&#11015;</span></div>
+		<div id="flelorder">
+			<span class="arr" onclick="flelup()">&#11014;</span >&nbsp;&nbsp;&nbsp;&nbsp; 
+			<span class="arr" onclick="fleldown()">&#11015;</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			<span class="arr" style="color:red" onclick="fleldel()">&#10060;</span ></div>
 		<div id="scrollcorner"></div>
 		<div class="leftbar"></div>
 		<div id="rightbarfl" class="rightbar"></div>

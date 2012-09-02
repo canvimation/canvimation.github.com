@@ -22,12 +22,12 @@ function addToFilmBoard(el)
 	flel=FILMBOARD["fl"+ELCOUNT];
 	flel.next=FLELHEAD;
 	flel.prev=FLELHEAD.prev;
-	FLELHEAD.el=flel;
-	flel.head=FLELHEAD;
+	//FLELHEAD.el=flel;
+	//flel.head=FLELHEAD;
 	FLELHEAD.prev.next=flel;
 	FLELHEAD.prev=flel;
-	flel.head=FLELHEAD;
-	flel.prev.head="null";
+	//flel.head=FLELHEAD;
+	//flel.prev.head="null";
 	var flen=0;
 	for(var name in FILMBOARD)
 	{
@@ -646,6 +646,89 @@ function fleldown()
 	flel.next=flel.next.next;
 	flel.prev.next.next=flel;
 	flel.prev=flel.prev.next;
+}
+
+function fleldel()
+{
+	var flel=FILMBOARD[$("currentel").el];
+	var next=flel.next;
+	var start=next;
+	if(next.name=="&head!")
+	{
+		next=flel.prev;
+	}
+	flel.seen.parentNode.removeChild(flel.seen);
+	flel.label.parentNode.removeChild(flel.label);
+	flel.text.parentNode.removeChild(flel.text);
+	flel.prev.next=flel.next;
+	flel.next.prev=flel.prev;
+	next.text.style.backgroundColor="yellow";
+	next.label.style.backgroundColor="yellow";
+	$("currentel").el=next.text.id;
+	$("filmtitle").value=next.title;
+	$("Ain").value=next.A;
+	$("Acin").value=next.A;
+	$("Din").value=next.D;
+	$("Dcin").value=next.D;
+	$("Ain").style.top=(parseInt($("Ain").style.top)-25)+"px";
+	$("Din").style.top=(parseInt($("Din").style.top)-25)+"px";
+	switch (flel.source)
+	{
+		case "sprite":
+			flel.run.parentNode.removeChild(flel.run)
+			$("Rin").style.visibility="hidden";
+			$("Rcin").style.visibility="hidden";
+			$("Sin").style.visibility="hidden";
+			$("Scin").style.visibility="hidden";
+		break
+	}
+	switch (next.source)
+	{
+		case "sprite":
+			$("Rin").style.visibility="visible";
+			$("Rcin").style.visibility="visible";
+			$("Sin").style.visibility="visible";
+			$("Scin").style.visibility="visible";
+			$("Rin").value=next.R;
+			$("Rcin").value=next.R;
+			$("Sin").value=next.S;
+			$("Scin").value=next.S;
+			$("Rin").style.top=(parseInt($("Rin").style.top)-25)+"px";
+			$("Sin").style.top=(parseInt($("Sin").style.top)-25)+"px";
+		break
+	}
+	delete FILMBOARD[flel.id];
+	flel=FLELHEAD.next;
+	while(flel!=start)
+	{
+		flel.text.style.height=(parseInt(flel.text.style.height)-25)+"px";
+		flel.label.style.height=(parseInt(flel.label.style.height)-25)+"px";
+		flel.seen.style.height=(parseInt(flel.seen.style.height)-25)+"px";
+		switch(flel.source)
+		{
+			case "sprite":
+				flel.run.style.height=(parseInt(flel.run.style.height)-25)+"px";
+			break
+		}
+		flel=flel.next;
+	}
+	flel=start;
+	while (flel.name!="&head!")
+	{
+		flel.text.style.top=(parseInt(flel.text.style.top)-25)+"px";
+		flel.label.style.top=(parseInt(flel.label.style.top)-25)+"px";
+		flel.seen.style.top=(parseInt(flel.seen.style.top)-25)+"px";
+		switch(flel.source)
+		{
+			case "sprite":
+				flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
+			break
+		}
+		flel=flel.next;
+	}
+	$("timeline").style.top=(parseInt($("timeline").style.top)-25)+"px";
+	FLELTOP-=25;
+	FLELHEIGHT-=25;
 }
 
 function cancelFilmBuild(child)
