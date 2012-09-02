@@ -108,8 +108,8 @@ function closedone()
 	$("done" ).style.visibility="hidden";
 	$("spbuttons").style.visibility="hidden";
 	$("toolbar").style.visibility="visible";
-	$("menushape").style.visibility="visible";
-	$("grid").style.visibility="visible";
+	$("menushape").style.visibility="inherit";
+	$("grid").style.visibility="inherit";
 	$("sceneeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
 	$("spriteeditbox").style.visibility="hidden";
@@ -736,4 +736,20 @@ function resize(el)
 function anidialogue(el)
 {
 	$(el+"box").style.visibility="visible";
+}
+
+function closeAllDialogues()
+{
+	BOXES=getElementsByClassName("dialoguebox");
+	for(var i=0; i<BOXES.length; i++)
+	{
+		BOXES[i].style.visibility="hidden";
+	}
+	BOXES=getElementsByClassName("elementsbox");
+	for(var i=0; i<BOXES.length; i++)
+	{
+		BOXES[i].style.visibility="hidden";
+	}
+	$("toolbar").style.visibility="hidden";
+	$("anibar").style.visibility="hidden";
 }

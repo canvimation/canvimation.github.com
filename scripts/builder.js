@@ -343,7 +343,9 @@ function buildFilm(child)
 	{
 		var film=new Film($('filmtitle').value.trim());
 		film.title=film.name;
+		FILMS[film.name]=film;
 	}
+	film.list=[];
 	for(var name in FILMBOARD)
 	{
 		fbel=FILMBOARD[name];
@@ -360,6 +362,8 @@ function buildFilm(child)
 		flel.xOffset=parseInt($(fbel.DD.id).style.left);
 		flel.yOffset=parseInt($(fbel.DD.id).style.top);
 		fbel.DD.unreg();
+		flay=[name,flel.layer];
+		film.list.push(flay);
 		switch (flel.source)
 		{
 			case "scene":
@@ -371,7 +375,7 @@ function buildFilm(child)
 			break
 		}
 	}
-	FILMS[film.name]=film;
+	film.list.sort(zindp);
 	FILMBOARD={};
 	holder=child.parentNode.parentNode;
 	holder.style.visibility="hidden";
@@ -1039,7 +1043,6 @@ function filmEdit(n)  //edits the selected scene shapes
 {
 	var el,flel,fbel;
 	var filmboard,filmlines;
-	var flist=[];
 	var flay=[];
 	var idarray=n.parentNode.id.split(",");
 	var topfilm=idarray[0]
@@ -1051,16 +1054,9 @@ function filmEdit(n)  //edits the selected scene shapes
 	flbb();
 	FMCOUNT--;
 	$('filmtitle').value=film.title;
-	for(var name in film.elements)
+	for(var i=0;i<film.list.length;i++)
 	{
-		flel=film.elements[name];
-		flay=[name,flel.layer];
-		flist.push(flay);
-	}
-	flist.sort(zindp);
-	for(var i=0;i<flist.length;i++)
-	{
-		flel=film.elements[flist[i][0]];
+		flel=film.elements[film.list[i][0]];
 		addToFilmBoard(flel);
 		$("Acin").value=flel.A
 		setA($("Acin"));

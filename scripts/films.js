@@ -9,6 +9,9 @@ function Film(name)
 	this.name=name;
 	this.title;
 	this.elements={};
+	
+	//methods
+	this.play=play;
 }
 
 function addToFilmBoard(el)
@@ -97,6 +100,7 @@ function addToFilmBoard(el)
 	eldiv.style.left=(el.xOffset||0)+"px";
 	eldiv.style.width=SCRW;
 	eldiv.style.height=SCRH;
+	eldiv.style.zIndex=flel.layer;
 	$("filmstage").appendChild(eldiv);
 	flel.DD=new YAHOO.util.DD(eldiv.id);
 	switch (el.source)
@@ -113,6 +117,8 @@ function addToFilmBoard(el)
 			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
 			flel.elm=SPRITES[flel.name].copysprite("div"+flel.id);
+			flel.elm.zeroPointers();
+			flel.elm.saveCanvases();
 			flel.elm.transform();
 			flel.elm.drawalltracks(true);
 			flel.elm.drawsprite();
@@ -285,20 +291,12 @@ function setD(inp)
 		FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
 		if(flel.source=="sprite")
 		{
-			var sprite=SPRITES[flel.name];
-			if(isNaN(sprite.track.repeats))
+			if(isNaN(flel.S))
 			{
 				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
 				$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
 				$("Scin").value="Never";
 				$("Sin").value="Never";
-			}
-			else
-			{
-				flel.run.style.width=flel.maxruntime+"px";	
-				$("Scin").value=flel.maxruntime;
-				$("Sin").value=flel.maxruntime;
-				$("Sin").style.left=(flel.start+flel.maxruntime+57)+"px";		
 			}
 		}
 	}
@@ -307,10 +305,10 @@ function setD(inp)
 		flel.seen.style.width=(flel.D-flel.A)+"px";
 		$("Din").style.left=(parseInt(flel.seen.style.left)+parseInt(flel.seen.style.width)+2)+"px";
 		FLELWIDTH=Math.max(FLELWIDTH,flel.D);
-		if(flel.source="sprite")
+		if(flel.source=="sprite")
 		{
 			flel.run.style.borderRight="2px solid blue";
-			if(isNaN(flel.maxruntime))
+			if(isNaN(flel.S))
 			{
 				flel.run.style.width=(flel.D-flel.R)+"px";
 				flel.run.style.borderRight="2px solid black";
@@ -330,14 +328,6 @@ function setD(inp)
 					$("Sin").value=$("Din").value;
 					flel.S=$("Sin").value;
 				}
-				else
-				{
-					flel.run.style.width=flel.maxruntime+"px";	
-					$("Sin").style.left=(flel.start+flel.maxruntime+2)+"px";
-					$("Scin").value=flel.maxruntime;
-					$("Sin").value=flel.maxruntime;
-					flel.S=$("Sin").value;
-				}		
 			}
 		}
 	}
@@ -416,7 +406,7 @@ function setS(inp)
 	{
 		if(isNaN(flel.maxruntime))
 		{
-			if (!(inp.value.toLowerCase()=="never") )
+			if (inp.value.toLowerCase()!="never")
 			{
 				alert("Stop At time is not a number nor 'never'");
 				inp.value=flel.S;
@@ -485,7 +475,7 @@ function setS(inp)
 		{
 			flel.run.style.width=(flel.D-flel.R)+"px";
 			flel.run.style.borderRight="2px solid black";
-			$("Sin").style.left=$(Din).style.left;
+			$("Sin").style.left=$("Din").style.left;
 			$("Scin").value=$("Din").value;
 			$("Sin").value=$("Din").value;
 			flel.S=$("Sin").value;
@@ -494,8 +484,8 @@ function setS(inp)
 		{
 			flel.run.style.width=(flel.S-flel.R)+"px";	
 			$("Sin").style.left=(parseInt(flel.run.style.left)+parseInt(flel.run.style.width)+2)+"px";
-			$("Scin").value=$("Din").value;
-			$("Sin").value=$("Din").value;
+			$("Scin").value=flel.S;
+			$("Sin").value=flel.S;
 		}		
 	}
 }
@@ -571,11 +561,12 @@ function flelup()
 	if(prev.name=="&head!")
 	{
 		return;
-		//prev=prev.prev
 	}
 	var prevdata=prev.layer;
 	prev.layer=flel.layer;
 	flel.layer=prevdata;
+	$(flel.DD.id).style.zIndex=flel.layer;
+	$(prev.DD.id).style.zIndex=prev.layer;
 	prevdata=prev.text.style.top;
 	prev.text.style.top=flel.text.style.top;
 	flel.text.style.top=prevdata;
@@ -617,11 +608,12 @@ function fleldown()
 	if(next.name=="&head!")
 	{
 		return;
-		//next=next.next
 	}
 	var nextdata=next.layer;
 	next.layer=flel.layer;
 	flel.layer=nextdata;
+	$(flel.DD.id).style.zIndex=flel.layer;
+	$(next.DD.id).style.zIndex=next.layer;
 	nextdata=next.text.style.top;
 	next.text.style.top=flel.text.style.top;
 	flel.text.style.top=nextdata;
@@ -663,6 +655,10 @@ function cancelFilmBuild(child)
 	{
 		for(var name in FILMBOARD)
 		{
+			if(FILMBOARD[name].source=="sprite")
+			{
+				FILMBOARD[name].elm.restoreCanvases();
+			}
 			for(var prop in FILMBOARD[name].elm)
 			{
 				delete FILMBOARD[name].elm[prop];
@@ -677,4 +673,226 @@ function cancelFilmBuild(child)
 		$("filmstage").style.visibility="hidden";
 		$("dragstage").style.visibility="hidden";
 	}
+}
+
+function filmPlay(el)
+{
+	$("blockstage").style.visibility="visible";
+	var flel;
+	var flay=[];
+	var idarray=el.parentNode.id.split(",");
+	var topfilm=idarray[0]
+	var name=idarray[2];
+	$("rewindfm").film=name;
+  	$("pausefm").film=name;
+  	$("playonfm").film=name;
+  	$("stopfm").film=name;
+	clear($("filmstage"));
+	$("shapestage").style.visibility="hidden";
+	$("scenestage").style.visibility="hidden";
+	$("filmstage").style.visibility="visible";
+	if(topfilm=="non!!!!")
+	{
+		var film=FILMS[name];
+		film.paused=false;
+		film.stopped=false;
+		film.rewind=false;
+	}
+	film.active={};
+	for(var i=0;i<film.list.length;i++)
+	{
+		flel=film.elements[film.list[i][0]];
+		film.active[film.list[i][0]]=film.list[i][0];
+		var eldiv=document.createElement("div");
+		eldiv.id="elm"+flel.id+"stage";
+		eldiv.style.top=flel.yOffset+"px";
+		eldiv.style.left=flel.xOffset+"px";
+		eldiv.style.width=SCRW;
+		eldiv.style.height=SCRH;
+		eldiv.style.zIndex=flel.layer;
+		eldiv.style.visibility="hidden";
+		$("filmstage").appendChild(eldiv);
+		switch(flel.source)
+		{
+			case "scene":
+				flel.elm=SCENES[flel.name].copyscene("elm"+flel.id);
+				flel.elm.drawscene();
+			break
+			case "sprite":
+			 	flel.elm=SPRITES[flel.name].copysprite("elm"+flel.id);
+			 	STOPCHECKING=false;
+			 	flel.elm.zeroPointers();
+			 	flel.elm.saveCanvases();
+			 	flel.elm.track.drawtrack(false);
+				flel.elm.transform();
+				flel.elm.drawsprite();
+				flel.elm.drawalltracks(false);
+			break
+		}
+	}
+	closeAllDialogues();
+	$("shapestage").style.visibility="hidden";
+	$("filmstage").style.visibility="visible";
+	$("rewindfm").style.visibility="visible";
+	$("pausefm").style.visibility="visible";
+	$("stopfm").style.visibility="visible";
+	$("filmtime").style.visibility="visible";
+	$("secsfm").style.visibility="visible";
+	film.t=0; // time into film
+	film.play(0);
+}
+
+function play(t)
+{
+	var stoprun;
+	this.t=t;
+	$("filmtime").innerHTML=Math.round(t/100)/10+" ";
+	var alen=0;
+	for(var name in this.active)
+	{
+		alen++;
+	}
+	if(alen>0 && !this.paused && !this.stopped)
+	{
+		for(var name in this.active)
+		{
+			flel=this.elements[name];
+			if(isNaN(flel.S))
+			{
+				stoprun=t+10;
+			}
+			else
+			{
+				stoprun=flel.S;
+			}
+			if(t>=flel.A*1000)
+			{
+				$("elm"+flel.id+"stage").style.visibility="visible";
+				if(isNaN(flel.D) || (!(isNaN(flel.D)) && t>flel.D*1000) ) //check to leave element visible and delete from this active if stationery
+				{
+					if(!(isNaN(flel.D)) && t>flel.D*1000)
+					{
+						$("elm"+flel.id+"stage").style.visibility="hidden";
+					}
+					switch(flel.source)
+					{
+						case "scene":
+							delete this.active[name];
+						break
+						case "sprite":
+							if(isNaN(flel.S))
+							{
+								if(flel.elm.finishmove)
+								{
+									delete this.active[name];
+								}
+							}
+							else
+							{
+								if(t>flel.S*1000)
+								{
+									delete this.active[name];
+								}
+							}
+						break
+					}
+				}
+			}
+		}
+		switch (flel.source)
+		{
+			case "sprite":
+				if(t>=flel.R*1000 && t<stoprun*1000)
+				{
+					flel.elm.transform();
+					flel.elm.drawalltracks(true);
+					flel.elm.drawsprite();
+				}
+			break
+		}
+		var film=this;
+	  	var runthis=setTimeout(function() {film.play(t+50)},50);
+	}
+	else
+	{
+		clearTimeout(runthis);
+		if(this.rewind) 
+		{
+			this.t=0;
+			this.active={};
+			for(var i=0;i<this.list.length;i++)
+			{
+				flel=this.elements[this.list[i][0]];
+				this.active[this.list[i][0]]=this.list[i][0];
+				eldiv=$("elm"+flel.id+"stage");
+				eldiv.style.visibility="hidden";
+				switch(flel.source)
+				{
+					case "scene":
+						flel.elm.drawscene();
+					break
+					case "sprite":
+						STOPCHECKING=false;
+						flel.elm.restoreCanvases();
+						flel.elm.finishmove=false;
+			 			flel.elm.zeroPointers();
+			 			flel.elm.saveCanvases();
+			 			flel.elm.track.drawtrack(false);
+						flel.elm.transform();
+						flel.elm.drawsprite();
+						flel.elm.drawalltracks(false);
+					break
+				}
+			}
+		}
+	}
+}
+
+function playonfilm(name)
+{
+	var film=FILMS[name];
+	$("pausefm").style.visibility="visible";
+	$("playonfm").style.visibility="hidden";
+	FILMS[name].paused=false;
+	STOPCHECKING=false;
+	FILMS[name].stopped=false;
+	FILMS[name].rewind=false;
+	film.play(film.t);
+}
+
+function rewindfilm(name)
+{
+	FILMS[name].rewind=true;
+	STOPCHECKING=true;
+	FILMS[name].stopped=true;
+	$("pausefm").style.visibility="hidden";
+	$("playonfm").style.visibility="visible";
+	FILMS[name].paused=true;
+	film.t=0;
+	
+}
+
+function pausefilm(name)
+{
+	$("pausefm").style.visibility="hidden";
+	$("playonfm").style.visibility="visible";
+	FILMS[name].paused=true;
+}
+
+function stopfilm(name)
+{
+	STOPCHECKING=true;
+	FILMS[name].stopped=true;
+	$("rewindfm").style.visibility="hidden";
+	$("pausefm").style.visibility="hidden";
+	$("stopfm").style.visibility="hidden";
+	$("playonfm").style.visibility="hidden";
+	$("filmtime").style.visibility="hidden";
+	$("secsfm").style.visibility="hidden";
+	$("toolbar").style.visibility="visible";
+	$("anibar").style.visibility="visible";
+	$("shapestage").style.visibility="visible";
+	clear($("filmstage"));
+	$("filmstage").style.visibility="hidden";
+	$("blockstage").style.visibility="hidden";
 }

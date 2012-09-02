@@ -42,7 +42,6 @@ function Sprite(name)
 	this.getScene=getScene;
 	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
-	this.spriteTranslate=spriteTranslate
 }
 
 function copysprite(theatre)
@@ -177,7 +176,7 @@ function followPath(showpathline)
 	this.inTheatre($("spritestage"));
 	this.saveCanvases();
 	this.track.drawtrack(showpathline);
-	this.spriteTranslate(200,300);
+	//this.spriteTranslate(200,300);
   	this.moveSprite(showpathline);
 }
 
@@ -529,20 +528,3 @@ function expandspritelist(sn)
 		break
 	}
 }
-
-function spriteTranslate(x,y)
-{
-	var shape;
-	this.track.getShape().Canvas.ctx.translate(x,y);
-	this.track.getShape().Canvas.ctx.save();
-	switch(this.engine)
-    {
-    	case 'scene':	
-		break
-		case "sprite":
-			this.train.spriteTranslate(x,y);
-		break
-	}
-}
-
-

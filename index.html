@@ -666,6 +666,20 @@ inner img {
 	left:95px;
 	cursor:pointer;
 }
+#filmtime{
+	top:4px;
+	height:20px;
+	left:135px;
+	width:75px;
+	background-color:#FFFFFF;
+	border:1px black solid;
+	text-align: right;
+}
+#secsfm{
+	top:4px;
+	height:20px;
+	left:220px;
+}
 
 #drop_zone {
 	left:10px;
@@ -761,6 +775,15 @@ inner img {
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=1)";
     filter:alpha(opacity=1);
     z-index:4;
+}
+
+#blockstage {
+	background-color:#FFFFFF;
+	opacity:0.01;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=1)";
+    filter:alpha(opacity=1);
+    z-index:10;
+    top:50px;
 }
 
 #stageframe {
@@ -1578,8 +1601,8 @@ function main()
 	BODY=document.getElementsByTagName("body")[0];
 	$('toolbar').style.visibility='visible';
 	$('anibar').style.visibility='visible';
-	$('grid').style.visibility='visible';
-	$('menushape').style.visibility='visible';
+	$('grid').style.visibility='inherit';
+	$('menushape').style.visibility='inherit';
 	$('background').style.visibility='visible';
 	BACKDROP={};
 	BACKDROP.zIndex=0;
@@ -2225,7 +2248,7 @@ function main()
 <div id="tweenstage" class="theatre_style"></div>
 <div id="filmstage" class="theatre_style"></div>
 <div id="dragstage" class="theatre_style"></div>
-
+<div id="blockstage" class="theatre_style"></div>
 <div id="stageframe"></div>
 
 <div id="griddrop" class="theatre_style"></div>
@@ -2517,10 +2540,11 @@ function main()
   <input id="done" type="button" value="" onclick="closedone()" />
   <div id="fmbuttons">
   	<img film="" id="rewindfm" src="assets/startplay.png" onclick="rewindfilm(this.film)" alt="rewind" title="rewind" /> 
-  	<img film="" id="playfm" src="assets/runplay.png" onclick="playfilm(this.film)" alt="play" title="play" /> 
   	<img film="" id="pausefm"  src="assets/pauseplay.png" onclick="pausefilm(this.film)"  alt="pause" title="pause" />
   	<img film="" id="playonfm" src="assets/runplay.png" onclick="playonfilm(this.film)"  alt="continue" title="continue" />
-  	<img film="" id="stopfm"  src="assets/stopplay.png" onclick="stopfilm(this.film)"  alt="stop and close" title="stop and close" /> 
+  	<img film="" id="stopfm"  src="assets/stopplay.png" onclick="stopfilm(this.film)"  alt="stop and close" title="stop and close" />
+  	<div id="filmtime"></div>
+  	<div id="secsfm"> Secs</div> 
   </div>
   <div id="spbuttons">
   	<input sprite="" id="checksp" type="button" value="Track Check" onclick="checksprite(this.sprite,true)" /> 

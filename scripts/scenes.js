@@ -70,6 +70,3 @@ function setAniStage()
 	}
 	$("boundarydrop").style.visibility="visible";
 }
-
-
-
