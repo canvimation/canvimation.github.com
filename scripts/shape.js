@@ -224,7 +224,8 @@ function Shape(name,title,open,editable,type,STORE)
    	this.isIn=isIn;
 	this.addAllMarks=addAllMarks; 
 	this.ShapeToText=ShapeToText; 
-	this.drawjustpath=drawjustpath;	
+	this.drawjustpath=drawjustpath;
+	this.shapeHTML=shapeHTML;	
    	return this;
    	
 }
@@ -1048,8 +1049,10 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	copy.radGrad[3]=shape.radGrad[3]+offset;
 	copy.radGrad[4]=shape.radGrad[4]+offset;
 	copy.radGrad[5]=shape.radGrad[5];
+	copy.colorStops=[];
 	for(var i=0;i<shape.colorStops.length;i++)
 	{
+		copy.colorStops[i]=[];
 		for(var j=0;j<shape.colorStops[i].length;j++)
 		{
 			copy.colorStops[i][j]=shape.colorStops[i][j];

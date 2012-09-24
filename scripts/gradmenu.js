@@ -95,16 +95,7 @@ function addStop()
 	var p=shape.stopn;
 	var s=(shape.colorStops[p][0]+shape.colorStops[p+1][0])/2;
 	var tempcsn=[s,shape.colorStops[p][1],shape.colorStops[p][2],shape.colorStops[p][3],shape.colorStops[p][4]];
-	var tempcs=[];
-	for (var i=0; i<=p;i++)
-	{
-		tempcs[i]=shape.colorStops[i];
-	}
-	tempcs[p+1]=tempcsn
-	for (var i=p+1; i<shape.colorStops.length;i++)
-	{
-		tempcs[i+1]=shape.colorStops[i];
-	}
+
 	for(var groupName in SELECTED)
 	{
 		var group=SELECTED[groupName];
@@ -112,8 +103,9 @@ function addStop()
 		for(var name in shapeNames)
 		{
 			shape=shapeNames[name];
-			shape.colorStops=tempcs;
+			shape.colorStops.splice(-1,0,tempcsn);
 			shape.stopn=p+1;
+			shape.justfill=false;
 		}
 	}
 	removeGradLine();

@@ -1,330 +1,351 @@
-function showfilm()
+function $(id)
 {
-	var sprite;
-	for (var i=0; i<film.list.length;i++)
-	{
-		film.list[i][9]=false;
-		if (film.list[i][0]=='SP')
-		{
-			sprite=sprites[film.list[i][1]];
-			filmfollowpath(sprite);
-		}
-	}
-	
-	runlist={};
-	runfilm(0);
+      return document.getElementById(id);
 }
 
-function runfilm(t)
+function Point(x,y)
 {
-	var filmfinished=true;
-	for (var i=0; i<film.list.length;i++)
-	{
-		var ff=true;
-		if (film.list[i][2]==t)
-		{
-			var fdiv=$('filmdiv'+film.list[i][1]);
-			fdiv.style.visibility='visible';
-			if (film.list[i][0]=='SC' && (film.list[i][3]=='e' || film.list[i][3]=='ever'))
-			{
-				film.list[i][9]=true;
-				for(var j=0; j<fdiv.childNodes.length; j++)
-				{
-					drawline(fdiv.childNodes[j].frame);
-				}
-			}
-			else if(film.list[i][0]=='SP')
-			{
-				var sprite=sprites[film.list[i][1]];
-				if (sprite.track.visible)
-				{
-					drawline(sprite.track.line);
-				}
-			}
-			ff = ff && film.list[i][9];
-		}
-		if (film.list[i][3]==t)
-		{
-			$('filmdiv'+film.list[i][1]).style.visibility='hidden';
-			film.list[i][9]=true
-			if (film.list[i][0]=='SP')
-			{
-				delete runlist[film.list[i][1]];
-			}
-			ff = ff && film.list[i][9];
-		}
-		if (film.list[i][0]=='SP')
-		{
-			if (film.list[i][4]==t)
-			{
-				sprite=sprites[film.list[i][1]];
-				runlist[film.list[i][1]]=film.list[i];
-			}
-			if (film.list[i][5]==t)
-			{	
-				film.list[i][9]=true;
-				delete runlist[film.list[i][1]];
-			}
-		}
-		
-	}
-	
-	
-	var osvalue=openshutter(runlist);
-	filmfinished = ff &&  osvalue;
-	t+=50;
-	if (!filmfinished)
-	{
-		setTimeout(function() {runfilm(t)},50);
-	}
+	this.x=x;
+	this.y=y;
 }
 
-function openshutter(runlist)
+function Node(point,ctrl1,ctrl2) 
 {
-	var ff=true;
-	var opened=false;
-	for (var  flm in runlist)
+	this.point=point;
+	this.ctrl1=ctrl1;
+	this.ctrl2=ctrl2;
+	this.vertex;
+	this.corner;
+	this.next;
+	this.prev;
+}
+
+function Shape(name) 
+{
+   	this.title;
+   	this.name=name;
+   	this.open;
+   	this.editable;
+   	this.type;
+   	this.strokeStyle=[0,0,0,1];
+   	this.fillStyle=[255,255,255,1];
+   	this.lineWidth = 1;
+   	this.lineCap = "butt";
+   	this.lineJoin = "miter"
+   	this.justfill=true;  //ordinary fill when true;
+   	this.linearfill=true; //linear when true, radial when false;
+   	this.lineGrad=[0,0,0,0];
+   	this.radGrad=[0,0,0,0,10,10];
+   	this.colorStops=[[0,0,0,0,0],[1,0,0,0,0]];
+   	this.stopn=0; //pointer to current stop point;
+   	this.shadow=false;
+   	this.shadowOffsetX = 15;   
+   	this.shadowOffsetY = 15;   
+   	this.shadowBlur = 0;   
+   	this.shadowColor = [0, 0, 0, 0];
+   	this.zIndex=0;
+   	this.crnradius=10;
+   	p=new Point("end","end");
+   	this.path=new Node(p);
+   	this.path.next=this.path;
+   	this.path.prev=this.path;
+   	   	
+   	//methods
+   	this.addTo=addTo;
+   	//this.setPath=setPath;
+   	this.addNode=addNode;
+   	this.draw=draw;
+	//this.drawjustpath=drawjustpath;	
+   	return this;
+   	
+}
+
+function addTo(theatre)
+{
+	this.Canvas = document.createElement('canvas');
+   	this.Canvas.style.position='absolute';
+   	this.Canvas.style.left="0px"; 
+   	this.Canvas.style.top= "0px";  	
+   	this.Canvas.width=SCRW;
+   	this.Canvas.height=SCRH;	
+   	this.Canvas.style.zIndex=this.zIndex;
+   	theatre.appendChild(this.Canvas);
+   	if (this.Canvas.getContext)
 	{
-		switch (runlist[flm][0])
-		{
-			case 'SP':
-				shvalue=shutter(sprites[runlist[flm][1]]);
-				ff=ff && shvalue;
-			break
-		}	
-	}
-	return ff && opened;
+        this.Canvas.ctx = this.Canvas.getContext('2d');
+    }
+    else
+    {
+    	this.Canvas=G_vmlCanvasManager.initElement(this.Canvas);
+    	this.Canvas.ctx = this.Canvas.getContext('2d');
+    }
+    //this.Canvas.shape=this;
 }
 
-function shutter(sprite)
+function addNode(node)
 {
-	if (!sprite.finishmove)
-	{
-		transform(sprite);
-		drawtracks(sprite);
-		for (var i=0; i<sprite.cars.length; i++)
- 	  	{ 	
-			drawline(sprite.cars[i]);
-			sprite.cars[i].ctx.restore();
-			sprite.cars[i].ctx.save();
-	  	}
-	}
-	return sprite.finishmove;
+	var path=this.path;
+	node.next=path;
+	node.prev=path.prev;
+	path.prev.next=node;
+	path.prev=node;
+	node.shape=this;
 }
 
-function filmfollowpath(sprite)
+function draw()
 {
-	zeropointers(sprite);
-	sprite.finishmove=false;
-	savecanvases(sprite);
-	savetracks(sprite);
-}
-
-function savecanvases(sprite)
-{
-	for (var i=0; i<sprite.cars.length; i++)
-	{
-		sprite.cars[i].ctx.save();
-	}	
-}
-
-function savetracks(sprite)
-{
-	if (sprite.engine !='scene')
-	{
-		sprite.train.track.line.ctx.save();
-		savetracks(sprite.train)
-	}
-}
-
-function drawline(canv)
-{
-	canv.ctx.clearRect(0,0,canv.width,canv.height);
-	
+	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
    	var rule='rgba('
 	for (var j=0;j<3;j++)
 	{
-		rule += canv.strokeStyle[j]+',';
+		rule += this.strokeStyle[j]+',';
 	} 
-	rule +=canv.strokeStyle[j]+')';
-	canv.ctx.strokeStyle=rule;
-	canv.ctx.lineWidth = canv.lineWidth;
-	canv.ctx.lineCap = canv.lineCap;
-	canv.ctx.lineJoin = canv.lineJoin;
+	rule +=this.strokeStyle[j]+')';
+	this.Canvas.ctx.strokeStyle=rule;
+	this.Canvas.ctx.lineWidth = this.lineWidth;
+	this.Canvas.ctx.lineCap = this.lineCap;
+	this.Canvas.ctx.lineJoin = this.lineJoin;
 	
-	canv.ctx.beginPath();
-	canv.ctx.moveTo(canv.path[3][1],canv.path[3][2]);
-	for (var i=4;i<canv.path.length;i++)
+	this.Canvas.ctx.beginPath();
+	var node=this.path.next;
+	this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+	while (node.next.point.x !="end")
 	{
-	   if (canv.path[i][0]=="L")
-	   {
-		canv.ctx.lineTo(canv.path[i][1],canv.path[i][2])
-	   }
-	   else if (canv.path[i][0]=="M")
-	   {alert([canv.path[i][1],canv.path[i][2]]);
-		canv.ctx.moveTo(canv.path[i][1],canv.path[i][2])
-	   }
-	   else if (canv.path[i][0]=="B")
-	   {
-			canv.ctx.bezierCurveTo(canv.path[i][1],canv.path[i][2],canv.path[i][3],canv.path[i][4],canv.path[i][5],canv.path[i][6])
-	   }
+	   	node=node.next;
+	   	if (node.vertex=="L")
+	   	{ 
+		    this.Canvas.ctx.lineTo(node.point.x,node.point.y);
+	   	}
+	   	else 
+	   	{
+			this.Canvas.ctx.bezierCurveTo(node.ctrl1.x,node.ctrl1.y,node.ctrl2.x,node.ctrl2.y,node.point.x,node.point.y)
+	   	}
 	} 
 
-	if (canv.path[0]=='closed') {canv.ctx.closePath()}
-	canv.ctx.stroke(); 
-	if (canv.path[0]=='closed')
+	if (!this.open) 
 	{
-		canv.ctx.shadowOffsetX = canv.shadowOffsetX;   
-   		canv.ctx.shadowOffsetY = canv.shadowOffsetY;   
-   		canv.ctx.shadowBlur = canv.shadowBlur; 
+		this.Canvas.ctx.closePath()
+	}
+	this.Canvas.ctx.stroke();
+	if (!this.open)
+	{	 
+		this.Canvas.ctx.shadowOffsetX = this.shadowOffsetX;   
+   		this.Canvas.ctx.shadowOffsetY = this.shadowOffsetY;   
+   		this.Canvas.ctx.shadowBlur = this.shadowBlur; 
 		var rule='rgba('
 		for (var j=0;j<3;j++)
 		{
-			rule += canv.shadowColor[j]+',';
+			rule += this.shadowColor[j]+',';
 		} 
-		rule +=canv.shadowColor[j]+')';
-   		canv.ctx.shadowColor = rule;
-		if (canv.justfill)
+		rule +=this.shadowColor[j]+')';
+   		this.Canvas.ctx.shadowColor = rule;
+		if (this.justfill)
 		{
 			var rule='rgba('
 			for (var j=0;j<3;j++)
 			{
-				rule += canv.fillStyle[j]+',';
+				rule += this.fillStyle[j]+',';
 			}
-			rule +=canv.fillStyle[j]+')';
-			canv.ctx.fillStyle=rule;
+			rule +=this.fillStyle[j]+')';
+			this.Canvas.ctx.fillStyle=rule;
 			
 		}
 		else
 		{
-			if (canv.linearfill)
+			if (this.linearfill)
 			{
-				var grad = canv.ctx.createLinearGradient(canv.lineGrad[0],canv.lineGrad[1],canv.lineGrad[2],canv.lineGrad[3]);
+				var grad = this.Canvas.ctx.createLinearGradient(this.lineGrad[0],this.lineGrad[1],this.lineGrad[2],this.lineGrad[3]);
 
 			}
 			else
 			{
-				var grad = canv.ctx.createRadialGradient(canv.radGrad[0],canv.radGrad[1],canv.radGrad[2],canv.radGrad[3],canv.radGrad[4],canv.radGrad[5]);
+				var grad = this.Canvas.ctx.createRadialGradient(this.radGrad[0],this.radGrad[1],this.radGrad[2],this.radGrad[3],this.radGrad[4],this.radGrad[5]);
 			}
 			var rule;
-			for (var k=0; k<canv.colorStops.length;k++)
+			for (var k=0; k<this.colorStops.length;k++)
 			{
 				rule='rgba('
 				for (var j=1;j<4;j++)
 				{
-					rule += canv.colorStops[k][j]+',';
+					rule += this.colorStops[k][j]+',';
 				}
-				rule +=canv.colorStops[k][j]+')';
-				grad.addColorStop(canv.colorStops[k][0],rule);
+				rule +=this.colorStops[k][j]+')';
+				grad.addColorStop(this.colorStops[k][0],rule);
 			}
-			canv.ctx.fillStyle=grad;
+			this.Canvas.ctx.fillStyle=grad;
 		}
-		canv.ctx.fill();
-	}
+		this.Canvas.ctx.fill();
+	 }
 }
 
-function zeropointers(sprite)
+function Scene(name)
 {
-	sprite.pointer=0;
-	if (sprite.engine!='scene')
-	{
-		zeropointers(sprite.train);
-	}
-}
-
-function nextpointer(sprite)
-{
-	sprite.finishmove=false;
-	if (sprite.track.repeats=='c')
-	{
-		sprite.pointer +=1;
-		return;
-	}
-	if (sprite.track.line[0]='closed' && sprite.pointer>=((sprite.track.repeats+1)*sprite.points.length))
-	{
-		sprite.finishmove=true;
-	}
-	else if (sprite.track.line[0]='edit' && sprite.pointer>=((sprite.track.repeats+1)*sprite.points.length - 1))
-	{
-		sprite.finishmove=true;
-	}
-	else
-	{
-		sprite.pointer +=1;
-	}
-}
-
-function transform(sprite)
-{
-	var curptr=sprite.pointer % sprite.points.length;
-	nextpointer(sprite);
-	var p = sprite.points[curptr];
-    if (sprite.engine =='scene')
-	{
-		for (var i=0; i<sprite.cars.length; i++)
- 		{ 	
-			var canv=sprite.cars[i];	
-			canv.ctx.translate(p.x,p.y);
-			//canv.ctx.clearRect(-canv.width,-canv.height,2*canv.width,2*canv.height);
-			if (sprite.vec)
-			{
-				var psi=p.phi-sprite.vector.psi;
-				canv.ctx.rotate(psi);
-			}
-			canv.ctx.translate(-sprite.vector.xs, -sprite.vector.ys);
-			
-		}
-	}
-	else
-	{
-		var v =sprite.vector;
-		transfTracks(sprite,p,v);
-		for (var i=0; i<sprite.cars.length; i++)
- 		{ 	
-			var canv=sprite.cars[i];
-			canv.ctx.clearRect(-canv.width,-canv.height,2*canv.width,2*canv.height);
-			canv.ctx.translate(p.x,p.y);
-			if (sprite.vec)
-			{
-				var psi=p.phi-sprite.vector.psi;
-				canv.ctx.rotate(psi);
-			}
-			canv.ctx.translate(-sprite.vector.xs, -sprite.vector.ys);
-				
-		}
-		transform(sprite.train);
-	}
-}
-
-function transfTracks(sprite,p,v)
-{
-	if (sprite.engine !='scene')
-	{
-		var canv = sprite.train.track.line;	
-		canv.ctx.clearRect(-canv.width,-canv.height,2*canv.width,2*canv.height);	
-		canv.ctx.translate(p.x,p.y);
-		if (sprite.vec)
-		{
-			var psi=p.phi-v.psi;
-			canv.ctx.rotate(psi);
-		}
-		canv.ctx.translate(-v.xs, -v.ys);
-		
-		transfTracks(sprite.train,p,v);
-	}
-}
-
-function drawtracks(sprite)
-{
-	if (sprite.engine !='scene')
-	{
-		if (sprite.train.track.visible)
-		{
-			drawline(sprite.train.track.line);
-		}
-		sprite.train.track.line.ctx.restore();
-		sprite.train.track.line.ctx.save();
-		drawtracks(sprite.train);
-	}
+	this.name=name;
+	this.shapes={};
 	
+	//methods
+	this.drawscene=drawscene;
+	//this.addToStage=addToStage;
+}
+
+
+function drawscene()
+{
+	for(var name in this.shapes)
+	{
+		this.shapes[name].draw();
+		this.shapes[name].Canvas.ctx.restore();
+		this.shapes[name].Canvas.ctx.save();
+	}
+}
+
+function Sprite(name)
+{
+	this.name=name;
+	this.title;
+	this.ptime;
+	this.track;
+	this.engine;
+	this.train;
+	this.speed;
+	this.finishmove=false;
+	this.points=[]; //an array of points along a path depending on time along path giving x and y coordinates and the angle of the gradient at that point
+	this.pointer=0;
+	this.vector = {xs:0,ys:0,xe:0,ye:0,psi:0};
+	this.usevec=false;
+	this.expanded=false;
+	
+	//methods
+	this.drawsprite=drawsprite;
+	this.drawrailway=drawrailway;
+	this.drawalltracks=drawalltracks;
+	this.inTheatre=inTheatre;
+	this.followPath=followPath;
+	this.setPoints=setPoints;
+	this.moveSprite=moveSprite;
+	this.setVector=setVector;
+	this.zeroPointers=zeroPointers;
+	this.saveCanvases=saveCanvases;
+	this.restoreCanvases=restoreCanvases;
+	this.transform=transform;
+	this.transformTrack=transformTrack;
+	this.nextPointer=nextPointer;
+	this.getShapes=getShapes;
+	this.getSprite=getSprite;
+	this.getScene=getScene;
+	this.getTrack=getTrack;
+}
+
+function Film(name)
+{
+	this.name=name;
+	this.title;
+	this.elements={};
+	
+	//methods
+	this.setUp=setUp;
+	this.play=play;
+}
+
+function setUp()
+{
+	var flel;
+	this.active={};
+	for(var el in this.elements)
+	{
+		flel=this.elements[el];
+		this.active[el]=flel;
+		switch(flel.source)
+		{
+			case "scene":
+			break
+			case "sprite":
+			 	STOPCHECKING=false;
+			 	flel.elm.zeroPointers();
+			 	flel.elm.saveCanvases();
+			 	flel.elm.track.drawtrack(false);
+				flel.elm.transform();
+				flel.elm.drawsprite();
+				flel.elm.drawalltracks(false);
+			break
+		}
+	}
+	this.t=0; // time into this
+	this.play(0);
+}
+
+function play(t)
+{
+	var stoprun;
+	this.t=t;
+	var alen=0;
+	for(var name in this.active)
+	{
+		alen++;
+	}
+	if(alen>0 && !this.paused && !this.stopped)
+	{
+		for(var name in this.active)
+		{
+			flel=this.elements[name];
+			if(isNaN(flel.S))
+			{
+				stoprun=t+10;
+			}
+			else
+			{
+				stoprun=flel.S;
+			}
+			if(t>=flel.A*1000)
+			{
+				$(flel.id).style.visibility="visible";
+				if(isNaN(flel.D) || (!(isNaN(flel.D)) && t>flel.D*1000) ) //check to leave element visible and delete from this active if stationery
+				{
+					if(!(isNaN(flel.D)) && t>flel.D*1000)
+					{
+						$(flel.id).style.visibility="hidden";
+					}
+					switch(flel.source)
+					{
+						case "scene":
+							delete this.active[name];
+						break
+						case "sprite":
+							if(isNaN(flel.S))
+							{
+								if(flel.elm.finishmove)
+								{
+									delete this.active[name];
+								}
+							}
+							else
+							{
+								if(t>flel.S*1000)
+								{
+									delete this.active[name];
+								}
+							}
+						break
+					}
+				}
+			}
+		}
+		switch (flel.source)
+		{
+			case "sprite":
+				if(t>=flel.R*1000 && t<stoprun*1000)
+				{
+					flel.elm.transform();
+					flel.elm.drawalltracks(true);
+					flel.elm.drawsprite();
+				}
+			break
+		}
+		var film=this;
+	  	var runthis=setTimeout(function() {film.play(t+50)},50);
+	}
+	else
+	{
+		clearTimeout(runthis);
+	}
 }

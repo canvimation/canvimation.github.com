@@ -833,7 +833,7 @@ inner img {
 
 #toolbar {
 	top: 60px;
-	left:10px;
+	left:5px;
 	width: 95px;
 	height:515px;
 	z-index:10;
@@ -1647,7 +1647,7 @@ function main()
 		document.getElementsByTagName('body')[0].addEventListener('drop', handleBodyDrop, false);
 	}
 		
-	$('toolbar').style.left=20+"px";
+	$('toolbar').style.left=10+"px";
 	$('toolbar').style.top=60+"px";
 	$('anibar').style.left=(SCRW-120)+"px";
 	$('anibar').style.top="60px";
@@ -1693,9 +1693,9 @@ function main()
 	$("fromtextbox").style.width=350+"px";
 	$("fromtextbox").style.height=140+"px";
 	
-	//filetextbox
-	$("filetextbox").style.width=350+"px";
-	$("filetextbox").style.height=375+"px";
+	//filmexportbox
+	$("filmexportbox").style.width=350+"px";
+	$("filmexportbox").style.height=375+"px";
 	
 	//rotation markers
 	$("rotateCentre").style.width=12+"px";
@@ -1857,6 +1857,9 @@ function main()
 	$("spriteeditbox").style.width="250px";
 	$("spriteeditbox").style.height="230px";
 	
+//File dialogue boxes
+	$("filmexportbox").style.width="250px";
+
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
 	{
@@ -2514,19 +2517,36 @@ function main()
 </div>
 
 <!--dialogue file text box -->
-<div id='filetextbox' class="dialoguebox">
-	<div id='filetextcontent' class='content'>
-		<div id="message">Drag Files into box below</div>
-		<div id="drop_zone">
-			
-		</div>
-		<div id="fileButtons">
-			<input type="button" value=" Close " onclick="closedialogue(this.parentNode)" />
-		</div>
+<div id='filmexportbox' class="dialoguebox">
+	<div id='filmexportcontent' class='content'>
+		<p class="text_input">
+			<label for="fromtext">Paste text from file into box below and click Create</label><br> <input type="textarea" name="fromtext" id="fromtext" value="" size=40 style="left:15px; text-align: left; "/>
+		</p>
+		<input type="button" value=" Create " onclick="extract($('fromtext').value.trim());closedialogue(this)" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>	
-	<div id='filetexthead' class='head'>&nbsp; Open Files
+	<div id='filmexporthead' class='head'>&nbsp; Open Files
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filetextcontent")'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmexportcontent")'/>
+	</div>
+</div>
+
+<!--dialogue film export box -->
+<div id='filmexportbox' class="dialoguebox">
+	<div id='filmexportcontent' class='content'>
+		Select the Films you want to Export.
+		<p class="check_input">
+			<input type="checkbox" id="yoyo"><label for="yoyo">Yoyo.</label>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="viewselect"><label for="viewselect">Visible.</label>
+		</p>
+		<input type="button" value=" Export " onclick="exportFilms()" />
+		<input type="button" value=" Cancel " onclick="closedialogue(this)" />
+	</div>	
+	<div id='filmexporthead' class='head'>&nbsp; Export Films To HTML
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmexportcontent")'/>
 	</div>
 </div>
 
@@ -2552,7 +2572,12 @@ function main()
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
   </div>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
-  <div id='fopts'><a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a><p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a><p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p><p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p></div>			
+  <div id='fopts'>
+  	<a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a>
+  	<p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a></p>
+  	<p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p>
+  	<p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p>
+  </div>			
 </div>
 
 <!--toolbars ............................................................... -->
@@ -2880,7 +2905,6 @@ function main()
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"spriteeditcontent")'/>
 	</div>	
 </div>
-
 
 
 <!--animation toolbar ............................................................... -->
