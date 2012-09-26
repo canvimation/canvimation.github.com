@@ -12,7 +12,7 @@ function Sprite(name)
 	this.track;
 	this.engine;
 	this.train;
-	this.speed;
+	//this.speed;
 	this.finishmove=false;
 	this.points=[]; //an array of points along a path depending on time along path giving x and y coordinates and the angle of the gradient at that point
 	this.pointer=0;
@@ -42,6 +42,7 @@ function Sprite(name)
 	this.getScene=getScene;
 	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
+	this.spriteHTML=spriteHTML;
 }
 
 function copysprite(theatre)
@@ -211,18 +212,13 @@ function setPoints()
   					this.points.push({x:xd,y:yd,phi:phi});
   				break
   				case "B":
-  					this.points.push({x:x(dt),y:y(dt),phi:arctan(dy(dt),dx(dt))});//alert(["("+prev.point.x+","+prev.point.y+")","("+x(dt)+","+y(dt)+")",dy(dt),dx(dt),arctan(dy(dt),dx(dt))*180/Math.PI])
+  					this.points.push({x:x(dt),y:y(dt),phi:arctan(dy(dt),dx(dt))});
   				break
   			}
   			llxx=this.points.length-1;
-  			//if(this.engine=="sprite"){alert([this.points[llxx].x,this.points[llxx].y,(this.points[llxx].phi)*180/Math.PI])};	
   			t+=50;
   		}
   		s++;
-  	}
-  	if (!this.open)
-  	{
-	 	//this.points.pop(); 
   	}
   	if (track.yoyo)
   	{

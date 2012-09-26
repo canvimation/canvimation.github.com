@@ -94,6 +94,8 @@ function addNode(node)
 
 function draw()
 {
+	var scrw=this.Canvas.width;
+	var scrh=this.Canvas.height;
 	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
    	var rule='rgba('
 	for (var j=0;j<3;j++)
@@ -207,7 +209,6 @@ function Sprite(name)
 	this.track;
 	this.engine;
 	this.train;
-	this.speed;
 	this.finishmove=false;
 	this.points=[]; //an array of points along a path depending on time along path giving x and y coordinates and the angle of the gradient at that point
 	this.pointer=0;
@@ -219,11 +220,11 @@ function Sprite(name)
 	this.drawsprite=drawsprite;
 	this.drawrailway=drawrailway;
 	this.drawalltracks=drawalltracks;
-	this.inTheatre=inTheatre;
-	this.followPath=followPath;
+	//this.inTheatre=inTheatre;
+	//this.followPath=followPath;
 	this.setPoints=setPoints;
-	this.moveSprite=moveSprite;
-	this.setVector=setVector;
+	//this.moveSprite=moveSprite;
+	//this.setVector=setVector;
 	this.zeroPointers=zeroPointers;
 	this.saveCanvases=saveCanvases;
 	this.restoreCanvases=restoreCanvases;
@@ -231,9 +232,355 @@ function Sprite(name)
 	this.transformTrack=transformTrack;
 	this.nextPointer=nextPointer;
 	this.getShapes=getShapes;
-	this.getSprite=getSprite;
-	this.getScene=getScene;
-	this.getTrack=getTrack;
+	//this.getSprite=getSprite;
+	//this.getScene=getScene;
+	//this.getTrack=getTrack;
+}
+
+function drawsprite()
+{
+	switch(this.engine)
+	{
+		case "scene":
+			this.train.drawscene();
+		break
+		case "sprite":
+			this.train.drawsprite();
+		break
+	}
+}
+
+function drawrailway()
+{
+	switch (this.engine)
+	{
+		case "scene":
+			this.train.drawscene();
+		break
+		case "sprite":
+			this.train.transform();
+			this.train.drawsprite();
+			this.drawalltracks();
+		break	
+	}
+}
+
+function drawalltracks()
+{
+	if (this.engine !='scene')
+	{
+		this.train.track.drawtrack();
+		this.train.drawalltracks();
+	}
+}
+
+function zeroPointers()
+{
+	this.pointer=0;
+	if (this.engine!='scene')
+	{
+		this.train.zeroPointers();
+	}
+}
+
+function getShapes()
+{
+	switch(this.engine)
+	{
+		case "scene":
+			return this.train.shapes;
+		break
+		case "sprite":
+			return this.train.getShapes();
+		break
+	}
+}
+
+function saveCanvases()
+{
+	var shape;
+	switch (this.engine)
+	{
+		case "scene":
+			shape=this.track.shape;
+			shape.Canvas.ctx.save();
+			for(var name in this.train.shapes)
+			{
+				shape=this.train.shapes[name];
+				shape.Canvas.ctx.save();
+			}
+		break
+		case "sprite":
+			shape=this.track.shape;
+			shape.Canvas.ctx.save();
+			this.train.saveCanvases();
+		break
+	}
+}
+
+function restoreCanvases()
+{
+	var shape;
+	switch (this.engine)
+	{
+		case "scene":
+			shape=this.track.shape;
+			shape.Canvas.ctx.restore();
+			for(var name in this.train.shapes)
+			{
+				shape=this.train.shapes[name];
+				shape.Canvas.ctx.restore();
+			}
+		break
+		case "sprite":
+			shape=this.track.shape;
+			shape.Canvas.ctx.restore();
+			this.train.restoreCanvases();
+		break
+	}
+}
+
+function transform()
+{
+	var shape;
+	var curptr=this.pointer % this.points.length;
+	this.nextPointer();
+	var p = this.points[curptr];
+	switch(this.engine)
+    {
+    	case 'scene':	
+			for(var name in this.train.shapes)
+			{	
+				shape=this.train.shapes[name];
+				shape.Canvas.ctx.translate(p.x,p.y);
+				if (this.usevec)
+				{
+					var psi=p.phi-this.vector.psi;
+					shape.Canvas.ctx.rotate(psi);
+				}
+				shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
+			}
+		break
+		case "sprite":
+			var v=this.vector;
+			this.transformTrack(p,v);
+			var shapes=this.train.getShapes();
+			for(var name in shapes)
+			{	
+				shape=shapes[name];
+				shape.Canvas.ctx.translate(p.x,p.y);
+				if (this.usevec)
+				{
+					var psi=p.phi-this.vector.psi;
+					shape.Canvas.ctx.rotate(psi);
+				}
+				shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
+			}
+			this.train.transform();
+		break
+	}
+}
+
+function transformTrack(p,v)
+{
+	if (this.engine !='scene')
+	{
+		var shape=this.train.track.shape;
+		shape.Canvas.ctx.translate(p.x,p.y);//$("msg").innerHTML+=p.x+".."+p.y+"..."+p.phi*180/Math.PI+"<br>";
+		if (this.usevec)
+		{
+			var psi=p.phi-v.psi;
+			shape.Canvas.ctx.rotate(psi);
+		}
+		shape.Canvas.ctx.translate(-v.xs, -v.ys);
+		this.train.transformTrack(p,v);
+	}
+}
+
+function nextPointer()
+{
+	if (STOPCHECKING)
+	{
+		this.finishmove=true;
+		return;
+	}
+	
+	this.finishmove=false;
+	if (this.track.repeats=='c')
+	{
+		this.pointer +=1;
+		return;
+	}
+	var shape=this.track.shape;
+	if (!shape.open && this.pointer>=((this.track.repeats+1)*this.points.length))
+	{
+		this.finishmove=true;
+	}
+	else if (shape.editable && this.pointer>=((this.track.repeats+1)*this.points.length - 1))
+	{
+		this.finishmove=true;
+	}
+	else
+	{
+		this.pointer +=1;
+	}
+}
+
+function setPoints()
+{
+  	var track=this.track;
+  	track.ptime=this.ptime*1000;
+  	track.setLengths();
+  	track.setTimes();
+  	var s=0; //section number
+  	var t=0; //time in milliseconds 
+  	var dt; //fraction of time from 0 to 1 for a section of path
+  	var xd,yd,phi //for linear sections
+  	this.points=[];
+  	var prev;
+  	var shape=track.shape;
+  	var path=shape.path;
+  	var node=path.next; 
+  	while(node.next.point.x!="end")
+  	{
+  		prev=node;
+  		node=node.next;
+  		while(t<track.times[s+1])
+  		{
+  			dt=(t-track.times[s])/(track.times[s+1]-track.times[s]);
+  			switch(node.vertex)
+  			{
+  				case "L":
+  					xd=prev.point.x+(node.point.x-prev.point.x)*dt;
+  					yd=prev.point.y+(node.point.y-prev.point.y)*dt;
+  					phi=arctan((node.point.y-prev.point.y),(node.point.x-prev.point.x));
+  					this.points.push({x:xd,y:yd,phi:phi});
+  				break
+  				case "B":
+  					this.points.push({x:x(dt),y:y(dt),phi:arctan(dy(dt),dx(dt))});
+  				break
+  			}
+  			llxx=this.points.length-1;
+  			t+=50;
+  		}
+  		s++;
+  	}
+  	if (track.yoyo)
+  	{
+	  	var apl=this.points.length;
+	  	for (var i=apl; i>0; i--)
+	  	{
+		  	this.points.push(this.points[i-1]);
+	  	}
+  	}
+  	if (this.engine !='scene')
+ 	{
+	 	this.train.setPoints();  
+  	}
+  
+  	function x(t)
+	{
+		return (1-t)*(1-t)*(1-t)*prev.point.x + 3*(1-t)*(1-t)*t*node.ctrl1.x + 3*(1-t)*t*t*node.ctrl2.x + t*t*t*node.point.x
+	}
+	
+	function y(t)
+	{
+	
+		return (1-t)*(1-t)*(1-t)*prev.point.y + 3*(1-t)*(1-t)*t*node.ctrl1.y + 3*(1-t)*t*t*node.ctrl2.y + t*t*t*node.point.y
+	}
+	
+	function dx(t)
+	{
+		return -3*(1-t)*(1-t)*prev.point.x + (3*(1-t)*(1-t) - 6*(1-t)*t)*node.ctrl1.x + (6*(1-t)*t - 3*t*t)*node.ctrl2.x + 3*t*t*node.point.x;
+	}
+	
+	function dy(t)
+	{
+		return -3*(1-t)*(1-t)*prev.point.y + (3*(1-t)*(1-t) - 6*(1-t)*t)*node.ctrl1.y + (6*(1-t)*t - 3*t*t)*node.ctrl2.y + 3*t*t*node.point.y;
+	}
+}
+
+function Track(name)
+{
+	this.name=name;
+	this.title;
+	this.shape;
+	this.repeats=0;
+	this.visible=false;
+	this.yoyo=false;
+	this.length;
+	this.lengths=[];
+	this.times=[];
+	this.ptime;
+	
+	//methods
+	this.drawtrack=drawtrack;
+	this.setLengths=setLengths;
+	this.setTimes=setTimes;
+	this.saveTrack=saveTrack;
+	this.restoreTrack=restoreTrack;
+}
+
+
+function setLengths()
+{
+	this.length=0; //cummulative total of section lengths
+	this.lengths=[]; //array of section lengths
+	var sl;  //section length
+	path=this.shape.path;
+	var node=path.next; // from first node
+	while(node.next.point.x!="end")  // check if next node is a point or end node, if point calculate length of path between nodes
+	{
+	  switch (node.vertex)
+	  {
+		case 'B':
+			sl = curvelength(node);
+			
+		break
+		case 'L':
+			sl=linelength(node);
+		break
+	  }
+	  this.length += sl;
+	  this.lengths.push(sl);
+	  node=node.next;
+	};
+}
+
+function setTimes() 
+{
+	var v=this.length/this.ptime;
+	var cuml_time=0; //cummulative time over sections
+	var t; //time over a section
+	this.times=[0];
+	for (var i=0; i<this.lengths.length; i++)
+	{
+		t=this.lengths[i]/v; //time over section
+		cuml_time +=t;
+		this.times.push(cuml_time);
+	}
+}
+
+function drawtrack()
+{
+	if(this.visible)
+	{
+		shape.draw();
+	}
+	shape.Canvas.ctx.restore();
+	shape.Canvas.ctx.save();
+}
+
+function saveTrack()
+{
+	var shape=this.shape();
+	shape.Canvas.ctx.save();
+}
+
+function restoreTrack()
+{
+	var shape=this.shape();
+	shape.Canvas.ctx.restore();
 }
 
 function Film(name)
@@ -348,4 +695,87 @@ function play(t)
 	{
 		clearTimeout(runthis);
 	}
+}
+
+function curvelength(node) //from node to node.next
+{
+	var next=node.next;
+	var dt=0.1;
+	var s=0;
+	var t=0;
+	var cx = x(t); //current x
+	var cy = y(t); //current y
+	while (t<1)
+	{
+		t +=dt;
+		s +=Math.sqrt((x(t)-cx)*(x(t)-cx)+(y(t)-cy)*(y(t)-cy));
+		cx=x(t);
+		cy=y(t);
+	}
+	
+	return s;
+	
+	function x(t)
+	{
+	
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.x) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.x) + 3*(1-t)*t*t*parseInt(node.ctrl2.x) + t*t*t*parseInt(next.point.x)
+	}
+	
+	function y(t)
+	{
+	
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.y) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.y) + 3*(1-t)*t*t*parseInt(node.ctrl2.y) + t*t*t*parseInt(next.point.y)
+	}
+}
+
+function linelength(node) //from node to node.next
+{
+	var next=node.next;
+	return Math.sqrt((node.next.point.x-node.point.x)*(node.next.point.x-node.point.x)+(node.next.point.y-node.point.y)*(node.next.point.y-node.point.y));	
+}
+
+function arctan(y,x)  //returns angle of line from (0,0) to (x,y) from x axis 
+{
+	if(x==0)
+	{
+		if(y>0) 
+		{
+			return Math.PI/2;
+		}
+		else
+		{
+			return 3*Math.PI/2;
+		}
+	}
+	
+	if(y==0)
+	{
+		if(x>0)
+		{
+			return 0;
+		}
+		else
+		{
+			return Math.PI;
+		}
+	}
+		
+	var theta = Math.atan(Math.abs(y/x));
+	
+	if (x>0)
+	{
+		if (y<0) {theta = 2*Math.PI-theta};
+	}
+	else
+	{
+		if (y>0)
+		{
+			theta = Math.PI-theta;
+		}
+		else
+		{
+			theta += Math.PI;
+		}
+	}
+	return theta;
 }

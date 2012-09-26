@@ -40,7 +40,7 @@ function linelength(node) //from node to node.next
 	var next=node.next;
 	return Math.sqrt((node.next.point.x-node.point.x)*(node.next.point.x-node.point.x)+(node.next.point.y-node.point.y)*(node.next.point.y-node.point.y));	
 }
-
+/*
 function sectionlengths(path)
 {
 	var seclengths=[];
@@ -81,3 +81,4 @@ function cumltimes(sl,T) //sl section length array, T total time for path
 	}
 	return cuml_t;  //cumulative time array
 }
+*/
