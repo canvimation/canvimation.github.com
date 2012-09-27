@@ -194,6 +194,7 @@ function ShapeToText()
 	var shapeAsText='';
 	
 	shapeAsText+=this.name+'|';
+	shapeAsText+=this.title+'|';
 	if (this.open)
 	{
 		shapeAsText+=1+'|';

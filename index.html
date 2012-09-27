@@ -199,6 +199,19 @@ img.marker {
 	height:25px;
 	background-color:#FFFFFF;
 	font-weight: bold;
+	
+}
+
+#drop_zone {
+	top:40px;
+	left:5%;
+	width:90%;
+	height:80%;
+	background-color:#FFFFFF;
+	font-size: 12pt;
+	font-weight: normal;
+	border: solid 1px black;
+	overflow: auto;
 }
 
 .dragger {
@@ -679,17 +692,6 @@ inner img {
 	top:4px;
 	height:20px;
 	left:220px;
-}
-
-#drop_zone {
-	left:10px;
-	width:330px;
-	top:35px;
-	height:270px;
-	font-size: 12pt;
-	font-weight: normal;
-	border: solid 1px black;
-	overflow: auto;
 }
 
 #message {
@@ -1562,9 +1564,6 @@ function clear(stage)
 }
 
 
-
-
-
 function setStage(stagewidth,stageheight)
 {
 	var stages=["area","frame"];
@@ -1578,7 +1577,7 @@ function setStage(stagewidth,stageheight)
 	}
 	$('stagebox').style.visibility="hidden";
 	$('shapestage').style.visibility="visible";
-	main();
+	//main();
 }
 
 function init()
@@ -1691,7 +1690,11 @@ function main()
 	
 	//fromtextbox
 	$("fromtextbox").style.width=350+"px";
-	$("fromtextbox").style.height=140+"px";
+	$("fromtextbox").style.height=160+"px";
+	
+	//filetextbox
+	$("filetextbox").style.width=300+"px";
+	$("filetextbox").style.height=310+"px";
 	
 	//filmexportbox
 	$("filmexportbox").style.width=350+"px";
@@ -1875,7 +1878,6 @@ function main()
 		DD.setHandleElId(BOXNAME+"head");
 		DD.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
 	}
-	
 	BOXES=getElementsByClassName("elementsbox");
 	for(var i=0; i<BOXES.length; i++)
 	{
@@ -2278,7 +2280,7 @@ function main()
 			<label for="stageheight">Height</label> <input type="text" name="stageheight" id="stageheight" value=500 size=5 /><span>px</span>
 		</p>
 		
-		<input type="button" value=" OK " id="stageOK" onclick="setStage($('stagewidth').value,$('stageheight').value)" />
+		<input type="button" value=" OK " id="stageOK" onclick="setStage($('stagewidth').value,$('stageheight').value);main()" />
 	</div>	
 </div>
 
@@ -2505,7 +2507,7 @@ function main()
 <div id='fromtextbox' class="dialoguebox">
 	<div id='fromtextcontent' class='content'>
 		<p class="text_input">
-			<label for="fromtext">Paste text from file into box below and click Create</label><br> <input type="textarea" name="fromtext" id="fromtext" value="" size=40 style="left:15px; text-align: left; "/>
+			<label for="fromtext">Paste text from file into box below and click Create.<br>Note - Canvas files overwrite the current one.</label><br> <input type="textarea" name="fromtext" id="fromtext" value="" size=40 style="left:15px; text-align: left; "/>
 		</p>
 		<input type="button" value=" Create " onclick="extract($('fromtext').value.trim());closedialogue(this)" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
@@ -2517,17 +2519,15 @@ function main()
 </div>
 
 <!--dialogue file text box -->
-<div id='filmexportbox' class="dialoguebox">
-	<div id='filmexportcontent' class='content'>
-		<p class="text_input">
-			<label for="fromtext">Paste text from file into box below and click Create</label><br> <input type="textarea" name="fromtext" id="fromtext" value="" size=40 style="left:15px; text-align: left; "/>
-		</p>
-		<input type="button" value=" Create " onclick="extract($('fromtext').value.trim());closedialogue(this)" />
-		<input type="button" value=" Close " onclick="closedialogue(this)" />
+<div id='filetextbox' class="dialoguebox">
+	<div id='filetextcontent' class='content'>
+		&nbsp;&nbsp;&nbsp;Drag files to open into box below.<br>
+		&nbsp;&nbsp;&nbsp;Note Canvas files overwrite the current one.</p>
+		<div id="drop_zone"> </div>
 	</div>	
-	<div id='filmexporthead' class='head'>&nbsp; Open Files
+	<div id='filetexthead' class='head'>&nbsp; Open Files
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmexportcontent")'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filetextcontent")'/>
 	</div>
 </div>
 
@@ -2570,7 +2570,7 @@ function main()
   	<a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a>
   	<p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a></p>
   	<p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p>
-  	<p><a href='#' onClick="fromText(); $('fopts').style.visibility='hidden' ;return false;"><span id='ifas'>Input File as Text</span></a></p>
+  	<p><a href='#' onClick="$('fopts').style.visibility='hidden';fromText(); return false;"><span id='ifas'>Input File as Text</span></a></p>
   </div>			
 </div>
 

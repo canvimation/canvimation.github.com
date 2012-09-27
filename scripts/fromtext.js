@@ -86,37 +86,37 @@ function paramstoshape(p)
 	var nodedata,point,ctrl1,ctrl2;
 	var node;
 	p=p.split('|');
-	var shape=new Shape(p[0],p[1]=="1",p[2]=="1",p[3]);
-	shape.tplftcrnr.x = parseInt(p[4]);
-	shape.tplftcrnr.y = parseInt(p[5]);
-	shape.btmrgtcrnr.x = parseInt(p[6]);
-	shape.btmrgtcrnr.y = parseInt(p[7]);
-	shape.strokeStyle = p[8].split(',');
+	var shape=new Shape(p[0],p[1],p[2]=="1",p[3]=="1",p[4],SHAPES);
+	shape.tplftcrnr.x = parseInt(p[5]);
+	shape.tplftcrnr.y = parseInt(p[6]);
+	shape.btmrgtcrnr.x = parseInt(p[7]);
+	shape.btmrgtcrnr.y = parseInt(p[8]);
+	shape.strokeStyle = p[9].split(',');
 	for (var i=0;i<shape.strokeStyle.length;i++)
 	{
 		shape.strokeStyle[i]=parseInt(shape.strokeStyle[i]);	
 	}	
-	shape.fillStyle = p[9].split(',');
+	shape.fillStyle = p[10].split(',');
 	for (var i=0;i<shape.fillStyle.length;i++)
 	{
 		shape.fillStyle[i]=parseInt(shape.fillStyle[i])	
 	}	
-	shape.lineWidth = parseInt(p[10]);
-	shape.lineCap = p[11];
-	shape.lineJoin = p[12];
-	shape.justfill = p[13]=='1';
-	shape.linearfill = p[14]=='1';
-	shape.lineGrad = p[15].split(',');
+	shape.lineWidth = parseInt(p[11]);
+	shape.lineCap = p[12];
+	shape.lineJoin = p[13];
+	shape.justfill = p[14]=='1';
+	shape.linearfill = p[15]=='1';
+	shape.lineGrad = p[16].split(',');
 	for (var i=0;i<shape.lineGrad.length;i++)
 	{
 		shape.lineGrad[i]=parseInt(shape.lineGrad[i])	
 	}	
-	shape.radGrad = p[16].split(',');
+	shape.radGrad = p[17].split(',');
 	for (var i=0;i<shape.radGrad.length;i++)
 	{
 		shape.radGrad[i]=parseInt(shape.radGrad[i])	
 	}	
-	var carray=p[17].split(':');
+	var carray=p[18].split(':');
 	shape.colorStops = [];
 	for (var i=0; i<carray.length; i++)
 	{
@@ -126,20 +126,20 @@ function paramstoshape(p)
 			shape.colorStops[i][j]=parseFloat(shape.colorStops[i][j])	
 		}		
 	}
-	shape.stopn = parseInt(p[18]);
-	shape.shadow = p[19]=='1';
-	shape.shadowOffsetX = parseInt(p[20]);
-	shape.shadowOffsetY = parseInt(p[21]);
-	shape.shadowBlur = parseFloat(p[22]);
-	shape.shadowColor = p[23].split(',');
+	shape.stopn = parseInt(p[19]);
+	shape.shadow = p[20]=='1';
+	shape.shadowOffsetX = parseInt(p[21]);
+	shape.shadowOffsetY = parseInt(p[22]);
+	shape.shadowBlur = parseFloat(p[23]);
+	shape.shadowColor = p[24].split(',');
 	for (var i=0;i<shape.shadowColor.length;i++)
 	{
 		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
 	}	
-	shape.zIndex = parseFloat(p[24]);
-	shape.crnrradius = parseInt(p[25])
-	shape.group = p[27];
-	var path=p[26].split("!");
+	shape.zIndex = parseFloat(p[25]);
+	shape.crnrradius = parseInt(p[26])
+	shape.group = p[28];
+	var path=p[27].split("!");
 	
 	while (path.length>0)
 	{
@@ -194,225 +194,6 @@ function paramstogroup(p)
 		group.members.push(member);
 	}
 }
-/*
-function resetcanv(txt)
-{
-	var shape,group,subgroup;
-	var ptr;
-	var right,bottom;
-	var ptrlist=[];
-	var namelist=[];
-	var params=txt.split('*');
-	var canvases=resetshapestage(params[0]);
-	var zmax=0;
-	var zmin=10000000	
-	for (var c=0; c<canvases; c++)
-	{
-		shape=oldparamstoshape(params[c+1]);
-		if(shape.zIndex>zmax) {zmax=shape.zIndex};
-		if(shape.zIndex<zmin) {zmin=shape.zIndex};
-		shape.addTo($("shapestage"));
-		delete GROUPS[shape.group.name];
-	}
-	GCOUNT=0;
-	ZPOS=zmax+1;
-	ZNEG=zmin-1;
-	for (var name in SHAPES)
-	{
-		var shape=SHAPES[name];
-		shape.setCorners();
-		if(shape.grouplist!="shape")
-		{
-			grouplist=shape.grouplist;
-			ptr=grouplist[0];
-			if (ptrlist.indexOf(ptr)==-1)
-			{
-				ptrlist.push(ptr);
-				group=new Group("Group"+ptr);
-				GROUPS["Group"+ptr]=group;
-				group.members.push(shape);
-				group.left=shape.group.left;
-				group.top=shape.group.top;
-				group.width=shape.group.width;
-				group.height=shape.group.height;
-			}
-			else
-			{
-				group=GROUPS["Group"+ptr];
-				group.members.push(shape);
-			}
-			group.members.push(shape);
-			group.left=shape.group.left;
-			group.top=shape.group.top;
-			group.width=shape.group.width;
-			group.height=shape.group.height;
-			group.centreOfRotation.x=group.left+group.width/2;
-			group.centreOfRotation.y=group.top+group.height/2;
-			group.phi=0;
-			for(i=1;i<grouplist.length;i++)
-			{
-				ptr=grouplist[i];
-				if (ptrlist.indexOf(ptr)==-1)
-				{
-					ptrlist.push(ptr);
-					group=new Group("Group"+ptr);
-					GROUPS["Group"+ptr]=group;
-					subgroup=GROUPS["Group"+grouplist[i-1]];
-					group.members.push(subgroup);
-					
-				}
-				else
-				{
-					group=GROUPS["Group"+ptr];
-					subgroup=GROUPS["Group"+grouplist[i-1]];
-					if(!(group.contains(subgroup)))
-					{
-						group.members.push(subgroup);
-					}
-				}
-			
-				group.left=Math.min(shape.group.left,subgroup.left)
-				group.top=Math.min(shape.group.top,subgroup.top);
-				right=Math.max(shape.group.left+shape.group.width,subgroup.left+subgroup.width);
-				bottom=Math.max(shape.group.top+shape.group.height,subgroup.top+subgroup.height);
-				group.width=right-group.left;
-				group.height=bottom-group.top;
-				group.centreOfRotation.x=group.left+group.width/2;
-				group.centreOfRotation.y=group.top+group.height/2;
-				group.phi=0;
-			}	
-			shape.group=group;
-		}
-	}
-	for(var name in SHAPES)
-	{
-		shape=SHAPES[name];
-		alert(shape.group.showmembers());
-		shape.setCorners();
-		delete shape["bleft"];
-		delete shape["btop"];
-		delete shape["bwidth"];
-		delete shape["bheight"];
-		delete shape["cx"];
-		delete shape["cy"];
-		delete shape["phi"];
-		delete shape["grouplist"];
-		shape.draw();
-	}
-}
-*/
-function oldparamstoshape(p)
-{
-	var nodedata,point,ctrl1,ctrl2;
-	var node;
-	p=p.split('|');
-	var pathdef = p[44].split(',');
-	var re=/square/;
-	var type=pathdef[2].replace(re,"rectangle");
-	re=/circle/;
-	type=type.replace(re,"ellipse");
-	var shape=new Shape(p[47],pathdef[0]=="open",pathdef[1]=="edit",type);
-	shape.bleft = parseInt(p[0]);
-	shape.btop = parseInt(p[1]);
-	shape.bwidth = parseInt(p[2]);
-	shape.bheight = parseInt(p[3]);
-	shape.cx = parseInt(p[13]);
-	shape.cy = parseInt(p[14]);
-	shape.phi = parseFloat(p[16]);
-	shape.strokeStyle = p[19].split(',');
-	for (var i=0;i<shape.strokeStyle.length;i++)
-	{
-		shape.strokeStyle[i]=parseInt(shape.strokeStyle[i])	
-	}	
-	shape.fillStyle = p[20].split(',');
-	for (var i=0;i<shape.fillStyle.length;i++)
-	{
-		shape.fillStyle[i]=parseInt(shape.fillStyle[i])	
-	}	
-	shape.lineWidth = parseInt(p[21]);
-	shape.lineCap = p[22];
-	shape.lineJoin = p[23];
-	shape.justfill = p[24]=='1';
-	shape.linearfill = p[25]=='1';
-	shape.lineGrad = p[26].split(',');
-	for (var i=0;i<shape.lineGrad.length;i++)
-	{
-		shape.lineGrad[i]=parseInt(shape.lineGrad[i])	
-	}	
-	shape.radGrad = p[27].split(',');
-	for (var i=0;i<shape.radGrad.length;i++)
-	{
-		shape.radGrad[i]=parseInt(shape.radGrad[i])	
-	}	
-	var carray=p[28].split(':');
-	shape.colorStops = [];
-	for (var i=0; i<carray.length; i++)
-	{
-		shape.colorStops[i]=carray[i].split(',');
-		for (var j=0;j<shape.colorStops[i].length;j++)
-		{
-			shape.colorStops[i][j]=parseFloat(shape.colorStops[i][j])	
-		}		
-	}
-	shape.stopn = parseInt(p[29]);
-	shape.shadow = p[30]=='1';
-	shape.shadowOffsetX = parseInt(p[31]);
-	shape.shadowOffsetY = parseInt(p[32]);
-	shape.shadowBlur = parseFloat(p[33]);
-	shape.shadowColor = p[34].split(',');
-	for (var i=0;i<shape.shadowColor.length;i++)
-	{
-		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
-	}	
-	shape.zIndex = parseInt(p[37]);
-	
-	shape.grouplist="shape"; //if left then only member of group is the shape itself created when shape created
-	if (p[41] != '') //not in a group
-	{
-		shape.grouplist=p[41].split(',');
-		for (var i=0;i<shape.grouplist.length;i++)
-		{
-			shape.grouplist[i]=parseInt(shape.grouplist[i])	
-		}		
-	}
-	shape.boundary = p[42];
-	shape.beztypes = [];
-	if (p[43] != '')
-	{
-		var beztypes=p[43].split(',');
-	}
-	carray=p[45].split(':');
-	for (var i=0; i<carray.length; i++)
-	{
-		nodedata=carray[i].split(',');
-		point=new Point(nodedata[1],nodedata[2]);
-		node=new Node(point);
-		if (p[43] != '')
-		{
-			node.corner=beztypes[i];
-		}
-		else
-		{
-			node.corner="corner";
-		}
-		if(nodedata[0]=="M" || nodedata[0]=="L")
-		{
-			point=new Point(nodedata[1],nodedata[2]);
-			node=new Node(point);
-		}
-		else
-		{
-			point=new Point(nodedata[5],nodedata[6]);
-			ctrl1=new Point(nodedata[1],nodedata[2]);
-			ctrl2=new Point(nodedata[3],nodedata[4]);
-			node=new Node(point,ctrl1,ctrl2);
-		} 
-		shape.addNode(node);
-	}
-	shape.crnradius = parseFloat(p[46]);
-	return shape;
-}
-
 
 function fromText()
 {
@@ -485,19 +266,7 @@ function handleFileSelect(evt)
 				return;
 			}
 		 break		 
-/*		 case 'canvas':
-		 	try
-			{
-				resetcanv(t[1]);
-			}
-			catch(e)
-			{
-				alert(e.name + ": " + e.message + ": " + e.fileName + ": " + e.lineNumber);
-				alert('File data not recognised');
-				return;
-			}
-		 break
-*/		 case 'scene':
+		 case 'scene':
 		 try
 			{
 				resetscene(t[1]);
