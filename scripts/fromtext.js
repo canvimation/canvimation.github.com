@@ -37,7 +37,7 @@ function resetshapestage(txt)
 	return c;
 }
 
-function resetcanv2(shapetxt,grouptxt)
+function resetcanv(shapetxt,grouptxt)
 {
 	var shape,group;
 	var shapeparams=shapetxt.split('*');
@@ -194,7 +194,7 @@ function paramstogroup(p)
 		group.members.push(member);
 	}
 }
-
+/*
 function resetcanv(txt)
 {
 	var shape,group,subgroup;
@@ -300,7 +300,7 @@ function resetcanv(txt)
 		shape.draw();
 	}
 }
-
+*/
 function oldparamstoshape(p)
 {
 	var nodedata,point,ctrl1,ctrl2;
@@ -473,10 +473,10 @@ function handleFileSelect(evt)
 	 var t=a.split('^');
 	 switch (t[0])
 	 {
-		 case 'canvas2':
+		 case 'canvas':
 		 	try
 			{
-				resetcanv2(t[1],t[2]);
+				resetcanv(t[1],t[2]);
 			}
 			catch(e)
 			{
@@ -485,7 +485,7 @@ function handleFileSelect(evt)
 				return;
 			}
 		 break		 
-		 case 'canvas':
+/*		 case 'canvas':
 		 	try
 			{
 				resetcanv(t[1]);
@@ -497,7 +497,7 @@ function handleFileSelect(evt)
 				return;
 			}
 		 break
-		 case 'scene':
+*/		 case 'scene':
 		 try
 			{
 				resetscene(t[1]);

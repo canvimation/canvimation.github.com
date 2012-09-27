@@ -22,12 +22,8 @@ function addToFilmBoard(el)
 	flel=FILMBOARD["fl"+ELCOUNT];
 	flel.next=FLELHEAD;
 	flel.prev=FLELHEAD.prev;
-	//FLELHEAD.el=flel;
-	//flel.head=FLELHEAD;
 	FLELHEAD.prev.next=flel;
 	FLELHEAD.prev=flel;
-	//flel.head=FLELHEAD;
-	//flel.prev.head="null";
 	var flen=0;
 	for(var name in FILMBOARD)
 	{
@@ -733,7 +729,7 @@ function fleldel()
 
 function cancelFilmBuild(child)
 {
-	cancel=confirm("Do you really want to delete this Film Build?")
+	cancel=confirm("Do you really want to cancel this Film Build?")
 	if(cancel)
 	{
 		for(var name in FILMBOARD)

@@ -74,6 +74,9 @@ function writeFilmHTML(film)
 	newwindow.document.writeln(SPACES.substr(0,12)+'width:'+parseInt($("stagearea").style.width)+'px;');
 	newwindow.document.writeln(SPACES.substr(0,12)+'border:black 1px solid;');
 	newwindow.document.writeln (SPACES.substr(0,9)+'}');
+newwindow.document.writeln(SPACES.substr(0,9)+'#msg {');
+newwindow.document.writeln(SPACES.substr(0,12)+'top:'+(50+parseInt($("stagearea").style.height))+'px;');
+newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,6)+'</style>');	
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,6)+'<script type="text/javascript" src = "canvimation_functions.js" ></script>');
@@ -150,6 +153,7 @@ function writeFilmHTML(film)
 	newwindow.document.writeln(SPACES.substr(0,3)+'<body onload="main()">');
 	newwindow.document.writeln(SPACES.substr(0,6)+'<div id="screen"></div>'); 
 	newwindow.document.writeln(SPACES.substr(0,6)+'<div id="frame"></div>'); 
+newwindow.document.writeln(SPACES.substr(0,6)+'<div id="msg"></div>'); 
 	newwindow.document.writeln(SPACES.substr(0,3)+'</body>');
 	newwindow.document.writeln('</html>');
 	newwindow.document.close();	

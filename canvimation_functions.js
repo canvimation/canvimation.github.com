@@ -2,7 +2,7 @@ function $(id)
 {
       return document.getElementById(id);
 }
-
+//html="";
 function Point(x,y)
 {
 	this.x=x;
@@ -386,7 +386,7 @@ function transformTrack(p,v)
 	if (this.engine !='scene')
 	{
 		var shape=this.train.track.shape;
-		shape.Canvas.ctx.translate(p.x,p.y);//$("msg").innerHTML+=p.x+".."+p.y+"..."+p.phi*180/Math.PI+"<br>";
+		shape.Canvas.ctx.translate(p.x,p.y);
 		if (this.usevec)
 		{
 			var psi=p.phi-v.psi;
@@ -563,6 +563,7 @@ function setTimes()
 
 function drawtrack()
 {
+	var shape=this.shape;
 	if(this.visible)
 	{
 		shape.draw();
@@ -610,14 +611,14 @@ function setUp()
 			 	STOPCHECKING=false;
 			 	flel.elm.zeroPointers();
 			 	flel.elm.saveCanvases();
-			 	flel.elm.track.drawtrack(false);
+			 	flel.elm.track.drawtrack();
 				flel.elm.transform();
 				flel.elm.drawsprite();
-				flel.elm.drawalltracks(false);
+				flel.elm.drawalltracks();
 			break
 		}
 	}
-	this.t=0; // time into this
+	this.t=0; 	
 	this.play(0);
 }
 
@@ -630,7 +631,7 @@ function play(t)
 	{
 		alen++;
 	}
-	if(alen>0 && !this.paused && !this.stopped)
+	if(alen>0)
 	{
 		for(var name in this.active)
 		{
@@ -682,8 +683,8 @@ function play(t)
 			case "sprite":
 				if(t>=flel.R*1000 && t<stoprun*1000)
 				{
-					flel.elm.transform();
-					flel.elm.drawalltracks(true);
+					flel.elm.transform();html="";
+					flel.elm.drawalltracks();
 					flel.elm.drawsprite();
 				}
 			break

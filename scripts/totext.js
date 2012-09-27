@@ -32,7 +32,7 @@ function groupToText()
 
 function CanvasToText()
 {
-	var params='canvas2^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
+	var params='canvas^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
 	
 	for(var name in SHAPES)
 	{
