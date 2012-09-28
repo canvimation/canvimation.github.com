@@ -109,7 +109,6 @@ img.marker {
 
 .dialoguebox {
 	border: 1px solid #000000;
-	border-top:1px solid #000000;
 	visibility:hidden;
 	z-index:5;
 }
@@ -1688,6 +1687,10 @@ function main()
 	$('rotatebox').style.width=130+"px";
 	$('rotatebox').style.height=120+"px";
 	
+	//totextbox
+	$("totextbox").style.width=300+"px";
+	$("totextbox").style.height=200+"px";
+	
 	//fromtextbox
 	$("fromtextbox").style.width=350+"px";
 	$("fromtextbox").style.height=160+"px";
@@ -1699,6 +1702,7 @@ function main()
 	//filmexportbox
 	$("filmexportbox").style.width=350+"px";
 	$("filmexportbox").style.height=375+"px";
+	$("filmexportbox").style.overflow="auto";
 	
 	//rotation markers
 	$("rotateCentre").style.width=12+"px";
@@ -1860,8 +1864,6 @@ function main()
 	$("spriteeditbox").style.width="250px";
 	$("spriteeditbox").style.height="230px";
 	
-//File dialogue boxes
-	$("filmexportbox").style.width="250px";
 
 	BOXES=getElementsByClassName("dialoguebox");
 	for(var i=0; i<BOXES.length; i++)
@@ -1906,7 +1908,6 @@ function main()
 	$("filmbuildstory").style.height="295px";
 	$("filmbuildlines").style.width="375px";
 	$("filmbuildlines").style.height="195px";
-	//$("filmbuildlines").style.zIndex=-10000000;
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
 	$("flellistholder").style.height="174px";
 	$("viewport").style.width="275px";
@@ -2544,6 +2545,18 @@ function main()
 	</div>
 </div>
 
+<!--dialogue to text box -->
+<div id='totextbox' class="dialoguebox">
+	<div id='totextcontent' class='content'>
+		<input type="button" value=" Export " onclick="exportElements()" />
+		<input type="button" value=" Cancel " onclick="closedialogue(this)" />
+	</div>	
+	<div id='totexthead' class='head'>&nbsp; Export Elements To Text
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"totextcontent")'/>
+	</div>
+</div>
+
 <!--Header bar ............................................................... -->
 <div id="heading"><div id='msg' style='top:2px; left:750px; width:300px ;height:40px; '> </div>
  <div id='logo'><img alt="" src="assets/logo.png"></div>
@@ -2569,7 +2582,7 @@ function main()
   <div id='fopts'>
   	<a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a>
   	<p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a></p>
-  	<p><a href='#' onClick="CanvasToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p>
+  	<p><a href='#' onClick="ToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p>
   	<p><a href='#' onClick="$('fopts').style.visibility='hidden';fromText(); return false;"><span id='ifas'>Input File as Text</span></a></p>
   </div>			
 </div>
@@ -2827,14 +2840,14 @@ function main()
 	
 	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> 
 		<input type="button" value=" Save " onclick="buildFilm(this)" />
-		<input type="button" value=" Cancel " onclick="cancelFilmBuild(this)" />
+		<input type="button" value=" Cancel " onclick="cancelFilmBuild(this);$("menushape").style.visibility="visible"" />
 	</div>
 	<div id="currentel" class="current"> &nbsp;Current Element:</div>
 	<div class="sclbar"></div>		
 	<div class="scrbar"></div>
 	<div class="bbar"></div>
 	<div id='filmbuildhead' class='head'>&nbsp; Build A Film
-		<img alt="" src='assets/x.png' onclick='cancelFilmBuild(this)'/>
+		<img alt="" src='assets/x.png' onclick='cancelFilmBuild(this);$("menushape").style.visibility="visible"'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmbuildcontent")'/>
 	</div>	
 </div>

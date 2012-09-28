@@ -38,11 +38,14 @@ function resetshapestage(txt)
 	return c;
 }
 
-function resetcanv(shapetxt,grouptxt)
+function resetcanv(sizetxt,sgtxt)
 {
 	var shape,group;
+	var sgp=sgtxt.split("¬")
+	var shapetxt=sgp[0];
+	var grouptxt=sgp[1];
 	var shapeparams=shapetxt.split('*');
-	resetshapestage(shapeparams.shift());
+	resetshapestage(sizetxt);
 	var zmax=0;
 	var zmin=10000000
 	SCOUNT=shapeparams.length+1;	
@@ -75,7 +78,6 @@ function resetcanv(shapetxt,grouptxt)
 				group.members[i]=GROUPS[group.members[i][1].trim()];
 			}
 		}
-		alert(group.showmembers());
 	}
 	for(var name in SHAPES)
 	{
@@ -190,7 +192,7 @@ function paramstogroup(p)
 	group.centreOfRotation.x=parseInt(p[6]);
 	group.centreOfRotation.y=parseInt(p[7]);
 	group.phi=parseFloat(p[8]);
-	members=p[9].split(":");alert(p[9])
+	members=p[9].split(":");
 	while(members.length>0)
 	{
 		member=members.shift();
@@ -242,7 +244,7 @@ function handleFileSelect(evt)
 		var r = new FileReader();
 		r.onloadend = function(e) {extract(e.target.result) }
 		r.readAsText(f);
-		document.getElementById('drop_zone').innerHTML +=f.name+'<br>';
+		document.getElementById('drop_zone').innerHTML +="&nbsp;&nbsp;"+f.name+'<br>';
 	} 
 	else 
 	{ 

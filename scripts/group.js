@@ -33,7 +33,7 @@ function Group(COLLECTION,name,title,shape)   //Group object contains shapes and
 	this.removeBoundary=removeBoundary;
 	this.groupRotate=groupRotate;
 	this.update=update;
-	this.groupToText=groupToText;
+	this.GroupToText=GroupToText;
 	this.contains=contains;
 	this.showmembers=showmembers;
 }

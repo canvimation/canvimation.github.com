@@ -27,6 +27,7 @@ function Track(name)
 	this.setTimes=setTimes;
 	this.saveTrack=saveTrack;
 	this.restoreTrack=restoreTrack;
+	this.TrackToText=TrackToText;
 }
 
 function copytrack(theatre)

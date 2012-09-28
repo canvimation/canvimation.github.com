@@ -4,6 +4,95 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+/* Formats for saved elements
+ * 
+ * shapes-->shape parameters*shape parameters*....*shape parameters¬group parameters*group parameters*.....*group parameters
+ * 
+ * Canvas-->canvas^width|height^shapes
+ * 
+ * Scene-->scene^name|title^shapes
+ * 
+ * Track-->track^track parameters^shape parameters^group parameters
+ * 
+ * Base can be a scene or a tween(tween not yet available)
+ * 
+ * Sprite-->sprite^base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
+ * sprite.train points to previous built sprite.
+ */
+function ToText()
+{
+	$("totextbox").style.visibility="visible";
+	var ttbh=200;
+	var innerhtml = '<br> &nbsp;Select the Elements you want to Export.<br><br>';
+	innerhtml +=' &nbsp;Canvas<br>'
+	innerhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cbcanvas">Contents<br>';
+	filmhtml='';
+	for (var name in FILMS)
+	{
+		ttbh+=50;
+		filmhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+FILMS[name].name+'">'+FILMS[name].name+'<br>';
+	}
+	if (filmhtml !='')
+	{
+		filmhtml='<br> &nbsp;Films<br>'+filmhtml;
+	}
+	innerhtml +=filmhtml;
+	spritehtml='';
+	for (var name in SPRITES)
+	{
+		ttbh+=50;
+		spritehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SPRITES[name].name+'" >'+SPRITES[name].name+'<br>';
+	}
+	if (spritehtml !='')
+	{
+		spritehtml='<br> &nbsp;Sprites<br>'+spritehtml;
+	}
+	innerhtml +=spritehtml;
+	scenehtml='';
+	for (var name in SCENES)
+	{
+		ttbh+=50;
+		scenehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SCENES[name].name+'" >'+SCENES[name].name+'<br>';
+	}
+	if (scenehtml !='')
+	{
+		scenehtml='<br> &nbsp;Scenes<br>'+scenehtml;
+	}
+	innerhtml +=scenehtml;
+	tweenhtml='';
+	for (var name in TWEENS)
+	{
+		ttbh+=50;
+		tweenhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TWEENS[name].name+'">'+TWEENS[name].name+'<br>';
+	}
+	if (tweenhtml !='')
+	{
+		tweenhtml='<br> &nbsp;Tweens<br>'+tweenhtml;
+	}
+	innerhtml +=tweenhtml;
+	trackhtml='';
+	for (var name in TRACKS)
+	{
+		ttbh+=50;
+		trackhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TRACKS[name].name+'">'+TRACKS[name].name+'<br>';
+	}
+	if (trackhtml !='')
+	{
+		trackhtml='<br> &nbsp;Tracks<br>'+trackhtml;
+	}
+	innerhtml +=trackhtml;
+	innerhtml+='<br>';
+	innerhtml+='<input type="button" value=" Export " onclick="exportElements()" />';
+	innerhtml+='<input type="button" value=" Cancel " onclick="closedialogue(this)" />';
+	totextcontent.innerHTML=innerhtml;
+	if(ttbh>375) {ttbh=375};alert(ttbh);
+	//$("totextbox").style.height=ttbh+"px";
+	$("totextcontent").style.height=(parseInt($("totextbox").style.height)-25)+"px";
+	//$("totextbox").style.clip="rect(auto, auto, auto, auto)";
+	$("totextcontent").style.overflow="auto";
+}
+
 function GroupToText()
 {
 	var groupAsText="";
@@ -33,7 +122,7 @@ function GroupToText()
 
 function CanvasToText()
 {
-	var params='canvas^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
+	var params='canvas^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'^';
 	var shape;
 	for(var name in SHAPES)
 	{
@@ -41,33 +130,29 @@ function CanvasToText()
 		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
-	params+="^";
+	params+="¬";
 	for(var name in GROUPS)
 	{
 		var group=GROUPS[name];
 		params+=group.GroupToText()+'*';
 	}
 	params=params.slice(0,-1);
-	var newwindow=window.open('','_blank');
- 	newwindow.document.write(params);
-	newwindow.document.close();
+	return params;
 }
 
-
-
-function SceneTotText()
+function SceneToText()
 {
-	var params='';
 	var shape,group;
+	var params='scene^';
 	params+=this.name+"|";
-	params+=this.title+"|^";
+	params+=this.title+"^";
 	for(var name in this.shapes)
 	{
 		var shape=this.shapes[name];
 		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
-	params+="^";
+	params+="¬";
 	for(var name in this.groups)
 	{
 		group=this.groups[name];
@@ -79,7 +164,7 @@ function SceneTotText()
 
 function SpriteToText()
 {
-	var params ='';
+	var params ='sprite^';
 	params +=this.recordsprite();
 	params=params.slice(0,-1);
 	return params;
@@ -90,17 +175,17 @@ function recordsprite()
 {
 	if (this.engine=='scene')
 	{
-		var params=this.spriteparams();
-		params +=this.track.TrackToText()+'~';
-		params +=this.train.SceneToText()+'#';
+		
+		var params=this.track.TrackToText()+'~';
+		params +=this.train.SceneToText()+'~';
+		params +=this.spriteparams()+'#';
 		return params;
 	}
 	else
 	{
 		var params=this.train.recordsprite();
-		params+=this.spriteparams(s);
 		params+=this.TrackToText()+'~';
-		params+=this.train.name+"#";
+		params+=this.spriteparams(s)+"#";
 		return params;
 	}
 }
@@ -116,14 +201,14 @@ function spriteparams()
 	{
 		params +='-1|';
 	}
-	params +=this.vector.xs+'|'+this.vector.xe+'|'+this.vector.ys+'|'+this.vector.ye+'|'+this.vector.psi+'~';
+	params +=this.vector.xs+'|'+this.vector.xe+'|'+this.vector.ys+'|'+this.vector.ye+'|'+this.vector.psi;
 	return params;
 }
 
 function TrackToText()
 {
-	var params='';
 	var shape,group;
+	var params='track^';
 	params +=this.track.name+'|'+this.track.title+'|'+this.track.repeats+'|';
 	if (this.track.visible)
 	{
@@ -135,11 +220,11 @@ function TrackToText()
 	}	
 	if (this.track.yoyo)
 	{
-		params +='1*';
+		params +='1|';
 	}
 	else
 	{
-		params +='-1*';
+		params +='-1^';
 	}
 	for(var name in this.shapes)
 	{
@@ -147,7 +232,7 @@ function TrackToText()
 		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
-	params+="^";
+	params+="¬";
 	for(var name in this.groups)
 	{
 		group=this.groups[name];
@@ -193,11 +278,6 @@ function filmtotext(f)
 		params +='@';
 	}
 	return params;
-}
-
-function canceltotext()
-{
-	if ($('boxto')) {$('boxto').parentNode.removeChild($('boxto'))};
 }
 
 function ShapeToText()
@@ -306,197 +386,71 @@ function ShapeToText()
 	return shapeAsText;
 }
 
-
-function totextbox(txt)
-{
-	canceltotext();	
-	box=document.createElement('div');
-	box.id='boxto';
-	box.style.zIndex=20000024
-	box.style.top=screen.availHeight*0.10;
-	box.style.left=screen.availWidth*0.25;
-	box.style.height=screen.availHeight*0.50;
-	box.style.width=screen.availWidth*0.25;
-	box.style.backgroundColor='#000080';
-	box.style.border='solid 1px black';
-	document.getElementsByTagName('body')[0].appendChild(box);
-	headbox=document.createElement('div');
-	headbox.style.top=10;
-	headbox.style.left=10;
-	headbox.style.height=50;
-	headbox.style.color='#000066';
-	headbox.style.width=parseInt(box.style.width)-20;
-	headbox.style.backgroundColor='#66FFFF';
-	headbox.style.fontSize=24;
-	headbox.style.paddingTop=8;
-	headbox.innerHTML='&nbsp;&nbsp;Export Elements as Text';
-	box.appendChild(headbox);
-	innerbox=document.createElement('div');
-	innerbox.style.top=70;
-	innerbox.style.left=10;
-	innerbox.style.height=parseInt(box.style.height)-120;
-	innerbox.style.width=parseInt(box.style.width)-20;
-	innerbox.style.backgroundColor='#00FFFF';
-	innerbox.style.border='solid 1px black';
-	innerbox.style.overflow='auto';
-	box.appendChild(innerbox);
-
-	var innerhtml = 'Select the Elements you want to Export.<br><br>';
-	innerhtml +='Canvas<br>'
-	innerhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cbcanvas">Contents<br>';
-	filmhtml='';
-	for (var pp in films)
-	{
-		filmhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+films[pp].name+'">'+films[pp].name+'<br>';
-	}
-	if (filmhtml !='')
-	{
-		filmhtml='Films<br>'+filmhtml;
-	}
-	innerhtml +=filmhtml;
-	innerbox.innerHTML=innerhtml;
-	spritehtml='';
-	for (var pp in sprites)
-	{
-		spritehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+sprites[pp].name+'" >'+sprites[pp].name+'<br>';
-	}
-	if (spritehtml !='')
-	{
-		spritehtml='Sprites<br>'+spritehtml;
-	}
-	innerhtml +=spritehtml;
-	innerbox.innerHTML=innerhtml;
-	scenehtml='';
-	for (var pp in scenes)
-	{
-		scenehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+scenes[pp].name+'" >'+scenes[pp].name+'<br>';
-	}
-	if (scenehtml !='')
-	{
-		scenehtml='Scenery<br>'+scenehtml;
-	}
-	innerhtml +=scenehtml;
-	innerbox.innerHTML=innerhtml;
-	tweenhtml='';
-	for (var pp in tweens)
-	{
-		tweenhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+tweens[pp].name+'">'+tweens[pp].name+'<br>';
-	}
-	if (tweenhtml !='')
-	{
-		tweenhtml='Tweens<br>'+tweenhtml;
-	}
-	innerhtml +=tweenhtml;
-	innerbox.innerHTML=innerhtml;
-	trackhtml='';
-	for (var pp in tracks)
-	{
-		trackhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+tracks[pp].name+'">'+tracks[pp].name+'<br>';
-	}
-	if (trackhtml !='')
-	{
-		trackhtml='Tracks<br>'+trackhtml;
-	}
-	innerhtml +=trackhtml;
-	innerbox.innerHTML=innerhtml;
-	
-	cin=document.createElement('input');
-	cin.style.position='absolute'
-	cin.style.left=20;
-	cin.style.top=parseInt(box.style.height)-35;
-	cin.type='button';
-	cin.value='Export Files';
-	cin.onclick=function () {exporttotext()};
-	box.appendChild(cin);
-	cin=document.createElement('input');
-	cin.style.position='absolute'
-	cin.style.left=120;
-	cin.style.top=parseInt(box.style.height)-35;
-	cin.type='button';
-	cin.value='Cancel';
-	cin.onclick=function () {canceltotext()};
-	box.appendChild(cin);
-}
-
-function exporttotext()
+function exportElements()
 {
 	if ($('cbcanvas').checked)
 	{
-		canvastotext();
+		var canvastxt=CanvasToText();
+		var re = /[\s\r]+/g;
+	 	canvastxt=canvastxt.replace(re,'`');
+		var newwindow=window.open('Canvas','_blank');
+ 		newwindow.document.write(canvastxt);
+		newwindow.document.close();
 	}
-	for (var pp in scenes)
+	for (var name in SCENES)
 	{
-		if($('cb'+scenes[pp].name).checked)
+		if($('cb'+SCENES[name].name).checked)
 		{
-			var sctxt='scene^'+scenes[pp].name+'|'+scenes[pp].cars.length+'*';
-			sctxt+=scenetotext(scenes[pp]);
+			var sctxt=SCENES[name].SceneToText();
 			var re = /[\s\r]+/g;
 	 		sctxt=sctxt.replace(re,'`');
-			var newwindow=window.open('','Scenery - '+scenes[pp].name);
+			var newwindow=window.open(SCENES[name].name,'Scenes - '+SCENES[name].name);
  			newwindow.document.write(sctxt);
 			newwindow.document.close();
 		}
 	}
-	for (var pp in sprites)
+	for (var name in SPRITES)
 	{
-		if($('cb'+sprites[pp].name).checked)
+		if($('cb'+SPRITES[name].name).checked)
 		{
-			var sprtxt='sprite^';
-			sprtxt+=spritetotext(sprites[pp]);
+			var sprtxt=SPRITES[name].SpriteToText();
 			sprtxt=sprtxt.slice(0,-1);
 			var re = /[\s\r]+/g;
 	 		sprtxt=sprtxt.replace(re,'`');
-			var newwindow=window.open('','Sprite - '+sprites[pp].name);
+			var newwindow=window.open('','Sprite - '+SPRITES[name].name);
  			newwindow.document.write(sprtxt);
 			newwindow.document.close();
 		}
 	}
-	for (var pp in tweens)
+	for (var name in TWEENS)
 	{
-		if($('cb'+tweens[pp].name).checked)
+		if($('cb'+TWEENS[name].name).checked)
 		{
-			tweentotext(tweens[pp])
+			TWEENS[name].tweentotext()
 		}
 	}
-	for (var pp in tracks)
+	for (var name in TRACKS)
 	{
-		if($('cb'+tracks[pp].name).checked)
+		if($('cb'+TRACKS[name].name).checked)
 		{
-			var trktxt='track^'+tracks[pp].name+'|'+tracks[pp].repeats+'|';
-			if (tracks[pp].visible)
-			{
-				trktxt +='1|';
-			}
-			else
-			{
-				trktxt +='-1|';
-			}	
-			if (tracks[pp].yoyo)
-			{
-				trktxt +='1*';
-			}
-			else
-			{
-				trktxt +='-1*';
-			}
-			trktxt+=tracktotext(tracks[pp]);
+			var trktxt='track^';
+			trktxt+=TRACKS[name].TrackToText();
 			var re = /[\s\r]+/g;
 	 		trktxt=trktxt.replace(re,'`');
-			var newwindow=window.open('','track - '+tracks[pp].name);
+			var newwindow=window.open('','Track - '+TRACKS[name].name);
  			newwindow.document.write(trktxt);
 			newwindow.document.close();
 		}
 	}
-	for (var pp in films)
+	for (var name in FILMS)
 	{
-		if($('cb'+films[pp].name).checked)
+		if($('cb'+FILMS[name].name).checked)
 		{
-			var flmtxt='film^'+film.name+'@';
-			flmtxt+=filmtotext(films[pp]);
-			flmtxt=flmtxt.slice(0,-1);
+			var flmtxt='film^';
+			flmtxt+=FILMS[name].FilmToText();
 			var re = /[\s\r]+/g;
 	 		flmtxt=flmtxt.replace(re,'`');
-			var newwindow=window.open('','_blank');
+			var newwindow=window.open('','Film - '+FILMS[name].name);
  			newwindow.document.write(flmtxt);
 			newwindow.document.close();
 		}
