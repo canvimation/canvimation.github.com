@@ -43,6 +43,9 @@ function Sprite(name)
 	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
 	this.spriteHTML=spriteHTML;
+	this.SpriteToText=SpriteToText;
+	this.recordsprite=recordsprite;
+	this.spriteparams=spriteparams;
 }
 
 function copysprite(theatre)

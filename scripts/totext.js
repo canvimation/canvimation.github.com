@@ -4,10 +4,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-function groupToText()
+function GroupToText()
 {
 	var groupAsText="";
 	groupAsText+=this.name+'|';
+	groupAsText+=this.title+'|';
 	groupAsText+=this.left+'|';
 	groupAsText+=this.top+'|';
 	groupAsText+=this.width+'|';
@@ -33,10 +34,10 @@ function groupToText()
 function CanvasToText()
 {
 	var params='canvas^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'*';
-	
+	var shape;
 	for(var name in SHAPES)
 	{
-		var shape=SHAPES[name];
+		shape=SHAPES[name];
 		params+=shape.ShapeToText()+'*';
 	}
 	params=params.slice(0,-1);
@@ -44,7 +45,7 @@ function CanvasToText()
 	for(var name in GROUPS)
 	{
 		var group=GROUPS[name];
-		params+=group.groupToText()+'*';
+		params+=group.GroupToText()+'*';
 	}
 	params=params.slice(0,-1);
 	var newwindow=window.open('','_blank');
@@ -53,102 +54,112 @@ function CanvasToText()
 }
 
 
-function scenetotext(s)
+
+function SceneTotText()
 {
 	var params='';
-	for(var i=0;i<s.cars.length;i++)
+	var shape,group;
+	params+=this.name+"|";
+	params+=this.title+"|^";
+	for(var name in this.shapes)
 	{
-		params+=storeinparams(s.cars[i])+'*';
+		var shape=this.shapes[name];
+		params+=shape.ShapeToText()+'*';
+	}
+	params=params.slice(0,-1);
+	params+="^";
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		params+=group.GroupToText()+'*';
 	}
 	params=params.slice(0,-1);
 	return params;
 }
 
-function spritetotext(s)
+function SpriteToText()
 {
 	var params ='';
-	params +=recsprite(s);
+	params +=this.recordsprite();
+	params=params.slice(0,-1);
 	return params;
+}	
 	
 	
-	function recsprite(s)
-	{
-		if (s.engine=='scene')
-		{
-			var pt=spriteparams(s);
-			pt +=s.track.name+'|'+s.track.repeats+'|';
-			if (s.track.visible)
-			{
-				pt +='1|';
-			}
-			else
-			{
-				pt +='-1|';
-			}	
-			if (s.track.yoyo)
-			{
-				pt +='1*';
-			}
-			else
-			{
-				pt +='-1*';
-			}
-			pt +=tracktotext(s.track)+'~';
-			pt +=s.train.name+'|'+s.train.cars.length+'*';
-			pt +=scenetotext(s.train)+'~';
-			return pt;
-		}
-		else
-		{
-			var pt=spriteparams(s);
-			pt +=s.track.name+'|'+s.track.repeats+'|';
-			if (s.track.visible)
-			{
-				pt +='1|';
-			}
-			else
-			{
-				pt +='-1|';
-			}	
-			if (s.track.yoyo)
-			{
-				pt +='1*';
-			}
-			else
-			{
-				pt +='-1*';
-			}
-			pt +=tracktotext(s.track)+'~';
-			return recsprite(s.train)+pt;
-		}
-	}
-	
-	function spriteparams(s)
-	{
-		var pt= s.name+'|'+s.engine+'|'+s.ptime+'|'+s.pointer+'|';
-		if (s.vec)
-		{
-			pt += '1|';
-		}
-		else
-		{
-			pt +='-1|';
-		}
-		pt +=s.vector.xs+'|'+s.vector.xe+'|'+s.vector.ys+'|'+s.vector.ye+'|'+s.vector.psi+'~';
-		return pt;
-	}
-}
-
-function tweentotext(s)
+function recordsprite()
 {
+	if (this.engine=='scene')
+	{
+		var params=this.spriteparams();
+		params +=this.track.TrackToText()+'~';
+		params +=this.train.SceneToText()+'#';
+		return params;
+	}
+	else
+	{
+		var params=this.train.recordsprite();
+		params+=this.spriteparams(s);
+		params+=this.TrackToText()+'~';
+		params+=this.train.name+"#";
+		return params;
+	}
+}
 	
+function spriteparams()
+{
+	var params= this.name+'|'+this.title+'|'+this.engine+'|'+this.ptime+'|';
+	if (this.vec)
+	{
+		params += '1|';
+	}
+	else
+	{
+		params +='-1|';
+	}
+	params +=this.vector.xs+'|'+this.vector.xe+'|'+this.vector.ys+'|'+this.vector.ye+'|'+this.vector.psi+'~';
+	return params;
 }
 
-function tracktotext(s)
+function TrackToText()
 {
 	var params='';
-	params+=storeinparams(s.line);
+	var shape,group;
+	params +=this.track.name+'|'+this.track.title+'|'+this.track.repeats+'|';
+	if (this.track.visible)
+	{
+		params +='1|';
+	}
+	else
+	{
+		params +='-1|';
+	}	
+	if (this.track.yoyo)
+	{
+		params +='1*';
+	}
+	else
+	{
+		params +='-1*';
+	}
+	for(var name in this.shapes)
+	{
+		shape=this.shapes[name];
+		params+=shape.ShapeToText()+'*';
+	}
+	params=params.slice(0,-1);
+	params+="^";
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		params+=group.GroupToText()+'*';
+	}
+	params=params.slice(0,-1);
 	return params;
+}
+
+function TweenToText(s)
+{
+	
 }
 
 function filmtotext(f)

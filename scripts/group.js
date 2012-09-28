@@ -18,8 +18,8 @@ function Group(COLLECTION,name,title,shape)   //Group object contains shapes and
 	p=new Point(200,200);
    	this.centreOfRotation=p;
    	this.phi=0;  //angle of rotation
-   	this.expanded=false;
-	this.showmembers=showmembers;
+   	//this.expanded=false;
+	
 	
 	COLLECTION[this.name]=this;
 	
@@ -35,6 +35,7 @@ function Group(COLLECTION,name,title,shape)   //Group object contains shapes and
 	this.update=update;
 	this.groupToText=groupToText;
 	this.contains=contains;
+	this.showmembers=showmembers;
 }
 
 

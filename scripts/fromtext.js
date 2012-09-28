@@ -34,6 +34,7 @@ function resetshapestage(txt)
 	GCOUNT=0;
 	ZPOS=1;
 	ZNEG=-1;
+	CURRENT=SHAPES;
 	return c;
 }
 
@@ -43,7 +44,8 @@ function resetcanv(shapetxt,grouptxt)
 	var shapeparams=shapetxt.split('*');
 	resetshapestage(shapeparams.shift());
 	var zmax=0;
-	var zmin=10000000	
+	var zmin=10000000
+	SCOUNT=shapeparams.length+1;	
 	while (shapeparams.length>0)
 	{
 		shape=paramstoshape(shapeparams.shift());
@@ -54,6 +56,7 @@ function resetcanv(shapetxt,grouptxt)
 	ZPOS=zmax+1;
 	ZNEG=zmin-1;
 	var groupparams=grouptxt.split('*');
+	GCOUNT=groupparams.length+1;
 	while(groupparams.length>0)
 	{
 		group=paramstogroup(groupparams.shift());
@@ -65,13 +68,14 @@ function resetcanv(shapetxt,grouptxt)
 		{
 			if(group.members[i][0]=="s")
 			{
-				group.members[i]=SHAPES[group.members[i][1]];
+				group.members[i]=SHAPES[group.members[i][1].trim()];
 			}
 			else
 			{
-				group.members[i]=GROUPS[group.members[i][1]];
+				group.members[i]=GROUPS[group.members[i][1].trim()];
 			}
 		}
+		alert(group.showmembers());
 	}
 	for(var name in SHAPES)
 	{
@@ -178,15 +182,15 @@ function paramstogroup(p)
 {
 	var members,member;
 	p=p.split('|');
-	var group=new Group(p[0]);
-	group.left=parseInt(p[1]);
-	group.top=parseInt(p[2]);
-	group.width=parseInt(p[3]);
-	group.height=parseInt(p[4]);
-	group.centreOfRotation.x=parseInt(p[5]);
-	group.centreOfRotation.y=parseInt(p[6]);
-	group.phi=parseFloat(p[7]);
-	members=p[8].split(":");
+	var group=new Group(GROUPS,p[0],p[1]);
+	group.left=parseInt(p[2]);
+	group.top=parseInt(p[3]);
+	group.width=parseInt(p[4]);
+	group.height=parseInt(p[5]);
+	group.centreOfRotation.x=parseInt(p[6]);
+	group.centreOfRotation.y=parseInt(p[7]);
+	group.phi=parseFloat(p[8]);
+	members=p[9].split(":");alert(p[9])
 	while(members.length>0)
 	{
 		member=members.shift();
