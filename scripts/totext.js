@@ -9,15 +9,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * 
  * shapes-->shape parameters*shape parameters*....*shape parameters¬group parameters*group parameters*.....*group parameters
  * 
- * Canvas-->canvas^width|height^shapes
+ * Canvas-->canvas@width|height^shapes
  * 
- * Scene-->scene^name|title^shapes
+ * Scene-->scene@name|title^shapes
  * 
- * Track-->track^track parameters^shape parameters^group parameters
+ * Track-->track@track parameters^shape parameters¬group parameters
  * 
  * Base can be a scene or a tween(tween not yet available)
  * 
- * Sprite-->sprite^base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
+ * Sprite-->sprite@base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
  * sprite.train points to previous built sprite.
  */
 function ToText()
@@ -83,10 +83,11 @@ function ToText()
 	}
 	innerhtml +=trackhtml;
 	innerhtml+='<br>';
-	innerhtml+='<input type="button" value=" Export " onclick="exportElements()" />';
+	innerhtml+='&nbsp;<input type="button" value=" Export " onclick="exportElements()" />';
 	innerhtml+='<input type="button" value=" Cancel " onclick="closedialogue(this)" />';
+	innerhtml+='<br>&nbsp;';
 	totextcontent.innerHTML=innerhtml;
-	if(ttbh>375) {ttbh=375};alert(ttbh);
+	if(ttbh>375) {ttbh=375};
 	//$("totextbox").style.height=ttbh+"px";
 	$("totextcontent").style.height=(parseInt($("totextbox").style.height)-25)+"px";
 	//$("totextbox").style.clip="rect(auto, auto, auto, auto)";
@@ -122,7 +123,7 @@ function GroupToText()
 
 function CanvasToText()
 {
-	var params='canvas^'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'^';
+	var params='canvas@'+parseInt($("stagearea").style.width)+'|'+parseInt($("stagearea").style.height)+'^';
 	var shape;
 	for(var name in SHAPES)
 	{
@@ -143,7 +144,7 @@ function CanvasToText()
 function SceneToText()
 {
 	var shape,group;
-	var params='scene^';
+	var params='';
 	params+=this.name+"|";
 	params+=this.title+"^";
 	for(var name in this.shapes)
@@ -164,7 +165,7 @@ function SceneToText()
 
 function SpriteToText()
 {
-	var params ='sprite^';
+	var params ='';
 	params +=this.recordsprite();
 	params=params.slice(0,-1);
 	return params;
@@ -175,7 +176,6 @@ function recordsprite()
 {
 	if (this.engine=='scene')
 	{
-		
 		var params=this.track.TrackToText()+'~';
 		params +=this.train.SceneToText()+'~';
 		params +=this.spriteparams()+'#';
@@ -184,8 +184,8 @@ function recordsprite()
 	else
 	{
 		var params=this.train.recordsprite();
-		params+=this.TrackToText()+'~';
-		params+=this.spriteparams(s)+"#";
+		params+=this.track.TrackToText()+'~';
+		params+=this.spriteparams()+"#";
 		return params;
 	}
 }
@@ -193,7 +193,7 @@ function recordsprite()
 function spriteparams()
 {
 	var params= this.name+'|'+this.title+'|'+this.engine+'|'+this.ptime+'|';
-	if (this.vec)
+	if (this.usevec)
 	{
 		params += '1|';
 	}
@@ -207,10 +207,10 @@ function spriteparams()
 
 function TrackToText()
 {
-	var shape,group;
-	var params='track^';
-	params +=this.track.name+'|'+this.track.title+'|'+this.track.repeats+'|';
-	if (this.track.visible)
+	var shape;
+	var params='';
+	params +=this.name+'|'+this.title+'|'+this.repeats+'|';
+	if (this.visible)
 	{
 		params +='1|';
 	}
@@ -218,14 +218,15 @@ function TrackToText()
 	{
 		params +='-1|';
 	}	
-	if (this.track.yoyo)
+	if (this.yoyo)
 	{
 		params +='1|';
 	}
 	else
 	{
-		params +='-1^';
+		params +='-1';
 	}
+	params+="^";
 	for(var name in this.shapes)
 	{
 		shape=this.shapes[name];
@@ -401,7 +402,8 @@ function exportElements()
 	{
 		if($('cb'+SCENES[name].name).checked)
 		{
-			var sctxt=SCENES[name].SceneToText();
+			var sctxt="scene@";
+			sctxt+=SCENES[name].SceneToText();
 			var re = /[\s\r]+/g;
 	 		sctxt=sctxt.replace(re,'`');
 			var newwindow=window.open(SCENES[name].name,'Scenes - '+SCENES[name].name);
@@ -413,11 +415,11 @@ function exportElements()
 	{
 		if($('cb'+SPRITES[name].name).checked)
 		{
-			var sprtxt=SPRITES[name].SpriteToText();
-			sprtxt=sprtxt.slice(0,-1);
+			var sprtxt="sprite@";
+			sprtxt+=SPRITES[name].SpriteToText();
 			var re = /[\s\r]+/g;
 	 		sprtxt=sprtxt.replace(re,'`');
-			var newwindow=window.open('','Sprite - '+SPRITES[name].name);
+			var newwindow=window.open(SPRITES[name].name,'Sprite - '+SPRITES[name].name);
  			newwindow.document.write(sprtxt);
 			newwindow.document.close();
 		}
@@ -433,11 +435,12 @@ function exportElements()
 	{
 		if($('cb'+TRACKS[name].name).checked)
 		{
-			var trktxt='track^';
+			var trktxt="track@";
 			trktxt+=TRACKS[name].TrackToText();
+			trktxt=trktxt.slice(0,-1);
 			var re = /[\s\r]+/g;
 	 		trktxt=trktxt.replace(re,'`');
-			var newwindow=window.open('','Track - '+TRACKS[name].name);
+			var newwindow=window.open(TRACKS[name].name,'Track - '+TRACKS[name].name);
  			newwindow.document.write(trktxt);
 			newwindow.document.close();
 		}

@@ -32,67 +32,94 @@ function resetshapestage(txt)
 	BCOUNT=0;
 	SCOUNT=0;
 	GCOUNT=0;
+	NCOUNT=0;
 	ZPOS=1;
 	ZNEG=-1;
 	CURRENT=SHAPES;
 	return c;
 }
 
-function resetcanv(sizetxt,sgtxt)
+function resetcanv(canvasfiletxt)
 {
+	var canvasfile=canvasfiletxt.split("^");
+	var sizetxt=canvasfile[0];
+	var sgtxt=canvasfile[1];
+	var zmax=0;
+	var zmin=10000000;
+	var shape;
+	resetshapestage(sizetxt);
+	resetshapes(sgtxt,SHAPES,GROUPS,"canvas");
+	for(var name in SHAPES)
+	{
+		shape=SHAPES[name];
+		SCOUNT++;
+		if(shape.zIndex>zmax) {zmax=shape.zIndex};
+		if(shape.zIndex<zmin) {zmin=shape.zIndex};
+		shape.addTo($("shapestage"));
+		shape.draw();
+	}
+	for (var name in GROUPS)
+	{
+		GCOUNT++;
+	}
+	ZPOS=zmax+1;
+	ZNEG=zmin-1;
+}
+
+function resetshapes(sgtxt,Shape_Store,Group_Store,type)
+{	
 	var shape,group;
 	var sgp=sgtxt.split("¬")
 	var shapetxt=sgp[0];
 	var grouptxt=sgp[1];
-	var shapeparams=shapetxt.split('*');
-	resetshapestage(sizetxt);
-	var zmax=0;
-	var zmin=10000000
-	SCOUNT=shapeparams.length+1;	
+	var shapeparams=shapetxt.split('*');	
 	while (shapeparams.length>0)
 	{
-		shape=paramstoshape(shapeparams.shift());
-		if(shape.zIndex>zmax) {zmax=shape.zIndex};
-		if(shape.zIndex<zmin) {zmin=shape.zIndex};
-		shape.addTo($("shapestage"));
+		shape=paramstoshape(shapeparams.shift(),Shape_Store,type);
 	}
-	ZPOS=zmax+1;
-	ZNEG=zmin-1;
 	var groupparams=grouptxt.split('*');
-	GCOUNT=groupparams.length+1;
 	while(groupparams.length>0)
 	{
-		group=paramstogroup(groupparams.shift());
+		paramstogroup(groupparams.shift(),Group_Store,type);
 	}
-	for(var name in GROUPS)
+	for(var name in Group_Store)
 	{
-		group=GROUPS[name];
+		group=Group_Store[name];
 		for(var i=0; i<group.members.length; i++)
 		{
 			if(group.members[i][0]=="s")
 			{
-				group.members[i]=SHAPES[group.members[i][1].trim()];
+				group.members[i]=Shape_Store[group.members[i][1].trim()];
 			}
 			else
 			{
-				group.members[i]=GROUPS[group.members[i][1].trim()];
+				group.members[i]=Group_Store[group.members[i][1].trim()];
 			}
 		}
 	}
-	for(var name in SHAPES)
+	for(var name in Shape_Store)
 	{
-		shape=SHAPES[name];
-		shape.group=GROUPS[shape.group]; //change shape.group from group.name to actual group
-		shape.draw();
+		shape=Shape_Store[name];
+		shape.group=Group_Store[shape.group]; //change shape.group from group.name to actual group
 	}
 }
 
-function paramstoshape(p)
+function paramstoshape(p,Shape_Store,type)
 {
 	var nodedata,point,ctrl1,ctrl2;
 	var node;
 	p=p.split('|');
-	var shape=new Shape(p[0],p[1],p[2]=="1",p[3]=="1",p[4],SHAPES);
+	if(type=="canvas")
+	{
+		var oldname=p[0];
+		var newname=oldname;
+	}
+	else
+	{
+		var oldname=p[0];
+		var newname="SUBSH"+(NCOUNT++);
+	}
+	var shape=new Shape(p[0],p[1],p[2]=="1",p[3]=="1",p[4],Shape_Store);
 	shape.tplftcrnr.x = parseInt(p[5]);
 	shape.tplftcrnr.y = parseInt(p[6]);
 	shape.btmrgtcrnr.x = parseInt(p[7]);
@@ -143,8 +170,8 @@ function paramstoshape(p)
 		shape.shadowColor[i]=parseInt(shape.shadowColor[i])	
 	}	
 	shape.zIndex = parseFloat(p[25]);
-	shape.crnrradius = parseInt(p[26])
-	shape.group = p[28];
+	shape.crnrradius = parseInt(p[26]);
+	shape.group = p[28]; //name of group
 	var path=p[27].split("!");
 	
 	while (path.length>0)
@@ -180,11 +207,19 @@ function paramstoshape(p)
 	return shape;
 }
 
-function paramstogroup(p)
+function paramstogroup(p,Group_Store,type)
 {
 	var members,member;
 	p=p.split('|');
-	var group=new Group(GROUPS,p[0],p[1]);
+	if(type=="canvas")
+	{
+		var name=p[0];
+	}
+	else
+	{
+		var name="SUBGP"+(NCOUNT++);
+	}
+	var group=new Group(Group_Store,p[0],p[1]);
 	group.left=parseInt(p[2]);
 	group.top=parseInt(p[3]);
 	group.width=parseInt(p[4]);
@@ -199,6 +234,7 @@ function paramstogroup(p)
 		member=member.split("!");
 		group.members.push(member);
 	}
+	return group;
 }
 
 function fromText()
@@ -257,13 +293,13 @@ function handleFileSelect(evt)
  {
 	 hideTools();
 
-	 var t=a.split('^');
+	 var t=a.split('@');
 	 switch (t[0])
 	 {
 		 case 'canvas':
 		 	try
 			{
-				resetcanv(t[1],t[2]);
+				resetcanv(t[1]);
 			}
 			catch(e)
 			{
@@ -275,8 +311,7 @@ function handleFileSelect(evt)
 		 case 'scene':
 		 try
 			{
-				resetscene(t[1]);
-				movenotscene();
+				resetscene(t[1],"basescene");
 			}
 			catch(e)
 			{
@@ -289,7 +324,6 @@ function handleFileSelect(evt)
 		 	try
 			{
 				resetsprite(t[1]);
-				movenotsprite()
 			}
 			catch(e)
 			{
@@ -304,8 +338,7 @@ function handleFileSelect(evt)
 		 case 'track':
 		 	try
 			{
-				resettrack(t[1]);
-				movenottrack();
+				resettrack(t[1],"basetrack");
 			}
 			catch(e)
 			{
@@ -318,7 +351,6 @@ function handleFileSelect(evt)
 		 	try
 			{
 				resetfilm(t[1]);
-				movenotfilm()
 			}
 			catch(e)
 			{				
@@ -335,205 +367,90 @@ function handleFileSelect(evt)
 	 $('bodydiv').onclick=function(e){checkBoundary(shiftdown(e),getPosition(e))};
  }
  
-function resetscene(t)
+function resetscene(scenefiletxt,type)
 {
-	var s=t.split('*');
-	var scp = s.shift();
-	var sc=scp.split('|');
-	var sname=sc[0];
-	return redoscene(sname, s)
-}
-
-function redoscene(sname,s)
-{
-	if (checkname(sname,'scene')) 
-	{
-		var ans=confirm('There is already scenery with the title '+sname+'.\nDo you want to overwrite?');
-		if (!ans) 
-		{
-			return null;
-		}
-		else
-		{
-			scene=scenes[sname];
-			scene.cars=[];
-		}
-	}
-	else
-	{
-	 	scene=new cscene(sname);
-		scenes[scene.name]=scene;
-		
-		$('scenehold').innerHTML +='<div id="scene|'+scene.name+'"><img src="assets/edit.png" style="cursor:pointer" alt="edit" title="edit" onclick="aniedit(this)">&nbsp;&nbsp;&nbsp;<span onclick="usename(this.innerHTML,'+squote+'scene'+squote+')" style="cursor:pointer">'+scene.name+'</span></div><br>';
-	}
-
-	if (scene.name.substr(0,8)=='Scenery ')
-	{
-		var n = parseInt(scene.name.substr(8))
-		if(!(isNaN(n)))
-		{
-			scenecount=Math.max(n,scenecount);
-		}
-	}
-	zmax=1000000000; //not needed but used in paramstocanvas
-	zmin=-1;//not needed but used in paramstocanvas
-	for (var i=0; i<s.length; i++)
-	{
-		ns=paramstocanvas(blocknum++,s[i]);
-		ns.parentNode.removeChild(ns);
-		scene.cars.push(ns);
-		numblocks +=1;
-	}
+	var scenefile=scenefiletxt.split("^");
+	var scenetxt=scenefile[0];
+	var sgtxt=scenefile[1];
+	var sceneparams=scenetxt.split('|');
+	var scene=new Scene("SUBSC"+(NCOUNT++));
+	if(type=="basescene") {SCENES[scene.name]=scene};
+	scene.title=sceneparams[1];
+	if(type=="basescene") {writescenelist()};
+	resetshapes(sgtxt,scene.shapes,scene.groups);
 	return scene;
 }
 
-function resettrack(t)
+function resettrack(trackfiletxt,type)
 {
-	var tr=t.split('*');
-	var trp=tr[0].split('|');
-	var trname=trp[0];
-	if (checkname(trname,'track')) 
-	{
-		var ans=confirm('There is already a track with the title '+trname+'.\nDo you want to overwrite?');
-		if (!ans) 
-		{
-			return null;
-		}
-		else
-		{
-			track=tracks[trname];
-		}
-	}
-	else
-	{
-		track=new ctrack(trname);
-		tracks[track.name]=track;
-		$('trackhold').innerHTML +='<div id="track|'+track.name+'"><img src="assets/edit.png" style="cursor:pointer" alt="edit" title="edit" onclick="aniedit(this)">&nbsp;&nbsp;&nbsp;<span onclick="usename(this.innerHTML,'+squote+'track'+squote+')" style="cursor:pointer">'+track.name+'</span></div><br>';
-	}
-	track.repeats=parseInt(trp[1]);
-	if (isNaN(track.repeats))
-	{
-		track.repeats='c';	   
-	}
-	if (trp[2]=='1')
-	{
-		track.visible=true;
-	}
-	else
-	{
-		track.visible=false;
-	}
-	if (trp[3]=='1')
-	{
-		track.yoyo=true;
-	}
-	else
-	{
-		track.yoyo=false;
-	}
-	if (track.name.substr(0,6)=='Track ')
-	{
-		var n = parseInt(track.name.substr(6))
-		if(!(isNaN(n)))
-		{
-			trackcount=Math.max(n,trackcount);
-		}
-	}
-	zmax=1000000000; //not needed but used in paramstocanvas
-	zmin=-1;//not needed but used in paramstocanvas
-	track.line=paramstocanvas(blocknum++,tr[1]);
-	track.line.parentNode.removeChild(track.line);
-	numblocks +=1;
+	var trackfile=trackfiletxt.split("^");
+	var tracktxt=trackfile[0];
+	var sgtxt=trackfile[1];
+	var trackparams=tracktxt.split('|');
+	var track=new Track("SUBTR"+(NCOUNT++));
+	if(type=="basetrack") {TRACKS[track.name]=track};
+	track.title=trackparams[1];
+	track.repeats=parseInt(trackparams[2]);
+	track.visible=trackparams[3]=="1";
+	track.yoyo=trackparams[4]=="1";
+	if(type=="basetrack") {writetracklist()};
+	resetshapes(sgtxt,track.shapes,track.groups);
 	return track;
-	
 }
 
-function resetsprite(t)
+function resetsprite(spritetxt)
 {
-	var sprops;
-	var spary=t.split('~');
-	while (spary.length>0)
+	var sprites={}
+	var spritelist=spritetxt.split("#");
+	var curspritetxt=spritelist[0];
+	var cursprite=curspritetxt.split('~');
+	var tracktxt=cursprite[0];
+	var traintxt=cursprite[1];
+	var spritetxt=cursprite[2];
+	var sprite=resetspriteparams(spritetxt);
+	sprites[sprite.name]=sprite;
+	switch(sprite.engine)
 	{
-		sprops=spary.shift().split('|');
-	
-		spname=sprops[0];
-		if (checkname(spname,'sprite')) 
-		{
-			var ans=confirm('There is already a sprite with the title '+spname+'.\nDo you want to overwrite?');
-			if (!ans) 
-			{ 
-				return
-			}
-			else
-			{
-				sprite=sprites[spname];
-			}
-		}
-		else
-		{
-			sprite=new csprite();
-			sprite.name=spname;
-			sprites[sprite.name]=sprite;
-			$('spritehold').innerHTML +='<div id="sprite|'+sprite.name+'"><img src="assets/edit.png" style="cursor:pointer" alt="edit" title="edit" onclick="aniedit(this)">&nbsp;&nbsp;&nbsp;<span onclick="usename(this.innerHTML,'+squote+'sprite'+squote+')" style="cursor:pointer">'+sprite.name+'</span></div><br>';
-		}
-
-		var track = resettrack(spary.shift());
-		if (track != null) 
-		{
-			sprite.track=track;
-		}
-		sprite.engine=sprops[1];
-		sprite.ptime=sprops[2];
-		sprite.pointer=sprops[3];
-		if (sprops[4]=='1')
-		{
-			sprite.vec = true;
-		}
-		else
-		{
-			sprite.vec = false;
-		}
-		sprite.vector={xs:0,ys:0,xe:0,ye:0,psi:0};
-		sprite.vector.xs=sprops[5];
-		sprite.vector.xe=sprops[6];
-		sprite.vector.ys=sprops[7];
-		sprite.vector.ye=sprops[8];
-		sprite.vector.psi=sprops[9];
-
-		if (sprite.engine=='scene')
-		{
-		
-			var scene = resetscene(spary.shift());
-			if (scene != null) 
-			{
-				sprite.train=scene;
-				sprite.cars=scene.cars
-				prevsprite=sprite.name;
-				if (sprite.name.substr(0,7)=='Sprite ')
-				{
-					var n = parseInt(sprite.name.substr(7))
-					if(!(isNaN(n)))
-					{
-						spritecount=Math.max(n,spritecount);
-					}
-				}
-			}
-		}
-		else
-		{
-			sprite.train=sprites[prevsprite];
-			sprite.cars=sprite.train.cars;
-			prevsprite=sprite.name;
-			if (sprite.name.substr(0,7)=='Sprite ')
-			{
-				var n = parseInt(sprite.name.substr(7))
-				if(!(isNaN(n)))
-				{
-					spritecount=Math.max(n,spritecount);
-				}
-			}
-		}
+		case "scene":
+			sprite.train=resetscene(traintxt);
+		break
+		case "tween":
+		break
 	}
+	sprite.track=resettrack(tracktxt);
+	var curname=sprite.name;
+	for(var i=1; i<spritelist.length;i++)
+	{
+		curspritetxt=spritelist[i];
+		cursprite=curspritetxt.split('~');
+		tracktxt=cursprite[0];
+		spritetxt=cursprite[1];
+		sprite=resetspriteparams(spritetxt);
+		sprite.track=resettrack(tracktxt);
+		sprite.train=sprites[curname];
+		curname=sprite.name;
+	}
+	SPRITES[sprite.name]=sprite;
+	writespritelist();
+	sprite.setPoints();
+	sprite.inTheatre($("spritestage"));
+}
+
+function resetspriteparams(spritetxt)
+{
+	var spriteparams=spritetxt.split("|");
+	var sprite=new Sprite("SUBSP"+(NCOUNT++));
+	SPRITES[sprite.name]=sprite;
+	sprite.title=spriteparams[1];
+	sprite.engine=spriteparams[2];
+	sprite.ptime=parseInt(spriteparams[3]);
+	sprite.usevec=spriteparams[4]=="1";
+	sprite.vector.xs=parseInt(spriteparams[5]);
+	sprite.vector.xe=parseInt(spriteparams[6]);
+	sprite.vector.ys=parseInt(spriteparams[7]);
+	sprite.vector.ye=parseInt(spriteparams[8]);
+	sprite.vector.psi=parseInt(spriteparams[9]);
+	return sprite;
 }
 
 function resetfilm(f)

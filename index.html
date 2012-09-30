@@ -1328,7 +1328,7 @@ var BARS=["right","bottom","rcorner"]; //array for edge classes;
 var	ANIELS=["sc","sp","tr","tw","fm","ls","fl"];
 var ED=[]; //array of drag and drop elements for element boxes;
 var EDCOUNT=0; //counter for ED
-temptrack={};
+
 var TRACKS = {};  //associative array for tracks
 var SCENES = {}; //associative array for scenes
 var SPRITES = {}; //associative array for sprites
@@ -1343,13 +1343,14 @@ var SPCOUNT=0; //counter for sprites
 var TWCOUNT=0; //counter for tweens
 var FMCOUNT=0; //counter for films
 var ELCOUNT=0; //counter for elements on filmbuildboard;
+var NCOUNT=0; //counter for element shapes
 
 var FLELTOP=5; //top position of element on filmboard;
 var FLELWIDTH;
 var FLELHEIGHT;
 var FLELHEAD; //head of double linked list of film elements.
 var FLELINDX; //z-index for elements on filmlines
-var NCOUNT=0; //counter for element shapes
+
 var CURRENT=SHAPES; //pointer to current associative array of shapes;
 
 var DDDIVS={};

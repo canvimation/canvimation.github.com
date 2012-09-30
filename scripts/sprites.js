@@ -31,6 +31,8 @@ function Sprite(name)
 	this.setPoints=setPoints;
 	this.moveSprite=moveSprite;
 	this.setVector=setVector;
+	this.addVector=addVector;
+	this.addSpriteCentre=addSpriteCentre;
 	this.zeroPointers=zeroPointers;
 	this.saveCanvases=saveCanvases;
 	this.restoreCanvases=restoreCanvases;
@@ -126,27 +128,23 @@ function setVector()
 	if (this.usevec)
 	{
 		//position vector for sprite vector
-		vector.xs = parseInt($('vecdiv').style.left)+110+MINIVECT.xs;
-		vector.xe = parseInt($('vecdiv').style.left)+110+MINIVECT.xe;
-		vector.ys = parseInt($('vecdiv').style.top)+110+MINIVECT.ys;
-		vector.ye = parseInt($('vecdiv').style.top)+110+MINIVECT.ye;
-		var psi = arctan(vector.ye - vector.ys,vector.xe - vector.xs);
+		this.vector.xs = parseInt($('vecdiv').style.left)+110+MINIVECT.xs;alert([parseInt($('vecdiv').style.left),MINIVECT.xs]);
+		this.vector.xe = parseInt($('vecdiv').style.left)+110+MINIVECT.xe;alert([parseInt($('vecdiv').style.left),MINIVECT.xe]);
+		this.vector.ys = parseInt($('vecdiv').style.top)+110+MINIVECT.ys;alert([parseInt($('vecdiv').style.top),MINIVECT.ys]);
+		this.vector.ye = parseInt($('vecdiv').style.top)+110+MINIVECT.ye;alert([parseInt($('vecdiv').style.top),MINIVECT.ye]);
+		this.vector.psi = arctan(this.vector.ye - this.vector.ys,this.vector.xe - this.vector.xs);
 	}
 	else
 	{
-		vector.xs=parseInt($('spritecentre').style.left)+10;
-		vector.ys=parseInt($('spritecentre').style.top)+10;
-		var psi = 0;
+		this.vector.xs=parseInt($('spritecentre').style.left)+10;
+		this.vector.ys=parseInt($('spritecentre').style.top)+10;
+		this.vector.psi = 0;
 	}
-	this.vector.xs=vector.xs;
-	this.vector.xe=vector.xe;
-	this.vector.ys=vector.ys;
-	this.vector.ye=vector.ye;
-	this.vector.psi = psi;
+	alert(this.vector.xs+'|'+this.vector.xe+'|'+this.vector.ys+'|'+this.vector.ye+'|'+this.vector.psi)
 }
 
 function checksprite(spritename,showpathline)
-{
+{alert(["checksprite",spritename]);
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
@@ -161,7 +159,7 @@ function checksprite(spritename,showpathline)
 
 
 function savesprite(spritename)
-{
+{alert(["savesprite",spritename]);
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	sprite.setPoints();

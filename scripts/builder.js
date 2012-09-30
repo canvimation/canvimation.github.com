@@ -302,7 +302,7 @@ function buildSprite()
 	if($('spritevector').checked)
 	{
 		alert('Vector now available for positioning');
-		addvector();
+		sprite.addVector(SCRW/2,SCRH/2);
 	}
 	else
 	{
@@ -955,13 +955,17 @@ function spriteEdit(n)
 	sprite.restoreCanvases();
 	if (sprite.usevec)
 	{
-		$('vecdiv').style.visibility='visible';
+		sprite.addVector(0,0);
 	}
 	else
 	{
-		$('spritecentre').style.visibility='visible';
+		sprite.addSpriteCentre();
 	}
 	$("spritebuildbox").visibility="hidden";
+	CURRENT=sprite.shapes;
+	$("checksp").sprite=sprite.name;
+	$("fullchecksp").sprite=sprite.name;
+	$("savesp").sprite=sprite.name;
 	openStage('sprite');
 	$('editspritetitle').value=sprite.title;
 	$('editspritetime').value=sprite.ptime;
@@ -1009,12 +1013,12 @@ function editSprite(OKbutton)
 		if(sprite.usevec)
 		{
 			$('spritecentre').style.visibility='hidden';
-			$('vecdiv').style.visibility='visible';
+			sprite.addVector(0,0);
 		}
 		else
 		{
 			$('vecdiv').style.visibility='hidden';
-			$('spritecentre').style.visibility='visible';
+			sprite.addSpriteCentre();
 		}
 	}
 	OKbutton.style.visibility="hidden";
@@ -1081,20 +1085,20 @@ function copydrag(cursor)
 	$("dragdiv").style.left=(cursor.x)-1+"px";
 }
 
-function addvector()
+function addVector(a,d)
 {
-	$('vecdiv').style.left=500;
-	$('vecdiv').style.top=200;
-	$('vecrotate').style.left=210;
-	$('vecrotate').style.top=105;
-	vecphi=0;
-	vecanvdraw(0);
-	$('vecdiv').style.visibility='visible';
+		$('vecrotate').style.left=(105+105*Math.cos(this.vector.psi))+"px";
+		$('vecrotate').style.top=(105+105*Math.sin(this.vector.psi))+"px";
+		MINIVECT.xe=100*Math.cos(this.vector.psi);
+		MINIVECT.ye=100*Math.sin(this.vector.psi);		
+		$('vecdiv').style.left=(a+this.vector.xs -110-MINIVECT.xs)+"px";
+		$('vecdiv').style.top=(d+this.vector.ys -110-MINIVECT.ys)+"px";
+		vecanvdraw(this.vector.psi);
+		$('vecdiv').style.visibility='visible';
 }
 
 function vecanvdraw(phi)
 {
-	
 	vecanv.ctx.restore();
 	vecanv.ctx.save();
 	vecanv.ctx.clearRect(-220,-220,440,440);
@@ -1109,6 +1113,13 @@ function vecanvdraw(phi)
 	vecirc.ctx.beginPath();
 	vecirc.ctx.arc(0,0,5,0,2*Math.PI, false);
 	vecirc.ctx.stroke();
+}
+
+function addSpriteCentre()
+{
+	$('spritecentre').style.left=(this.vector.xs-10)+"px";
+	$('spritecentre').style.top=(this.vector.ys-10)+"px";
+	$('spritecentre').style.visibility='visible';
 }
 
 

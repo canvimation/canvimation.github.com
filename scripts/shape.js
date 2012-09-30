@@ -1015,7 +1015,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	}
 	else
 	{
-		var name="Subshape"+(NCOUNT++);
+		var name="SUBSH"+(NCOUNT++);
 	}
 	var copy=new Shape(name,shape.title,shape.open,shape.editable,shape.type,STORE);  		
 	copy.lineWidth  = shape.lineWidth ;

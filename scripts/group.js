@@ -17,9 +17,7 @@ function Group(COLLECTION,name,title,shape)   //Group object contains shapes and
 	this.height;
 	p=new Point(200,200);
    	this.centreOfRotation=p;
-   	this.phi=0;  //angle of rotation
-   	//this.expanded=false;
-	
+   	this.phi=0;  //angle of rotation	
 	
 	COLLECTION[this.name]=this;
 	
@@ -142,7 +140,7 @@ function copyGroup(group,offset,theatre,STORE,COLLECTION)
 	}
 	else
 	{
-		var name="group"+(NCOUNT++);
+		var name="SUBGP"+(NCOUNT++);
 	}
 	var groupcopy=new Group(COLLECTION,name,group.title);	
 	groupcopy.left=group.left+offset;
