@@ -400,7 +400,7 @@ function resettrack(trackfiletxt,type)
 
 function resetsprite(spritetxt)
 {
-	var sprites={}
+	var spriteobjs={}
 	var spritelist=spritetxt.split("#");
 	var curspritetxt=spritelist[0];
 	var cursprite=curspritetxt.split('~');
@@ -408,7 +408,7 @@ function resetsprite(spritetxt)
 	var traintxt=cursprite[1];
 	var spritetxt=cursprite[2];
 	var sprite=resetspriteparams(spritetxt);
-	sprites[sprite.name]=sprite;
+	spriteobjs[sprite.name]=sprite;
 	switch(sprite.engine)
 	{
 		case "scene":
@@ -427,10 +427,20 @@ function resetsprite(spritetxt)
 		spritetxt=cursprite[1];
 		sprite=resetspriteparams(spritetxt);
 		sprite.track=resettrack(tracktxt);
-		sprite.train=sprites[curname];
+		sprite.train=spriteobjs[curname];
 		curname=sprite.name;
 	}
+	for(var name in SPRITES )
+	{
+		alert(["before",name])
+	}
+	
 	SPRITES[sprite.name]=sprite;
+	for(var name in SPRITES )
+	{
+		alert(["after",name])
+	}
+	
 	writespritelist();
 	sprite.setPoints();
 	sprite.inTheatre($("spritestage"));
@@ -440,7 +450,6 @@ function resetspriteparams(spritetxt)
 {
 	var spriteparams=spritetxt.split("|");
 	var sprite=new Sprite("SUBSP"+(NCOUNT++));
-	SPRITES[sprite.name]=sprite;
 	sprite.title=spriteparams[1];
 	sprite.engine=spriteparams[2];
 	sprite.ptime=parseInt(spriteparams[3]);

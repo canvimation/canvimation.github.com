@@ -128,10 +128,10 @@ function setVector()
 	if (this.usevec)
 	{
 		//position vector for sprite vector
-		this.vector.xs = parseInt($('vecdiv').style.left)+110+MINIVECT.xs;alert([parseInt($('vecdiv').style.left),MINIVECT.xs]);
-		this.vector.xe = parseInt($('vecdiv').style.left)+110+MINIVECT.xe;alert([parseInt($('vecdiv').style.left),MINIVECT.xe]);
-		this.vector.ys = parseInt($('vecdiv').style.top)+110+MINIVECT.ys;alert([parseInt($('vecdiv').style.top),MINIVECT.ys]);
-		this.vector.ye = parseInt($('vecdiv').style.top)+110+MINIVECT.ye;alert([parseInt($('vecdiv').style.top),MINIVECT.ye]);
+		this.vector.xs = parseInt($('vecdiv').style.left)+110+MINIVECT.xs;
+		this.vector.xe = parseInt($('vecdiv').style.left)+110+MINIVECT.xe;
+		this.vector.ys = parseInt($('vecdiv').style.top)+110+MINIVECT.ys;
+		this.vector.ye = parseInt($('vecdiv').style.top)+110+MINIVECT.ye;
 		this.vector.psi = arctan(this.vector.ye - this.vector.ys,this.vector.xe - this.vector.xs);
 	}
 	else
@@ -140,11 +140,10 @@ function setVector()
 		this.vector.ys=parseInt($('spritecentre').style.top)+10;
 		this.vector.psi = 0;
 	}
-	alert(this.vector.xs+'|'+this.vector.xe+'|'+this.vector.ys+'|'+this.vector.ye+'|'+this.vector.psi)
 }
 
 function checksprite(spritename,showpathline)
-{alert(["checksprite",spritename]);
+{
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
@@ -159,7 +158,7 @@ function checksprite(spritename,showpathline)
 
 
 function savesprite(spritename)
-{alert(["savesprite",spritename]);
+{
 	var sprite=SPRITES[spritename];
 	sprite.setVector();
 	sprite.setPoints();

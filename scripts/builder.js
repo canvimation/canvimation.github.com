@@ -1043,7 +1043,7 @@ function filmDelete(n)
 	}
 }
 
-function filmEdit(n)  //edits the selected scene shapes
+function filmEdit(n)
 {
 	var el,flel,fbel;
 	var filmboard,filmlines;

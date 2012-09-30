@@ -19,6 +19,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * 
  * Sprite-->sprite@base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
  * sprite.train points to previous built sprite.
+ * 
+ * Film-->film@film parameters>run parameters%element parameters<run parameters%element parameters<.......<run parameters%element parameters
  */
 function ToText()
 {
@@ -31,7 +33,7 @@ function ToText()
 	for (var name in FILMS)
 	{
 		ttbh+=50;
-		filmhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+FILMS[name].name+'">'+FILMS[name].name+'<br>';
+		filmhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+FILMS[name].name+'">'+FILMS[name].title+'<br>';
 	}
 	if (filmhtml !='')
 	{
@@ -42,7 +44,7 @@ function ToText()
 	for (var name in SPRITES)
 	{
 		ttbh+=50;
-		spritehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SPRITES[name].name+'" >'+SPRITES[name].name+'<br>';
+		spritehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SPRITES[name].name+'" >'+SPRITES[name].title+'<br>';
 	}
 	if (spritehtml !='')
 	{
@@ -53,7 +55,7 @@ function ToText()
 	for (var name in SCENES)
 	{
 		ttbh+=50;
-		scenehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SCENES[name].name+'" >'+SCENES[name].name+'<br>';
+		scenehtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+SCENES[name].name+'" >'+SCENES[name].title+'<br>';
 	}
 	if (scenehtml !='')
 	{
@@ -64,7 +66,7 @@ function ToText()
 	for (var name in TWEENS)
 	{
 		ttbh+=50;
-		tweenhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TWEENS[name].name+'">'+TWEENS[name].name+'<br>';
+		tweenhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TWEENS[name].name+'">'+TWEENS[name].title+'<br>';
 	}
 	if (tweenhtml !='')
 	{
@@ -75,7 +77,7 @@ function ToText()
 	for (var name in TRACKS)
 	{
 		ttbh+=50;
-		trackhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TRACKS[name].name+'">'+TRACKS[name].name+'<br>';
+		trackhtml += '&nbsp;&nbsp;&nbsp;<input type="checkbox" id="cb'+TRACKS[name].name+'">'+TRACKS[name].title+'<br>';
 	}
 	if (trackhtml !='')
 	{
@@ -88,9 +90,9 @@ function ToText()
 	innerhtml+='<br>&nbsp;';
 	totextcontent.innerHTML=innerhtml;
 	if(ttbh>375) {ttbh=375};
-	//$("totextbox").style.height=ttbh+"px";
+	$("totextbox").style.height=ttbh+"px";
 	$("totextcontent").style.height=(parseInt($("totextbox").style.height)-25)+"px";
-	//$("totextbox").style.clip="rect(auto, auto, auto, auto)";
+	$("totextbox").style.clip="rect(auto, auto, auto, auto)";
 	$("totextcontent").style.overflow="auto";
 }
 
@@ -243,41 +245,45 @@ function TrackToText()
 	return params;
 }
 
-function TweenToText(s)
+function TweenToText()
 {
 	
 }
 
-function filmtotext(f)
+function FilmToText()
 {
+	var flel;
 	var params='';
-	for (var i=0; i<f.list.length; i++)
+	params +=this.name+'|'+this.title+'>';
+	for (var name in this.elements)
 	{
-		for (var j=0; j<9; j++)
+		flel=this.elements[name];
+		params+=flel.name+"|";
+		params+=flel.title+"|";
+		params+=flel.id+"|";
+		params+=flel.source+"|";
+		params+=flel.layer+"|";
+		params+=flel.A+"|";
+		params+=flel.D+"|";
+		params+=flel.xOffset+"|";
+		params+=flel.yOffset+"";
+		switch (flel.source)
 		{
-			params +=f.list[i][j]+':';
-		}
-		if (f.list[i][9])
-		{
-			params +='1!';
-		}
-		else
-		{
-			params +='-1!';
-		}
-		switch (film.list[i][0])
-		{
-			case 'SC':
-				params +=scenetotext(scenes[film.list[i][1]]);
-				params=params.slice(0,-1);
+			case "scene":
+			params+="%";
+			params+=flel.elm.SceneToText();
 			break
-			case 'SP':
-				params +=spritetotext(sprites[film.list[i][1]]);
-				params=params.slice(0,-1);
+			case "sprite":
+			params+="|";
+				params+=flel.R+"|";
+				params+=flel.S+"|";
+				params+=flel.maxruntime+"%";
+				params+=flel.elm.SpriteToText();
 			break
 		}
-		params +='@';
+		params +='<';
 	}
+	params=params.slice(0,-1);
 	return params;
 }
 
@@ -449,11 +455,11 @@ function exportElements()
 	{
 		if($('cb'+FILMS[name].name).checked)
 		{
-			var flmtxt='film^';
+			var flmtxt='film@';
 			flmtxt+=FILMS[name].FilmToText();
 			var re = /[\s\r]+/g;
 	 		flmtxt=flmtxt.replace(re,'`');
-			var newwindow=window.open('','Film - '+FILMS[name].name);
+			var newwindow=window.open('FILMS[name].name','Film - '+FILMS[name].name);
  			newwindow.document.write(flmtxt);
 			newwindow.document.close();
 		}
