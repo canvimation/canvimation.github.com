@@ -444,6 +444,7 @@ function resetsprite(spritetxt)
 	writespritelist();
 	sprite.setPoints();
 	sprite.inTheatre($("spritestage"));
+	return sprite;
 }
 
 function resetspriteparams(spritetxt)
@@ -462,69 +463,44 @@ function resetspriteparams(spritetxt)
 	return sprite;
 }
 
-function resetfilm(f)
+function resetfilm(filmtxt)
 {
-	var fparts;
-	var fprops;
-	var tmp;
-	var flms=f.split('@');
-	var flmname=flms[0];
-	if (checkname(flmname,'film')) 
+	var eltxt,elparamstxt,runtxt,fleltxt;
+	var flel;
+	var filmparamstxt=filmtxt.split(">");
+	var filmparams=filmparamstxt[0].split("|");
+	var film=new Film(filmparams[0]);
+	FILMS[film.name]=film;
+	film.title=filmparams[1];
+	var flelparamstxt=filmparams[1].split("<");
+	while(flelparamstxt.length>0)
 	{
-		var ans=confirm('There is already a film with the title '+flmname+'.\nDo you want to overwrite?');
-		if (!ans) 
+		eltxt=flelparamstxt.shift();
+		elparamstxt=eltxt.split("%");
+		runtxt=elparamstxt[0];
+		fleltxt=elparamstxt[1];
+		runparams=runtxt.split("|");
+		flel={};
+		flel.name=runtxt[0];
+		flel.title=runtxt[1];
+		flel.id=runtxt[2];
+		flel.source=runtxt[3];
+		flel.layer=runtxt[4];
+		flel.A=runtxt[5];
+		flel.D=runtxt[6];
+		flel.xOffset=runtxt[7];
+		flel.yOffset=runtxt[8];
+		switch(flel.source)
 		{
-			return null;
-		}
-		else
-		{
-			film=films[flmname];
-		}
-	}
-	else
-	{
-		film=new cfilm(flmname);
-		films[film.name]=film;
-		film.list=[];
-		$('filmhold').innerHTML +='<div id="film|'+film.name+'"><img src="assets/edit.png" style="cursor:pointer" alt="edit" title="edit" onclick="aniedit(this)">&nbsp;&nbsp;&nbsp;<span onclick="usename(this.innerHTML,'+squote+'film'+squote+')" style="cursor:pointer">'+film.name+'</span></div><br>';
-	}
-	for (var i=1;i<flms.length; i++)
-	{
-		fparts=flms[i].split('!');
-		fprops=fparts[0].split(':');
-		fprops[2]=parseInt(fprops[2]);
-		fprops[4]=parseInt(fprops[4]);
-		fprops[6]=parseInt(fprops[6]);
-		fprops[7]=parseInt(fprops[7]);
-		fprops[8]=parseInt(fprops[8]);
-		tmp=parseInt(fprops[3])
-		if (!isNaN(tmp))
-		{
-			fprops[3]=tmp;
-		}
-		tmp=parseInt(fprops[5])
-		if (!isNaN(tmp))
-		{
-			fprops[5]=tmp;
-		}
-		if (fprops[9]=='1')
-		{
-			fprops[9]=true;
-		}
-		else
-		{
-			fprops[9]=false;
-		}
-		film.list.push(fprops);
-		switch (fprops[0])
-		{
-			case 'SC':
-				var scs=fparts[1].split('*');
-				redoscene(fprops[1],scs);
+			case "scene":
+				flel.elm=resetscene(fleltxt);
 			break
-			case 'SP':
-				resetsprite(fparts[1]);
+			case "sprite":
+				flel.elm=resetsprite(fleltxt)
+				flel.R=runtxt[9];
+				flel.S=runtxt[10];
+				flel.maxruntime=runtxt[11];
 			break
-		}
+		}		
 	}
 }

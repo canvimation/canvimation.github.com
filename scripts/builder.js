@@ -423,7 +423,7 @@ function writescenelist()
 											el.source="scene";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -516,7 +516,7 @@ function writespritelist()
 											el.source="sprite";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -563,7 +563,7 @@ function writefilmlist()
 											el.source="film";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el);
+											addToFilmBoard(el,false);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -1061,7 +1061,7 @@ function filmEdit(n)
 	for(var i=0;i<film.list.length;i++)
 	{
 		flel=film.elements[film.list[i][0]];
-		addToFilmBoard(flel);
+		addToFilmBoard(flel,true);
 		$("Acin").value=flel.A
 		setA($("Acin"));
 		$("Dcin").value=flel.D

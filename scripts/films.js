@@ -14,12 +14,27 @@ function Film(name)
 	this.play=play;
 }
 
-function addToFilmBoard(el)
+function addToFilmBoard(el,editing)
 {
 	var filmboard=$("filmbuildboard");
 	var filmlines=$("filmbuildlines");
-	FILMBOARD["fl"+ELCOUNT]={};
-	flel=FILMBOARD["fl"+ELCOUNT];
+	if(!editing)
+	{
+		flel={};
+		flel.id="fl"+(ELCOUNT++);
+		flel.name=el.name;
+		flel.title=el.title;
+		flel.source=el.source;
+	}
+	else
+	{
+		flel=el;
+		for(var props in flel)
+		{
+			alert([props,flel.props])
+		}
+	}
+	FILMBOARD[flel.id]=flel;
 	flel.next=FLELHEAD;
 	flel.prev=FLELHEAD.prev;
 	FLELHEAD.prev.next=flel;
@@ -31,10 +46,7 @@ function addToFilmBoard(el)
 	}
 	$("timeline").style.top=((flen+2)*25)+"px";
 	FLELHEIGHT=(flen+2)*25+75;
-	flel.id="fl"+ELCOUNT;
-	flel.name=el.name;
-	flel.title=el.title;
-	flel.source=el.source;
+	
 	flel.layer=ELCOUNT;
 	flel.A=0;
 	flel.D="Never";
@@ -50,8 +62,8 @@ function addToFilmBoard(el)
 	filmlines.appendChild(flel.seen);
 	flel.text=document.createElement("div");
 	flel.text.innerHTML=el.title;
-	flel.text.id="fl"+(ELCOUNT++);
-	flel.text.nid=flel.text.id
+	flel.text.id=flel.id;
+	flel.text.nid=flel.id; //name id as text and label 
 	flel.text.style.textAlign="center";
 	flel.text.style.fontSize="12pt";
 	flel.text.style.height="20px";
@@ -65,7 +77,7 @@ function addToFilmBoard(el)
 	flel.text.onclick =function() {setflel(this)};
 	flel.label=document.createElement("div");
 	flel.label.innerHTML=el.title;
-	flel.label.nid=flel.text.id;
+	flel.label.nid=flel.id;
 	flel.label.style.labelAlign="center";
 	flel.label.style.fontSize="12pt";
 	flel.label.style.height="20px";
@@ -79,7 +91,7 @@ function addToFilmBoard(el)
 	$("flellist").appendChild(flel.label);
 	$("currentel").innerHTML=" &nbsp;Current Element: "+el.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
-	$("currentel").el=flel.text.id;
+	$("currentel").el=flel.id;
 	$("Ain").value=0;
 	$("Ain").onchange=function() {setA(this)};
 	$("Ain").style.left=(parseInt(flel.seen.style.left)-48)+"px";
@@ -104,7 +116,15 @@ function addToFilmBoard(el)
 		case "scene":
 			$("Rin").style.visibility="hidden";
 			$("Sin").style.visibility="hidden";
-			flel.elm=SCENES[flel.name].copyscene("div"+flel.id);
+			if(editing)
+			{alert(flel.elm.name)
+				flel.elm.addToStage($("div"+flel.id+"stage"));
+			}
+			else
+			{
+				flel.elm=SCENES[el.name].copyscene("div"+flel.id);
+				flel.name=flel.elm.name;
+			}
 			flel.elm.drawscene();
 		break
 		case "sprite":
@@ -112,13 +132,22 @@ function addToFilmBoard(el)
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
 			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
-			flel.elm=SPRITES[flel.name].copysprite("div"+flel.id);
+			if(editing)
+			{
+				flel.elm.inTheatre($("div"+flel.id+"stage"));
+				flel.name=flel.elm.name;
+			}
+			else
+			{
+				flel.elm=SPRITES[el.name].copysprite("div"+flel.id);
+			}
 			flel.elm.zeroPointers();
 			flel.elm.saveCanvases();
 			flel.elm.transform();
 			flel.elm.drawalltracks(true);
 			flel.elm.drawsprite();
-			if(isNaN(sprite.track.repeats))
+			 			
+			if(isNaN(flel.elm.track.repeats))
 			{
 				flel.maxruntime="c"; //continuous
 				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
@@ -126,8 +155,8 @@ function addToFilmBoard(el)
 			}
 			else
 			{
-				flel.maxruntime=sprite.ptime*(sprite.track.repeats+1);
-				if(sprite.track.yoyo) (flel.maxruntime*=2);
+				flel.maxruntime=flel.elm.ptime*(flel.elm.track.repeats+1);
+				if(flel.elm.track.yoyo) (flel.maxruntime*=2);
 				flel.run.style.width=flel.maxruntime+"px";	
 				$("Scin").value=flel.maxruntime;
 				$("Sin").style.left=(flel.maxruntime+57)+"px";		
@@ -500,7 +529,7 @@ function setflel(el)
 	flel.seen.style.zIndex=++FLELINDX;
 	$("currentel").innerHTML=" &nbsp;Current Element: "+flel.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
-	$("currentel").el=flel.text.id;
+	$("currentel").el=flel.id;
 	$("Ain").value=flel.A;
 	$("Acin").value=flel.A;
 	$("Ain").style.left=(parseInt(flel.seen.style.left)-48)+"px";;
@@ -660,7 +689,7 @@ function fleldel()
 	flel.next.prev=flel.prev;
 	next.text.style.backgroundColor="yellow";
 	next.label.style.backgroundColor="yellow";
-	$("currentel").el=next.text.id;
+	$("currentel").el=next.id;
 	$("filmtitle").value=next.title;
 	$("Ain").value=next.A;
 	$("Acin").value=next.A;

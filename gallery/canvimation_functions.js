@@ -161,7 +161,7 @@ function drawline(canv)
 		canv.ctx.lineTo(canv.path[i][1],canv.path[i][2])
 	   }
 	   else if (canv.path[i][0]=="M")
-	   {alert([canv.path[i][1],canv.path[i][2]]);
+	   {
 		canv.ctx.moveTo(canv.path[i][1],canv.path[i][2])
 	   }
 	   else if (canv.path[i][0]=="B")
