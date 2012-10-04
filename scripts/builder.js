@@ -37,8 +37,8 @@ function flbb()
 	$('filmtitle').value="Film"+(FMCOUNT++);
 	$("filmbuildbox").style.zIndex=ZBOX++;
 	$("filmbuildbox").style.visibility="visible";
-	$("filmbuildboard").innerHTML="<input id='Ain' type='text' value='' size='4' /><input id='Din'  type='text' value='' size='4' />";
-	$("filmbuildboard").innerHTML+="<input id='Rin' type='text' value='' size='4' /><input id='Sin'  type='text' value='' size='4' />";
+	$("filmbuildboard").innerHTML="<input id='Ain' onchange='setA(this)' type='text' value='' size='4' /><input id='Din' onchange='setD(this)' type='text' value='' size='4' />";
+	$("filmbuildboard").innerHTML+="<input id='Rin' onchange='setR(this)' type='text' value='' size='4' /><input id='Sin'  type='text' onchange='setS(this)' value='' size='4' />";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
 	$("flellist").innerHTML="";
 	$("Ain").style.visibility="hidden";
@@ -346,34 +346,16 @@ function buildFilm(child)
 		FILMS[film.name]=film;
 	}
 	film.list=[];
+	film.elements={};
 	for(var name in FILMBOARD)
 	{
-		fbel=FILMBOARD[name];
-		fbel.elm={};
-		film.elements[name]={};
-		flel=film.elements[name];
-		flel.id=fbel.id;
-		flel.name=fbel.name;
-		flel.title=fbel.title;
-		flel.source=fbel.source;
-		flel.layer=fbel.layer;
-		flel.A=fbel.A;
-		flel.D=fbel.D;
-		flel.xOffset=parseInt($(fbel.DD.id).style.left);
-		flel.yOffset=parseInt($(fbel.DD.id).style.top);
-		fbel.DD.unreg();
+		flel=FILMBOARD[name];
+		film.elements[name]=flel;
+		flel.xOffset=parseInt($(flel.DD.id).style.left);
+		flel.yOffset=parseInt($(flel.DD.id).style.top);
+		flel.DD.unreg();
 		flay=[name,flel.layer];
 		film.list.push(flay);
-		switch (flel.source)
-		{
-			case "scene":
-			break
-			case "sprite":
-				flel.R=fbel.R;
-				flel.S=fbel.S;
-				flel.maxruntime=fbel.maxruntime;
-			break
-		}
 	}
 	film.list.sort(zindp);
 	FILMBOARD={};
@@ -423,7 +405,7 @@ function writescenelist()
 											el.source="scene";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,false);
+											addToFilm(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -516,7 +498,7 @@ function writespritelist()
 											el.source="sprite";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,false);
+											addToFilm(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -563,7 +545,7 @@ function writefilmlist()
 											el.source="film";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
-											addToFilmBoard(el,false);
+											addToFilm(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
@@ -1046,7 +1028,8 @@ function filmDelete(n)
 function filmEdit(n)
 {
 	var el,flel,fbel;
-	var filmboard,filmlines;
+	var filmboard=$("filmbuildboard");
+	var filmlines=$("filmbuildlines");
 	var flay=[];
 	var idarray=n.parentNode.id.split(",");
 	var topfilm=idarray[0]
@@ -1058,23 +1041,14 @@ function filmEdit(n)
 	flbb();
 	FMCOUNT--;
 	$('filmtitle').value=film.title;
+	ELCOUNT=film.list.length;
+	$("timeline").style.top=((ELCOUNT+1)*25)+"px";
+	FLELHEIGHT=(ELCOUNT+1)*25+75;
 	for(var i=0;i<film.list.length;i++)
 	{
 		flel=film.elements[film.list[i][0]];
-		addToFilmBoard(flel,true);
-		$("Acin").value=flel.A
-		setA($("Acin"));
-		$("Dcin").value=flel.D
-		setD($("Dcin"));
-		switch(flel.source)
-		{
-			case "sprite":
-				$("Rcin").value=flel.R
-				setR($("Rcin"));
-				$("Scin").value=flel.S
-				setS($("Scin"));
-			break
-		}
+		flel.addToBoard();
+		$("filmstage").appendChild(flel.eldiv);
 	}
 }
 

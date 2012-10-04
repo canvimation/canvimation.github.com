@@ -121,9 +121,9 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 			case 'scene':
 				newwindow.document.writeln ('');
 				newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Scene---Base is '+flel.title+'-------------------------');
-				for (var name in SCENES[flel.name].shapes)
+				for (var name in flel.elm.shapes)
 				{
-					shape=SCENES[flel.name].shapes[name];
+					shape=flel.elm.shapes[name];
 					shape.shapeHTML(flel.id);
 					newwindow.document.writeln(SPACES.substr(0,12)+'shape.draw();');
 					newwindow.document.writeln ('');
@@ -136,7 +136,7 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 			case 'sprite':
 				newwindow.document.writeln(SPACES.substr(0,12)+'flel.R="'+flel.R+'",');
 				newwindow.document.writeln(SPACES.substr(0,12)+'flel.S="'+flel.S+'",');
-				sprite=SPRITES[flel.name];
+				sprite=flel.elm;
 				sprite.spriteHTML(flel.id)
 				newwindow.document.writeln(SPACES.substr(0,12)+'flel.elm=sprite;');
 				newwindow.document.writeln(SPACES.substr(0,12)+'sprite.setPoints();');

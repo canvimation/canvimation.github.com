@@ -1180,7 +1180,8 @@ inner img {
 }
 
 </style>
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.9.0/build/dragdrop/dragdrop-min.js"></script> 
+<script type="text/javascript" src="scripts/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="scripts/dragdrop-min.js"></script> 
 <script type="text/javascript" src="scripts/getElementsByClassName-1.0.1.js" ></script>
 <script type="text/javascript" src = "scripts/mark.js" ></script>
 <script type="text/javascript" src = "scripts/shape.js" ></script>
@@ -2842,7 +2843,7 @@ function main()
 	
 	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> 
 		<input type="button" value=" Save " onclick="buildFilm(this)" />
-		<input type="button" value=" Cancel " onclick="cancelFilmBuild(this);$("menushape").style.visibility="visible"" />
+		<input type="button" value=" Cancel " onclick='cancelFilmBuild(this);$("menushape").style.visibility="visible"' />
 	</div>
 	<div id="currentel" class="current"> &nbsp;Current Element:</div>
 	<div class="sclbar"></div>		
