@@ -323,7 +323,7 @@ function handleFileSelect(evt)
 		 case 'sprite':
 		 	try
 			{
-				resetsprite(t[1]);
+				resetsprite(t[1],"baseSprite");
 			}
 			catch(e)
 			{
@@ -391,6 +391,10 @@ function resettrack(trackfiletxt,type)
 	if(type=="basetrack") {TRACKS[track.name]=track};
 	track.title=trackparams[1];
 	track.repeats=parseInt(trackparams[2]);
+	if(isNaN(track.repeats))
+	{
+		track.repeats="c";
+	}
 	track.visible=trackparams[3]=="1";
 	track.yoyo=trackparams[4]=="1";
 	if(type=="basetrack") {writetracklist()};
@@ -398,7 +402,7 @@ function resettrack(trackfiletxt,type)
 	return track;
 }
 
-function resetsprite(spritetxt)
+function resetsprite(spritetxt,type)
 {
 	var spriteobjs={}
 	var spritelist=spritetxt.split("#");
@@ -430,18 +434,11 @@ function resetsprite(spritetxt)
 		sprite.train=spriteobjs[curname];
 		curname=sprite.name;
 	}
-	for(var name in SPRITES )
+	if(type=="baseSprite")
 	{
-		alert(["before",name])
+		SPRITES[sprite.name]=sprite;
+		writespritelist();
 	}
-	
-	SPRITES[sprite.name]=sprite;
-	for(var name in SPRITES )
-	{
-		alert(["after",name])
-	}
-	
-	writespritelist();
 	sprite.setPoints();
 	sprite.inTheatre($("spritestage"));
 	return sprite;
@@ -465,14 +462,20 @@ function resetspriteparams(spritetxt)
 
 function resetfilm(filmtxt)
 {
+	//flbb(false);
+	
 	var eltxt,elparamstxt,runtxt,fleltxt;
+	var width;
 	var flel;
 	var filmparamstxt=filmtxt.split(">");
 	var filmparams=filmparamstxt[0].split("|");
 	var film=new Film(filmparams[0]);
 	FILMS[film.name]=film;
 	film.title=filmparams[1];
-	var flelparamstxt=filmparams[1].split("<");
+	$('filmtitle').value=film.title;
+	writefilmlist();
+	var flelparamstxt=filmparamstxt[1].split("<");
+	$("timeline").style.top=((flelparamstxt.length+2)*25)+"px";
 	while(flelparamstxt.length>0)
 	{
 		eltxt=flelparamstxt.shift();
@@ -480,27 +483,101 @@ function resetfilm(filmtxt)
 		runtxt=elparamstxt[0];
 		fleltxt=elparamstxt[1];
 		runparams=runtxt.split("|");
-		flel={};
-		flel.name=runtxt[0];
-		flel.title=runtxt[1];
-		flel.id=runtxt[2];
-		flel.source=runtxt[3];
-		flel.layer=runtxt[4];
-		flel.A=runtxt[5];
-		flel.D=runtxt[6];
-		flel.xOffset=runtxt[7];
-		flel.yOffset=runtxt[8];
+		flel=new FilmElement(0);
+		flel.name=runparams[0];
+		flel.title=runparams[1];
+		width=10*flel.title.length;
+		flel.id=runparams[2];
+		flel.source=runparams[3];
+		flel.layer=runparams[4];
+		flel.A=parseInt(runparams[5]);
+		flel.D=parseFloat(runparams[6])
+		if(isNaN(flel.D))
+		{
+			flel.D="Never";
+		}
+		flel.xOffset=parseInt(runparams[7]);
+		flel.yOffset=parseInt(runparams[8]);
+		
+		flel.eldiv=document.createElement("div");
+		flel.eldiv.id="div"+flel.id+"stage";
+		flel.eldiv.style.top="0px";
+		flel.eldiv.style.left="0px";
+		flel.eldiv.style.width=SCRW;
+		flel.eldiv.style.height=SCRH;
+		flel.eldiv.style.zIndex=flel.layer;
+		$("filmstage").appendChild(flel.eldiv);
+		
 		switch(flel.source)
 		{
 			case "scene":
 				flel.elm=resetscene(fleltxt);
+				flel.elm.addToStage($("div"+flel.id+"stage"));
 			break
 			case "sprite":
-				flel.elm=resetsprite(fleltxt)
-				flel.R=runtxt[9];
-				flel.S=runtxt[10];
-				flel.maxruntime=runtxt[11];
+				flel.elm=resetsprite(fleltxt,"film");
+				flel.elm.inTheatre($("div"+flel.id+"stage"));
+				flel.R=parseInt(runparams[9]);
+				flel.S=parseFloat(runparams[10]);
+				if(isNaN(flel.S))
+				{
+					flel.S="Never";
+				}
+				flel.maxruntime=parseInt(runparams[11]);
+				flel.run=document.createElement("div");
+				
+				flel.run.style.borderTop="2px solid blue";
+				flel.run.style.borderLeft="2px solid blue";
+				flel.run.style.borderRight="2px solid blue";
+				
 			break
-		}		
+		}
+		$("timeline").style.top=((flel.layer+2)*25)+"px";
+		FLELHEIGHT=(flel.layer+2)*25+75;
+		flel.seen=document.createElement("div");
+		flel.seen.style.borderTop="2px solid black";
+		flel.seen.style.borderLeft="2px solid black";
+		flel.seen.style.borderRight="2px solid black";
+		
+		flel.text=document.createElement("div");
+		flel.text.innerHTML=flel.title;
+		flel.text.id=flel.id;
+		flel.text.nid=flel.id; //name id as text and label 
+		flel.text.style.textAlign="center";
+		flel.text.style.fontSize="12pt";
+		flel.text.style.height="20px";
+		flel.text.style.top=(flel.layer*25+5)+"px";
+		flel.text.style.backgroundColor="white";
+		flel.text.style.width=width+"px";
+		flel.text.style.border="1px solid black";
+		flel.text.style.cursor="pointer";
+		flel.text.onclick =function() {setflel(this)};
+	
+		flel.label=document.createElement("div");
+		flel.label.innerHTML=flel.title;
+		flel.label.nid=flel.id;
+		flel.label.style.labelAlign="center";
+		flel.label.style.fontSize="12pt";
+		flel.label.style.height="20px";
+		flel.label.style.left="5px";
+		flel.label.style.top=(flel.layer*25+5)+"px";
+		flel.label.style.backgroundColor="white";
+		flel.label.style.width="90px";
+		flel.label.style.border="1px solid black";
+		flel.label.style.cursor="pointer";
+		flel.label.onclick =function() {setflel(this)};
+	
+		film.elements[flel.id]=flel;
+		//flel.addToBoard();		
 	}
+	film.list=[];
+	for(var name in film.elements)
+	{
+		flel=film.elements[name];
+		flay=[name,flel.layer];
+		film.list.push(flay);
+	}
+	film.list.sort(zindp);
+	ELCOUNT=film.list.length;
+	
 }

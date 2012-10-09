@@ -34,6 +34,7 @@ function Sprite(name)
 	this.addVector=addVector;
 	this.addSpriteCentre=addSpriteCentre;
 	this.zeroPointers=zeroPointers;
+	this.clearTracks=clearTracks;
 	this.saveCanvases=saveCanvases;
 	this.restoreCanvases=restoreCanvases;
 	this.transform=transform;
@@ -153,6 +154,7 @@ function checksprite(spritename,showpathline)
 	$('savesp').style.visibility="hidden";
 	$('checkdone').style.visibility="visible";
 	sprite.setPoints();
+	STOPCHECKING=false;
 	sprite.followPath(showpathline);
 }
 
@@ -177,7 +179,6 @@ function followPath(showpathline)
 	this.inTheatre($("spritestage"));
 	this.saveCanvases();
 	this.track.drawtrack(showpathline);
-	//this.spriteTranslate(200,300);
   	this.moveSprite(showpathline);
 }
 
@@ -317,6 +318,16 @@ function zeroPointers()
 	if (this.engine!='scene')
 	{
 		this.train.zeroPointers();
+	}
+}
+
+function clearTracks()
+{
+	var shape=this.track.getShape();
+	shape.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
+	if (this.engine!='scene')
+	{
+		this.train.clearTracks();
 	}
 }
 

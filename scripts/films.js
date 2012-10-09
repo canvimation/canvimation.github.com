@@ -12,6 +12,7 @@ function Film(name)
 	
 	//methods
 	this.play=play;
+	this.FilmToText=FilmToText;
 }
 
 function FilmElement(n)
@@ -39,7 +40,7 @@ function addToFilm(el)
 	$("timeline").style.top=((flel.layer+2)*25)+"px";
 	FLELHEIGHT=(flel.layer+2)*25+75;
 	
-	flel.width = 10*el.title.length; //width for flel.text
+	width = 10*el.title.length; //width for flel.text
 	
 	flel.seen=document.createElement("div");
 	flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
@@ -60,7 +61,7 @@ function addToFilm(el)
 	flel.text.style.left="60px";
 	flel.text.style.top=(FLELTOP-10)+"px";
 	flel.text.style.backgroundColor="white";
-	flel.text.style.width=flel.width+"px";
+	flel.text.style.width=width+"px";
 	flel.text.style.border="1px solid black";
 	flel.text.style.cursor="pointer";
 	flel.text.onclick =function() {setflel(this)};
@@ -74,7 +75,7 @@ function addToFilm(el)
 	flel.label.style.left="5px";
 	flel.label.style.top=(FLELTOP-10)+"px";
 	flel.label.style.backgroundColor="white";
-	flel.label.style.width=flel.width+"px";
+	flel.label.style.width="90px";
 	flel.label.style.border="1px solid black";
 	flel.label.style.cursor="pointer";
 	flel.label.onclick =function() {setflel(this)};
@@ -97,7 +98,8 @@ function addToFilm(el)
 		case "sprite":
 			flel.elm=SPRITES[el.name].copysprite("div"+flel.id);
 			flel.name=flel.elm.name;
-			flel.R=0;flel.run=document.createElement("div");
+			flel.R=0;
+			flel.run=document.createElement("div");
 			flel.run.style.left="55px";
 			flel.run.style.top=(FLELTOP+5)+"px";
 			flel.run.style.borderTop="2px solid blue";
@@ -137,6 +139,20 @@ function addToBoard()
 	$("currentel").innerHTML=" &nbsp;Current Element: "+this.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
 	$("currentel").el=this.id;
+	
+	this.seen.style.left=(55+this.A)+"px";;
+	this.seen.style.top=(this.layer*25+15)+"px";
+	this.seen.style.height=(parseInt($("timeline").style.top)-parseInt(this.seen.style.top))+"px";
+	this.seen.style.left=(55+this.A)+"px";
+	if(isNaN(this.D))
+	{
+		this.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+	}
+	else
+	{
+		this.seen.style.width=(this.D-this.A)+"px";
+	}
+	
 	$("Ain").value=this.A;
 	$("Acin").value=this.A;
 	$("Ain").style.left=(parseInt(this.seen.style.left)-48)+"px";
@@ -148,6 +164,8 @@ function addToBoard()
 	$("Ain").style.visibility="inherit";
 	$("Din").style.visibility="inherit";
 	
+	this.text.style.left=(parseInt(this.seen.style.left)+5)+"px";
+	
 	switch (this.source)
 	{
 		case "scene":
@@ -158,6 +176,26 @@ function addToBoard()
 		case "sprite":
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
+			
+			this.run.style.left=(55+this.R)+"px";
+			this.run.style.top=(this.layer*25+20)+"px";
+			this.run.style.height=(parseInt($("timeline").style.top)-parseInt(this.run.style.top))+"px";
+			if(isNaN(this.S))
+			{
+				this.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+			}
+			else
+			{
+				this.run.style.width=(this.S-this.R)+"px";
+			}
+			
+			$("Rin").style.left=(parseInt(this.run.style.left)-48)+"px";
+			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			
+			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			$("Rin").style.visibility="inherit";
+			$("Sin").style.visibility="inherit";
+			
 			$("Rin").value=this.R;
 			$("Rcin").value=this.R;
 			$("Sin").value=this.S;
@@ -171,17 +209,11 @@ function addToBoard()
 			{	
 				$("Sin").style.left=(this.maxruntime+57)+"px";		
 			}
-
 			filmlines.appendChild(this.run);
-			$("Rin").style.left=(parseInt(this.run.style.left)-48)+"px";
-			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			
-			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			$("Rin").style.visibility="inherit";
-			$("Sin").style.visibility="inherit";
 			
 			this.elm.zeroPointers();
 			this.elm.saveCanvases();
+			this.elm.track.drawtrack(true);
 			this.elm.transform();
 			this.elm.drawalltracks(true);
 			this.elm.drawsprite();
@@ -408,7 +440,7 @@ function setR(inp)
 	}
 	flel.R=n;
 	flel.run.style.left=(55+n)+"px";
-	flel.text.style.left=(65+n)+"px";
+	//flel.text.style.left=(65+n)+"px";
 	$("Rin").style.left=(parseInt(flel.run.style.left)-48)+"px";
 	if(isNaN(flel.S))
 	{
@@ -822,6 +854,7 @@ function filmPlay(el)
 			case "sprite":
 			 	STOPCHECKING=false;
 			 	flel.elm.zeroPointers();
+			 	flel.elm.clearTracks();
 			 	flel.elm.saveCanvases();
 			 	flel.elm.track.drawtrack(false);
 				flel.elm.transform();
@@ -898,17 +931,17 @@ function play(t)
 					}
 				}
 			}
-		}
-		switch (flel.source)
-		{
-			case "sprite":
-				if(t>=flel.R*1000 && t<stoprun*1000)
-				{
-					flel.elm.transform();
-					flel.elm.drawalltracks(true);
-					flel.elm.drawsprite();
-				}
-			break
+			switch (flel.source)
+			{
+				case "sprite":
+					if(t>=flel.R*1000 && t<stoprun*1000)
+					{
+						flel.elm.transform();
+						flel.elm.drawalltracks(false);
+						flel.elm.drawsprite();
+					}
+				break
+			}
 		}
 		var film=this;
 	  	var runthis=setTimeout(function() {film.play(t+50)},50);

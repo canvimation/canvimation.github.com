@@ -28,13 +28,11 @@ function updialogue(img,content)
 		else
 		{
 			holder.style.height=gap+"px";
-			//box.style.visibility="hidden";
 		}
 	}
 	
 	function open()
-	{
-		//box.style.visibility="visible";
+	{;
 		if (parseInt(holder.style.height)<holder.height)
 		{
 			box.style.top=(parseInt(box.style.top)+10)+"px";

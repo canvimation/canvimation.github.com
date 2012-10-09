@@ -32,9 +32,12 @@ function spbb()
 	$("trackdrop").innerHTML="";
 }
 
-function flbb()
+function flbb(newone)
 {
-	$('filmtitle').value="Film"+(FMCOUNT++);
+	if(newone)
+	{
+		$('filmtitle').value="Film"+(FMCOUNT++);
+	}
 	$("filmbuildbox").style.zIndex=ZBOX++;
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="<input id='Ain' onchange='setA(this)' type='text' value='' size='4' /><input id='Din' onchange='setD(this)' type='text' value='' size='4' />";
@@ -1038,7 +1041,7 @@ function filmEdit(n)
 	{
 		var film=FILMS[name];
 	}
-	flbb();
+	flbb(false);
 	FMCOUNT--;
 	$('filmtitle').value=film.title;
 	ELCOUNT=film.list.length;

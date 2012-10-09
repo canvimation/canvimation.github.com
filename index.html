@@ -2704,7 +2704,7 @@ function main()
 		<div id="innerfl" class="inner" path=""></div>
 	</div>
 	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="flbb()"><span class="buildhead">Build New</span></div>	
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="flbb(true)"><span class="buildhead">Build New</span></div>	
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
@@ -2843,14 +2843,14 @@ function main()
 	
 	<div class="filmline"><label for="filmtitle"> &nbsp;Title</label> <input class="title" type="text" name="filmtitle" id="filmtitle" size=15 /> 
 		<input type="button" value=" Save " onclick="buildFilm(this)" />
-		<input type="button" value=" Cancel " onclick='cancelFilmBuild(this);$("menushape").style.visibility="visible"' />
+		<input type="button" value=" Cancel " onclick='cancelFilmBuild(this);$("menushape").style.visibility="inherit"' />
 	</div>
 	<div id="currentel" class="current"> &nbsp;Current Element:</div>
 	<div class="sclbar"></div>		
 	<div class="scrbar"></div>
 	<div class="bbar"></div>
 	<div id='filmbuildhead' class='head'>&nbsp; Build A Film
-		<img alt="" src='assets/x.png' onclick='cancelFilmBuild(this);$("menushape").style.visibility="visible"'/>
+		<img alt="" src='assets/x.png' onclick='cancelFilmBuild(this);$("menushape").style.visibility="inherit"'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"filmbuildcontent")'/>
 	</div>	
 </div>

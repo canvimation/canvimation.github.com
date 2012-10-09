@@ -677,18 +677,19 @@ function play(t)
 					}
 				}
 			}
-		}
-		switch (flel.source)
-		{
-			case "sprite":
-				if(t>=flel.R*1000 && t<stoprun*1000)
-				{
-					flel.elm.transform();html="";
-					flel.elm.drawalltracks();
-					flel.elm.drawsprite();
-				}
-			break
-		}
+		
+			switch (flel.source)
+			{
+				case "sprite":
+					if(t>=flel.R*1000 && t<stoprun*1000)
+					{
+						flel.elm.transform();html="";
+						flel.elm.drawalltracks();
+						flel.elm.drawsprite();
+					}
+				break
+			}
+		}	
 		var film=this;
 	  	var runthis=setTimeout(function() {film.play(t+50)},50);
 	}

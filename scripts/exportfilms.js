@@ -252,7 +252,14 @@ function spriteHTML(fleldiv)
 		shape.shapeHTML(fleldiv);
 		newwindow.document.writeln(SPACES.substr(0,12)+'track=new Track("'+this.track.name+'");');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape=shape;');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
+		if(isNaN(this.track.repeats))
+		{
+			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats="'+this.track.repeats+'";');
+		}
+		else
+		{
+			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
+		}
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.visible='+this.track.visible+';');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.yoyo='+this.track.yoyo+';');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape.addTo($("'+fleldiv+'"));');
@@ -287,7 +294,14 @@ function spriteHTML(fleldiv)
 		shape.shapeHTML(fleldiv);
 		newwindow.document.writeln(SPACES.substr(0,12)+'track=new Track("'+this.track.name+'");');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape=shape;');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
+		if(isNaN(this.track.repeats))
+		{
+			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats="'+this.track.repeats+'";');
+		}
+		else
+		{
+			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
+		}
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.visible='+this.track.visible+';');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.yoyo='+this.track.yoyo+';');
 		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape.addTo($("'+fleldiv+'"));');
