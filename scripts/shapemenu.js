@@ -14,7 +14,7 @@ function showmenu()
 	{
 		var smenu=$('listshapebox');
 	}
-	if (parseInt($('toolbar').style.left)>0.85*maxwidth)
+	if (parseInt($('toolbar').style.left)>0.85*SCRW)
 	{
 		smenu.style.left=-65;
 	}

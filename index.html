@@ -80,33 +80,6 @@ img.marker {
 
 }
 
-#filmdivhandle {
-	width:49px;
-	height:46px;
-	filter:alpha(opacity=50);
-	opacity:0.5;
-	visibility:hidden;
-	background-image:url(assets/filmove.png);
-
-}
-
-#animationdiv {
-	top:52px;
-	left:0px;
-	width: 100%;
-	height:85%;
-
-	visibility:hidden;
-}
-
-#canvasdiv {
-	top:52px;
-	left:0px;
-	width: 100%;
-	height:85%;
-	background-color:transparent;
-}
-
 .dialoguebox {
 	border: 1px solid #000000;
 	visibility:hidden;
@@ -1215,92 +1188,31 @@ inner img {
 <script type="text/javascript" src = "scripts/totext.js" ></script>
 <script type="text/javascript" src = "scripts/fromtext.js" ></script>
 
-
-<script type="text/javascript" src = "scripts/filmpropmenu.js" ></script>
 <!--[IF LT IE 9]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
 <script type="text/javascript">
 
 
 ieb=navigator.appName=='Microsoft Internet Explorer';
 iop=navigator.appName=='Opera';
-var blocknum=0;
-var numblocks=0;
+
 squote="'";
 dquote='"';
-var parentselected=null;
 
-var lnmrks=0;
 var gdmrks=0;
 var rdmrks=0;
-var rtmrks=0;
-var bndries=0;
-var hidnum=0;
-var gpnum=0;
-var inln=false;
-var gp=[];
-var firstclick=false;
-var endpoint=false;
-var curcanv='empty';
 var currentColor = Colors.ColorFromRGB(64,128,128);
 var alphaperct=0;
 var coltype='F';
 var xgrid=1;
 var ygrid=1;
-var grdon=false;
-var showgrd=false;
-var shapestarted=false;
-var coldir='up';
-var masterwidth;
-var masterheight;
-var storedw=0;
-var storedh;
-var magscale=100;
-var actualwidth;
-var actualheight;
-var activewidth;
-var activeheight;
-var shapejustcreated=false;
-var editjustcreated=false;
 var undo=[];
-var worksaved=false;
-var flname='';
-var fstar='';
-var logurl='';
-var filecount=0;
-var file=[];
-var filenum=0;
-var canvases=0
-var subcount=0;
-var subfile=[];
-var subfilenum=0;
-var stf=[];
-var piccount=0;
-var picfile=[];
-var picfilenum=0;
-var pctf=[];
-var aniselect=[];
 
-var vector={xs:0, xe:0,ys:0, ye:0};
+//var file=[];
 var vecanv;
 var vecphi;
 var midx={x:0,y:0};
 var spritecentre;
-var aniobj='scene';
-var doingani=false;
-var tracktarg;
-var anitarg;
-var ani;
-var scenecount=0;
-var trackcount=0;
-var spritecount=0;
-var tweencount=0;
-var filmcount=0;
-var canvases;
-var elmsadded;
-var editcheck=false;
-var trackcheck=false;
-var flmovetop;
-var flmoveleft;
+
 var MINIVECT={xs:0, xe:100,ys:0, ye:0}; //vector direction of sprite vector
 var CURSOR;  //previous cursor point
 var SHAPES={};  // list of shapes
@@ -1389,16 +1301,6 @@ function $(id)
       return document.getElementById(id);
 }
 
-for( var i=0; i<3; i++)
-{
-	stf[i]=false;
-}
-
-for( var i=0; i<3; i++)
-{
-	pctf[i]=false;
-}
-
 function str_rep(n) 
 {
    var s = "", t = this.toString();
@@ -1464,9 +1366,6 @@ function getPosition(e) {
 }
 
 
-
-
-
 function openhelp()
 {
 	window.open('https://sites.google.com/site/canvimationhelp/');
@@ -1474,7 +1373,7 @@ function openhelp()
 
 function visitgallery()
 {
-	window.open('gallery/vector continuous.html');
+	window.open('https://sites.google.com/site/canvimationhelp/visiting-the-gallery');
 }
 
 
@@ -1629,18 +1528,7 @@ function main()
 	   										checkBoundary(shiftdown(e),getPosition(e));
 	   									}  									
 	
-
-	canvwidth=0.98*screen.availWidth;
-	canvheight=0.785*screen.availHeight;
-	maxwidth=canvwidth;
-	maxheight=canvheight;
-	masterwidth=0.80*maxwidth;
-	masterheight=0.80*maxheight;
 	gridcanv=$('gridcanvas');
-	$('filmdivhandle').style.top=(masterheight/2-25)+"px";
-	$('filmdivhandle').style.left=(masterwidth/2-25)+"px";
-	//fhtfix=masterheight/2-25;
-	//fhlfix=masterwidth/2-25;
 
 	if (!ieb)
 	{
@@ -1652,12 +1540,6 @@ function main()
 	$('toolbar').style.top=60+"px";
 	$('anibar').style.left=(SCRW-120)+"px";
 	$('anibar').style.top="60px";
-/*	$('canvasdiv').style.height=(maxheight-52)+"px";
-	$('canvasdiv').style.width=maxwidth+"px";
-	$('canvasdiv').style.zIndex=2;*/
-
-	$('animationdiv').style.height=(maxheight-52)+"px";
-	$('animationdiv').style.width=maxwidth+"px";
 	
 	//dialogue box settings .....................................
 	
@@ -2237,14 +2119,9 @@ function main()
       <div style='top:200px;left:400px '><img alt="" src='assets/3d_cd.gif'/> Please wait while the application finishes loading.....</div>
 </div>
 
-
-
-<!--<div id="canvasdiv"></div>-->
 <div id="hidecanvas"></div>
-<div id='animationdiv'></div>
 <div id="bodydiv"></div>
 <div id="filmbodydiv"></div>
-<div id="filmdivhandle"></div>
 
 <div id='background'></div>
 <div id='stagearea'></div>

@@ -6,9 +6,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 function draw()
 {
-	
-	shapestarted=false;
-	worksaved='false';
 	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
 	
    	var rule='rgba('

@@ -169,16 +169,10 @@ function drawBoundary()
 										//shape.cy +=dy;
 
 										shape.draw();
-										
-										//$("backstage").style.visibility="visible";
-										//shape.drawBezGuides();alert("stop");
 									}
 									group.update(l,t,dx,dy,1,1);
 									group.drawBoundary();
 								};
-								
-								//if (gdmrks>0) {drawgradpoints(selected[0])};
-								//if (rtmrks>0) {drawrotate(selected[0])}
 							  };
 	this.boundary.cc.DD.onDrag =function(e) {
 												noBubble(e);

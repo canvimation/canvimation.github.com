@@ -19,15 +19,7 @@ function exportshape(name)
 	} 
 	rule +=shape.strokeStyle[j]+')';
 	newwindow.document.writeln(SPACES.substr(0,15)+'ctx.strokeStyle ="'+rule+'";');
-	
-	if (shape.lineWidth*100/magscale<=1)
-	{
-		newwindow.document.writeln(SPACES.substr(0,15)+'ctx.lineWidth = '+magscale/100+';');
-	}
-	else
-	{
-		newwindow.document.writeln(SPACES.substr(0,15)+'ctx.lineWidth = '+shape.lineWidth+';');
-	}
+	newwindow.document.writeln(SPACES.substr(0,15)+'ctx.lineWidth = '+shape.lineWidth+';');
 	newwindow.document.writeln(SPACES.substr(0,15)+'ctx.lineCap = "'+shape.lineCap+'";');
 	newwindow.document.writeln(SPACES.substr(0,15)+'ctx.lineJoin = "'+shape.lineJoin+'";');
 	
