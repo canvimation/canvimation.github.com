@@ -45,6 +45,7 @@ function Sprite(name)
 	this.getScene=getScene;
 	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
+	this.expandfilmspritelist=expandfilmspritelist;
 	this.spriteHTML=spriteHTML;
 	this.SpriteToText=SpriteToText;
 	this.recordsprite=recordsprite;
@@ -143,9 +144,13 @@ function setVector()
 	}
 }
 
-function checksprite(spritename,showpathline)
+function checksprite(spritedata,showpathline)
 {
-	var sprite=SPRITES[spritename];
+	var spritearray=spritedata.split(",");
+	var topname=spritearray[0];
+	var spritename=spritearray[1];
+	var topsprite=SPRITES[topname];
+	var sprite=topsprite.getSprite(spritename).sprite;
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
@@ -159,9 +164,13 @@ function checksprite(spritename,showpathline)
 }
 
 
-function savesprite(spritename)
+function savesprite(spritedata)
 {
-	var sprite=SPRITES[spritename];
+	var spritearray=spritedata.split(",");
+	var topname=spritearray[0];
+	var spritename=spritearray[1];
+	var topsprite=SPRITES[topname];
+	var sprite=topsprite.getSprite(spritename).sprite;
 	sprite.setVector();
 	sprite.setPoints();
 	$("checksp").style.visibility="hidden";
@@ -520,18 +529,48 @@ function expandspritelist(sn)
 	switch(this.engine)
 	{
 		case "scene":
-			var scene=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>'+scene.title+'</span></li>';
 			var track=this.track;
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>TR '+track.title+'</span></li>';
+			var scene=this.train;
+			$("innersp").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>SC '+scene.title+'</span></li>';
+		break
+		case "sprite":
+			var track=this.track;
+			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+'&nbsp;&nbsp;&nbsp; <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>TR '+track.title+'</span></li>';
+			var sprite=this.train;
+			if(sprite.expanded)
+			{
+				$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+				sprite.expandspritelist(sprite.name);
+			}
+			else
+			{
+				$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			}
+			
+			//sprite.expandspritelist(sn);
+		break
+	}
+}
+
+function expandfilmspritelist(sn)
+{
+	FLIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	switch(this.engine)
+	{
+		case "scene":
+			var scene=this.train;
+			$("innerfl").innerHTML+='<li id='+sn+','+scene.title+','+scene.name+'>'+FLIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>'+scene.title+'</span></li>';
+			var track=this.track;
+			$("innersfl").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+FLIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
 		break
 		case "sprite":
 			var sprite=this.train;
-			$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span>'+sprite.title+'</span></li>';
+			$("innerfl").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+FLIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span>'+sprite.title+'</span></li>';
 			var track=this.track;
 			LIMARGIN+="&nbsp;&nbsp;&nbsp;";
-			$("innersp").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
-			sprite.expandspritelist(sn);
+			$("innerfl").innerHTML+='<li id='+sn+','+track.title+','+track.name+'>'+FLIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <span>'+track.title+'</span></li>';
+			sprite.expandfilmspritelist(sn);
 		break
 	}
 }

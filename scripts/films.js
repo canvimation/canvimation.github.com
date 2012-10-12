@@ -9,10 +9,12 @@ function Film(name)
 	this.name=name;
 	this.title;
 	this.elements={};
+	this.expanded=false;
 	
 	//methods
 	this.play=play;
 	this.FilmToText=FilmToText;
+	this.expandfilmlist=expandfilmlist;
 }
 
 function FilmElement(n)
@@ -1028,3 +1030,52 @@ function stopfilm(name)
 	$("filmstage").style.visibility="hidden";
 	$("blockstage").style.visibility="hidden";
 }
+
+
+function expandfilmlist()
+{
+	var flel;
+	var limargin="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	for(var id in this.elements)
+	{
+		flel=film.elements[id];
+		switch(flel.source)
+		{
+			case "scene":
+				var scene=flel.elm;
+				$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+'>'+limargin+' <img src="assets/edit.png" alt="edit" title="edit" onclick="scenefromFilmEdit(this)" /> <span>'+scene.title+'</span></li>';
+			break
+			case "sprite":
+				var sprite=flel.elm;
+				if(sprite.expanded)
+				{
+					$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+' > '+limargin+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expandfromFilm(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+					FLIMARGIN="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+					sprite.expandfilmspritelist(sprite.name);
+				}
+				else
+				{
+					$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+' > '+limargin+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expandfromFilm(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+				}
+			break
+		}
+	}
+}
+
+function expandfromFilm(spexp)
+{
+	var idarray=spexp.parentNode.id.split(",");
+	var filmname=idarray[0]
+	var id=idarray[1];
+	var sprite=film.elements[id].elm;
+	if (sprite.expanded)
+	{
+		sprite.expanded=false;
+	}
+	else
+	{
+		sprite.expanded=true;
+	}
+	writefilmlist();
+}
+
