@@ -203,8 +203,8 @@ function setPoints()
   	var xd,yd,phi //for linear sections
   	this.points=[];
   	var prev;
-  	var shape=track.getShape();//alert([track.name,track.title,shape.name,shape.title]);
-  	var path=shape.path;//alert(shape.path.point.x)
+  	var shape=track.getShape();
+  	var path=shape.path;
   	var node=path.next; 
   	while(node.next.point.x!="end")
   	{
@@ -541,14 +541,12 @@ function expandspritelist(sn)
 			if(sprite.expanded)
 			{
 				$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
-				sprite.expandspritelist(sprite.name);
+				sprite.expandspritelist(sn);
 			}
 			else
 			{
 				$("innersp").innerHTML+='<li id='+sn+','+sprite.title+','+sprite.name+' >'+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
 			}
-			
-			//sprite.expandspritelist(sn);
 		break
 	}
 }

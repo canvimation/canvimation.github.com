@@ -741,7 +741,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var topsprite=SPRITES[topname];
-		var data=sprite.getScene();
+		var data=topsprite.getScene();
 		var scene=data.scene;
 		var path=data.path;
 	}
@@ -830,7 +830,7 @@ function trackEdit(n)
 	{
 		var topsprite=SPRITES[topname];
 		//var sprite=topsprite.getSprite(name).sprite;
-		var data=sprite.getTrack(name);
+		var data=topsprite.getTrack(name);
 		var track=data.track;
 		var path=data.path;
 	}
@@ -930,10 +930,10 @@ function spriteDelete(n)
 function spriteEdit(n)
 {
 	var idarray=n.parentNode.id.split(",");
-	var topsprite=idarray[0]
+	var topname=idarray[0]
 	var name=idarray[2];
-	var sprite=SPRITES[topsprite];
-	var data=sprite.getSprite(name);
+	var topsprite=SPRITES[topname];
+	var data=topsprite.getSprite(name);
 	var sprite=data.sprite;
 	var path=data.path;
 	$("shapestage").style.visibility="hidden";
@@ -962,9 +962,9 @@ function spriteEdit(n)
 	}
 	$("spritebuildbox").visibility="hidden";
 	CURRENT=sprite.shapes;
-	$("checksp").sprite=topsprite+","+sprite.name;
-	$("fullchecksp").sprite=topsprite+","+sprite.name;
-	$("savesp").sprite=topsprite+","+sprite.name;
+	$("checksp").sprite=topsprite.name+","+sprite.name;
+	$("fullchecksp").sprite=topsprite.name+","+sprite.name;
+	$("savesp").sprite=topsprite.name+","+sprite.name;
 	openStage('sprite');
 	$('editspritetitle').value=sprite.title;
 	$('editspritetime').value=sprite.ptime;
