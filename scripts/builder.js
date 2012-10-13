@@ -639,7 +639,7 @@ function shapeNamesToHTML()
 		group=GROUPS[name];
 		if(group.members.length>1)
 		{
-			inhtml+='<li id='+group.name+'> <span class="innertext" onclick="addgrouptoscene(this)">'+group.name+' </span></li>';
+			inhtml+='<li id='+group.name+'> <span class="innertext" onclick="addgrouptoscene(this)"> '+group.name+' </span></li>';
 		}
 		members=group.memberShapes();
 		for(var shapename in members)
@@ -655,7 +655,7 @@ function shapeNamesToHTML()
 	for(var name in shapelist)
 	{
 		shape=shapelist[name];
-		inhtml+='<li id='+shape.name+'> <span class="innertext" onclick="addshapetoscene(this)">'+shape.name+' </span></li>';
+		inhtml+='<li id='+shape.name+'> <span class="innertext" onclick="addshapetoscene(this)"> '+shape.name+' </span></li>';
 	}
 	
 	inhtml+="</ul>";
@@ -664,7 +664,7 @@ function shapeNamesToHTML()
 
 function addgrouptoscene(g)
 {
-	
+	var scene=CURRENTSCENE;
 	var name=g.parentNode.id;
 	var group=GROUPS[name];
 	SELECTED={};
@@ -673,7 +673,7 @@ function addgrouptoscene(g)
 	SELECTED={};
 	SELECTED[groupcopy.name]=groupcopy;
 	clear($("boundarydrop"));
-	group.drawBoundary();
+	scene.drawscene();
 	showTools();
 	setTools(true)
 	$("listshapebox").style.visibility="hidden";
@@ -684,13 +684,12 @@ function addshapetoscene(s)
 	var name=s.parentNode.id;
 	var shape=SHAPES[name];
 	var group=shape.group;
+	var scene=CURRENTSCENE;
 	SELECTED={};
 	if(group.members.length==1)
 	{
 		SELECTED[group.name]=group;
 		elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
-		clear($("boundarydrop"));
-		group.drawBoundary();
 	}
 	else
 	{	 
@@ -701,9 +700,9 @@ function addshapetoscene(s)
 		copy.Canvas.style.zIndex=copy.zIndex;
 		copy.draw();
 		SELECTED[copy.group.name]=copy.group;
-		clear($("boundarydrop"))
-		copy.group.drawBoundary();
 	}
+	clear($("boundarydrop"))
+	scene.drawscene();
 	showTools();
 	setTools(true);
 	$("listshapebox").style.visibility="hidden";
@@ -733,7 +732,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	var shape;
 	var idarray=n.parentNode.id.split(",");
 	var topname=idarray[0];
-	var name=idarray[2];alert([topname,idarray[1],name]);
+	var name=idarray[2];
 	if(topname=="non!!!!")
 	{
 		var scene=SCENES[name];
@@ -742,7 +741,6 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var topsprite=SPRITES[topname];
-		//var sprite=topsprite.getSprite(name).sprite;
 		var data=sprite.getScene();
 		var scene=data.scene;
 		var path=data.path;
@@ -758,6 +756,7 @@ function sceneEdit(n)  //edits the selected scene shapes
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	closeColor();
+	CURRENTSCENE=scene;
 	CURRENT=scene.shapes;
 	for(var shapename in CURRENT)
 	{

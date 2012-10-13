@@ -17,7 +17,6 @@ function Scene(name)
 	this.drawscene=drawscene;
 	this.addToStage=addToStage;
 	this.SceneToText=SceneToText;
-	//this.sceneHTML=sceneHTML;
 }
 
 function copyscene(theatre)
