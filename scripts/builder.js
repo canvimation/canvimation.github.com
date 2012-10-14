@@ -394,6 +394,8 @@ function writescenelist()
 		DDSC[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
+										$("dragdiv").topname=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").filmname=$(this.id).parentNode.id.split(",")[0];
 										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
@@ -404,6 +406,8 @@ function writescenelist()
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
 											el.source="scene";
 											el.name=$("dragdiv").name;
+											el.topname=$("dragdiv").topname;
+											el.filmname=$("dragdiv").filmname;
 										}
 										else if(DDelfilmdrop.cursorIsOver)
 										{

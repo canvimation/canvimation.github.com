@@ -152,7 +152,14 @@ function checksprite(spritedata,showpathline)
 	var spritename=spritearray[2];
 	if(filmname=="nofilm!!!!")
 	{
-		var topsprite=SPRITES[topname];
+		if(topname=="nosprite!!!!")
+		{
+			var topsprite=SPRITES[spritename];
+		}
+		else
+		{
+			var topsprite=SPRITES[topname];
+		}
 	}
 	else
 	{
@@ -175,13 +182,20 @@ function checksprite(spritedata,showpathline)
 
 function savesprite(spritedata)
 {
-	var spritearray=spritedata.split(",");
+	var spritearray=spritedata.split(",");alert(spritedata)
 	var filmname=spritearray[0];
 	var topname=spritearray[1];
 	var spritename=spritearray[2];
 	if(filmname=="nofilm!!!!")
 	{
-		var topsprite=SPRITES[topname];
+		if(topname=="nosprite!!!!")
+		{
+			var topsprite=SPRITES[spritename];
+		}
+		else
+		{
+			var topsprite=SPRITES[topname];
+		}
 	}
 	else
 	{
@@ -204,7 +218,7 @@ function followPath(showpathline)
 	this.finishmove=false;
 	clear($("spritestage"));
 	this.inTheatre($("spritestage"));
-	this.saveCanvases();
+	this.saveCanvases(); //remove this for locus
 	this.track.drawtrack(showpathline);
   	this.moveSprite(showpathline);
 }
