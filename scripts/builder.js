@@ -4,7 +4,7 @@ function scbb()
 	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+60)+"px";
 	$('scenebuildbox').style.zIndex=ZBOX++;
 	$('scenebuildbox').style.visibility='visible';
-	$('scenetitle').value="Scene"+(SCCOUNT++);
+	$('scenetitle').value="Scenery"+(SCCOUNT++);
 }
 
 function trbb()

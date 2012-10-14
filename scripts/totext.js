@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * Sprite-->sprite@base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
  * sprite.train points to previous built sprite.
  * 
- * Film-->film@film parameters>run parameters%element parameters<run parameters%element parameters<.......<run parameters%element parameters
+ * Film-->film@film parameters>run parameters%element parameters£run parameters%element parameters£.......£run parameters%element parameters
  */
 function ToText()
 {
@@ -266,7 +266,7 @@ function FilmToText()
 		params+=flel.A+"|";
 		params+=flel.D+"|";
 		params+=flel.xOffset+"|";
-		params+=flel.yOffset+"";
+		params+=flel.yOffset;
 		switch (flel.source)
 		{
 			case "scene":
@@ -281,7 +281,7 @@ function FilmToText()
 				params+=flel.elm.SpriteToText();
 			break
 		}
-		params +='<';
+		params +='£';
 	}
 	params=params.slice(0,-1);
 	return params;

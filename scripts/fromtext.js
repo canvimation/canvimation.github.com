@@ -462,8 +462,6 @@ function resetspriteparams(spritetxt)
 
 function resetfilm(filmtxt)
 {
-	//flbb(false);
-	
 	var eltxt,elparamstxt,runtxt,fleltxt;
 	var width;
 	var flel;
@@ -474,7 +472,7 @@ function resetfilm(filmtxt)
 	film.title=filmparams[1];
 	$('filmtitle').value=film.title;
 	writefilmlist();
-	var flelparamstxt=filmparamstxt[1].split("<");
+	var flelparamstxt=filmparamstxt[1].split("£");
 	$("timeline").style.top=((flelparamstxt.length+2)*25)+"px";
 	while(flelparamstxt.length>0)
 	{
