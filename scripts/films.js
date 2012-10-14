@@ -15,6 +15,7 @@ function Film(name)
 	this.play=play;
 	this.FilmToText=FilmToText;
 	this.expandfilmlist=expandfilmlist;
+	this.getFlel=getFlel;
 }
 
 function FilmElement(n)
@@ -24,6 +25,20 @@ function FilmElement(n)
 	
 	//methods
 	this.addToBoard=addToBoard;
+	this.addToElStage=addToElStage;
+}
+
+function getFlel(name)
+{
+	var flel;
+	for(var id in this.elements)
+	{
+		flel=this.elements[id];
+		if(flel.elm.name==name)
+		{
+			return flel.elm
+		}
+	}
 }
 
 function addToFilm(el)
@@ -834,8 +849,9 @@ function filmPlay(el)
 	clear($("filmstage"));
 	$("shapestage").style.visibility="hidden";
 	$("scenestage").style.visibility="hidden";
+	$("spritestage").style.visibility="hidden";
 	$("filmstage").style.visibility="visible";
-	if(topfilm=="non!!!!")
+	if(topfilm=="nofilm!!!!")
 	{
 		var film=FILMS[name];
 		film.paused=false;
@@ -848,6 +864,8 @@ function filmPlay(el)
 		flel=film.elements[film.list[i][0]];
 		film.active[film.list[i][0]]=film.list[i][0];
 		$("filmstage").appendChild(flel.eldiv);
+		clear(flel.eldiv);
+		flel.addToElStage();
 		switch(flel.source)
 		{
 			case "scene":
@@ -1035,47 +1053,42 @@ function stopfilm(name)
 function expandfilmlist()
 {
 	var flel;
-	var limargin="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-	for(var id in this.elements)
+	var film=this;
+	LIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	for(var id in film.elements)
 	{
 		flel=film.elements[id];
 		switch(flel.source)
 		{
 			case "scene":
 				var scene=flel.elm;
-				$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+'>'+limargin+' <img src="assets/edit.png" alt="edit" title="edit" onclick="scenefromFilmEdit(this)" /> <span>'+scene.title+'</span></li>';
+				$("innerfl").innerHTML+='<li id="'+film.name+',nosprite!!!!,'+scene.title+','+scene.name+'">'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>'+scene.title+'</span></li>';
 			break
 			case "sprite":
 				var sprite=flel.elm;
 				if(sprite.expanded)
 				{
-					$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+' > '+limargin+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expandfromFilm(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
-					FLIMARGIN="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-					sprite.expandfilmspritelist(sprite.name);
+					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+					sprite.expandspritelist(film.name,sprite.name,"fl");
 				}
 				else
 				{
-					$("innerfl").innerHTML+='<li id='+film.name+','+flel.id+' > '+limargin+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expandfromFilm(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
 				}
 			break
 		}
 	}
 }
 
-function expandfromFilm(spexp)
+function addToElStage()
 {
-	var idarray=spexp.parentNode.id.split(",");
-	var filmname=idarray[0]
-	var id=idarray[1];
-	var sprite=film.elements[id].elm;
-	if (sprite.expanded)
+	switch(this.source)
 	{
-		sprite.expanded=false;
+		case "scene":
+			this.elm.addToStage($("div"+this.id+"stage"))
+		break
+		case "sprite":
+			this.elm.inTheatre($("div"+this.id+"stage"));
+		break
 	}
-	else
-	{
-		sprite.expanded=true;
-	}
-	writefilmlist();
 }
-

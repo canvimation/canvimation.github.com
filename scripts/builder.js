@@ -265,6 +265,7 @@ function buildSprite()
 	}
 	var elname=$("eldrop").name;
 	var eltopname=$("eldrop").topname;
+	var elfilmname=$("eldrop").filmname;
 	var engine=$("eldrop").source;
 	var elexists;
 	switch (engine)
@@ -300,9 +301,9 @@ function buildSprite()
 	$("spritestage").style.visibility="visible";
 	sprite.setAniStage();
 	CURRENT=sprite.shapes;
-	$("checksp").sprite=eltopname+","+sprite.name;
-	$("fullchecksp").sprite=eltopname+","+sprite.name;
-	$("savesp").sprite=sprite.name;
+	$("checksp").sprite=elfilmname+','+eltopname+","+sprite.name;
+	$("fullchecksp").sprite=elfilmname+','+eltopname+","+sprite.name;
+	$("savesp").sprite=elfilmname+','+eltopname+","+sprite.name;
 	openStage('sprite');
 	if($('spritevector').checked)
 	{
@@ -383,7 +384,7 @@ function writescenelist()
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id="non!!!!,'+scene.title+','+scene.name+'"> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+		$("innersc").innerHTML+='<li id="nofilm!!!!,nosprite!!!!,'+scene.title+','+scene.name+'"> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
 	}
 	$("innersc").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -391,8 +392,8 @@ function writescenelist()
 		DDSC[i]=new YAHOO.util.DD("SC"+i,"ELGROUP");
 		DDSC[i].setDragElId("dragdiv");
 		DDSC[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
-										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
 										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
@@ -430,7 +431,7 @@ function writetracklist()
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id=non!!!!,'+track.title+','+track.name+'> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+		$("innertr").innerHTML+='<li id="nofilm!!!!,nosprite!!!!,'+track.title+','+track.name+'"> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
 	}
 	$("innertr").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -438,8 +439,8 @@ function writetracklist()
 		DDTR[i]=new YAHOO.util.DD("TR"+i,"TRGROUP");
 		DDTR[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
 		DDTR[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
-										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
 										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
@@ -470,12 +471,12 @@ function writespritelist()
 		sprite=SPRITES[name];
 		if(sprite.expanded)
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+','+sprite.title+','+sprite.name+' >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
-			sprite.expandspritelist(sprite.name);
+			$("innersp").innerHTML+='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'" >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			sprite.expandspritelist("nofilm!!!!",sprite.name,"sp");
 		}
 		else
 		{
-			$("innersp").innerHTML+='<li id='+sprite.name+','+sprite.title+','+sprite.name+' >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			$("innersp").innerHTML+='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'" >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
 		}
 	}
 	$("innersp").innerHTML+="</ul>";
@@ -484,9 +485,10 @@ function writespritelist()
 		DDSP[i]=new YAHOO.util.DD("SP"+i,"ELGROUP");
 		DDSP[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
 		DDSP[i].onMouseDown=function() {
-										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[1];
-										$("dragdiv").name=$(this.id).parentNode.id.split(",")[2];
-										$("dragdiv").topname=$(this.id).parentNode.id.split(",")[0];
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
+										$("dragdiv").topname=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").filmname=$(this.id).parentNode.id.split(",")[0];
 										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
@@ -498,6 +500,7 @@ function writespritelist()
 											el.source="sprite";
 											el.name=$("dragdiv").name;
 											el.topname=$("dragdiv").topname;
+											el.filmname=$("dragdiv").filmname;
 										}
 										else if(DDelfilmdrop.cursorIsOver)
 										{
@@ -506,6 +509,7 @@ function writespritelist()
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
 											el.topname=$("dragdiv").topname;
+											el.filmname=$("dragdiv").filmname;
 											addToFilm(el);
 											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
 											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
@@ -522,22 +526,23 @@ function writefilmlist()
 	SPANCOUNT=0;
 	var DDSC=[];
 	var el;
+	LIMARGIN="&nbsp;&nbsp;&nbsp;";
 	$("innerfl").innerHTML="<ul>";
 	for(var name in FILMS)
 	{
 		film=FILMS[name];
 		if(film.expanded)
 		{
-			$("innerfl").innerHTML+='<li id=non!!!!,'+film.title+','+film.name+'> <img src="assets/contract.gif" alt="contract" title="contract" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			$("innerfl").innerHTML+='<li id="nofilm!!!!,'+film.title+','+film.name+'"> <img src="assets/contract.gif" alt="contract" title="contract" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
 			film.expandfilmlist();		
 		}
 		else
 		{
-			$("innerfl").innerHTML+='<li id=non!!!!,'+film.title+','+film.name+'> <img src="assets/expand.gif" alt="expand" title="expand" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			$("innerfl").innerHTML+='<li id="nofilm!!!!,'+film.title+','+film.name+'"> <img src="assets/expand.gif" alt="expand" title="expand" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
 		}
 	}
 	$("innerfl").innerHTML+="</ul>";
-	for(var i=0;i<SPANCOUNT;i++)
+/*	for(var i=0;i<SPANCOUNT;i++)
 	{
 		DDSC[i]=new YAHOO.util.DD("FL"+i,"ELGROUP");
 		DDSC[i].setDragElId("dragdiv");
@@ -569,7 +574,7 @@ function writefilmlist()
 										$("dragdiv").style.top="-50px";
 									   };
 		DDSC[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";}
-	}
+	} Previous comment section to be added when films can be added to films*/ 
 }
 
 function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative array of groups, TO is target associative array of groups
@@ -711,8 +716,8 @@ function addshapetoscene(s)
 function sceneDelete(n)
 {
 	var idarray=n.parentNode.id.split(",");
-	var title=idarray[1]
-	var name=idarray[2];
+	var title=idarray[2]
+	var name=idarray[3];
 	var doit = confirm('Do you really want to delete '+title+'?');
 	if (doit)
 	{
@@ -731,19 +736,31 @@ function sceneEdit(n)  //edits the selected scene shapes
 {
 	var shape;
 	var idarray=n.parentNode.id.split(",");
-	var topname=idarray[0];
-	var name=idarray[2];
-	if(topname=="non!!!!")
+	var filmname=idarray[0];
+	var topname=idarray[1];
+	var name=idarray[3];
+	if(filmname=="nofilm!!!!")
 	{
-		var scene=SCENES[name];
-		var path="";
+		if(topname=="nosprite!!!!")
+		{
+			var scene=SCENES[name];
+			var path="";
+		}
+		else
+		{
+			var topsprite=SPRITES[topname];
+			var data=topsprite.getScene();
+			var scene=data.scene;
+			var path=data.path;
+		}
 	}
 	else
 	{
-		var topsprite=SPRITES[topname];
+		var film=FILMS[filmname];
+		var topsprite=film.getFlel(topname);
 		var data=topsprite.getScene();
 		var scene=data.scene;
-		var path=data.path;
+		var path=film.title+"/"+data.path;
 	}
 	$("shapestage").style.visibility="hidden";
 	clear($("scenestage"));
@@ -793,14 +810,15 @@ function editScene(OKbutton)  //sets edit box for scene
 	scene.title=$('editscenetitle').value.trim();
 	writescenelist();
 	writespritelist();
+	writefilmlist();
 	OKbutton.style.visibility="hidden";
 }
 
 function trackDelete(n)
 {
 	var idarray=n.parentNode.id.split(",");
-	var title=idarray[1]
-	var name=idarray[2];
+	var title=idarray[2]
+	var name=idarray[3];
 	var doit = confirm('Do you really want to delete '+title+'?');
 	if (doit)
 	{
@@ -819,20 +837,31 @@ function trackEdit(n)
 {
 	var shape;
 	var idarray=n.parentNode.id.split(",");
-	var topname=idarray[0]
-	var name=idarray[2];
-	if(topname=="non!!!!")
+	var filmname=idarray[0];
+	var topname=idarray[1]
+	var name=idarray[3];
+	if(filmname=="nofilm!!!!")
 	{
-		var track=TRACKS[name];
-		var path="";
+		if(topname=="nosprite!!!!")
+		{
+			var track=TRACKS[name];
+			var path="";
+		}
+		else
+		{
+			var topsprite=SPRITES[topname];
+			var data=topsprite.getTrack(name);
+			var track=data.track;
+			var path=data.path;
+		}
 	}
 	else
 	{
-		var topsprite=SPRITES[topname];
-		//var sprite=topsprite.getSprite(name).sprite;
+		var film=FILMS[filmname];
+		var topsprite=film.getFlel(topname);
 		var data=topsprite.getTrack(name);
 		var track=data.track;
-		var path=data.path;
+		var path=film.title+"/"+data.path;
 	}
 	$("shapestage").style.visibility="hidden";
 	clear($("trackstage"));
@@ -911,8 +940,8 @@ function editTrack(OKbutton)
 function spriteDelete(n)
 {
 	var idarray=n.parentNode.id.split(",");
-	var title=idarray[1]
-	var name=idarray[2];
+	var title=idarray[2]
+	var name=idarray[3];
 	var doit = confirm('Do you really want to delete '+title+'?');
 	if (doit)
 	{
@@ -930,12 +959,24 @@ function spriteDelete(n)
 function spriteEdit(n)
 {
 	var idarray=n.parentNode.id.split(",");
-	var topname=idarray[0]
-	var name=idarray[2];
-	var topsprite=SPRITES[topname];
-	var data=topsprite.getSprite(name);
-	var sprite=data.sprite;
-	var path=data.path;
+	var filmname=idarray[0]
+	var topname=idarray[1]
+	var name=idarray[3];
+	if(filmname=="nofilm!!!!")
+	{
+		var topsprite=SPRITES[topname];
+		var data=topsprite.getSprite(name);
+		var sprite=data.sprite;
+		var path=data.path;
+	}
+	else
+	{
+		var film=FILMS[filmname];
+		var topsprite=film.getFlel(topname);
+		var data=topsprite.getSprite(name);
+		var sprite=data.sprite;
+		var path=film.name+"/"+data.path;
+	}
 	$("shapestage").style.visibility="hidden";
 	sprite.setAniStage();
 	removeGradLine();
@@ -962,9 +1003,9 @@ function spriteEdit(n)
 	}
 	$("spritebuildbox").visibility="hidden";
 	CURRENT=sprite.shapes;
-	$("checksp").sprite=topsprite.name+","+sprite.name;
-	$("fullchecksp").sprite=topsprite.name+","+sprite.name;
-	$("savesp").sprite=topsprite.name+","+sprite.name;
+	$("checksp").sprite=filmname+','+topsprite.name+","+sprite.name;
+	$("fullchecksp").sprite=filmname+','+topsprite.name+","+sprite.name;
+	$("savesp").sprite=filmname+','+topsprite.name+","+sprite.name;
 	openStage('sprite');
 	$('editspritetitle').value=sprite.title;
 	$('editspritetime').value=sprite.ptime;
@@ -1051,7 +1092,7 @@ function filmEdit(n)
 	var idarray=n.parentNode.id.split(",");
 	var topfilm=idarray[0]
 	var name=idarray[2];
-	if(topfilm=="non!!!!")
+	if(topfilm=="nofilm!!!!")
 	{
 		var film=FILMS[name];
 	}
@@ -1065,6 +1106,7 @@ function filmEdit(n)
 	{
 		flel=film.elements[film.list[i][0]];
 		flel.addToBoard();
+		flel.addToElStage();
 		$("filmstage").appendChild(flel.eldiv);
 	}
 }
@@ -1117,9 +1159,18 @@ function addSpriteCentre()
 function expand(spexp)
 {
 	var idarray=spexp.parentNode.id.split(",");
-	var topname=idarray[0];
-	var spritename=idarray[2];
-	var topsprite=SPRITES[topname];
+	var filmname=idarray[0];
+	var topname=idarray[1];
+	var spritename=idarray[3];
+	if(filmname=="nofilm!!!!")
+	{
+		var topsprite=SPRITES[topname];
+	}
+	else
+	{
+		var film=FILMS[filmname];
+		var topsprite=film.getFlel(topname);
+	}
 	var sprite=topsprite.getSprite(spritename).sprite;
 	if (sprite.expanded)
 	{
@@ -1129,7 +1180,14 @@ function expand(spexp)
 	{
 		sprite.expanded=true;
 	}
-	writespritelist();
+	if(filmname=="nofilm!!!!")
+	{
+		writespritelist();
+	}
+	else
+	{
+		writefilmlist();
+	}
 }
 
 function filmexpand(flexp)
