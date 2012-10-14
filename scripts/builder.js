@@ -267,7 +267,6 @@ function buildSprite()
 	var eltopname=$("eldrop").topname;
 	var elfilmname=$("eldrop").filmname;
 	var engine=$("eldrop").source;
-	var elexists;
 	switch (engine)
 	{
 		case 'scene':
@@ -301,9 +300,9 @@ function buildSprite()
 	$("spritestage").style.visibility="visible";
 	sprite.setAniStage();
 	CURRENT=sprite.shapes;
-	$("checksp").sprite=elfilmname+','+eltopname+","+sprite.name;
-	$("fullchecksp").sprite=elfilmname+','+eltopname+","+sprite.name;
-	$("savesp").sprite=elfilmname+','+eltopname+","+sprite.name;
+	$("checksp").sprite="nofilm!!!!,nosprite!!!!,"+sprite.name;
+	$("fullchecksp").sprite="nofilm!!!!,nosprite!!!!,"+sprite.name;
+	$("savesp").sprite="nofilm!!!!,nosprite!!!!,"+sprite.name;
 	openStage('sprite');
 	if($('spritevector').checked)
 	{

@@ -71,20 +71,25 @@ function openStage(theatre)
 	//$("tweeneditbox").style.visibility="hidden";
 	//$("filmeditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
-	if(theatre=="scene" || theatre=="track")
+	switch (theatre)
 	{
-		$("done").value="Save "+theatre;
-		$("done").style.visibility="visible";
-	}
-	else if (theatre=="sprite")
-	{
-		$("spbuttons").style.visibility="visible";
-		$("checksp").style.visibility="visible";
-		$("fullchecksp").style.visibility="visible";
-		$("savesp").style.visibility="visible";
-		$("toolbar").style.visibility="hidden";
-		$("menushape").style.visibility="hidden";
-		$("grid").style.visibility="hidden";
+		case "scene":
+			$("done").value="Save Scenery";
+			$("done").style.visibility="visible";
+		break
+		case "track":
+			$("done").value="Save Track";
+			$("done").style.visibility="visible";
+		break
+		case "sprite":
+			$("spbuttons").style.visibility="visible";
+			$("checksp").style.visibility="visible";
+			$("fullchecksp").style.visibility="visible";
+			$("savesp").style.visibility="visible";
+			$("toolbar").style.visibility="hidden";
+			$("menushape").style.visibility="hidden";
+			$("grid").style.visibility="hidden";
+		break
 	}
 	$(hideTools());
 	if(theatre=="track")

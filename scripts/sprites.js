@@ -154,19 +154,20 @@ function checksprite(spritedata,showpathline)
 	{
 		if(topname=="nosprite!!!!")
 		{
-			var topsprite=SPRITES[spritename];
+			var sprite=SPRITES[spritename];
 		}
 		else
 		{
 			var topsprite=SPRITES[topname];
+			var sprite=topsprite.getSprite(spritename).sprite;
 		}
 	}
 	else
 	{
 		var film=FILMS[filmname];
 		var topsprite=film.getFlel(topname);
+		var sprite=topsprite.getSprite(spritename).sprite;
 	}
-	var sprite=topsprite.getSprite(spritename).sprite;
 	sprite.setVector();
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
@@ -182,7 +183,7 @@ function checksprite(spritedata,showpathline)
 
 function savesprite(spritedata)
 {
-	var spritearray=spritedata.split(",");alert(spritedata)
+	var spritearray=spritedata.split(",");
 	var filmname=spritearray[0];
 	var topname=spritearray[1];
 	var spritename=spritearray[2];
@@ -190,19 +191,20 @@ function savesprite(spritedata)
 	{
 		if(topname=="nosprite!!!!")
 		{
-			var topsprite=SPRITES[spritename];
+			var sprite=SPRITES[spritename];
 		}
 		else
 		{
 			var topsprite=SPRITES[topname];
+			var sprite=topsprite.getSprite(spritename).sprite;
 		}
 	}
 	else
 	{
 		var film=FILMS[filmname];
 		var topsprite=film.getFlel(topname);
+		var sprite=topsprite.getSprite(spritename).sprite;
 	}
-	var sprite=topsprite.getSprite(spritename).sprite;
 	sprite.setVector();
 	sprite.setPoints();
 	$("checksp").style.visibility="hidden";
