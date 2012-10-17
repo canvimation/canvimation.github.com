@@ -153,8 +153,9 @@ function buildScene()
 	scene.drawscene("scene");
 	$("scenestage").style.visibility="visible";
 	scene.setAniStage();
+	$("toolbar").style.visibility="hidden";
 	CURRENT=scene.shapes;
-	$("innerls").innerHTML=shapeNamesToHTML();
+	//$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
 }
 
@@ -677,13 +678,13 @@ function addgrouptoscene(g)
 	var group=GROUPS[name];
 	SELECTED={};
 	SELECTED[group.name]=group;
-	var groupcopy=elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
+	var groupcopy=elementShapeCopy(SELECTED,scene.groups,scene.shapes,20,$("scenestage"));
 	SELECTED={};
 	SELECTED[groupcopy.name]=groupcopy;
 	clear($("boundarydrop"));
 	scene.drawscene();
-	showTools();
-	setTools(true)
+	//showTools();
+	//setTools(true)
 	$("listshapebox").style.visibility="hidden";
 }
 
@@ -697,11 +698,11 @@ function addshapetoscene(s)
 	if(group.members.length==1)
 	{
 		SELECTED[group.name]=group;
-		elementShapeCopy(SELECTED,scene.groups,scene.shapes,0,$("scenestage"));
+		elementShapeCopy(SELECTED,scene.groups,scene.shapes,20,$("scenestage"));
 	}
 	else
 	{	 
-		var copy=makeCopy(shape,0,$("scenestage"),scene.shapes,scene.groups);
+		var copy=makeCopy(shape,20,$("scenestage"),scene.shapes,scene.groups);
 		copy.group=new Group(scene.groups,"group"+(NCOUNT++),shape.group.name,copy);
 		copy.setCorners();
 		copy.zIndex=ZPOS++;
@@ -711,8 +712,8 @@ function addshapetoscene(s)
 	}
 	clear($("boundarydrop"))
 	scene.drawscene();
-	showTools();
-	setTools(true);
+	//showTools();
+	//setTools(true);
 	$("listshapebox").style.visibility="hidden";
 }
 

@@ -621,6 +621,7 @@ function updatename(name)
 		}
 		delete SHAPES[members[0].name];
 		SHAPES[name]=members[0];
+		members[0].name=name;
 	}
 	else
 	{
@@ -629,10 +630,11 @@ function updatename(name)
 			alert("A Group with name '"+name+"' already exists!");
 			return;
 		}
-		delete GROUPS[members[0].name];
-		GROUPS[name]=members[0];
+		delete GROUPS[group.name];
+		group.name=name;
+		GROUPS[name]=group;
 	}
-	members[0].name=name;
+	
 }
 
 function setgrid()
