@@ -51,7 +51,7 @@ function checkBoundary(shiftdown,cursor)
 		}
 	}
 	if (shapefound)
-	{//alert(["boundary",foundshape.name]);
+	{
 		$("boundarydrop").style.visibility="visible";
 		if(shiftdown)
 		{

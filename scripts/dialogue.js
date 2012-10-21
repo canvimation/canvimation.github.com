@@ -69,7 +69,6 @@ function openStage(theatre)
 	$("spriteeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
 	//$("tweeneditbox").style.visibility="hidden";
-	//$("filmeditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
 	switch (theatre)
 	{

@@ -37,6 +37,13 @@ function flbb(newone)
 	if(newone)
 	{
 		$('filmtitle').value="Film"+(FMCOUNT++);
+		$("fbhtitle").innerHTML="&nbsp; Build Film";
+		$("filmsave").value=" Save ";
+	}
+	else
+	{
+		$("fbhtitle").innerHTML="&nbsp; Edit Film";
+		$("filmsave").value=" Change ";
 	}
 	$("filmbuildbox").style.zIndex=ZBOX++;
 	$("filmbuildbox").style.visibility="visible";
@@ -155,7 +162,6 @@ function buildScene()
 	scene.setAniStage();
 	$("toolbar").style.visibility="hidden";
 	CURRENT=scene.shapes;
-	//$("innerls").innerHTML=shapeNamesToHTML();
 	openStage('scene');
 }
 
@@ -229,6 +235,7 @@ function buildTrack()
 	shape.draw();
 	$("trackstage").style.visibility="visible";
 	track.setAniStage();
+	$("toolbar").style.visibility="hidden";
 	CURRENT=track.shapes;
 	openStage('track');
 }
@@ -333,23 +340,35 @@ function buildFilm(child)
 		alert('Name should contain only letters and numbers.');
 		return;
 	}
-	if (checkname($('filmtitle').value.trim(),'film')) 
-	{
-		cnfrm=confirm('There is already film with the name '+$('filmtitle').value.trim()+"\nOK to overwrite.");
-		if(cnfrm)
-		{
-			var film=FILMS[$('filmtitle').value.trim()];
-		}
-		else
-		{
-			return;
-		}
+	if($("filmsave").value==" Change ")
+	{alert([$('filmtitle').name,$('filmtitle').value])
+for(var name in FILMS)	
+{
+	alert([name,$('filmtitle').name,name==$('filmtitle').name])
+}
+		var film=FILMS[$('filmtitle').name];alert(film.name);
+		film.title=$('filmtitle').value;
 	}
 	else
 	{
-		var film=new Film($('filmtitle').value.trim());
-		film.title=film.name;
-		FILMS[film.name]=film;
+		if (checkname($('filmtitle').name,'film')) 
+		{
+			cnfrm=confirm('There is already film with the name '+$('filmtitle').name+"\nOK to overwrite.");
+			if(cnfrm)
+			{
+				var film=FILMS[$('filmtitle').name];
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			var film=new Film($('filmtitle').value.trim());
+			film.title=film.name;
+			FILMS[film.name]=film;
+		}
 	}
 	film.list=[];
 	film.elements={};
@@ -372,6 +391,7 @@ function buildFilm(child)
 	$("filmstage").style.visibility="hidden";
 	$("dragstage").style.visibility="hidden";
 	$("menushape").style.visibility="inherit";
+	alert(["before write ",film.name,film.title])
 	writefilmlist();
 }
 
@@ -683,8 +703,6 @@ function addgrouptoscene(g)
 	SELECTED[groupcopy.name]=groupcopy;
 	clear($("boundarydrop"));
 	scene.drawscene();
-	//showTools();
-	//setTools(true)
 	$("listshapebox").style.visibility="hidden";
 }
 
@@ -712,8 +730,6 @@ function addshapetoscene(s)
 	}
 	clear($("boundarydrop"))
 	scene.drawscene();
-	//showTools();
-	//setTools(true);
 	$("listshapebox").style.visibility="hidden";
 }
 
@@ -1101,8 +1117,8 @@ function filmEdit(n)
 		var film=FILMS[name];
 	}
 	flbb(false);
-	FMCOUNT--;
 	$('filmtitle').value=film.title;
+	$('filmtitle').name=film.name;
 	ELCOUNT=film.list.length;
 	$("timeline").style.top=((ELCOUNT+1)*25)+"px";
 	FLELHEIGHT=(ELCOUNT+1)*25+75;
@@ -1110,8 +1126,8 @@ function filmEdit(n)
 	{
 		flel=film.elements[film.list[i][0]];
 		flel.addToBoard();
-		flel.addToElStage();
 		$("filmstage").appendChild(flel.eldiv);
+		flel.addToElStage();
 	}
 }
 

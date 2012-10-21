@@ -467,7 +467,7 @@ function resetfilm(filmtxt)
 	var flel;
 	var filmparamstxt=filmtxt.split(">");
 	var filmparams=filmparamstxt[0].split("|");
-	var film=new Film(filmparams[0]);
+	var film=new Film("SUBFL"+(FLCOUNT++));
 	FILMS[film.name]=film;
 	film.title=filmparams[1];
 	$('filmtitle').value=film.title;

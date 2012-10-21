@@ -19,7 +19,7 @@ function showmenu()
 		smenu.style.left=-65;
 	}
 	smenu.style.visibility='visible';
-	$('markerdrop').style.visibility='hidden';
+	//$('markerdrop').style.visibility='hidden';
 	clear($("markerdrop"));
 	MCOUNT=0;
 	$('group').style.visibility='hidden';

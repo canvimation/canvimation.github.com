@@ -821,7 +821,15 @@ function fleldel()
 
 function cancelFilmBuild(child)
 {
-	cancel=confirm("Do you really want to cancel this Film Build?")
+	if($("filmsave").value==" Save ")
+	{
+		var cnfmsg="Do you really want to cancel this Film Build?"
+	}
+	else
+	{
+		var cnfmsg="Do you really want to cancel any changes to this Film?"
+	}
+	cancel=confirm(cnfmsg)
 	if(cancel)
 	{
 		FILMBOARD={};

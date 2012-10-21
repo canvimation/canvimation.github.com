@@ -12,7 +12,6 @@ function Sprite(name)
 	this.track;
 	this.engine;
 	this.train;
-	//this.speed;
 	this.finishmove=false;
 	this.points=[]; //an array of points along a path depending on time along path giving x and y coordinates and the angle of the gradient at that point
 	this.pointer=0;
@@ -45,7 +44,6 @@ function Sprite(name)
 	this.getScene=getScene;
 	this.getTrack=getTrack;
 	this.expandspritelist=expandspritelist;
-	//this.expandfilmspritelist=expandfilmspritelist;
 	this.spriteHTML=spriteHTML;
 	this.SpriteToText=SpriteToText;
 	this.recordsprite=recordsprite;

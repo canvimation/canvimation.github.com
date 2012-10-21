@@ -946,6 +946,7 @@ function hideTools()
 {
 	$('editlines').style.visibility='hidden';
 	$('shapemenu').style.visibility='hidden';
+	$('fopts').style.visibility='hidden';
 	$('listshapebox').style.visibility='hidden';
 	$('group').style.visibility='hidden';
 	$('ungroup').style.visibility='hidden';
