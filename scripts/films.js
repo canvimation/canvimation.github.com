@@ -1064,16 +1064,18 @@ function expandfilmlist()
 {
 	var flel;
 	var film=this;
-	var schtlm;
-	LIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	var schtlm,sphtml;
+	var Col=["#FFFFFF","#8BF7F1"];
+	var c=0;
 	for(var id in film.elements)
 	{
+		LIMARGIN="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		flel=film.elements[id];
 		switch(flel.source)
 		{
 			case "scene":
 				var scene=flel.elm;
-				schtml='<li id="'+film.name+',nosprite!!!!,'+scene.title+','+scene.name+'">'+LIMARGIN;
+				schtml='<li id="'+film.name+',nosprite!!!!,'+scene.title+','+scene.name+'" style="background-color:'+Col[c]+'">'+LIMARGIN+"&nbsp;&nbsp;&nbsp;&nbsp;";
 				if(BUILDCLOSED)
 				{
 					schtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> ';
@@ -1085,15 +1087,29 @@ function expandfilmlist()
 				var sprite=flel.elm;
 				if(sprite.expanded)
 				{
-					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
-					sprite.expandspritelist(film.name,sprite.name,"fl");
+					sphtml='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" style="background-color:'+Col[c]+'"> '+LIMARGIN+' <img src="assets/contract.png" alt="contract" title="contract" onclick=expand(this) /> ';
+					if(BUILDCLOSED)
+					{
+						sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
+					}
+					sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+					$("innerfl").innerHTML+=sphtml;
+					sprite.expandspritelist(film.name,sprite.name,"fl",Col[c]);
 				}
 				else
 				{
-					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+					sphtml='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" style="background-color:'+Col[c]+'"> '+LIMARGIN+' <img src="assets/expand.png" alt="expand" title="expand" onclick=expand(this) /> ';
+					if(BUILDCLOSED)
+					{
+						sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
+					}
+					sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+					$("innerfl").innerHTML+=sphtml;
 				}
 			break
 		}
+		c+=1;
+		c=c % 2;
 	}
 }
 

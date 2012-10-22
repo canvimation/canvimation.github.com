@@ -406,17 +406,21 @@ function writescenelist()
 	var DDSC=[];
 	var el;
 	var schtlm;
+	var Col=["#FFFFFF","#8BF7F1"];
+	var c=0;
 	$("innersc").innerHTML="<ul>";
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		schtml='<li id="nofilm!!!!,nosprite!!!!,'+scene.title+','+scene.name+'"> ';
+		schtml='<li id="nofilm!!!!,nosprite!!!!,'+scene.title+','+scene.name+'" style="background-color:'+Col[c]+'"> ';
 		if(BUILDCLOSED)
 		{
-			schtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> ';
+			schtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="sceneDelete(this)" /> ';
 		}
 		schtml+='<span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
 		$("innersc").innerHTML+=schtml;
+		c+=1;
+		c=c % 2;
 	}
 	$("innersc").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -463,11 +467,22 @@ function writetracklist()
 	SPANCOUNT=0;
 	var DDTR=[];
 	var el;
+	var trhtml;
+	var Col=["#FFFFFF","#8BF7F1"];
+	var c=0;
 	$("innertr").innerHTML="<ul>";
 	for(var name in TRACKS)
 	{
 		track=TRACKS[name];
-		$("innertr").innerHTML+='<li id="nofilm!!!!,nosprite!!!!,'+track.title+','+track.name+'"> <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="trackDelete(this)" /> <span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+		trhtml='<li id="nofilm!!!!,nosprite!!!!,'+track.title+','+track.name+'"  style="background-color:'+Col[c]+'"> '
+		if(BUILDCLOSED)
+		{
+			trhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="trackDelete(this)" /> ';
+		}
+		trhtml+='<span id="TR'+(SPANCOUNT++)+'" class="innertext">'+track.title+'</span></li>';
+		$("innertr").innerHTML+=trhtml;
+		c+=1;
+		c=c % 2;
 	}
 	$("innertr").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -499,7 +514,9 @@ function writespritelist()
 	SPANCOUNT=0;
 	var DDSP=[];
 	var el;
-	
+	var sphtml;
+	var Col=["#FFFFFF","#8BF7F1"];
+	var c=0;
 	$("innersp").innerHTML="<ul>";
 	for(var name in SPRITES)
 	{
@@ -507,13 +524,27 @@ function writespritelist()
 		sprite=SPRITES[name];
 		if(sprite.expanded)
 		{
-			$("innersp").innerHTML+='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'" >  <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
-			sprite.expandspritelist("nofilm!!!!",sprite.name,"sp");
+			sphtml='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'"  style="background-color:'+Col[c]+'">  <img src="assets/contract.png" alt="contract" title="contract" onclick=expand(this) />';
+			if(BUILDCLOSED)
+			{
+				sphtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="spriteDelete(this)" /> ';
+			}
+			sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			$("innersp").innerHTML+=sphtml;
+			sprite.expandspritelist("nofilm!!!!",sprite.name,"sp",Col[c]);
 		}
 		else
 		{
-			$("innersp").innerHTML+='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'" >  <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="spriteDelete(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			sphtml='<li id="nofilm!!!!,'+sprite.name+','+sprite.title+','+sprite.name+'"  style="background-color:'+Col[c]+'">  <img src="assets/expand.png" alt="expand" title="expand" onclick=expand(this) /> ';
+			if(BUILDCLOSED)
+			{
+				sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="spriteDelete(this)" /> ';
+			}
+			sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+			$("innersp").innerHTML+=sphtml;
 		}
+		c+=1;
+		c=c % 2;
 	}
 	$("innersp").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -562,20 +593,37 @@ function writefilmlist()
 	SPANCOUNT=0;
 	var DDSC=[];
 	var el;
-	LIMARGIN="&nbsp;&nbsp;&nbsp;";
+	var flhtml;
+	var Fcol=["#DDDDDD","#999999"];
+	var f=0;
 	$("innerfl").innerHTML="<ul>";
 	for(var name in FILMS)
 	{
+		LIMARGIN="&nbsp;&nbsp;&nbsp;";
 		film=FILMS[name];
 		if(film.expanded)
 		{
-			$("innerfl").innerHTML+='<li id="nofilm!!!!,'+film.title+','+film.name+'"> <img src="assets/contract.gif" alt="contract" title="contract" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			flhtml='<li id="nofilm!!!!,'+film.title+','+film.name+'" style="background-color:'+Fcol[f]+'"> <img src="assets/contract.png" alt="contract" title="contract" onclick=filmexpand(this) /> ';
+			if(BUILDCLOSED)
+			{
+				flhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> ';
+			}
+			flhtml+='<span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			$("innerfl").innerHTML+=flhtml;
 			film.expandfilmlist();		
 		}
 		else
 		{
-			$("innerfl").innerHTML+='<li id="nofilm!!!!,'+film.title+','+film.name+'"> <img src="assets/expand.gif" alt="expand" title="expand" onclick=filmexpand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			flhtml='<li id="nofilm!!!!,'+film.title+','+film.name+'"  style="background-color:'+Fcol[f]+'"> <img src="assets/expand.png" alt="expand" title="expand" onclick=filmexpand(this) /> ';
+			if(BUILDCLOSED)
+			{
+				flhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="filmDelete(this)" /> ';
+			}
+			flhtml+='<img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			$("innerfl").innerHTML+=flhtml;
 		}
+		f+=1;
+		f= f % 2;
 	}
 	$("innerfl").innerHTML+="</ul>";
 /*	for(var i=0;i<SPANCOUNT;i++)
