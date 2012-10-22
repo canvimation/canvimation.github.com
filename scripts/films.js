@@ -1062,6 +1062,7 @@ function expandfilmlist()
 {
 	var flel;
 	var film=this;
+	var schtlm;
 	LIMARGIN+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 	for(var id in film.elements)
 	{
@@ -1070,18 +1071,24 @@ function expandfilmlist()
 		{
 			case "scene":
 				var scene=flel.elm;
-				$("innerfl").innerHTML+='<li id="'+film.name+',nosprite!!!!,'+scene.title+','+scene.name+'">'+LIMARGIN+' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <span>'+scene.title+'</span></li>';
+				schtml='<li id="'+film.name+',nosprite!!!!,'+scene.title+','+scene.name+'">'+LIMARGIN;
+				if(BUILDCLOSED)
+				{
+					schtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> ';
+				}
+				schtml+='<span>SC '+scene.title+'</span></li>';
+				$("innerfl").innerHTML+=schtml;
 			break
 			case "sprite":
 				var sprite=flel.elm;
 				if(sprite.expanded)
 				{
-					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/contract.gif" alt="contract" title="contract" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
 					sprite.expandspritelist(film.name,sprite.name,"fl");
 				}
 				else
 				{
-					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">'+sprite.title+'</span></li>';
+					$("innerfl").innerHTML+='<li id="'+film.name+','+sprite.name+','+sprite.title+','+sprite.name+'" > '+LIMARGIN+' <img src="assets/expand.gif" alt="expand" title="expand" onclick=expand(this) /> <img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> <span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
 				}
 			break
 		}

@@ -5,6 +5,8 @@ function scbb()
 	$('scenebuildbox').style.zIndex=ZBOX++;
 	$('scenebuildbox').style.visibility='visible';
 	$('scenetitle').value="Scenery"+(SCCOUNT++);
+	BUILDCLOSED=false;
+	rewritelists();
 }
 
 function trbb()
@@ -17,6 +19,8 @@ function trbb()
 	$('trackreps').value=0;
 	$("yoyo").checked=false;
 	$("viewselect").checked=false;
+	BUILDCLOSED=false;
+	rewritelists();
 }
 
 function spbb()
@@ -30,6 +34,8 @@ function spbb()
 	$("spritevector").checked=false;
 	$("eldrop").innerHTML="";
 	$("trackdrop").innerHTML="";
+	BUILDCLOSED=false;
+	rewritelists();
 }
 
 function flbb(newone)
@@ -76,6 +82,8 @@ function flbb(newone)
 	$("shapestage").style.visibility="hidden";
 	$("filmstage").style.visibility="visible";
 	$("menushape").style.visibility="hidden";
+	BUILDCLOSED=false;
+	rewritelists();
 }
 
 function buildScene()
@@ -391,7 +399,6 @@ for(var name in FILMS)
 	$("filmstage").style.visibility="hidden";
 	$("dragstage").style.visibility="hidden";
 	$("menushape").style.visibility="inherit";
-	alert(["before write ",film.name,film.title])
 	writefilmlist();
 }
 
@@ -400,11 +407,18 @@ function writescenelist()
 	SPANCOUNT=0;
 	var DDSC=[];
 	var el;
+	var schtlm;
 	$("innersc").innerHTML="<ul>";
 	for(var name in SCENES)
 	{
 		scene=SCENES[name];
-		$("innersc").innerHTML+='<li id="nofilm!!!!,nosprite!!!!,'+scene.title+','+scene.name+'"> <img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> <span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+		schtml='<li id="nofilm!!!!,nosprite!!!!,'+scene.title+','+scene.name+'"> ';
+		if(BUILDCLOSED)
+		{
+			schtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="sceneEdit(this)" /> <img src="assets/delete.gif" alt="delete" title="delete" onclick="sceneDelete(this)" /> ';
+		}
+		schtml+='<span id="SC'+(SPANCOUNT++)+'" class="innertext">'+scene.title+'</span></li>';
+		$("innersc").innerHTML+=schtml;
 	}
 	$("innersc").innerHTML+="</ul>";
 	for(var i=0;i<SPANCOUNT;i++)
@@ -1224,4 +1238,13 @@ function filmexpand(flexp)
 		film.expanded=true;
 	}
 	writefilmlist();
+}
+
+function rewritelists()
+{
+	writescenelist();
+	writespritelist();
+	writetracklist();
+	writefilmlist();
+	
 }

@@ -51,6 +51,16 @@ function closedialogue(img)
 {
 	holder=img.parentNode.parentNode;
 	holder.style.visibility="hidden";
+	switch (holder.id)
+	{
+		case "scenebuildbox":
+		case "spritebuildbox":
+		case "trackbuildbox":
+		case "filmbuildbox":
+			BUILDCLOSED=true;
+			rewritelists();
+		break
+	}
 }
 
 function openStage(theatre)
@@ -70,6 +80,8 @@ function openStage(theatre)
 	$("trackeditbox").style.visibility="hidden";
 	//$("tweeneditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
+	BUILDCLOSED=true;
+	rewritelists();
 	switch (theatre)
 	{
 		case "scene":
