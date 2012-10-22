@@ -839,6 +839,8 @@ function cancelFilmBuild(child)
 		$("shapestage").style.visibility="visible";
 		$("filmstage").style.visibility="hidden";
 		$("dragstage").style.visibility="hidden";
+		BUILDCLOSED=true;
+		rewritelists();
 	}
 }
 

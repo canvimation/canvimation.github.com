@@ -349,12 +349,8 @@ function buildFilm(child)
 		return;
 	}
 	if($("filmsave").value==" Change ")
-	{alert([$('filmtitle').name,$('filmtitle').value])
-for(var name in FILMS)	
-{
-	alert([name,$('filmtitle').name,name==$('filmtitle').name])
-}
-		var film=FILMS[$('filmtitle').name];alert(film.name);
+	{
+		var film=FILMS[$('filmtitle').name];
 		film.title=$('filmtitle').value;
 	}
 	else
@@ -400,6 +396,8 @@ for(var name in FILMS)
 	$("dragstage").style.visibility="hidden";
 	$("menushape").style.visibility="inherit";
 	writefilmlist();
+	BUILDCLOSED=true;
+	rewritelists();
 }
 
 function writescenelist()
