@@ -25,6 +25,7 @@ function FilmElement(n)
 	
 	//methods
 	this.addToBoard=addToBoard;
+	this.setBoard=setBoard;
 	this.addToElStage=addToElStage;
 }
 
@@ -123,20 +124,22 @@ function addToFilm(el)
 			flel.run.style.borderLeft="2px solid blue";
 			flel.run.style.borderRight="2px solid blue";
 			flel.run.style.height=(parseInt($("timeline").style.top)-parseInt(flel.run.style.top))+"px";
-			if(isNaN(flel.elm.track.repeats))
+			flel.maxrun=document.createElement("div");
+			flel.maxrun.style.borderTop="2px dotted red";
+			flel.maxrun.style.borderRight="2px dotted red";
+			flel.maxruntime=flel.elm.maxruntime(0);
+			if(flel.maxruntime=="c")  //is continuous
 			{
-				flel.maxruntime="c"; //continuous
 				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+				flel.maxrun.style.width=flel.run.style.width;
 				flel.S="Never";
 			}
 			else
 			{
-				flel.maxruntime=flel.elm.ptime*(flel.elm.track.repeats+1);
-				if(flel.elm.track.yoyo) (flel.maxruntime*=2);
-				flel.run.style.width=flel.maxruntime+"px";	
+				flel.run.style.width=flel.maxruntime+"px";
+				flel.maxrun.style.width=flel.run.style.width;	
 				flel.S=flel.maxruntime;	
 			}
-			
 		break
 	}
 	flel.addToBoard();
@@ -157,77 +160,16 @@ function addToBoard()
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
 	$("currentel").el=this.id;
 	
-	this.seen.style.left=(55+this.A)+"px";;
-	this.seen.style.top=(this.layer*25+15)+"px";
-	this.seen.style.height=(parseInt($("timeline").style.top)-parseInt(this.seen.style.top))+"px";
-	this.seen.style.left=(55+this.A)+"px";
-	if(isNaN(this.D))
-	{
-		this.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
-	}
-	else
-	{
-		this.seen.style.width=(this.D-this.A)+"px";
-	}
-	
-	$("Ain").value=this.A;
-	$("Acin").value=this.A;
-	$("Ain").style.left=(parseInt(this.seen.style.left)-48)+"px";
-	$("Ain").style.top=(parseInt($("timeline").style.top)+5)+"px";
-	$("Din").value=this.D;
-	$("Dcin").value=this.D;
-	$("Din").style.left=(parseInt(this.seen.style.left)+2)+"px";
-	$("Din").style.top=(parseInt($("timeline").style.top)+5)+"px";
-	$("Ain").style.visibility="inherit";
-	$("Din").style.visibility="inherit";
-	
-	this.text.style.left=(parseInt(this.seen.style.left)+5)+"px";
-	
 	switch (this.source)
 	{
 		case "scene":
-			$("Rin").style.visibility="hidden";
-			$("Sin").style.visibility="hidden";
 			this.elm.drawscene();
 		break
 		case "sprite":
+			filmlines.appendChild(this.maxrun);
+			filmlines.appendChild(this.run);
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
-			
-			this.run.style.left=(55+this.R)+"px";
-			this.run.style.top=(this.layer*25+20)+"px";
-			this.run.style.height=(parseInt($("timeline").style.top)-parseInt(this.run.style.top))+"px";
-			if(isNaN(this.S))
-			{
-				this.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
-			}
-			else
-			{
-				this.run.style.width=(this.S-this.R)+"px";
-			}
-			
-			$("Rin").style.left=(parseInt(this.run.style.left)-48)+"px";
-			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			
-			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			$("Rin").style.visibility="inherit";
-			$("Sin").style.visibility="inherit";
-			
-			$("Rin").value=this.R;
-			$("Rcin").value=this.R;
-			$("Sin").value=this.S;
-			$("Scin").value=this.S;
-			 			
-			if(isNaN(this.elm.track.repeats))
-			{
-				$("Sin").style.left=(parseInt(this.run.style.left)+2)+"px";
-			}
-			else
-			{	
-				$("Sin").style.left=(this.maxruntime+57)+"px";		
-			}
-			filmlines.appendChild(this.run);
-			
 			this.elm.zeroPointers();
 			this.elm.saveCanvases();
 			this.elm.track.drawtrack(true);
@@ -236,6 +178,7 @@ function addToBoard()
 			this.elm.drawsprite();
 		break
 	}
+	this.setBoard();
 	this.DD=new YAHOO.util.DD(this.eldiv.id);
 	for(var name in FILMBOARD)
 	{
@@ -243,6 +186,7 @@ function addToBoard()
 		if(FILMBOARD[name].source=="sprite")
 		{
 			FILMBOARD[name].run.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].run.style.top))+"px";
+			FILMBOARD[name].maxrun.style.height=(parseInt(FILMBOARD[name].run.style.height))+"px";
 		}
 		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
 		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
@@ -276,6 +220,128 @@ function addToBoard()
 	FLELHEIGHT+=25;
 }
 
+function setBoard()
+{	
+	this.seen.style.left=(55+this.A)+"px";;
+	this.seen.style.top=(this.layer*25+15)+"px";
+	this.seen.style.height=(parseInt($("timeline").style.top)-parseInt(this.seen.style.top))+"px";
+	this.seen.style.left=(55+this.A)+"px";
+	if(isNaN(this.D))
+	{
+		this.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
+		$("Din").style.left=(parseInt(this.seen.style.left)+2)+"px";
+	}
+	else
+	{
+		this.seen.style.width=(this.D-this.A)+"px";
+		$("Din").style.left=(parseInt(this.seen.style.left)+parseInt(this.seen.style.width)+2)+"px";
+	}
+	$("Ain").value=this.A;
+	$("Acin").value=this.A;
+	$("Ain").style.left=(parseInt(this.seen.style.left)-48)+"px";
+	$("Ain").style.top=(parseInt($("timeline").style.top)+5)+"px";
+	$("Din").value=this.D;
+	$("Dcin").value=this.D;
+	$("Din").style.top=(parseInt($("timeline").style.top)+5)+"px";
+	$("Ain").style.visibility="inherit";
+	$("Din").style.visibility="inherit";
+	
+	this.text.style.left=(parseInt(this.seen.style.left)+5)+"px";
+	
+	$("MaxT").style.visibility="hidden";
+	
+	switch (this.source)
+	{
+		case "scene":
+			$("Rin").style.visibility="hidden";
+			$("Sin").style.visibility="hidden";
+		break
+		case "sprite":	
+			this.maxrun.style.visibility="hidden";		
+			this.run.style.left=(55+this.R)+"px";
+			this.run.style.top=(this.layer*25+20)+"px";
+			this.run.style.height=(parseInt($("timeline").style.top)-parseInt(this.run.style.top))+"px";
+			$("Rin").style.left=(parseInt(this.run.style.left)-48)+"px";
+			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			$("MaxT").style.top=(parseInt($("timeline").style.top)+60)+"px";
+			this.maxrun.style.left=this.run.style.left;
+			this.maxrun.style.top=this.run.style.top;
+			this.maxrun.style.height=this.run.style.height;
+			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
+			$("Rin").style.visibility="inherit";
+			$("Sin").style.visibility="inherit";
+			
+			$("Rin").value=this.R;
+			$("Rcin").value=this.R;
+			$("Sin").value=this.S;
+			$("Scin").value=this.S;
+			if(isNaN(this.D))
+			{
+				if(isNaN(this.maxruntime))
+				{
+					if(isNaN(this.S))
+					{
+						this.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+						$("Sin").style.left=(parseInt(this.run.style.left)+2)+"px";
+						$("Scin").value="Never";
+						$("Sin").value="Never";
+					}
+					else
+					{
+						this.run.style.width=(this.S-this.R)+"px";
+						$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
+						$("Scin").value=this.S;
+						$("Sin").value=this.S;
+						this.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
+						this.maxrun.style.visibility="inherit";
+						$("MaxT").style.left=(parseInt(this.maxrun.style.left)+2)+"px";
+						$("MaxT").innerHTML="Never";
+						$("MaxT").style.visibility="inherit";
+					}
+				}
+				else
+				{	
+					this.run.style.width=(this.S-this.R)+"px";
+					$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
+					$("Scin").value=this.S;
+					$("Sin").value=this.S;
+					if(this.S<this.maxruntime)
+					{
+						this.maxrun.style.width=(this.maxruntime-this.R)+"px";
+						this.maxrun.style.visibility="inherit";
+						$("MaxT").style.left=(parseInt(this.maxrun.style.left)+parseInt(this.maxrun.style.width)+2)+"px";
+						$("MaxT").innerHTML=this.maxruntime;
+						$("MaxT").style.visibility="inherit";
+					}		
+				}
+			}
+			else
+			{
+				this.run.style.width=(this.S-this.R)+"px";
+				$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
+				$("Scin").value=this.S;
+				$("Sin").value=this.S;
+				if(isNaN(this.maxruntime))
+				{
+					this.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
+					this.maxrun.style.visibility="inherit";
+				}
+				else
+				{
+					if(this.S<this.maxruntime)
+					{
+						this.maxrun.style.width=(this.maxruntime-this.R)+"px";
+						this.maxrun.style.visibility="inherit";
+						$("MaxT").style.left=(parseInt(this.maxrun.style.left)+parseInt(this.maxrun.style.width)+2)+"px";
+						$("MaxT").innerHTML=this.maxruntime;
+						$("MaxT").style.visibility="inherit";
+					}
+				}
+			}
+		break
+	}
+}
+
 function setA(inp)
 {
 	var flel=FILMBOARD[$("currentel").el];
@@ -293,48 +359,41 @@ function setA(inp)
 		inp.value=flel.A;
 		return;
 	}
-	if(inp.id=="Ain")
+/*	if(inp.id=="Ain")
 	{
 		$("Acin").value=$("Ain").value;
 	}
 	else
 	{
 		$("Ain").value=$("Acin").value;
-	}
+	} */
 	flel.A=n;
-	flel.seen.style.left=(55+n)+"px";
-	flel.text.style.left=(65+n)+"px";
-	$("Ain").style.left=(parseInt(flel.seen.style.left)-48)+"px";
-	if(isNaN(flel.D))
+	
+	if(!(isNaN(flel.D)) && flel.D-flel.A<0.25)
 	{
-		$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
-	}
-	else
-	{
-		if(flel.D-flel.A >0.25)
-		{
-			flel.seen.style.width=(flel.D-flel.A)+"px";
-			
-		}
-		else
-		{
-			flel.D+=flel.A-oldA;
-			$("Din").value=flel.D;
-			$("Dcin").value=flel.D;
-		}
-		$("Din").style.left=(parseInt(flel.seen.style.left)+parseInt(flel.seen.style.width)+2)+"px";
+		flel.D+=flel.A-oldA;
 	}
 	FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
+	if(flel.source=="sprite")
+	{
+		flel.R+=flel.A-oldA;
+		if(!(isNaN(flel.S)))
+		{
+			
+			flel.S+=flel.A-oldA;;
+		}
+	}
 	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
 	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 	$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
-	for(var name in FILMBOARD)
+/*	for(var name in FILMBOARD)
 	{
 		if(isNaN(FILMBOARD[name].D))
 		{
 			FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 		}
-	}
+	} */
+	flel.setBoard();
 }
 
 function setD(inp)
@@ -353,71 +412,39 @@ function setD(inp)
 		inp.value=flel.D;
 		return;
 	}
-	if(inp.id=="Din")
+/*	if(inp.id=="Din")
 	{
 		$("Dcin").value=$("Din").value;
 	}
 	else
 	{
 		$("Din").value=$("Dcin").value;
-	}
+	} */
 	if(isNaN(n))
 	{
 		flel.D="Never";
-		$("Din").value="Never";
-		$("Dcin").value="Never";
 	}
 	else
 	{
 		flel.D=n;
 	}
+	flel.maxrun.style.visibility="hidden";
 	if(inp.value.trim().toLowerCase() == "never")
 	{
-		flel.seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
-		$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
 		FLELWIDTH=Math.max(FLELWIDTH,flel.A+500);
-		if(flel.source=="sprite")
-		{
-			if(isNaN(flel.S))
-			{
-				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
-				$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
-				$("Scin").value="Never";
-				$("Sin").value="Never";
-			}
-		}
 	}
 	else
 	{
-		flel.seen.style.width=(flel.D-flel.A)+"px";
-		$("Din").style.left=(parseInt(flel.seen.style.left)+parseInt(flel.seen.style.width)+2)+"px";
 		FLELWIDTH=Math.max(FLELWIDTH,flel.D);
 		if(flel.source=="sprite")
 		{
-			flel.run.style.borderRight="2px solid blue";
-			if(isNaN(flel.S))
+			if(isNaN(flel.S)  || flel.S>flel.D)
 			{
-				flel.run.style.width=(flel.D-flel.R)+"px";
-				flel.run.style.borderRight="2px solid black";
-				$("Sin").style.left=$("Din").style.left;
-				$("Scin").value=$("Din").value;
-				$("Sin").value=$("Din").value;
-				flel.S=$("Sin").value;
-			}
-			else
-			{
-				if(flel.S>flel.D)
-				{
-					flel.run.style.width=(flel.D-flel.S)+"px";
-					flel.run.style.borderRight="2px solid black";
-					$("Sin").style.left=$(Din).style.left;
-					$("Scin").value=$("Din").value;
-					$("Sin").value=$("Din").value;
-					flel.S=$("Sin").value;
-				}
+				flel.S=flel.D;
 			}
 		}
 	}
+	flel.setBoard();
 	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
 	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 	$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
@@ -447,42 +474,25 @@ function setR(inp)
 			alert("Run At time is after the sprite will disappear.")
 		}
 	}
-	if(inp.id=="Rin")
+/*	if(inp.id=="Rin")
 	{
 		$("Rcin").value=$("Rin").value;
 	}
 	else
 	{
 		$("Rin").value=$("Rcin").value;
-	}
+	} */
 	flel.R=n;
-	flel.run.style.left=(55+n)+"px";
-	//flel.text.style.left=(65+n)+"px";
-	$("Rin").style.left=(parseInt(flel.run.style.left)-48)+"px";
-	if(isNaN(flel.S))
+
+	if(!(isNaN(flel.S)) && flel.S-flel.R<0.25)
 	{
-		$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
-	}
-	else
-	{
-		if(flel.S-flel.R >0.25)
+		flel.S+=flel.R-oldR;
+		if(!(isNaN(flel.D)) && flel.S>flel.D)
 		{
-			if(flel.S-flel.R>flel.maxruntime)
-			{
-				flel.S=flel.R+flel.maxruntime;
-				$("Sin").value=flel.S;
-			    $("Scin").value=flel.S;	
-			}
-			flel.run.style.width=(flel.S-flel.R)+"px";
+			flel.S=flel.D;
 		}
-		else
-		{
-			flel.S+=flel.R-oldR;
-			$("Sin").value=flel.S;
-			$("Scin").value=flel.S;
-		}
-		$("Sin").style.left=(parseInt(flel.run.style.left)+parseInt(flel.run.style.width)+2)+"px";
 	}
+	flel.setBoard();
 }
 
 function setS(inp)
@@ -495,7 +505,7 @@ function setS(inp)
 		{
 			if (inp.value.toLowerCase()!="never")
 			{
-				alert("Stop At time is not a number nor 'never'");
+				alert("Stop At time is not a number nor 'Never'");
 				inp.value=flel.S;
 				return;		  
 			}
@@ -515,36 +525,30 @@ function setS(inp)
 			inp.value=flel.S;
 			return;
 		}
-		if (n>flel.maxruntime)
+		if (!(isNaN(flel.maxruntime)) && n-flel.R>flel.maxruntime)
 		{
 			alert("Sprite is set to stop after the maximum running time "+flel.maxruntime+" seconds.");
-			inp.value=flel.S
+			inp.value=flel.S;
 			return;
 		}
 	}
-	if(inp.id=="sin")
+/*	if(inp.id=="sin")
 	{
 		$("Scin").value=$("Sin").value;
 	}
 	else
 	{
 		$("Sin").value=$("Scin").value;
-	}
+	}*/
 	if(isNaN(flel.D))
 	{
 		if(isNaN(n))
 		{
 				flel.S="Never";
-				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
-				$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
-				$("Sin").value="Never";
-				$("Scin").value="Never";
 		}
 		else
 		{
 			flel.S=n;
-			flel.run.style.width=(flel.S-flel.R)+"px";
-			$("Sin").style.left=(parseInt(flel.run.style.left)+parseInt(flel.run.style.width)+2)+"px"
 		}
 	}
 	else
@@ -556,25 +560,13 @@ function setS(inp)
 		else
 		{
 			flel.S=n;
-		}
-		flel.run.style.borderRight="2px solid blue";
-		if(flel.S>flel.D)
-		{
-			flel.run.style.width=(flel.D-flel.R)+"px";
-			flel.run.style.borderRight="2px solid black";
-			$("Sin").style.left=$("Din").style.left;
-			$("Scin").value=$("Din").value;
-			$("Sin").value=$("Din").value;
-			flel.S=$("Sin").value;
-		}
-		else
-		{
-			flel.run.style.width=(flel.S-flel.R)+"px";	
-			$("Sin").style.left=(parseInt(flel.run.style.left)+parseInt(flel.run.style.width)+2)+"px";
-			$("Scin").value=flel.S;
-			$("Sin").value=flel.S;
+			if(flel.S>flel.D)
+			{
+				flel.S=flel.D
+			}
 		}		
 	}
+	flel.setBoard();
 }
 
 function setflel(el)
@@ -1092,7 +1084,7 @@ function expandfilmlist()
 					{
 						sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
 					}
-					sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+					sphtml+='<span>SP '+sprite.title+'</span></li>';
 					$("innerfl").innerHTML+=sphtml;
 					sprite.expandspritelist(film.name,sprite.name,"fl",Col[c]);
 				}
@@ -1103,7 +1095,7 @@ function expandfilmlist()
 					{
 						sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
 					}
-					sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+					sphtml+='<span>SP '+sprite.title+'</span></li>';
 					$("innerfl").innerHTML+=sphtml;
 				}
 			break

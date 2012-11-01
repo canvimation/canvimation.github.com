@@ -421,25 +421,27 @@ function markLine()
 	closeColor();
 	removeGradLine();
 	removeRotate();
+	var node;
 	switch (SELECTEDSHAPE.type)
 	{
 		case "line":
 		case "arc":
 		case "segment":
 		case "sector":
-			var node=SELECTEDSHAPE.path.next;
+			node=SELECTEDSHAPE.path.next;
 			node.addPointMark();
 			node=node.next;
 			node.addPointMark();
 		break
 		case "rounded_rectangle":
-			var node=SELECTEDSHAPE.path.next;
+			node=SELECTEDSHAPE.path.next;
 			node.addPointMark();
 		break
-		case "freeform":
 		case "curve":
-			var node=SELECTEDSHAPE.path.next;
+			node=SELECTEDSHAPE.path.next;
 			node.addPointMark();
+		case "freeform":
+			node=SELECTEDSHAPE.path.next;
 			node=node.next;
 			while(node.point.x!="end")
 			{

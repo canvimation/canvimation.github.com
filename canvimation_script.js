@@ -412,11 +412,11 @@ function nextPointer()
 		return;
 	}
 	var shape=this.track.shape;
-	if (!shape.open && this.pointer>=((this.track.repeats+1)*this.points.length))
+	if (!shape.open && this.pointer>=((this.track.repeats)*this.points.length))
 	{
 		this.finishmove=true;
 	}
-	else if (shape.editable && this.pointer>=((this.track.repeats+1)*this.points.length - 1))
+	else if (shape.editable && this.pointer>=((this.track.repeats)*this.points.length - 1))
 	{
 		this.finishmove=true;
 	}
@@ -505,7 +505,7 @@ function Track(name)
 	this.name=name;
 	this.title;
 	this.shape;
-	this.repeats=0;
+	this.repeats=1;
 	this.visible=false;
 	this.yoyo=false;
 	this.length;

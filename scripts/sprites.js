@@ -48,6 +48,7 @@ function Sprite(name)
 	this.SpriteToText=SpriteToText;
 	this.recordsprite=recordsprite;
 	this.spriteparams=spriteparams;
+	this.maxruntime=maxruntime;
 }
 
 function copysprite(theatre)
@@ -488,11 +489,11 @@ function nextPointer()
 		return;
 	}
 	var shape=this.track.getShape();
-	if (!shape.open && this.pointer>=((this.track.repeats+1)*this.points.length))
+	if (!shape.open && this.pointer>=((this.track.repeats)*this.points.length))
 	{
 		this.finishmove=true;
 	}
-	else if (shape.editable && this.pointer>=((this.track.repeats+1)*this.points.length - 1))
+	else if (shape.editable && this.pointer>=((this.track.repeats)*this.points.length - 1))
 	{
 		this.finishmove=true;
 	}
@@ -596,7 +597,7 @@ function expandspritelist(fn,sn,box,col)
 				{
 					sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
 				}
-				sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+				sphtml+='<span >SP '+sprite.title+'</span></li>';
 				$("inner"+box).innerHTML+=sphtml;
 				sprite.expandspritelist(fn,sn,box,col);
 			}
@@ -607,10 +608,38 @@ function expandspritelist(fn,sn,box,col)
 				{
 					sphtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="spriteEdit(this)" /> ';
 				}
-				sphtml+='<span id="SP'+(SPANCOUNT++)+'" class="innertext">SP '+sprite.title+'</span></li>';
+				sphtml+='<span >SP '+sprite.title+'</span></li>';
 				$("inner"+box).innerHTML+=sphtml;
 			}
 		break
 	}
 }
 
+function maxruntime(mx)
+{
+	var mrt;
+	if(isNaN(this.track.repeats))
+	{
+		return "c";
+	}
+	else
+	{
+		mrt=this.ptime*(this.track.repeats);
+		if(this.track.yoyo) {mrt*=2};
+		return Math.max(mx,mrt);
+	}
+	if (this.engine=="sprite")
+	{
+		mx=this.train.maxruntime(mx);
+		if(isNaN(mx)  || isNaN(this.track.repeats))
+		{
+			return "c";
+		}
+		else
+		{
+			mrt=this.ptime*(this.track.repeats);
+			if(this.track.yoyo) (mrt*=2);
+			return Math.max(mx,mrt);
+		}
+	}
+}

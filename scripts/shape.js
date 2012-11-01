@@ -824,19 +824,19 @@ function fixCorners()
 
 function showTools()
 {
-	$('stylelines').style.visibility='visible';
-	$('collines').style.visibility='visible';
-	$('rotate').style.visibility='visible';
-	$('front').style.visibility='visible';
-	$('back').style.visibility='visible';
-	$('del').style.visibility='visible';
-	$('copy').style.visibility='visible';
-	$('vert').style.visibility='visible';
-	$('horz').style.visibility='visible';
-	$('sname').style.visibility='visible'
-	$('colfill').style.visibility='visible';
-	$('gradfill').style.visibility='visible';
-	$('shadow').style.visibility='visible';	
+	$('stylelines').style.visibility='inherit';
+	$('collines').style.visibility='inherit';
+	$('rotate').style.visibility='inherit';
+	$('front').style.visibility='inherit';
+	$('back').style.visibility='inherit';
+	$('del').style.visibility='inherit';
+	$('copy').style.visibility='inherit';
+	$('vert').style.visibility='inherit';
+	$('horz').style.visibility='inherit';
+	$('sname').style.visibility='inherit'
+	$('colfill').style.visibility='inherit';
+	$('gradfill').style.visibility='inherit';
+	$('shadow').style.visibility='inherit';	
 }
 
 function setTools(scene)
@@ -908,16 +908,16 @@ function setTools(scene)
 		$("sname").style.visibility="hidden";
 		$('ungroup').style.visibility="hidden";
 		$('editlines').style.visibility="hidden";
-		$('group').style.visibility="visible";
-		$('alntop').style.visibility='visible';
-		$('alnbot').style.visibility='visible';
-		$('alnleft').style.visibility='visible';
-		$('alnright').style.visibility='visible';
+		$('group').style.visibility="inherit";
+		$('alntop').style.visibility='inherit';
+		$('alnbot').style.visibility='inherit';
+		$('alnleft').style.visibility='inherit';
+		$('alnright').style.visibility='inherit';
 		$('alntop').style.top=280+"px";
 		$('alnbot').style.top=300+"px";
 		$('alnleft').style.top=280+"px";
 		$('alnright').style.top=280+"px";
-		if ($('colfill').style.visibility=='visible')  //one of selected shapes is closed
+		if ($('colfill').style.visibility=='inherit')  //one of selected shapes is closed
 		{
 			$('alntop').style.top=380+"px";
 			$('alnbot').style.top=400+"px";

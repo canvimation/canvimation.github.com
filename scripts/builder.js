@@ -1,7 +1,7 @@
 function scbb()
 {
 	$('scenebuildbox').style.top=(parseInt($("scenebox").style.top)+60)+"px";
-	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+60)+"px";
+	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+120)+"px";
 	$('scenebuildbox').style.zIndex=ZBOX++;
 	$('scenebuildbox').style.visibility='visible';
 	$('scenetitle').value="Scenery"+(SCCOUNT++);
@@ -12,11 +12,11 @@ function scbb()
 function trbb()
 {
 	$('trackbuildbox').style.top=(parseInt($("trackbox").style.top)+60)+"px";
-	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+60)+"px";
+	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+120)+"px";
 	$('trackbuildbox').style.zIndex=ZBOX++;
 	$('trackbuildbox').style.visibility='visible';
 	$('tracktitle').value="Track"+(TRCOUNT++);
-	$('trackreps').value=0;
+	$('trackreps').value=1;
 	$("yoyo").checked=false;
 	$("viewselect").checked=false;
 	BUILDCLOSED=false;
@@ -26,7 +26,7 @@ function trbb()
 function spbb()
 {
 	$('spritebuildbox').style.top=(parseInt($("spritebox").style.top)+60)+"px";
-	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)+60)+"px";
+	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)+120)+"px";
 	$('spritebuildbox').style.zIndex=ZBOX++;
 	$('spritebuildbox').style.visibility='visible';
 	$('spritetitle').value="Sprite"+(SPCOUNT++);
@@ -54,20 +54,26 @@ function flbb(newone)
 	$("filmbuildbox").style.zIndex=ZBOX++;
 	$("filmbuildbox").style.visibility="visible";
 	$("filmbuildboard").innerHTML="<input id='Ain' onchange='setA(this)' type='text' value='' size='4' /><input id='Din' onchange='setD(this)' type='text' value='' size='4' />";
-	$("filmbuildboard").innerHTML+="<input id='Rin' onchange='setR(this)' type='text' value='' size='4' /><input id='Sin'  type='text' onchange='setS(this)' value='' size='4' />";
+	$("filmbuildboard").innerHTML+="<input id='Rin' onchange='setR(this)' type='text' value='' size='4' /><input id='Sin'  type='text' onchange='setS(this)' value='' size='4' /><div id='MaxT' ></div>";
 	$("filmbuildlines").innerHTML="<div id='timeline'></div>";
 	$("flellist").innerHTML="";
 	$("Ain").style.visibility="hidden";
 	$("Din").style.visibility="hidden";
-	$("Rin").style.border="1px groove blue";
-	$("Sin").style.border="1px ridge blue";
+	$("Rin").style.border="1px solid blue";
+	$("Sin").style.border="1px solid blue";
 	$("Rin").style.paddingLeft="1px";
 	$("Sin").style.paddingLeft="1px";
 	$("Rin").style.paddingRight="1px";
 	$("Sin").style.paddingRight="1px";
 	$("Rin").style.visibility="hidden";
 	$("Sin").style.visibility="hidden";
+	$("MaxT").style.visibility="hidden";
+	$("MaxT").style.border="1px solid red";
+	$("MaxT").style.width="50px";
+	$("MaxT").style.textAlign="right";
+	$("MaxT").style.backgroundColor="#FF9999";
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
+	$("timeline").style.zIndex=1000000000;
 	ELCOUNT=0;
 	FLELTOP=15;
 	FLELWIDTH=350;
@@ -195,12 +201,12 @@ function buildTrack()
 	var n = parseInt($('trackreps').value);
 	if (isNaN(n) && !($('trackreps').value.toLowerCase()=="c"))
 	{
-		alert('Repetitons is neither a number nor continuous - c -');
+		alert('Traces is neither a number nor continuous - c -');
 		return;		  
 	}
-	if (n<0)
+	if (n<1)
 	{
-		alert('Repetitons must be positive.');
+		alert('Traces must be 1 or more.');
 		return;
 	}
 	var i=0;
@@ -617,9 +623,9 @@ function writefilmlist()
 			flhtml='<li id="nofilm!!!!,'+film.title+','+film.name+'"  style="background-color:'+Fcol[f]+'"> <img src="assets/expand.png" alt="expand" title="expand" onclick=filmexpand(this) /> ';
 			if(BUILDCLOSED)
 			{
-				flhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="filmDelete(this)" /> ';
+				flhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="filmEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="filmDelete(this)" /> <img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> ';
 			}
-			flhtml+='<img src="assets/play.png" alt="play" title="play" onclick="filmPlay(this)" /> <span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
+			flhtml+='<span id="FL'+(SPANCOUNT++)+'" class="innertext">'+film.title+'</span></li>';
 			$("innerfl").innerHTML+=flhtml;
 		}
 		f+=1;
@@ -1185,6 +1191,15 @@ function filmEdit(n)
 	for(var i=0;i<film.list.length;i++)
 	{
 		flel=film.elements[film.list[i][0]];
+		flel.maxruntime=flel.elm.maxruntime(0);
+		if(flel.maxruntime=="c")  //is continuous
+		{
+			flel.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
+		}
+		else
+		{
+			flel.maxrun.style.width=flel.maxruntime+"px";	
+		}
 		flel.addToBoard();
 		$("filmstage").appendChild(flel.eldiv);
 		flel.addToElStage();
