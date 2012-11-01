@@ -843,10 +843,19 @@ function sceneEdit(n)  //edits the selected scene shapes
 	else
 	{
 		var film=FILMS[filmname];
-		var topsprite=film.getFlel(topname);
-		var data=topsprite.getScene();
-		var scene=data.scene;
-		var path=film.title+"/"+data.path;
+		if(topname=="nosprite!!!!")
+		{
+			var scene=film.getFlel(name);
+			var path=film.title;
+		}
+		else
+		{
+			
+			var topsprite=film.getFlel(topname);
+			var data=topsprite.getScene();
+			var scene=data.scene;
+			var path=film.title+"/"+data.path;
+		}
 	}
 	$("shapestage").style.visibility="hidden";
 	clear($("scenestage"));
@@ -1191,14 +1200,17 @@ function filmEdit(n)
 	for(var i=0;i<film.list.length;i++)
 	{
 		flel=film.elements[film.list[i][0]];
-		flel.maxruntime=flel.elm.maxruntime(0);
-		if(flel.maxruntime=="c")  //is continuous
+		if(flel.source!="scene")
 		{
-			flel.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
-		}
-		else
-		{
-			flel.maxrun.style.width=flel.maxruntime+"px";	
+			flel.maxruntime=flel.elm.maxruntime(0);
+			if(flel.maxruntime=="c")  //is continuous
+			{
+				flel.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
+			}
+			else
+			{
+				flel.maxrun.style.width=flel.maxruntime+"px";	
+			}
 		}
 		flel.addToBoard();
 		$("filmstage").appendChild(flel.eldiv);
