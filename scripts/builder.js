@@ -677,24 +677,6 @@ function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative a
 	{
 		var group=FROM[name];
 		var groupcopy=copyGroup(group,offset,theatre,STORE,TO,NCOUNT)
-		var members=groupcopy.memberShapes();
-		for(var shape in members)
-		{
-			members[shape].group=groupcopy;
-			temps=[];
-			temps[0]=members[shape]
-			temps[1]=members[shape].zIndex;
-			shapelist.push(temps);
-		}
-	}
-	shapelist.sort(zindp);
-	
-	for (var i=0; i<shapelist.length;i++)
-	{
-		shape=shapelist[i][0];
-		shape.zIndex=ZPOS++;
-		shape.Canvas.style.zIndex=shape.zIndex;
-		shape.draw();
 	}
 	return groupcopy;
 }

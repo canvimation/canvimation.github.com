@@ -219,7 +219,7 @@ function followPath(showpathline)
 	this.finishmove=false;
 	clear($("spritestage"));
 	this.inTheatre($("spritestage"));
-	this.saveCanvases(); //remove this for locus
+	this.saveCanvases();
 	this.track.drawtrack(showpathline);
   	this.moveSprite(showpathline);
 }
