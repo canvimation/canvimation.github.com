@@ -868,6 +868,7 @@ function filmPlay(el)
 		$("filmstage").appendChild(flel.eldiv);
 		clear(flel.eldiv);
 		flel.addToElStage();
+		flel.eldiv.style.visibility="hidden";
 		switch(flel.source)
 		{
 			case "scene":

@@ -59,7 +59,7 @@ function ToText()
 	}
 	if (scenehtml !='')
 	{
-		scenehtml='<br> &nbsp;Scenes<br>'+scenehtml;
+		scenehtml='<br> &nbsp;Scenery<br>'+scenehtml;
 	}
 	innerhtml +=scenehtml;
 	tweenhtml='';
