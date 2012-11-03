@@ -371,18 +371,18 @@ function pointEdit(mark)
 
 function close_p_content()
 {
-	$("p_points").style.visibility="hidden";
-	$("p_smooth").style.visibility="hidden";
-	$("p_inline").style.visibility="hidden";
-	$("p_delete").style.visibility="hidden";
-	$("p_open").style.visibility="hidden";
-	$("p_line").style.visibility="hidden";
-	$("p_line2").style.visibility="hidden";
-	$("p_add").style.visibility="hidden";
-	$("p_add2").style.visibility="hidden";
-	$("p_paths").style.visibility="hidden";
-	$("p_close").style.visibility="hidden";
-	$("p_segments").style.visibility="hidden";
+	$("p_points").style.visibility="inherit";
+	$("p_smooth").style.visibility="inherit";
+	$("p_inline").style.visibility="inherit";
+	$("p_delete").style.visibility="inherit";
+	$("p_open").style.visibility="inherit";
+	$("p_line").style.visibility="inherit";
+	$("p_line2").style.visibility="inherit";
+	$("p_add").style.visibility="inherit";
+	$("p_add2").style.visibility="inherit";
+	$("p_paths").style.visibility="inherit";
+	$("p_close").style.visibility="inherit";
+	$("p_segments").style.visibility="inherit";
 }
 
 function closeStops()

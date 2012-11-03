@@ -967,6 +967,8 @@ function hideTools()
 	$('alnright').style.visibility='hidden';
 	$('shadow').style.visibility='hidden';
 	$('sname').style.visibility='hidden';
+	$('pointsbox').style.visibility='hidden';
+	close_p_content();
 }
 
 function shapecopy(offset)
