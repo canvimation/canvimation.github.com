@@ -154,31 +154,64 @@ function updatePointNode(cursor)
 		case "curve":
 			var dx=cursor.x-this.point.x;
 			var dy=cursor.y-this.point.y;
+			var vertex;
 			if(this.prev.point.x=="end")
 			{
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				this.setNode(cursor);
+				vertex=this.next.vertex;
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
-				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+					$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				}
+				else
+				{
+					this.next.vertex=vertex;
+				}
 			}
 			else if(this.next.point.x!="end")
 			{
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				vertex=this.vertex;
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
-				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+					$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				}
+				else
+				{
+					this.vertex=vertex;
+				}
+				vertex=this.next.vertex;
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
-				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+					$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				}
+				else
+				{
+					this.next.vertex=vertex;
+				}
 			}
 			else
 			{
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				vertex=this.vertex;
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
-				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+					$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				}
+				else
+				{
+					this.vertex=vertex;
+				}
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
@@ -187,28 +220,61 @@ function updatePointNode(cursor)
 		case "freeform":
 			var dx=cursor.x-this.point.x;
 			var dy=cursor.y-this.point.y;
+			var vertex=this.vertex;
 			if(this.next.point.x!="end")
 			{
 				var c1=new Point(this.next.ctrl1.x+dx,this.next.ctrl1.y+dy);
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
-				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+					$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+					
+				}
+				else
+				{
+					this.vertex=vertex;
+				}
+				vertex=this.next.vertex;
 				this.next.setNode(this.next.point,c1,this.next.ctrl2);
-				$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
-				$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.next.c1mark.id).style.left=(this.next.ctrl1.x-2)+"px";
+					$(this.next.c1mark.id).style.top=(this.next.ctrl1.y-2)+"px";
+				}
+				else
+				{
+					this.next.vertex=vertex;
+				}
 			}
 			else
 			{
 				var c2=new Point(this.ctrl2.x+dx,this.ctrl2.y+dy);
+				var vertex=this.vertex;
 				this.setNode(cursor,this.ctrl1,c2);
-				$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
-				$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.c2mark.id).style.left=(this.ctrl2.x-2)+"px";
+					$(this.c2mark.id).style.top=(this.ctrl2.y-2)+"px";
+				}
+				else
+				{
+					this.vertex=vertex;
+				}
 				this.shape.path.next.setNode(cursor);
 				var c1=new Point(this.shape.path.next.next.ctrl1.x+dx,this.shape.path.next.next.ctrl1.y+dy);
+				vertex=this.shape.path.next.next.vertex;
 				this.shape.path.next.next.setNode(this.shape.path.next.next.point,c1,this.shape.path.next.next.ctrl2);
-				$(this.shape.path.next.next.c1mark.id).style.left=(this.shape.path.next.next.ctrl1.x-2)+"px";
-				$(this.shape.path.next.next.c1mark.id).style.top=(this.shape.path.next.next.ctrl1.y-2)+"px";
+				if(vertex=="B")
+				{
+					$(this.shape.path.next.next.c1mark.id).style.left=(this.shape.path.next.next.ctrl1.x-2)+"px";
+					$(this.shape.path.next.next.c1mark.id).style.top=(this.shape.path.next.next.ctrl1.y-2)+"px";
+				}
+				else
+				{
+					this.shape.path.next.next.vertex=vertex;
+				}
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
