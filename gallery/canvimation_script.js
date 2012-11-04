@@ -96,7 +96,6 @@ function draw()
 {
 	var scrw=this.Canvas.width;
 	var scrh=this.Canvas.height;
-	this.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
    	var rule='rgba('
 	for (var j=0;j<3;j++)
 	{
