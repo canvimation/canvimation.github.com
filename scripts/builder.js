@@ -42,6 +42,7 @@ function flbb(newone)
 {
 	if(newone)
 	{
+		$('filmtitle').name="Film"+(FMCOUNT);
 		$('filmtitle').value="Film"+(FMCOUNT++);
 		$("fbhtitle").innerHTML="&nbsp; Build Film";
 		$("filmsave").value=" Save ";

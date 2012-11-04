@@ -22,7 +22,7 @@ function writeFilm()
 	{
 		flen+=25;
 		film=FILMS[name];
-		filmhtml+="<p class='check_input'>	<input type='checkbox' id='"+film.name+"'><label for='"+film.name+"'>"+film.name+"</label></p>"
+		filmhtml+="<p class='check_input'>	<input type='checkbox' id='"+film.name+"'><label for='"+film.name+"'>"+film.title+"</label></p>"
 	}
 	filmhtml+="<input type='button' value=' Export ' onclick='exportFilms()' />	<input type='button' value=' Cancel ' onclick='closedialogue(this)' />"
 	

@@ -523,11 +523,13 @@ function resetfilm(filmtxt)
 				}
 				flel.maxruntime=parseInt(runparams[11]);
 				flel.run=document.createElement("div");
-				
 				flel.run.style.borderTop="2px solid blue";
 				flel.run.style.borderLeft="2px solid blue";
 				flel.run.style.borderRight="2px solid blue";
 				
+				flel.maxrun=document.createElement("div");
+				flel.maxrun.style.borderTop="2px dotted red";
+				flel.maxrun.style.borderRight="2px dotted red";
 			break
 		}
 		$("timeline").style.top=((flel.layer+2)*25)+"px";

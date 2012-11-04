@@ -1,0 +1,558 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <style>
+         div {
+            position:absolute;
+         }
+
+         #screen {
+            height:400px;
+            width:400px;
+            clip:rect(0px,400px,400px,0px);
+         }
+         #frame {
+            height:400px;
+            width:400px;
+            border:black 1px solid;
+         }
+         #msg {
+            top:450px;
+         }
+      </style>
+
+      <script type="text/javascript" src = "canvimation_script.js" ></script>
+      <!--[IF LT IE 9]><script type="text/javascript" src = "excanvas.js" ></script><![endif]-->
+      <script type="text/javascript">
+         var SCRW=2732;
+         var SCRH=1456;
+         var flel;
+         var scene;
+         var shape;
+         var sprite;
+         var film;
+         var TRAINS={};
+
+         function main() {
+            film = new Film("Film1");
+
+//---------- Film Element----------------------------
+            film.elements["fl0"]={};
+            flel=film.elements["fl0"];
+            flel.name="SUBSP38",
+            flel.id="fl0",
+            flel.title="RedOrbit",
+            flel.source="sprite",
+            flel.A="0",
+            flel.D="Never",
+            eldiv=document.createElement("div");
+            eldiv.id="fl0";
+            eldiv.style.top="-112px";
+            eldiv.style.left="-483px";
+            eldiv.style.width="1366px";
+            eldiv.style.height="728px";
+            eldiv.style.zIndex=0;
+            eldiv.style.visibility="hidden";
+            $("screen").appendChild(eldiv);
+            flel.R="0",
+            flel.S="Never",
+
+   //--- Type Sprite---Base is Red-----------------------------
+
+   //---------- Type Train Scene---Base is Circle-------------------------
+            scene=new Scene("SUBSC46");
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH48");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="ellipse";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[254,3,3,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(536.5,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(543,171);
+            c1=new Point(540.0898508739001,164);
+            c2=new Point(543,167.13400675118444);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,178);
+            c1=new Point(543,174.86599324881556);
+            c2=new Point(540.0898508739001,178);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(530,171);
+            c1=new Point(532.9101491260999,178);
+            c2=new Point(530,174.86599324881556);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,164);
+            c1=new Point(530,167.13400675118444);
+            c2=new Point(532.9101491260999,164);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            scene.shapes[shape.name]=shape;
+
+   //---------- End of Train Scene---Base is Circle-------------------------
+
+      //---------- Track ---Base is Line-------------------------
+
+      //---------- Type Shape---Base is Shape1-------------------------
+            shape=new Shape("SUBSH45");
+            shape.title="Shape1";
+            shape.open=true;
+            shape.editable=true;
+            shape.type="line";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="2";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(548,238);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(622,238);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape1-------------------------
+            track=new Track("SUBTR43");
+            track.shape=shape;
+            track.repeats="c";
+            track.visible=false;
+            track.yoyo=true;
+            track.shape.addTo($("fl0"));
+
+      //---------- End Of Track ---Base is Line-------------------------
+
+            sprite=new Sprite("SUBSP42");
+            sprite.train=scene;
+            sprite.engine="scene";
+            sprite.track=track;
+            sprite.ptime=5;
+            sprite.pointer=0;
+            sprite.usevec=false;
+            sprite.expanded=false;
+            sprite.finishmove=true;
+            sprite.vector={xs:537,xe:0,ys:171,ye:0,psi:0};
+
+   //--- End Of Sprite---Base is Red-----------------------------
+            TRAINS["SUBSP42"]=sprite;
+
+      //---------- Track ---Base is Orbited-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH41");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="ellipse";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[138,125,138,125];
+            shape.radGrad=[138,125,0,138,135,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(674.5,289);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(681,296);
+            c1=new Point(678.0898508739001,289);
+            c2=new Point(681,292.1340067511844);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(674.5,303);
+            c1=new Point(681,299.8659932488156);
+            c2=new Point(678.0898508739001,303);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(668,296);
+            c1=new Point(670.9101491260999,303);
+            c2=new Point(668,299.8659932488156);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(674.5,289);
+            c1=new Point(668,292.1340067511844);
+            c2=new Point(670.9101491260999,289);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            track=new Track("SUBTR39");
+            track.shape=shape;
+            track.repeats="c";
+            track.visible=false;
+            track.yoyo=false;
+            track.shape.addTo($("fl0"));
+
+      //---------- End Of Track ---Base is Orbited-------------------------
+
+            sprite=new Sprite("SUBSP38");
+            sprite.train=TRAINS["SUBSP42"];;
+            sprite.engine="sprite";
+            sprite.track=track;
+            sprite.ptime=9;
+            sprite.pointer=0;
+            sprite.usevec=true;
+            sprite.expanded=false;
+            sprite.finishmove=true;
+            sprite.vector={xs:542,xe:642,ys:266,ye:266,psi:0};
+
+   //--- End Of Sprite---Base is RedOrbit-----------------------------
+            TRAINS["SUBSP38"]=sprite;
+            flel.elm=sprite;
+            sprite.setPoints();
+
+//---------- End Of Film Element -- Type sprite--Base is RedOrbit--------------------------
+
+//---------- Film Element----------------------------
+            film.elements["fl1"]={};
+            flel=film.elements["fl1"];
+            flel.name="SUBSP49",
+            flel.id="fl1",
+            flel.title="BlueOrbit",
+            flel.source="sprite",
+            flel.A="0",
+            flel.D="Never",
+            eldiv=document.createElement("div");
+            eldiv.id="fl1";
+            eldiv.style.top="13px";
+            eldiv.style.left="-345px";
+            eldiv.style.width="1366px";
+            eldiv.style.height="728px";
+            eldiv.style.zIndex=1;
+            eldiv.style.visibility="hidden";
+            $("screen").appendChild(eldiv);
+            flel.R="0",
+            flel.S="Never",
+
+   //--- Type Sprite---Base is Blue-----------------------------
+
+   //---------- Type Train Scene---Base is Circle-------------------------
+            scene=new Scene("SUBSC57");
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH59");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="ellipse";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[60,0,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(536.5,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(543,171);
+            c1=new Point(540.0898508739001,164);
+            c2=new Point(543,167.13400675118444);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,178);
+            c1=new Point(543,174.86599324881556);
+            c2=new Point(540.0898508739001,178);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(530,171);
+            c1=new Point(532.9101491260999,178);
+            c2=new Point(530,174.86599324881556);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,164);
+            c1=new Point(530,167.13400675118444);
+            c2=new Point(532.9101491260999,164);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            scene.shapes[shape.name]=shape;
+
+   //---------- End of Train Scene---Base is Circle-------------------------
+
+      //---------- Track ---Base is Line-------------------------
+
+      //---------- Type Shape---Base is Shape1-------------------------
+            shape=new Shape("SUBSH56");
+            shape.title="Shape1";
+            shape.open=true;
+            shape.editable=true;
+            shape.type="line";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="2";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(548,238);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(622,238);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape1-------------------------
+            track=new Track("SUBTR54");
+            track.shape=shape;
+            track.repeats="c";
+            track.visible=false;
+            track.yoyo=true;
+            track.shape.addTo($("fl1"));
+
+      //---------- End Of Track ---Base is Line-------------------------
+
+            sprite=new Sprite("SUBSP53");
+            sprite.train=scene;
+            sprite.engine="scene";
+            sprite.track=track;
+            sprite.ptime=7;
+            sprite.pointer=0;
+            sprite.usevec=false;
+            sprite.expanded=false;
+            sprite.finishmove=true;
+            sprite.vector={xs:537,xe:0,ys:171,ye:0,psi:0};
+
+   //--- End Of Sprite---Base is Blue-----------------------------
+            TRAINS["SUBSP53"]=sprite;
+
+      //---------- Track ---Base is Orbited-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH52");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="ellipse";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(536.5,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(543,171);
+            c1=new Point(540.0898508739001,164);
+            c2=new Point(543,167.13400675118444);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,178);
+            c1=new Point(543,174.86599324881556);
+            c2=new Point(540.0898508739001,178);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(530,171);
+            c1=new Point(532.9101491260999,178);
+            c2=new Point(530,174.86599324881556);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(536.5,164);
+            c1=new Point(530,167.13400675118444);
+            c2=new Point(532.9101491260999,164);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            track=new Track("SUBTR50");
+            track.shape=shape;
+            track.repeats="c";
+            track.visible=false;
+            track.yoyo=false;
+            track.shape.addTo($("fl1"));
+
+      //---------- End Of Track ---Base is Orbited-------------------------
+
+            sprite=new Sprite("SUBSP49");
+            sprite.train=TRAINS["SUBSP53"];;
+            sprite.engine="sprite";
+            sprite.track=track;
+            sprite.ptime=11;
+            sprite.pointer=0;
+            sprite.usevec=true;
+            sprite.expanded=false;
+            sprite.finishmove=true;
+            sprite.vector={xs:542,xe:642,ys:326,ye:326,psi:0};
+
+   //--- End Of Sprite---Base is BlueOrbit-----------------------------
+            TRAINS["SUBSP49"]=sprite;
+            flel.elm=sprite;
+            sprite.setPoints();
+
+//---------- End Of Film Element -- Type sprite--Base is BlueOrbit--------------------------
+
+            film.setUp();
+         }
+      </script>
+   </head>
+   <body onload="main()">
+      <div id="screen"></div>
+      <div id="frame"></div>
+      <div id="msg"></div>
+   </body>
+</html>
