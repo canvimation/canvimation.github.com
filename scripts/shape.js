@@ -968,6 +968,7 @@ function hideTools()
 	$('shadow').style.visibility='hidden';
 	$('sname').style.visibility='hidden';
 	$('pointsbox').style.visibility='hidden';
+	$('lundo').style.visibility='hidden';
 	close_p_content();
 }
 
