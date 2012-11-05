@@ -90,6 +90,7 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var sprite;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var film;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var TRAINS={};');
+	newwindow.document.writeln(SPACES.substr(0,9)+'var LOCUS=false;');
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,9)+'function main() {');
 	newwindow.document.writeln(SPACES.substr(0,12)+'film = new Film("'+film.name+'");');
