@@ -74,9 +74,6 @@ function writeFilmHTML(film)
 	newwindow.document.writeln(SPACES.substr(0,12)+'width:'+parseInt($("stagearea").style.width)+'px;');
 	newwindow.document.writeln(SPACES.substr(0,12)+'border:black 1px solid;');
 	newwindow.document.writeln (SPACES.substr(0,9)+'}');
-newwindow.document.writeln(SPACES.substr(0,9)+'#msg {');
-newwindow.document.writeln(SPACES.substr(0,12)+'top:'+(50+parseInt($("stagearea").style.height))+'px;');
-newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,6)+'</style>');	
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,6)+'<script type="text/javascript" src = "canvimation_script.js" ></script>');
@@ -90,6 +87,7 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var sprite;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var film;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var TRAINS={};');
+	newwindow.document.writeln(SPACES.substr(0,9)+'var LOCUS=false;');
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,9)+'function main() {');
 	newwindow.document.writeln(SPACES.substr(0,12)+'film = new Film("'+film.name+'");');
