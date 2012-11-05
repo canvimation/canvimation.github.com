@@ -837,6 +837,7 @@ function showTools()
 	$('colfill').style.visibility='inherit';
 	$('gradfill').style.visibility='inherit';
 	$('shadow').style.visibility='inherit';	
+	if(DELETES.length>0) {$('lundo').style.visibility='inherit';}
 }
 
 function setTools(scene)
