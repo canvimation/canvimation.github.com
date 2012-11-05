@@ -23,6 +23,17 @@ function trbb()
 	rewritelists();
 }
 
+function twbb()
+{
+	$('tweenbuildbox').style.top=(parseInt($("tweenbox").style.top)+60)+"px";
+	$('tweenbuildbox').style.left=(parseInt($("tweenbox").style.left)+120)+"px";
+	$('tweenbuildbox').style.zIndex=ZBOX++;
+	$('tweenbuildbox').style.visibility='visible';
+	$('tweentitle').value="Tween"+(TWCOUNT++);
+	BUILDCLOSED=false;
+	rewritelists();
+}
+
 function spbb()
 {
 	$('spritebuildbox').style.top=(parseInt($("spritebox").style.top)+60)+"px";
@@ -253,6 +264,62 @@ function buildTrack()
 	$("toolbar").style.visibility="hidden";
 	CURRENT=track.shapes;
 	openStage('track');
+}
+
+function buildTween()
+{
+	var group,shape,copy;
+	var re = /\W/;
+	if ($('tweentitle').value.trim()=="")
+	{
+		alert('No name given ');
+		return;
+	}
+	if (re.test($('tweentitle').value.trim()))
+	{
+		alert('Name should contain only letters and numbers.');
+		return;
+	}
+	if (checkname($('tweentitle').value.trim(),'tween')) 
+	{
+		alert('There is already tween with the name '+$('tweentitle').value.trim());
+		return;
+	}
+	var i=0;
+	for(var name in SELECTED)
+	{
+		i++
+	}
+	if(i==0)
+	{
+		alert("No shapes selected");
+		return;
+	}
+	else if (i>1)
+	{
+		alert("Too many shapes selected");
+		return;
+	}
+	var tween=new Tween($('tweentitle').value.trim());
+	TWEENS[tween.name]=tween;
+	tween.title=tween.name;
+	elementShapeCopy(SELECTED,tween.groups,tween.shapes,0,$("tweenstage"));	
+	elementShapeCopy(SELECTED,tween.copy.groups,tween.copy.shapes,100,$("tweenstage"));
+	//writetweenlist();
+	$("shapestage").style.visibility="hidden";
+	clear($("tweenstage"));
+	//tween.drawtween();
+	shape=tween.getShape();
+	shape.addTo($("tweenstage"));
+	shape.draw();
+	copy=tween.copy.getShape();
+	copy.addTo($("tweenstage"));
+	copy.draw(); 
+	$("tweenstage").style.visibility="visible";
+	tween.setAniStage();
+	//$("toolbar").style.visibility="hidden";
+	CURRENT=tween.copy.shapes;
+	openStage('tween');
 }
 
 function buildSprite()

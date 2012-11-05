@@ -7,6 +7,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 function checkBoundary(shiftdown,cursor)
 {
 	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
+	$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	removeGradLine();
 	closeStops();
 	removeRotate();

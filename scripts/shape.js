@@ -836,13 +836,14 @@ function showTools()
 	$('sname').style.visibility='inherit'
 	$('colfill').style.visibility='inherit';
 	$('gradfill').style.visibility='inherit';
-	$('shadow').style.visibility='inherit';	
+	$('shadow').style.visibility='inherit';		
 	if(DELETES.length>0) {$('lundo').style.visibility='inherit';}
 }
 
 function setTools(scene)
 {
 	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
+	$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	var agroup=false;
 	var boundary,members,memlen;
 	var slctd=$("boundarydrop").childNodes;
@@ -874,15 +875,16 @@ function setTools(scene)
 		if(memlen==1)
 		{
 			$("tracktext").innerHTML="&nbsp;&nbsp;From selected shape.";
+			$("tweentext").innerHTML="&nbsp;&nbsp;From selected shape.";
 			for(var name in members)
 			{
 				shape=members[name];
-				$("sname").style.visibility="visible";
+				$("sname").style.visibility="inherit";
 				$("sname").alt="shape name";
 				$("sname").title="shape name";
 				if(shape.editable)
 				{
-					$('editlines').style.visibility="visible";
+					$('editlines').style.visibility="inherit";
 					$('ungroup').style.visibility="hidden";
 					$('group').style.visibility="hidden";
 				}
@@ -896,10 +898,10 @@ function setTools(scene)
 		}
 		else
 		{
-			$("sname").style.visibility="visible";
+			$("sname").style.visibility="inherit";
 			$("sname").alt="group name";
 			$("sname").title="group name";
-			$('ungroup').style.visibility="visible";
+			$('ungroup').style.visibility="inherit";
 			$('editlines').style.visibility="hidden";
 			$('group').style.visibility="hidden";
 		}

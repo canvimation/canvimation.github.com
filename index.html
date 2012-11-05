@@ -1175,6 +1175,7 @@ inner img {
 <script type="text/javascript" src = "scripts/builder.js" ></script>
 <script type="text/javascript" src = "scripts/scenes.js" ></script>
 <script type="text/javascript" src = "scripts/tracks.js" ></script>
+<script type="text/javascript" src = "scripts/tweens.js" ></script>
 <script type="text/javascript" src = "scripts/sprites.js" ></script>
 <script type="text/javascript" src = "scripts/films.js" ></script>
 <script type="text/javascript" src = "scripts/alongpath.js" ></script>
@@ -1463,6 +1464,7 @@ function clear(stage)
 	if(stage.id=="boundarydrop")
 	{
 		$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
+		$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	}
 }
 
@@ -1736,6 +1738,8 @@ function main()
 	$("trackbuildbox").style.width="200px";
 	$("trackbuildbox").style.height="270px";
 	
+	$("tweenbuildbox").style.width="200px";
+	$("tweenbuildbox").style.height="160px";
 	
 	$("spritebuildbox").style.width="250px";
 	$("spritebuildbox").style.height="250px";
@@ -1748,6 +1752,9 @@ function main()
 	
 	$("trackeditbox").style.width="200px";
 	$("trackeditbox").style.height="260px";
+	
+	$("tweeneditbox").style.width="200px";
+	$("tweeneditbox").style.height="260px";
 	
 	$("spriteeditbox").style.width="250px";
 	$("spriteeditbox").style.height="230px";
@@ -2538,24 +2545,6 @@ function main()
 	</div>
 </div>
 
-<div id='tweenbox' class="elementsbox">
-	<div id='tweencontent' class='allcontent'>
-		<div class="leftbar"></div>
-		<div id="rightbartw" class="rightbar"></div>
-		<div id="bottombartw" class="bottombar"></div>
-		<div id="rcornerbartw" class="rcornerbar"></div>
-	</div>
-	<div class="white"></div>
-	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="$('tweenbuildbox').style.visibility='visible'"><span class="buildhead">Build New</span></div>	
-	<div class="lbar"></div>
-	<div class="rbar"></div>
-	<div class="bbar"></div>
-	<div id='tweenhead' class='head'>&nbsp; Tweens
-		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
-    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweencontent")'/>
-	</div>
-</div>
-
 <div id='trackbox' class="elementsbox">
 	<div id='trackcontent' class='allcontent'>
 		<div class="leftbar"></div>
@@ -2572,6 +2561,25 @@ function main()
 	<div id='trackhead' class='head'>&nbsp; Tracks
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackcontent")'/>
+	</div>
+</div>
+
+<div id='tweenbox' class="elementsbox">
+	<div id='tweencontent' class='allcontent'>
+		<div class="leftbar"></div>
+		<div id="rightbartw" class="rightbar"></div>
+		<div id="bottombartw" class="bottombar"></div>
+		<div id="rcornerbartw" class="rcornerbar"></div>
+		<div id="innertw" class="inner" path=""></div>
+	</div>
+	<div class="white"></div>
+	<div class="newbuild40" onmouseover="this.className='newbuild80'" onmouseout="this.className='newbuild40'" onclick="twbb()"><span class="buildhead">Build New</span></div>	
+	<div class="lbar"></div>
+	<div class="rbar"></div>
+	<div class="bbar"></div>
+	<div id='tweenhead' class='head'>&nbsp; Tracks
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweencontent")'/>
 	</div>
 </div>
 
@@ -2653,6 +2661,23 @@ function main()
 	<div id='trackbuildhead' class='head'>&nbsp; Build A Track
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackbuildcontent")'/>
+	</div>	
+</div>
+
+<div id='tweenbuildbox' class="dialoguebox">
+	<div id='tweenbuildcontent' class='content'>
+		<p class"=justtext" id="tweentext">
+			&nbsp;&nbsp;Select just one shape.
+		</p>
+		<p class="text_input">
+			<label for="tweentitle">Title</label> <input class="title" type="text" name="tweentitle" id="tweentitle" size=15 />
+		</p>
+		<input type="button" value=" OK " onclick="buildTween()" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='tweenbuildhead' class='head'>&nbsp; Build A Tween
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweenbuildcontent")'/>
 	</div>	
 </div>
 
@@ -2772,6 +2797,30 @@ function main()
 	<div id='trackedithead' class='head'>&nbsp; Edit A Track
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"trackeditcontent")'/>
+	</div>	
+</div>
+
+<div id='tweeneditbox' class="dialoguebox">
+	<div id='tweeneditcontent' class='content'>
+		<p id="trpath" class="pathtext"></p>
+		<p class="text_input">
+			<label for="edittweentitle">Title</label> <input class="title" type="text" name="edittweentitle" id="edittweentitle" size=15 onclick="$('trbutton').style.visibility='inherit'" />
+		</p>
+		<p class="text_input">
+			<label for="edittweenreps">Traces.</label><input type=text id="edittweenreps" value="1" size=7 onclick="$('trbutton').style.visibility='inherit'" />
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="edityoyo" onclick="$('trbutton').style.visibility='inherit'"><label for="edityoyo">Yoyo.</label>
+		</p>
+		<p class="check_input">
+			<input type="checkbox" id="editviewselect" onclick="$('trbutton').style.visibility='inherit'"><label for="editviewselect">Visible.</label>
+		</p>
+		<input type="button" id="trbutton" value=" Change " onclick="editTrack(this)" OKname="" />
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
+	</div>
+	<div id='tweenedithead' class='head'>&nbsp; Edit A Tween
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweeneditcontent")'/>
 	</div>	
 </div>
 
