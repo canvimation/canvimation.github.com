@@ -877,12 +877,12 @@ function setTools(scene)
 			for(var name in members)
 			{
 				shape=members[name];
-				$("sname").style.visibility="visible";
+				$("sname").style.visibility="inherit";
 				$("sname").alt="shape name";
 				$("sname").title="shape name";
 				if(shape.editable)
 				{
-					$('editlines').style.visibility="visible";
+					$('editlines').style.visibility="inherit";
 					$('ungroup').style.visibility="hidden";
 					$('group').style.visibility="hidden";
 				}
@@ -896,10 +896,10 @@ function setTools(scene)
 		}
 		else
 		{
-			$("sname").style.visibility="visible";
+			$("sname").style.visibility="inherit";
 			$("sname").alt="group name";
 			$("sname").title="group name";
-			$('ungroup').style.visibility="visible";
+			$('ungroup').style.visibility="inherit";
 			$('editlines').style.visibility="hidden";
 			$('group').style.visibility="hidden";
 		}
