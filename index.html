@@ -616,6 +616,12 @@ inner img {
 	visibility:hidden;
 }
 
+#twbuttons {
+	left:500px;
+	top:5px;
+	visibility:hidden;
+}
+
 #fmbuttons {
 	left:500px;
 	top:5px;
@@ -1780,10 +1786,9 @@ function main()
 	
 	$("trackeditbox").style.width="200px";
 	$("trackeditbox").style.height="260px";
-	
-	
+
 	$("tweeneditbox").style.width="200px";
-	$("tweeneditbox").style.height="260px";
+	$("tweeneditbox").style.height="160px";
 	
 	$("spriteeditbox").style.width="250px";
 	$("spriteeditbox").style.height="230px";
@@ -1822,9 +1827,9 @@ function main()
 		DD.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
 	}	
 	
-	$("tweentimebox").style.left=(SCRW-225)+"px";
+	$("tweentimebox").style.left=(SCRW-250)+"px";
 	$("tweentimebox").style.top="60px";
-	$("tweentimebox").style.width="200px";
+	$("tweentimebox").style.width="220px";
 	$("tweentimebox").style.height=(SCRH-200)+"px";
 	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";
 	$("tweentimecontent").style.height=(parseInt($("tweentimebox").style.height)-25)+"px";
@@ -2503,6 +2508,10 @@ function main()
   	<input sprite="" id="fullchecksp" type="button" value="Full Check" onclick="checksprite(this.sprite,false)" />
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
   </div>
+  <div id="twbuttons">
+  	<input tween="" id="checktw" type="button" value="Tween Check" onclick="checktween(this.tween,true)" /> 
+  	<input tween="" id="savetw" type="button" value="Save Tween" onclick="savetween(this.tween)" /> 
+  </div>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'>
   	<a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a>
@@ -2837,11 +2846,11 @@ function main()
 
 <div id='tweeneditbox' class="dialoguebox">
 	<div id='tweeneditcontent' class='content'>
-		<p id="trpath" class="pathtext"></p>
+		<p id="twpath" class="pathtext"></p>
 		<p class="text_input">
-			<label for="edittweentitle">Title</label> <input class="title" type="text" name="edittweentitle" id="edittweentitle" size=15 onclick="$('trbutton').style.visibility='inherit'" />
+			<label for="edittweentitle">Title</label> <input class="title" type="text" name="edittweentitle" id="edittweentitle" size=15 onclick="$('twbutton').style.visibility='inherit'" />
 		</p>
-		<input type="button" id="twbutton" value=" Change " onclick="editTween(this)" OKname="" />
+		<input type="button" id="twbutton" value=" Change " onclick="editTween(this)" OKname="" style="visibility:hidden" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='tweenedithead' class='head'>&nbsp; Edit A Tween
@@ -2867,6 +2876,9 @@ function main()
 			<br>
 			&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo
 			<p class="text_input">
+				<img src="assets/editlines.png" alt="line" title="line" > <input type="text" name="twline" id="twline" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoline">
+			</p>
+			<p class="text_input">
 				<img src="assets/translate.png" alt="translate" title="translate" > <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate">
 			</p>
 			<p class="text_input">
@@ -2874,6 +2886,21 @@ function main()
 			</p>
 			<p class="text_input">
 				<img src="assets/mirror.png" alt="mirror" title="mirror" > <input type="text" name="twmirror" id="twmirror" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepmirror">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyomirror">
+			</p>
+			<p class="text_input">
+				<img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles">
+			</p>
+			<p class="text_input">
+				<img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol">
+			</p>
+			<p class="text_input">
+				<img alt="fill colour" title="fill colour" id='colimg' src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol">
+			</p>
+			<p class="text_input">
+				<img alt="gradient fill" title="gradient fill" id='gradimg' src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill">
+			</p>
+			<p class="text_input">
+				<img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad">
 			</p>	
 	</div>
 	<div id='tweentimehead' class='head'>&nbsp; Tween Timings

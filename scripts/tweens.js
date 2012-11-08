@@ -48,3 +48,31 @@ function drawtween()
 	shape.Canvas.ctx.restore();
 	shape.Canvas.ctx.save();
 }
+
+function savetween(tweendata)
+{
+	var tweenarray=tweendata.split(",");
+	var filmname=tweenarray[0];
+	var topname=tweenarray[1];
+	var tweenname=tweenarray[2];
+	if(filmname=="nofilm!!!!")
+	{
+		if(topname=="nosprite!!!!")
+		{
+			var tween=TWEENS[tweenname];
+		}
+		else
+		{
+			var toptween=TWEENS[topname];
+			var tween=toptween.getTween(tweenname).tween;
+		}
+	}
+	else
+	{
+		var film=FILMS[filmname];
+		var toptween=film.getFlel(topname);
+		var tween=toptween.getTween(tweenname).tween;
+	}
+	$("twbuttons").style.visibility="hidden";
+	closedone();
+}

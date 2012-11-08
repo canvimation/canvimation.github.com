@@ -82,7 +82,7 @@ function checkBoundary(shiftdown,cursor)
 			}
 		}
 	}
-//alert(["out",SELECTEDSHAPE.name]);
+$("msg").innerHTML=SELECTEDSHAPE.name;
 }
 
 function removeBoundary()

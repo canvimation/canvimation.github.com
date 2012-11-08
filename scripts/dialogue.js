@@ -82,7 +82,6 @@ function openStage(theatre)
 	$("anibar").style.visibility="hidden";
 	BUILDCLOSED=true;
 	rewritelists();
-	$(hideTools());
 	switch (theatre)
 	{
 		case "scene":
@@ -96,8 +95,7 @@ function openStage(theatre)
 			$("del").style.visibility="hidden";
 		break
 		case "tween":
-			$("done").value="Save Tween";
-			$("done").style.visibility="visible";
+			$("twbuttons").style.visibility="visible";
 			$("tweentimebox").style.visibility="visible";
 			$("menushape").style.visibility="hidden";
 			$("del").style.visibility="hidden";

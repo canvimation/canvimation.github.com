@@ -309,17 +309,21 @@ function buildTween()
 	$("shapestage").style.visibility="hidden";
 	clear($("tweenstage"));
 	shape=tween.getShape();
+	shape.name="A"+shape.name;
 	shape.addTo($("tweenstage"));
 	shape.draw();
 	copy=tween.copy.getShape();
+	copy.name="B"+copy.name;
 	copy.addTo($("tweenstage"));
 	copy.draw();
 	$("tweenstage").style.visibility="visible";
 	tween.setAniStage();
-	//$("toolbar").style.visibility="hidden";
 	CURRENT={};
-	CURRENT[shape.name]=shape;
 	CURRENT[copy.name]=copy;
+	CURRENT[shape.name]=shape;
+	
+	$("checktw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
+	$("savetw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
 	openStage('tween');
 }
 
@@ -1129,6 +1133,88 @@ function editTrack(OKbutton)
 	track.visible=$('editviewselect').checked;
 	OKbutton.style.visibility="hidden";
 }
+
+function tweenDelete(n)
+{
+	var idarray=n.parentNode.id.split(",");
+	var title=idarray[2]
+	var name=idarray[3];
+	var doit = confirm('Do you really want to delete '+title+'?');
+	if (doit)
+	{
+		var tween=TWEENS[name];
+		for(var props in tween)
+		{
+			delete tween[props];
+		}
+		delete TWEENS[name];
+		closedone();
+		writetweenlist();
+	}
+}
+
+function tweenEdit(n)
+{
+	var shape;
+	var idarray=n.parentNode.id.split(",");
+	var filmname=idarray[0];
+	var topname=idarray[1]
+	var name=idarray[3];
+	if(filmname=="nofilm!!!!")
+	{
+		if(topname=="nosprite!!!!")
+		{
+			var tween=TWEENS[name];
+			var path="";
+		}
+		else
+		{
+			var topsprite=SPRITES[topname];
+			var data=topsprite.getTween(name);
+			var tween=data.tween;
+			var path=data.path;
+		}
+	}
+	else
+	{
+		var film=FILMS[filmname];
+		var topsprite=film.getFlel(topname);
+		var data=topsprite.getTween(name);
+		var tween=data.tween;
+		var path=film.title+"/"+data.path;
+	}
+	$("shapestage").style.visibility="hidden";
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
+	hideTools();
+	closeColor();
+	$("tweenbuildbox").visibility="hidden";
+	clear($("tweenstage"));
+	shape=tween.getShape();
+	shape.addTo($("tweenstage"));
+	shape.draw();
+	copy=tween.copy.getShape();
+	copy.addTo($("tweenstage"));
+	copy.draw();
+	$("tweenstage").style.visibility="visible";
+	tween.setAniStage();
+	CURRENT={};
+	CURRENT[copy.name]=copy;
+	CURRENT[shape.name]=shape;
+	$("checktw").tween=filmname+','+topname+","+tween.name;
+	$("savetw").tween=filmname+','+topname+","+tween.name;
+	openStage('tween');	
+	$("tweeneditbox").style.top=$("tweenbuildbox").style.top;
+	$("tweeneditbox").style.left=$("tweenbuildbox").style.left;
+	$("twpath").innerHTML=path;
+	$("edittweentitle").value=tween.title;
+	$("tweeneditbox").style.visibility="visible";
+	$("tweentimebox").style.visibility="visible";
+}
+
 
 function spriteDelete(n)
 {
