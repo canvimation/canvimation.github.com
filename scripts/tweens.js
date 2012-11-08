@@ -35,7 +35,7 @@ function copytween(theatre)
 	var tween=new Track("SUBTR"+(NCOUNT++));
 	tween.title=this.title;
 	elementShapeCopy(this.groups,tween.groups,tween.shapes,0,$(theatre));
-	tween.copy=this.copy;
+	elementShapeCopy(this.copy.groups,tween.copy.groups,tween.copy.shapes,0,$(theatre));
 	return tween;
 }
 

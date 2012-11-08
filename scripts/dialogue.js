@@ -73,15 +73,16 @@ function openStage(theatre)
 	$("scenebuildbox").style.visibility="hidden";
 	$("spritebuildbox").style.visibility="hidden";
 	$("trackbuildbox").style.visibility="hidden";
-	//$("tweenbuildbox").style.visibility="hidden";
+	$("tweenbuildbox").style.visibility="hidden";
 	$("filmbuildbox").style.visibility="hidden";
 	$("sceneeditbox").style.visibility="hidden";
 	$("spriteeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
-	//$("tweeneditbox").style.visibility="hidden";
+	$("tweeneditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
 	BUILDCLOSED=true;
 	rewritelists();
+	$(hideTools());
 	switch (theatre)
 	{
 		case "scene":
@@ -91,6 +92,15 @@ function openStage(theatre)
 		case "track":
 			$("done").value="Save Track";
 			$("done").style.visibility="visible";
+			$("menushape").style.visibility="hidden";
+			$("del").style.visibility="hidden";
+		break
+		case "tween":
+			$("done").value="Save Tween";
+			$("done").style.visibility="visible";
+			$("tweentimebox").style.visibility="visible";
+			$("menushape").style.visibility="hidden";
+			$("del").style.visibility="hidden";
 		break
 		case "sprite":
 			$("spbuttons").style.visibility="visible";
@@ -101,12 +111,6 @@ function openStage(theatre)
 			$("menushape").style.visibility="hidden";
 			$("grid").style.visibility="hidden";
 		break
-	}
-	$(hideTools());
-	if(theatre=="track")
-	{
-		$("menushape").style.visibility="hidden";
-		$("del").style.visibility="hidden";
 	}
 }
 
@@ -127,7 +131,8 @@ function closedone()
 	$("sceneeditbox").style.visibility="hidden";
 	$("trackeditbox").style.visibility="hidden";
 	$("spriteeditbox").style.visibility="hidden";
-	//$("tweeneditbox").style.visibility="hidden";
+	$("tweeneditbox").style.visibility="hidden";
+	$("tweentimebox").style.visibility="hidden";
 	//$("filmeditbox").style.visibility="hidden";
 	$("vecdiv").style.visibility="hidden";
 	$("spritecentre").style.visibility="hidden";

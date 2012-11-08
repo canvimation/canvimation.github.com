@@ -114,7 +114,6 @@ img.marker {
 	position:relative;
 	text-align:right;
 	margin-left:2px;
-
 }
 
 .content p.justtext {
@@ -171,7 +170,12 @@ img.marker {
 	height:25px;
 	background-color:#FFFFFF;
 	font-weight: bold;
-	
+}
+
+.allcontent input {
+	position:relative;
+	text-align:right;
+	margin-left:2px;
 }
 
 #drop_zone {
@@ -778,6 +782,30 @@ inner img {
 	width: 100%;
 	height:100%;
 	z-index:1;
+}
+
+#tweentimecontent {
+	overflow:auto;
+}
+
+#tweentimecontent img{
+	position:absolute;
+	left:2px;
+	border: solid 1px black;
+	width:15%;
+	cursor:default;
+}
+
+#tweentimecontent p.text_input input {
+	left:40px;
+}
+
+#tweentimecontent p.text_input span {
+	left:50px;
+}
+
+.defaultp input {
+	left:5px;
 }
 
 #hidecanvas {
@@ -1753,6 +1781,7 @@ function main()
 	$("trackeditbox").style.width="200px";
 	$("trackeditbox").style.height="260px";
 	
+	
 	$("tweeneditbox").style.width="200px";
 	$("tweeneditbox").style.height="260px";
 	
@@ -1791,8 +1820,14 @@ function main()
 		DD=new YAHOO.util.DD(BOXES[i].id);
 		DD.setHandleElId(BOXNAME+"head");
 		DD.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
-	}
+	}	
 	
+	$("tweentimebox").style.left=(SCRW-225)+"px";
+	$("tweentimebox").style.top="60px";
+	$("tweentimebox").style.width="200px";
+	$("tweentimebox").style.height=(SCRH-200)+"px";
+	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";
+	$("tweentimecontent").style.height=(parseInt($("tweentimebox").style.height)-25)+"px";
 	$("filmbuildbox").style.left="200px";
 	$("filmbuildbox").style.width="375px";
 	$("filmbuildbox").style.height="270px";
@@ -2577,7 +2612,7 @@ function main()
 	<div class="lbar"></div>
 	<div class="rbar"></div>
 	<div class="bbar"></div>
-	<div id='tweenhead' class='head'>&nbsp; Tracks
+	<div id='tweenhead' class='head'>&nbsp; Tweens
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweencontent")'/>
 	</div>
@@ -2806,22 +2841,45 @@ function main()
 		<p class="text_input">
 			<label for="edittweentitle">Title</label> <input class="title" type="text" name="edittweentitle" id="edittweentitle" size=15 onclick="$('trbutton').style.visibility='inherit'" />
 		</p>
-		<p class="text_input">
-			<label for="edittweenreps">Traces.</label><input type=text id="edittweenreps" value="1" size=7 onclick="$('trbutton').style.visibility='inherit'" />
-		</p>
-		<p class="check_input">
-			<input type="checkbox" id="edityoyo" onclick="$('trbutton').style.visibility='inherit'"><label for="edityoyo">Yoyo.</label>
-		</p>
-		<p class="check_input">
-			<input type="checkbox" id="editviewselect" onclick="$('trbutton').style.visibility='inherit'"><label for="editviewselect">Visible.</label>
-		</p>
-		<input type="button" id="trbutton" value=" Change " onclick="editTrack(this)" OKname="" />
+		<input type="button" id="twbutton" value=" Change " onclick="editTween(this)" OKname="" />
 		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
 	<div id='tweenedithead' class='head'>&nbsp; Edit A Tween
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweeneditcontent")'/>
 	</div>	
+</div>
+
+<div id='tweentimebox' class="dialoguebox">
+	<div id='tweentimecontent' class='content'>
+			<p class="defaultp">
+				<label for="defaulttime">&nbsp; Time for All Tweens</label><br><input type="text" name="defaulttime" id="defaulttime" size=5 value=60 /><span>&nbsp;&nbsp;Secs</span>
+				<input type="button" id="deftimebutton" value=" Set All " onclick="setTimeAll(this)" />
+			</p>
+			<p class="defaultp">
+				<label for="defaultrepeats">&nbsp; Number for All Traces</label><br><input class="title" type="text" name="defaultrepeats" id="defaultrepeats" size=5 value=1 />
+				<input type="button" id="defrepbutton" value=" Set All " onclick="setRepAll(this)" />
+			</p>
+			<p class="defaultp">
+				<label for="defaultyoyo">&nbsp;  All Yoyos</label><br><input type="checkbox" name="defaultyoyo" id="defaultyoyo" />
+				<input type="button" id="defyobutton" value=" Set All " onclick="setYoAll(this)" />
+			</p>
+			<br>
+			&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo
+			<p class="text_input">
+				<img src="assets/translate.png" alt="translate" title="translate" > <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate">
+			</p>
+			<p class="text_input">
+				<img src="assets/rotate.png" alt="rotate" title="rotate" > <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate">
+			</p>
+			<p class="text_input">
+				<img src="assets/rotate.png"> <input type="text" name="twcol" id="twcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyocol">
+			</p>	
+	</div>
+	<div id='tweentimehead' class='head'>&nbsp; Tween Timings
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweentimecontent")'/>
+	</div>
 </div>
 
 <div id='spriteeditbox' class="dialoguebox">

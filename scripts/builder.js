@@ -304,21 +304,22 @@ function buildTween()
 	TWEENS[tween.name]=tween;
 	tween.title=tween.name;
 	elementShapeCopy(SELECTED,tween.groups,tween.shapes,0,$("tweenstage"));	
-	elementShapeCopy(SELECTED,tween.copy.groups,tween.copy.shapes,100,$("tweenstage"));
-	//writetweenlist();
+	elementShapeCopy(SELECTED,tween.copy.groups,tween.copy.shapes,0,$("tweenstage"));
+	writetweenlist();
 	$("shapestage").style.visibility="hidden";
 	clear($("tweenstage"));
-	//tween.drawtween();
 	shape=tween.getShape();
 	shape.addTo($("tweenstage"));
 	shape.draw();
 	copy=tween.copy.getShape();
 	copy.addTo($("tweenstage"));
-	copy.draw(); 
+	copy.draw();
 	$("tweenstage").style.visibility="visible";
 	tween.setAniStage();
 	//$("toolbar").style.visibility="hidden";
-	CURRENT=tween.copy.shapes;
+	CURRENT={};
+	CURRENT[shape.name]=shape;
+	CURRENT[copy.name]=copy;
 	openStage('tween');
 }
 
@@ -580,6 +581,53 @@ function writetracklist()
 										$("dragdiv").style.top="-50px";
 									   };
 		DDTR[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
+	}
+}
+
+function writetweenlist()
+{
+	SPANCOUNT=0;
+	var DDTW=[];
+	var el;
+	var twhtml;
+	var Col=["#FFFFFF","#8BF7F1"];
+	var c=0;
+	$("innertw").innerHTML="<ul>";
+	for(var name in TWEENS)
+	{
+		tween=TWEENS[name];
+		twhtml='<li id="nofilm!!!!,nosprite!!!!,'+tween.title+','+tween.name+'"  style="background-color:'+Col[c]+'"> '
+		if(BUILDCLOSED)
+		{
+			twhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="tweenEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="tweenDelete(this)" /> ';
+		}
+		twhtml+='<span id="TR'+(SPANCOUNT++)+'" class="innertext">'+tween.title+'</span></li>';
+		$("innertw").innerHTML+=twhtml;
+		c+=1;
+		c=c % 2;
+	}
+	$("innertw").innerHTML+="</ul>";
+	for(var i=0;i<SPANCOUNT;i++)
+	{
+		DDTW[i]=new YAHOO.util.DD("TW"+i,"ELGROUP");
+		DDTW[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
+		DDTW[i].onMouseDown=function() {
+										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
+										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
+										$("dragdiv").style.zIndex=ZBOX++;
+										$("dragdiv").style.visibility="visible";
+									};
+		DDTW[i].onDragDrop=function() {
+										if(DDtweendrop.cursorIsOver)
+										{
+											el=DDtweendrop.getEl();
+											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
+										}
+										$("dragdiv").style.visibility="hidden";
+										$("dragdiv").style.top="-50px";
+									   };
+		DDTW[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
 	}
 }
 
@@ -1368,6 +1416,6 @@ function rewritelists()
 	writescenelist();
 	writespritelist();
 	writetracklist();
+	writetweenlist();
 	writefilmlist();
-	
 }
