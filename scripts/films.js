@@ -27,6 +27,7 @@ function FilmElement(n)
 	this.addToBoard=addToBoard;
 	this.setBoard=setBoard;
 	this.addToElStage=addToElStage;
+	this.setRun=setRun;
 }
 
 function getFlel(name)
@@ -115,31 +116,13 @@ function addToFilm(el)
 		break
 		case "sprite":
 			flel.elm=SPRITES[el.name].copysprite("div"+flel.id);
-			flel.name=flel.elm.name;
-			flel.R=0;
-			flel.run=document.createElement("div");
-			flel.run.style.left="55px";
-			flel.run.style.top=(FLELTOP+5)+"px";
-			flel.run.style.borderTop="2px solid blue";
-			flel.run.style.borderLeft="2px solid blue";
-			flel.run.style.borderRight="2px solid blue";
-			flel.run.style.height=(parseInt($("timeline").style.top)-parseInt(flel.run.style.top))+"px";
-			flel.maxrun=document.createElement("div");
-			flel.maxrun.style.borderTop="2px dotted red";
-			flel.maxrun.style.borderRight="2px dotted red";
 			flel.maxruntime=flel.elm.maxruntime(0);
-			if(flel.maxruntime=="c")  //is continuous
-			{
-				flel.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
-				flel.maxrun.style.width=flel.run.style.width;
-				flel.S="Never";
-			}
-			else
-			{
-				flel.run.style.width=flel.maxruntime+"px";
-				flel.maxrun.style.width=flel.run.style.width;	
-				flel.S=flel.maxruntime;	
-			}
+			flel.setRun();
+		break
+		case "tween":
+			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
+			flel.maxruntime=flel.elm.tweenruntime(0);
+			flel.setRun();
 		break
 	}
 	flel.addToBoard();
@@ -1076,6 +1059,16 @@ function expandfilmlist()
 				schtml+='<span>SC '+scene.title+'</span></li>';
 				$("innerfl").innerHTML+=schtml;
 			break
+			case "tween":
+				var tween=flel.elm;
+				twhtml='<li id="'+film.name+',nosprite!!!!,'+tween.title+','+tween.name+'" style="background-color:'+Col[c]+'">'+LIMARGIN+"&nbsp;&nbsp;&nbsp;&nbsp;";
+				if(BUILDCLOSED)
+				{
+					twhtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="tweenEdit(this)" /> ';
+				}
+				twhtml+='<span>TW '+tween.title+'</span></li>';
+				$("innerfl").innerHTML+=twhtml;
+			break
 			case "sprite":
 				var sprite=flel.elm;
 				if(sprite.expanded)
@@ -1117,4 +1110,32 @@ function addToElStage()
 			this.elm.inTheatre($("div"+this.id+"stage"));
 		break
 	}
+}
+
+function setRun()
+{
+	this.name=this.elm.name;
+	this.R=0;
+	this.run=document.createElement("div");
+	this.run.style.left="55px";
+	this.run.style.top=(thisTOP+5)+"px";
+	this.run.style.borderTop="2px solid blue";
+	this.run.style.borderLeft="2px solid blue";
+	this.run.style.borderRight="2px solid blue";
+	this.run.style.height=(parseInt($("timeline").style.top)-parseInt(this.run.style.top))+"px";
+	this.maxrun=document.createElement("div");
+	this.maxrun.style.borderTop="2px dotted red";
+	this.maxrun.style.borderRight="2px dotted red";
+	if(this.maxruntime=="c")  //is continuous
+	{
+		this.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+		this.maxrun.style.width=this.run.style.width;
+		this.S="Never";
+	}
+	else
+	{
+		this.run.style.width=this.maxruntime+"px";
+		this.maxrun.style.width=this.run.style.width;	
+		this.S=this.maxruntime;	
+	}	
 }

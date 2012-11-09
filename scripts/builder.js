@@ -605,7 +605,7 @@ function writetweenlist()
 		{
 			twhtml+='<img src="assets/edit.png" alt="edit" title="edit" onclick="tweenEdit(this)" /> <img src="assets/del.png" alt="delete" title="delete" onclick="tweenDelete(this)" /> ';
 		}
-		twhtml+='<span id="TR'+(SPANCOUNT++)+'" class="innertext">'+tween.title+'</span></li>';
+		twhtml+='<span id="TW'+(SPANCOUNT++)+'" class="innertext">'+tween.title+'</span></li>';
 		$("innertw").innerHTML+=twhtml;
 		c+=1;
 		c=c % 2;
@@ -614,24 +614,39 @@ function writetweenlist()
 	for(var i=0;i<SPANCOUNT;i++)
 	{
 		DDTW[i]=new YAHOO.util.DD("TW"+i,"ELGROUP");
-		DDTW[i].setDragElId("dragdiv");$("dragdiv").style.visibility="visible";
+		DDTW[i].setDragElId("dragdiv");
 		DDTW[i].onMouseDown=function() {
 										$("dragdiv").innerHTML=$(this.id).parentNode.id.split(",")[2];
 										$("dragdiv").name=$(this.id).parentNode.id.split(",")[3];
+										$("dragdiv").topname=$(this.id).parentNode.id.split(",")[1];
+										$("dragdiv").filmname=$(this.id).parentNode.id.split(",")[0];
 										$("dragdiv").style.zIndex=ZBOX++;
 										$("dragdiv").style.visibility="visible";
 									};
 		DDTW[i].onDragDrop=function() {
-										if(DDtweendrop.cursorIsOver)
+										if(DDeldrop.cursorIsOver)
 										{
-											el=DDtweendrop.getEl();
+											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
+											el.source="scene";
 											el.name=$("dragdiv").name;
+											el.topname=$("dragdiv").topname;
+											el.filmname=$("dragdiv").filmname;
+										}
+										else if(DDelfilmdrop.cursorIsOver)
+										{
+											el=DDelfilmdrop.getEl();
+											el.source="scene";
+											el.title=$("dragdiv").innerHTML;
+											el.name=$("dragdiv").name;
+											addToFilm(el);
+											$("filmbuildstory").style.height=Math.max((parseInt($("filmbuildbox").style.height)+10),FLELHEIGHT)+"px";
+											$("scrollud").style.height=((parseInt($("viewport").style.height)-42)*parseInt($("viewport").style.height)/(parseInt($("filmbuildstory").style.height)))+"px";
 										}
 										$("dragdiv").style.visibility="hidden";
 										$("dragdiv").style.top="-50px";
 									   };
-		DDTW[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";} 
+		DDTW[i].onInvalidDrop=function() {$("dragdiv").style.visibility="hidden";$("dragdiv").style.top="-50px";}
 	}
 }
 

@@ -43,6 +43,7 @@ function Sprite(name)
 	this.getSprite=getSprite;
 	this.getScene=getScene;
 	this.getTrack=getTrack;
+	this.getTween=getTween;
 	this.expandspritelist=expandspritelist;
 	this.spriteHTML=spriteHTML;
 	this.SpriteToText=SpriteToText;
@@ -543,6 +544,19 @@ function getTrack(trackname)
 	}
 }
 
+function getTween(tweenname)
+{
+	if(this.tween.name==tweenname)
+	{
+		return {path:this.title,tween:this.tween};
+	}
+	else
+	{
+		var twdata=this.train.getTween(tweenname)
+		return {path:this.title+"/"+twdata.path,tween:twdata.tween};
+	}
+}
+
 function getSprite(spritename)
 {
 	if(this.name==spritename)
@@ -579,6 +593,24 @@ function expandspritelist(fn,sn,box,col)
 			}
 			schtml+='<span>SC '+scene.title+'</span></li>';
 			$("inner"+box).innerHTML+=schtml;
+		break
+		case "tween":
+			var track=this.track;
+			trhtml='<li id="'+fn+','+sn+','+track.title+','+track.name+'"  style="background-color:'+col+'">'+LIMARGIN;
+			if(BUILDCLOSED)
+			{
+				trhtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="trackEdit(this)" /> ';
+			}
+			trhtml+='<span>TR '+track.title+'</span></li>';
+			$("inner"+box).innerHTML+=trhtml;
+			var tween=this.train;
+			twhtml='<li id="'+fn+','+sn+','+tween.title+','+tween.name+'"  style="background-color:'+col+'">'+LIMARGIN;
+			if(BUILDCLOSED)
+			{
+				twhtml+=' <img src="assets/edit.png" alt="edit" title="edit" onclick="tweenEdit(this)" /> ';
+			}
+			twhtml+='<span>TW '+tween.title+'</span></li>';
+			$("inner"+box).innerHTML+=twhtml;
 		break
 		case "sprite":
 			var track=this.track;
@@ -618,28 +650,42 @@ function expandspritelist(fn,sn,box,col)
 function maxruntime(mx)
 {
 	var mrt;
-	if(isNaN(this.track.repeats))
+	switch (this.engine)
 	{
-		return "c";
-	}
-	else
-	{
-		mrt=this.ptime*(this.track.repeats);
-		if(this.track.yoyo) {mrt*=2};
-		return Math.max(mx,mrt);
-	}
-	if (this.engine=="sprite")
-	{
-		mx=this.train.maxruntime(mx);
-		if(isNaN(mx)  || isNaN(this.track.repeats))
-		{
-			return "c";
-		}
-		else
-		{
-			mrt=this.ptime*(this.track.repeats);
-			if(this.track.yoyo) (mrt*=2);
-			return Math.max(mx,mrt);
-		}
-	}
+		case "scene":
+			if(isNaN(this.track.repeats))
+			{
+				return "c";
+			}
+			else
+			{
+				mrt=this.ptime*(this.track.repeats);
+				if(this.track.yoyo) {mrt*=2};
+				return Math.max(mx,mrt);
+			}
+		break
+		case "tween":
+			if(isNaN(this.track.repeats))
+			{
+				return "c";
+			}
+			else
+			{
+				mrt=this.tweenruntime(0);
+				return Math.max(mx,mrt);
+			}
+		break
+		case "sprite":
+			mx=this.train.maxruntime(mx);
+			if(isNaN(mx)  || isNaN(this.track.repeats))
+			{
+				return "c";
+			}
+			else
+			{
+				mrt=this.ptime*(this.track.repeats);
+				if(this.track.yoyo) (mrt*=2);
+				return Math.max(mx,mrt);
+			}
+		break
 }
