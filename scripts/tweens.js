@@ -11,6 +11,8 @@ function Tween(name)
 	this.shapes={};
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
+	this.tweens=[];  //list of shapes forming Tween
+	this.nodePaths=[] //list of paths between shape nodes and copy nodes
 	this.translate={active:false,repeat:1,yoyo:false};
 	this.rotate={active:false,twtime:60,repeat:1,yoyo:false};
 	this.mirror={active:false,twtime:60,repeat:1,yoyo:false};
@@ -33,6 +35,9 @@ function Tween(name)
 	//this.restoreTween=restoreTween;
 	//this.TweenToText=TweenToText;
 	this.copy.getShape=getShape;
+	this.addAllToStage=addAllToStage; 
+	this.setNodePaths=setNodePaths;
+	this.compareTweens=compareTweens;
 }
 
 function copytween(theatre)
@@ -78,7 +83,6 @@ function copytween(theatre)
 	tween.shadow.twtime=this.shadow.twtime;
 	tween.shadow.repeat=this.shadow.repeat;
 	tween.shadow.yoyo=this.shadow.yoyo;
-
 	return tween;
 }
 
@@ -117,6 +121,7 @@ function savetween(tweendata)
 		var tween=toptween.getTween(tweenname).tween;
 	}
 	$("twbuttons").style.visibility="hidden";
+	TWEENEDIT=false;
 	closedone();
 }
 
@@ -124,4 +129,80 @@ function tweenruntime(mx)
 {
 	mx=1;
 	return mx;
+}
+
+function addAllToStage(theatre)
+{
+	for(var name in this.shapes)
+	{
+		shape=this.shapes[name];
+		shape.addTo(theatre);
+	}
+	for(var name in this.copy.shapes)
+	{
+		shape=this.copy.shapes[name];
+		shape.addTo(theatre);
+	}
+}
+
+function setNodePaths()
+{
+	var shape=this.getShape();
+	var copy=this.copy.getShape();
+	var node=shape.path.next;
+	var copynode=copy.path.next;
+	var point,ctrl1,ctrl2;
+	var nodepath,start,last;
+	while(node.point!="end")
+	{
+		nodepath=new Shape("Shape"+SCOUNT,"Shape"+(SCOUNT++),true,true,curve,this.nodePaths);
+		start=nodepath.path.next;
+		last=nodepath.path.prev;
+		point=new Point(node.point.x,node.point.y);
+		start.setNode(point);
+		point=new Point(copynode.point.x,copynode.point.y);
+		last.setNode(point);
+		start=last.start;
+		ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
+		ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
+		last.setNode(point,ctrl1,ctrl2);
+		node=node.next;
+		copynode=copynode.next;
+	}
+}
+
+function compareTweens()
+{
+	var node;
+	var shape=this.getShape();
+	var copy=this.copy.getShape();
+	if(tween.translate.active)
+	{
+		if(tween.rotate.active)
+		{
+			//translate and rotate
+		}
+		else
+		{
+			//translate only
+			node=shape.path.next;
+			while(node.point.x!="end")
+			{
+				
+				node=node.next;
+			}
+		}
+	}
+	else
+	{
+		if(tween.rotate.active)
+		{
+			//rotate only
+		}
+		else
+		{
+			//not translation no rotation
+		}
+	}
+	
 }

@@ -602,7 +602,8 @@ function drawEnd(cursor)
 			{
 				node.addFullMarks();
 				node=node.next;  
-			}this.draw();
+			}
+			this.draw();
 			this.drawBezGuides();
 			DEFAULTKEYDOWN
 			this.setCorners();

@@ -38,6 +38,10 @@ function fliphorz()
 			shape.draw();shape.draw();//doing this twice gets rid of a stroke around the shadow do not know why?
 		}
 		group.drawBoundary();
+	}
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.mirror.active=true;
 	}	
 }
 
@@ -74,5 +78,9 @@ function flipvert()
 			shape.draw();shape.draw();//doing this twice gets rid of a stroke around the shadow do not know why?
 		}
 		group.drawBoundary();
+	}
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.mirror.active=true;
 	}	
 }

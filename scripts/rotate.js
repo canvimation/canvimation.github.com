@@ -81,6 +81,9 @@ function updateangle(phi)
 		group.phi=phi;
 		$("rotateangle").value=Math.round(group.phi*180/Math.PI);
 	}
-
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.rotate.active=true;
+	}
 }
 

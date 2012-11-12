@@ -148,6 +148,9 @@ function addToBoard()
 		case "scene":
 			this.elm.drawscene();
 		break
+		case "tween":
+			this.elm.drawtween();
+		break
 		case "sprite":
 			filmlines.appendChild(this.maxrun);
 			filmlines.appendChild(this.run);
@@ -239,7 +242,8 @@ function setBoard()
 			$("Rin").style.visibility="hidden";
 			$("Sin").style.visibility="hidden";
 		break
-		case "sprite":	
+		case "sprite":
+		case "tween":	
 			this.maxrun.style.visibility="hidden";		
 			this.run.style.left=(55+this.R)+"px";
 			this.run.style.top=(this.layer*25+20)+"px";
@@ -579,6 +583,7 @@ function setflel(el)
 			$("Rin").style.visibility="hidden";
 			$("Sin").style.visibility="hidden";
 		break
+		case "tween":
 		case "sprite":
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
@@ -857,6 +862,9 @@ function filmPlay(el)
 			case "scene":
 				flel.elm.drawscene();
 			break
+			case "tween":
+				flel.elm.drawtween();
+			break
 			case "sprite":
 			 	STOPCHECKING=false;
 			 	flel.elm.zeroPointers();
@@ -918,6 +926,7 @@ function play(t)
 						case "scene":
 							delete this.active[name];
 						break
+						case "tween":
 						case "sprite":
 							if(isNaN(flel.S))
 							{
@@ -968,6 +977,9 @@ function play(t)
 				{
 					case "scene":
 						flel.elm.drawscene();
+					break
+					case "tween":
+						flel.elm.drawtween();
 					break
 					case "sprite":
 						STOPCHECKING=false;
@@ -1105,6 +1117,9 @@ function addToElStage()
 	{
 		case "scene":
 			this.elm.addToStage($("div"+this.id+"stage"))
+		break
+		case "scene":
+			this.elm.addAllToStage($("div"+this.id+"stage"))
 		break
 		case "sprite":
 			this.elm.inTheatre($("div"+this.id+"stage"));

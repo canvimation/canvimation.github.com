@@ -81,6 +81,10 @@ function checkBoundary(shiftdown,cursor)
 				setTools(!(CURRENT===SHAPES));
 			}
 		}
+		if(TWEENEDIT)
+		{
+			CURRENTTWEEN.translate.active=true;
+		}
 	}
 $("msg").innerHTML=SELECTEDSHAPE.name;
 }

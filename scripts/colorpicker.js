@@ -326,6 +326,10 @@ function setColor()
 				shape.draw();
 			}
 		}
+		if(TWEENEDIT)
+		{
+			CURRENTTWEEN.fillcolor.active=true;
+		}
 	}
 	else if (coltype=='S')
 	{
@@ -344,6 +348,10 @@ function setColor()
 				shape.draw();
 			}
 		}
+		if(TWEENEDIT)
+		{
+			CURRENTTWEEN.shadow.active=true;
+		}
 	}	
 	else if (coltype=='L')
 	{
@@ -360,6 +368,10 @@ function setColor()
 				shape.strokeStyle[3]=1-alphaperct/100;
 				shape.draw();
 			}
+		}
+		if(TWEENEDIT)
+		{
+			CURRENTTWEEN.linecolor.active=true;
 		}
 	}
 	else
@@ -402,6 +414,10 @@ function setColor()
 		}
 		removeGradLine();
 		showGradLine(SELECTEDSHAPE);
+		if(TWEENEDIT)
+		{
+			CURRENTTWEEN.gradfill.active=true;
+		}
 	}
 	endMovement();
 }

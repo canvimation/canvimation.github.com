@@ -688,4 +688,5 @@ function maxruntime(mx)
 				return Math.max(mx,mrt);
 			}
 		break
+	}
 }

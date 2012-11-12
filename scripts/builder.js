@@ -324,6 +324,8 @@ function buildTween()
 	
 	$("checktw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
 	$("savetw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
+	TWEENEDIT=true;
+	CURRENTTWEEN=tween;
 	openStage('tween');
 }
 
@@ -367,6 +369,10 @@ function buildSprite()
 		case 'scene':
 			scene=SCENES[elname];
 			train=scene.copyscene("sprite");
+		break
+		case 'tween':
+			tween=TWEENS[elname];
+			train=tween.copytween("sprite");
 		break
 		case 'sprite':
 			topsprite=SPRITES[eltopname];
@@ -628,7 +634,7 @@ function writetweenlist()
 										{
 											el=DDeldrop.getEl();
 											el.innerHTML="<br>"+$("dragdiv").innerHTML;
-											el.source="scene";
+											el.source="tween";
 											el.name=$("dragdiv").name;
 											el.topname=$("dragdiv").topname;
 											el.filmname=$("dragdiv").filmname;
@@ -636,7 +642,7 @@ function writetweenlist()
 										else if(DDelfilmdrop.cursorIsOver)
 										{
 											el=DDelfilmdrop.getEl();
-											el.source="scene";
+											el.source="tween";
 											el.title=$("dragdiv").innerHTML;
 											el.name=$("dragdiv").name;
 											addToFilm(el);

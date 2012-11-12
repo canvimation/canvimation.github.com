@@ -197,19 +197,22 @@ function linestyles()
 function updateLines()
 {
 	for(var groupName in SELECTED)
-		{
-			var group=SELECTED[groupName];
-
+	{
+		var group=SELECTED[groupName];
 			var shapeNames=group.memberShapes();
-			for(var name in shapeNames)
-			{
-				shape=shapeNames[name];
-				shape.lineWidth=$('linewidth').value;
-   				shape.lineCap = $('selectcap').value;
-   				shape.lineJoin = $('selectjoin').value;
-				shape.draw();
-			}
-		}	
+		for(var name in shapeNames)
+		{
+			shape=shapeNames[name];
+			shape.lineWidth=$('linewidth').value;
+			shape.lineCap = $('selectcap').value;
+			shape.lineJoin = $('selectjoin').value;
+			shape.draw();
+		}
+	}
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.linestyles.active=true;
+	}	
 }
 
 function pointEdit(mark)
