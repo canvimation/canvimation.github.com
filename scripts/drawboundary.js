@@ -8,6 +8,7 @@ function checkBoundary(shiftdown,cursor)
 {
 	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
+	$("tweenpathsstage").style.visibility="hidden";
 	removeGradLine();
 	closeStops();
 	removeRotate();
@@ -84,6 +85,7 @@ function checkBoundary(shiftdown,cursor)
 		if(TWEENEDIT)
 		{
 			CURRENTTWEEN.translate.active=true;
+			$("twimgtranslate").className="choice100";
 		}
 	}
 $("msg").innerHTML=SELECTEDSHAPE.name;

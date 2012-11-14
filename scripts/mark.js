@@ -4,7 +4,47 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
+function addFixedPointMark() 
+{ 
+   	this.mark = document.createElement('div');
+   	this.mark.node=this;
+   	this.mark.id="mark"+(MCOUNT++);
+   	this.mark.style.left= (this.point.x-2)+"px"; 
+   	this.mark.style.top= (this.point.y-2)+"px";
+   	this.mark.style.fontSize=0;
+   	this.mark.style.width=4+"px";
+   	this.mark.style.height=4+"px";
+   	this.mark.style.border="solid black 1px";
+   	this.mark.style.backgroundColor="white";
+   	this.mark.innerHTML=MCOUNT-1;
+   	this.mark.style.cursor='pointer';						
+   	$("markerdrop").appendChild(this.mark);
+   	this.mark.onmouseover=function(){
+										$("markerdrop").onclick=function(e) {noBubble(e)};
+									};
+   	this.mark.onmouseout=function(){
+	   									$("markerdrop").onclick=function(e) {
+	   																			noBubble(e);
+	   																			clear($("markerdrop"));
+	   																			checkBoundary(shiftdown(e),getPosition(e));
+	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
+	   																			$("backstage").style.visibility="hidden";
+	   																			$("markerdrop").style.visibility="hidden";
+	   																			$("boundarydrop").style.visibility="visible";
+	   																		}
+									};
+   	this.mark.onclick	=function(){
+										$("pointsbox").style.visibility="hidden";
+										if(!($(this.id).node.nodepath===undefined))
+										{
+											showNodePathList($(this.id).node)
+										}
+										else
+										{
+											pointEdit($(this.id));
+										}					
+									};
+}
 
 function addPointMark() 
 { 
@@ -215,7 +255,10 @@ function updatePointNode(cursor)
 			}
 			this.shape.draw();
 			this.shape.drawBezGuides();
-			this.shape.setCorners();
+			if(!(this.shape.name.substr(0,8)=="NodePath"))
+			{
+				this.shape.setCorners();
+			}
 		break
 		case "freeform":
 			var dx=cursor.x-this.point.x;
@@ -415,7 +458,10 @@ function updateCtrl1Node(cursor)
 	}
 	this.shape.draw();
 	this.shape.drawBezGuides();
-	this.shape.setCorners();
+	if(!(this.shape.name.substr(0,8)=="NodePath"))
+	{
+		this.shape.setCorners();
+	}
 }
 
 function updateCtrl2Node(cursor)
@@ -458,6 +504,9 @@ function updateCtrl2Node(cursor)
 	}
 	this.shape.draw();
 	this.shape.drawBezGuides();
-	this.shape.setCorners();
+	if(!(this.shape.name.substr(0,8)=="NodePath"))
+	{
+		this.shape.setCorners();
+	}
 }
 

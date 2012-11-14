@@ -120,6 +120,7 @@ function closedone()
 	$("spritestage" ).style.visibility="hidden";
 	$("trackstage" ).style.visibility="hidden";
 	$("tweenstage" ).style.visibility="hidden";
+	$("tweenpathsstage" ).style.visibility="hidden";
 	$("filmstage" ).style.visibility="hidden";
 	$("done" ).style.visibility="hidden";
 	$("spbuttons").style.visibility="hidden";
@@ -131,7 +132,8 @@ function closedone()
 	$("spriteeditbox").style.visibility="hidden";
 	$("tweeneditbox").style.visibility="hidden";
 	$("tweentimebox").style.visibility="hidden";
-	//$("filmeditbox").style.visibility="hidden";
+	clear($("markerdrop"));
+	$("backstage").style.visibility="hidden";
 	$("vecdiv").style.visibility="hidden";
 	$("spritecentre").style.visibility="hidden";
 	clear($("boundarydrop"));
@@ -212,12 +214,13 @@ function updateLines()
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.linestyles.active=true;
+		$("twimgstyles").className="choice100";
 	}	
 }
 
 function pointEdit(mark)
 {
-	if(mark.node.shape.type=="freeform" || mark.node.shape.type=="curve")
+	if(mark.node.shape.type=="freeform" || mark.node.shape.type=="curve"  || mark.style.cursor=='pointer')
 	{
 		for(var i=0; i<$("markerdrop").childNodes.length; i++)
 		{
@@ -302,6 +305,11 @@ function pointEdit(mark)
 			$("p_add").style.visibility="visible";
 			$("p_add2").style.visibility="visible";
 		}
+		if(mark.style.cursor=='pointer')
+		{
+			$("p_delete").style.visibility="hidden";
+			dt+=25;
+		}
 		$("p_segments").style.top=(150-dt)+"px";
 		$("p_line").style.top=(175-dt)+"px";
 		$("p_line2").style.top=(175-dt)+"px";
@@ -315,13 +323,18 @@ function pointEdit(mark)
 		else
 		{
 			dt+=50;
+		}	
+		if(mark.node.shape.name.substr(0,8)=="NodePath")
+		{
+			$("p_paths").style.visibility="hidden";
+			$("p_close").style.visibility="hidden";
+			dt+=50;
 		}
 		$("p_paths").style.top=(225-dt)+"px";
 		$("p_close").style.top=(250-dt)+"px";
 		$('pointsbox').style.height=(300-dt)+"px";
 		$('pointscontent').style.height=(parseInt($('pointsbox').style.height)-25)+"px";
 		mark.style.backgroundColor="#F09898";//"#D7D700";
-			
 		if(mark.node.shape.type=="freeform" && mark.node.next.point.x=="end")
 		{
 			var nextnode=mark.node.next.next.next;
@@ -370,8 +383,6 @@ function pointEdit(mark)
 				$("p_inline").onclick=function(){};
 			break
 		}
-		
-		
 	}
 }
 
@@ -455,6 +466,8 @@ function updateCorner(node,corner)
 			var ctrl1=new Point(node.point.x+np1.x,node.point.y+np1.y);
 			node.ctrl2=ctrl2;
 			nextnode.ctrl1=ctrl1;
+			nextnode.updateCtrl1Node(ctrl1);
+			node.updateCtrl2Node(ctrl2);
 		}
 	}
 	if(!(node.shape.type=="curve" && node.prev.point.x=="end"))

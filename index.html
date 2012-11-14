@@ -1075,6 +1075,13 @@ inner img {
 	cursor:pointer;
 }
 
+.choice80 {
+	opacity:0.80;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=80)";
+    filter:alpha(opacity=80);
+	cursor:pointer;
+}
+
 .choice100 {
 	opacity:1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=100)";
@@ -2184,6 +2191,7 @@ function main()
 <div id="spritestage" class="theatre_style"></div>
 <div id="trackstage" class="theatre_style"></div>
 <div id="tweenstage" class="theatre_style"></div>
+<div id="tweenpathsstage" class="theatre_style"></div>
 <div id="filmstage" class="theatre_style"></div>
 <div id="dragstage" class="theatre_style"></div>
 <div id="blockstage" class="theatre_style"></div>
@@ -2875,39 +2883,54 @@ function main()
 				<label for="defaultyoyo">&nbsp;  All Yoyos</label><br><input type="checkbox" name="defaultyoyo" id="defaultyoyo" />
 				<input type="button" id="defyobutton" value=" Set All " onclick="setYoAll(this)" />
 			</p>
-			<br>
-			&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo
 			<p class="text_input">
-				<img src="assets/editlines.png" alt="line" title="line" > <input type="text" name="twline" id="twline" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoline">
+				<div id="nodetweens" class="choice40" onclick="showNodePathList()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"><img src="assets/nodepath.png" alt="Corner Path" title="Corner Path" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Corner Paths</div><br>
+			</p>
+			<p>
+				&nbsp;&nbsp;&nbsp;Corner Paths Active&nbsp;&nbsp;<input type="checkbox" id="twnodetween" onclick="setNodeTweening(this)">
+			</p>
+			<p>
+			&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo</p>
+			<p class="text_input">
+				<img src="assets/translate.png" id="twimgtranslate" alt="translate" title="translate" class="choice40"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate">
 			</p>
 			<p class="text_input">
-				<img src="assets/translate.png" alt="translate" title="translate" > <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate">
+				<img  id="twimgrotate" src="assets/rotate.png" alt="rotate" title="rotate" class="choice40"> <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate">
 			</p>
 			<p class="text_input">
-				<img src="assets/rotate.png" alt="rotate" title="rotate" > <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate">
+				<img  id="twimgmirror" src="assets/mirror.png" alt="mirror" title="mirror" class="choice40"> <input type="text" name="twmirror" id="twmirror" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepmirror">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyomirror">
 			</p>
 			<p class="text_input">
-				<img src="assets/mirror.png" alt="mirror" title="mirror" > <input type="text" name="twmirror" id="twmirror" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepmirror">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyomirror">
+				<img  id="twimgstyles" alt="line styles" title="line styles" src="assets/stylelines.png" class="choice40"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles">
 			</p>
 			<p class="text_input">
-				<img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles">
+				<img  id="twimglinecol" alt="line colour" title="line colour" src="assets/collines.png" class="choice40"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol">
 			</p>
 			<p class="text_input">
-				<img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol">
+				<img  id="twimgfillcol" alt="fill colour" title="fill colour" id='colimg' src="assets/colfill.png" class="choice40"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol">
 			</p>
 			<p class="text_input">
-				<img alt="fill colour" title="fill colour" id='colimg' src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol">
+				<img  id="twimggradfill" alt="gradient fill" title="gradient fill" id='gradimg' src="assets/gradfill.png" class="choice40"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill">
 			</p>
 			<p class="text_input">
-				<img alt="gradient fill" title="gradient fill" id='gradimg' src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill">
-			</p>
-			<p class="text_input">
-				<img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad">
+				<img  id="twimgshadow" alt="shadow" title="shadow" src="assets/shadow.png" class="choice40"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad">
 			</p>	
 	</div>
 	<div id='tweentimehead' class='head'>&nbsp; Tween Timings
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweentimecontent")'/>
+	</div>
+</div>
+
+<div id='tweenpathsbox' class="dialoguebox">
+	<div id='tweenpathscontent' class='content'>
+		<p class="text_input">
+			<img src="assets/editlines.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">
+		</p>
+	</div>
+	<div id='tweenpathshead' class='head'>&nbsp; Tween Timings
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweenpathscontent")'/>
 	</div>
 </div>
 

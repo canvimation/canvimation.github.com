@@ -84,6 +84,7 @@ function updateangle(phi)
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.rotate.active=true;
+		$("twimgrotate").className="choice100";
 	}
 }
 

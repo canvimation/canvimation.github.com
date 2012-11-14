@@ -308,6 +308,7 @@ function buildTween()
 	writetweenlist();
 	$("shapestage").style.visibility="hidden";
 	clear($("tweenstage"));
+	clear($("tweenpathsstage"));
 	shape=tween.getShape();
 	shape.name="A"+shape.name;
 	shape.addTo($("tweenstage"));
@@ -317,6 +318,7 @@ function buildTween()
 	copy.addTo($("tweenstage"));
 	copy.draw();
 	$("tweenstage").style.visibility="visible";
+	$("tweenpathsstage").style.visibility="visible";
 	tween.setAniStage();
 	CURRENT={};
 	CURRENT[copy.name]=copy;

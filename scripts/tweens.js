@@ -12,7 +12,7 @@ function Tween(name)
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
 	this.tweens=[];  //list of shapes forming Tween
-	this.nodePaths=[] //list of paths between shape nodes and copy nodes
+	this.nodePaths={} //list of paths between shape nodes and copy nodes
 	this.translate={active:false,repeat:1,yoyo:false};
 	this.rotate={active:false,twtime:60,repeat:1,yoyo:false};
 	this.mirror={active:false,twtime:60,repeat:1,yoyo:false};
@@ -21,6 +21,7 @@ function Tween(name)
 	this.fillcolour={active:false,twtime:60,repeat:1,yoyo:false};
 	this.gradfill={active:false,twtime:60,repeat:1,yoyo:false};
 	this.shadow={active:false,twtime:60,repeat:1,yoyo:false};
+	this.nodeTweening={active:false,repeat:1,yoyo:false};
 	this.ptime; //time over path from sprite.ptime;
 	
 	//methods
@@ -35,7 +36,9 @@ function Tween(name)
 	//this.restoreTween=restoreTween;
 	//this.TweenToText=TweenToText;
 	this.copy.getShape=getShape;
-	this.addAllToStage=addAllToStage; 
+	this.setNodeTweening;
+	this.addAllToStage=addAllToStage;
+	this.startNodePaths=startNodePaths; 
 	this.setNodePaths=setNodePaths;
 	this.compareTweens=compareTweens;
 }
@@ -145,24 +148,32 @@ function addAllToStage(theatre)
 	}
 }
 
-function setNodePaths()
+function startNodePaths()
 {
+	clear($("tweenpathsstage"));
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
 	var node=shape.path.next;
 	var copynode=copy.path.next;
 	var point,ctrl1,ctrl2;
-	var nodepath,start,last;
-	while(node.point!="end")
+	var start,last;
+	this.nodeTweening.active=true;
+	while(node.point.x!="end")
 	{
-		nodepath=new Shape("Shape"+SCOUNT,"Shape"+(SCOUNT++),true,true,curve,this.nodePaths);
-		start=nodepath.path.next;
-		last=nodepath.path.prev;
+		node.nodepath=new Shape("NodePath"+SCOUNT,"NodePath"+(SCOUNT++),true,true,"curve",this.nodePaths);
+		node.nodepath.zIndex=10000000;
+		node.nodepath.strokeStyle=[0,255,0,1];
+		node.nodeTweening={active:true,repeat:1,yoyo:false};
+		node.nodepath.addTo($("tweenpathsstage"));
+		copynode.nodepath=node.nodepath;
 		point=new Point(node.point.x,node.point.y);
-		start.setNode(point);
+		start=new Node(point);
+		node.nodepath.addNode(start);
 		point=new Point(copynode.point.x,copynode.point.y);
-		last.setNode(point);
-		start=last.start;
+		last=new Node(point);
+		node.nodepath.addNode(last);
+		start=node.nodepath.path.next;
+		last=node.nodepath.path.prev;
 		ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
 		ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
 		last.setNode(point,ctrl1,ctrl2);
@@ -170,6 +181,99 @@ function setNodePaths()
 		copynode=copynode.next;
 	}
 }
+
+function setNodePaths()
+{
+	clear($("tweenpathsstage"));
+	$("tweenpathsstage").style.visibility="visible";
+	var shape=this.getShape();
+	var copy=this.copy.getShape();
+	var node=shape.path.next;
+	var copynode=copy.path.next;
+	var point,ctrl1,ctrl2;
+	var start,last;
+	while(node.point.x!="end")
+	{
+		node.nodepath.addTo($("tweenpathsstage"));
+		start=node.nodepath.path.next;
+		start.setNode(node.point);
+		last=node.nodepath.path.prev;
+		last.setNode(copynode.point,last.ctrl1,last.ctrl2);
+		node=node.next;
+		copynode=copynode.next;
+	}
+}
+
+function showNodePathList(nodein)
+{
+	$("tweenpathsbox").style.visibility="visible";
+	var tween=CURRENTTWEEN;
+	var npths=0;
+	for(var name in tween.nodePaths)
+	{
+		npths++
+	}
+	if(npths==0)
+	{
+		tween.startNodePaths();
+	}
+	else
+	{
+		tween.setNodePaths();
+	}
+	tween.nodeTweening.active=true;
+	$("nodetweens").className="choice80";
+	$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
+	$("twnodetween").checked=true;
+	clear($("boundarydrop"));
+	$("markerdrop").style.visibility="visible";
+	$("tweenpathsstage").style.visibility="visible";
+	$("backstage").style.visibility="visible";
+	$("boundarydrop").style.visibility="hidden"
+	hideTools();
+	clear($("markerdrop"));
+	var shape=tween.getShape();
+	var node=shape.path.next;
+	while(node.next.point.x!="end")
+	{
+		node.addFixedPointMark();
+		node=node.next;
+	}
+	if(shape.open)
+	{
+		node.addFixedPointMark();
+	}
+	var copy=tween.copy.getShape();
+	node=copy.path.next;
+	while(node.next.point.x!="end")
+	{
+		node.addFixedPointMark();
+		node=node.next;
+	}
+	if(copy.open)
+	{
+		node.addFixedPointMark();
+	}
+	if(arguments.length<1)
+	{
+		nodein=shape.path.next;
+	}
+	var pathnode=nodein.nodepath.path.next;
+	pathnode.addFixedPointMark();
+	pathnode=pathnode.next;
+	while(pathnode.next.point.x!="end")
+	{
+		pathnode.addFullMarks();
+		pathnode=pathnode.next;
+	}
+	pathnode.addFixedPointMark();
+	pathnode.addCtrl1Mark();
+	pathnode.addCtrl2Mark();
+	nodein.nodepath.draw();
+	nodein.nodepath.drawBezGuides();
+}
+
+
 
 function compareTweens()
 {
@@ -205,4 +309,20 @@ function compareTweens()
 		}
 	}
 	
+}
+
+function setNodeTweening(chkbx)
+{
+	if(chkbx.checked)
+	{
+		CURRENTTWEEN.nodeTweening.active=true;
+		$("nodetweens").className="choice80";
+		$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
+	}
+	else
+	{
+		CURRENTTWEEN.nodeTweening.active=false;
+		$("nodetweens").className="choice40";
+		$("nodetweens").onmouseout=function() {$("nodetweens").className="choice40";}
+	}
 }

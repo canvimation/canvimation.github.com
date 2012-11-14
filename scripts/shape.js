@@ -44,6 +44,7 @@ function Node(point,ctrl1,ctrl2)
 	
 	//methods
 	this.setNode=setNode;
+	this.addFixedPointMark=addFixedPointMark;
 	this.addPointMark=addPointMark;
 	this.addCtrl1Mark=addCtrl1Mark;
 	this.addCtrl2Mark=addCtrl2Mark;

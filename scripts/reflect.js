@@ -42,6 +42,7 @@ function fliphorz()
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.mirror.active=true;
+		$("twimgmirror").className="choice100";
 	}	
 }
 
@@ -82,5 +83,6 @@ function flipvert()
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.mirror.active=true;
+		$("twimgmirror").className="choice100";
 	}	
 }
