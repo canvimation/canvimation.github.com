@@ -17,7 +17,8 @@ function Group(COLLECTION,name,title,shape)   //Group object contains shapes and
 	this.height;
 	p=new Point(200,200);
    	this.centreOfRotation=p;
-   	this.phi=0;  //angle of rotation	
+   	this.phi=0;  //angle of rotation
+   	this.clockwise=true;	
 	
 	COLLECTION[this.name]=this;
 	

@@ -37,7 +37,7 @@ function addFixedPointMark()
 										$("pointsbox").style.visibility="hidden";
 										if(!($(this.id).node.nodepath===undefined))
 										{
-											showNodePathList($(this.id).node)
+											showNodePathList($(this.id).node);
 										}
 										else
 										{
@@ -349,6 +349,16 @@ function updatePointNode(cursor)
 			this.shape.draw();
 		break
 	}
+	if(TWEENEDIT)
+	{
+		var l=this.shape.name.substr(0,1).toUpperCase();
+		if(l=="A" || l=="B")
+		{
+			CURRENTTWEEN.nodeTweening.active=true;
+			CURRENTTWEEN.pointTweening=true;
+			CURRENTTWEEN.setTweenTimeBox();
+		}
+	}
 }
 
 function addCtrl1Mark() 
@@ -462,6 +472,16 @@ function updateCtrl1Node(cursor)
 	{
 		this.shape.setCorners();
 	}
+	if(TWEENEDIT)
+	{
+		var l=this.shape.name.substr(0,1).toUpperCase();
+		if(l=="A" || l=="B")
+		{
+			CURRENTTWEEN.nodeTweening.active=true;
+			CURRENTTWEEN.pointTweening=true;
+			CURRENTTWEEN.setTweenTimeBox();
+		}
+	}
 }
 
 function updateCtrl2Node(cursor)
@@ -507,6 +527,16 @@ function updateCtrl2Node(cursor)
 	if(!(this.shape.name.substr(0,8)=="NodePath"))
 	{
 		this.shape.setCorners();
+	}
+	if(TWEENEDIT)
+	{
+		var l=this.shape.name.substr(0,1).toUpperCase();
+		if(l=="A" || l=="B")
+		{
+			CURRENTTWEEN.nodeTweening.active=true;
+			CURRENTTWEEN.pointTweening=true;
+			CURRENTTWEEN.setTweenTimeBox();
+		}
 	}
 }
 

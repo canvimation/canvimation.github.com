@@ -41,8 +41,8 @@ function fliphorz()
 	}
 	if(TWEENEDIT)
 	{
-		CURRENTTWEEN.mirror.active=true;
-		$("twimgmirror").className="choice100";
+		CURRENTTWEEN.translate.active=true;
+		CURRENTTWEEN.setTweenTimeBox();
 	}	
 }
 
@@ -82,7 +82,7 @@ function flipvert()
 	}
 	if(TWEENEDIT)
 	{
-		CURRENTTWEEN.mirror.active=true;
-		$("twimgmirror").className="choice100";
+		CURRENTTWEEN.translate.active=true;
+		CURRENTTWEEN.setTweenTimeBox();
 	}	
 }

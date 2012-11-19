@@ -544,16 +544,17 @@ function getTrack(trackname)
 	}
 }
 
-function getTween(tweenname)
+function getTween()
 {
-	if(this.tween.name==tweenname)
+	switch(this.engine)
 	{
-		return {path:this.title,tween:this.tween};
-	}
-	else
-	{
-		var twdata=this.train.getTween(tweenname)
-		return {path:this.title+"/"+twdata.path,tween:twdata.tween};
+		case "tween":
+			return {path:this.title,tween:this.train};
+		break
+		case "sprite":
+			var twdata=this.train.getTween();
+			return {path:this.title+"/"+twdata.path,tween:twdata.tween};;
+		break
 	}
 }
 

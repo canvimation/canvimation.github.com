@@ -80,6 +80,11 @@ function openStage(theatre)
 	$("trackeditbox").style.visibility="hidden";
 	$("tweeneditbox").style.visibility="hidden";
 	$("anibar").style.visibility="hidden";
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
 	BUILDCLOSED=true;
 	rewritelists();
 	switch (theatre)
@@ -99,6 +104,7 @@ function openStage(theatre)
 			$("tweentimebox").style.visibility="visible";
 			$("menushape").style.visibility="hidden";
 			$("del").style.visibility="hidden";
+			hideTools();
 		break
 		case "sprite":
 			$("spbuttons").style.visibility="visible";
@@ -132,6 +138,7 @@ function closedone()
 	$("spriteeditbox").style.visibility="hidden";
 	$("tweeneditbox").style.visibility="hidden";
 	$("tweentimebox").style.visibility="hidden";
+	$("tweenpathsbox").style.visibility="hidden";
 	clear($("markerdrop"));
 	$("backstage").style.visibility="hidden";
 	$("vecdiv").style.visibility="hidden";
@@ -214,7 +221,7 @@ function updateLines()
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.linestyles.active=true;
-		$("twimgstyles").className="choice100";
+		CURRENTTWEEN.setTweenTimeBox();
 	}	
 }
 
@@ -302,10 +309,17 @@ function pointEdit(mark)
 			$("p_segments").style.visibility="visible";
 			$("p_line").style.visibility="visible";
 			$("p_line2").style.visibility="visible";
-			$("p_add").style.visibility="visible";
-			$("p_add2").style.visibility="visible";
+			if(!TWEENEDIT || mark.node.shape.name.substr(0,8)=="NodePath")
+			{
+				$("p_add").style.visibility="visible";
+				$("p_add2").style.visibility="visible";
+			}
+			else
+			{
+				dt+=25;
+			}
 		}
-		if(mark.style.cursor=='pointer')
+		if(TWEENEDIT)
 		{
 			$("p_delete").style.visibility="hidden";
 			dt+=25;

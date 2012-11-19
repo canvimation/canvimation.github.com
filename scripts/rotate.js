@@ -76,7 +76,20 @@ function updateangle(phi)
 	for (var groupName in SELECTED)
 	{
 		var group=SELECTED[groupName];
-		
+		if(group.phi>6 && phi<0.1)
+		{
+			group.clockwise=true;
+		}
+		else if(group.phi<0.1 && phi>6)
+		{
+			group.clockwise=false;
+		}
+		else
+		{
+			group.clockwise=(phi>group.phi);
+		}
+
+		$("msg").innerHTML=group.clockwise;
 		group.groupRotate(phi-group.phi);
 		group.phi=phi;
 		$("rotateangle").value=Math.round(group.phi*180/Math.PI);
@@ -84,7 +97,7 @@ function updateangle(phi)
 	if(TWEENEDIT)
 	{
 		CURRENTTWEEN.rotate.active=true;
-		$("twimgrotate").className="choice100";
+		CURRENTTWEEN.setTweenTimeBox();
 	}
 }
 

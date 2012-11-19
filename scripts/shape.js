@@ -62,6 +62,9 @@ function Node(point,ctrl1,ctrl2)
 	this.scaleY=scaleY;
 	this.translate=translate;
 	this.copyNodeTo=copyNodeTo;
+	this.setNodePathBox=setNodePathBox;
+	this.pathTweeningPoints=pathTweeningPoints;
+	this.TransformTweeningPoints=TransformTweeningPoints;
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -1360,4 +1363,14 @@ function addAllMarks()
 		}
 		node=node.next;
 	}
+}
+
+function setNodePathBox()
+{
+	$("twnpbutton").OKnode=this;
+	$("tweditline").value=this.nodepath.nodeTweening.twtime;
+	$("twrepeditline").value=this.nodepath.nodeTweening.repeat;
+	$("twyoeditline").checked=this.nodepath.nodeTweening.yoyo;
+	$("twacteditline").checked=this.nodepath.nodeTweening.active;
+	$("tweenpathsbox").style.visibility="visible";
 }

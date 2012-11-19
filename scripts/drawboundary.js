@@ -9,6 +9,8 @@ function checkBoundary(shiftdown,cursor)
 	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	$("tweenpathsstage").style.visibility="hidden";
+	$("twfirst").style.backgroundColor="#66FFFF";
+	$("twlast").style.backgroundColor="#66FFFF";
 	removeGradLine();
 	closeStops();
 	removeRotate();
@@ -82,13 +84,34 @@ function checkBoundary(shiftdown,cursor)
 				setTools(!(CURRENT===SHAPES));
 			}
 		}
-		if(TWEENEDIT)
+		
+	}
+	if(TWEENEDIT  && shapefound)
+	{
+		if(CURRENTTWEEN.reverse)
 		{
-			CURRENTTWEEN.translate.active=true;
-			$("twimgtranslate").className="choice100";
+			if(SELECTEDSHAPE.name.substr(0,1).toUpperCase()=="A")
+			{
+				$("twlast").style.backgroundColor="yellow";
+			}
+			else
+			{
+				$("twfirst").style.backgroundColor="yellow";
+			}
+		}
+		else
+		{
+			if(SELECTEDSHAPE.name.substr(0,1).toUpperCase()=="A")
+			{
+				$("twfirst").style.backgroundColor="yellow";
+			}
+			else
+			{
+				$("twlast").style.backgroundColor="yellow";
+			}
 		}
 	}
-$("msg").innerHTML=SELECTEDSHAPE.name;
+//$("msg").innerHTML=SELECTEDSHAPE.name;
 }
 
 function removeBoundary()
@@ -131,6 +154,7 @@ function drawBoundary()
    										}
     this.boundary.DD.onMouseUp=function(e) {
 								noBubble(e);
+								var re;
 								$(this.id).style.left=Math.round(parseInt($(this.id).style.left)/xgrid)*xgrid+"px";
 								$(this.id).style.top=Math.round(parseInt($(this.id).style.top)/ygrid)*ygrid+"px";
 								var dx=parseInt($(this.id).style.left)-$(this.id).group.left;
@@ -180,6 +204,11 @@ function drawBoundary()
 									group.update(l,t,dx,dy,1,1);
 									group.drawBoundary();
 								};
+									if(TWEENEDIT)
+									{
+										CURRENTTWEEN.translate.active=true;
+										CURRENTTWEEN.setTweenTimeBox();
+									}
 							  };
 	this.boundary.cc.DD.onDrag =function(e) {
 												noBubble(e);
@@ -254,6 +283,12 @@ function drawBoundary()
 							  		}
 							  		group.update(l,t,0,0,scale,scale)
 								}
+								if(TWEENEDIT)
+								{
+									CURRENTTWEEN.nodeTweening.active=true;
+									CURRENTTWEEN.pointTweening=true;
+									CURRENTTWEEN.setTweenTimeBox();
+								}
 							}
 //right handle
 	this.boundary.rh.DD.onDrag =function(e) {
@@ -325,6 +360,12 @@ function drawBoundary()
 							  		}
 							  		group.update(l,t,0,0,scale,1);
 								}
+								if(TWEENEDIT)
+								{
+									CURRENTTWEEN.nodeTweening.active=true;
+									CURRENTTWEEN.pointTweening=true;
+									CURRENTTWEEN.setTweenTimeBox();
+								}
 							}
 //bottom handle
 	this.boundary.bh.DD.onDrag =function(e) {
@@ -395,6 +436,12 @@ function drawBoundary()
 										shape.draw();
 							  		}
 									group.update(l,t,0,0,1,scale);
+								}
+								if(TWEENEDIT)
+								{
+									CURRENTTWEEN.nodeTweening.active=true;
+									CURRENTTWEEN.pointTweening=true;
+									CURRENTTWEEN.setTweenTimeBox();
 								}
 							}
 }

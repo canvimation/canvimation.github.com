@@ -329,7 +329,7 @@ function setColor()
 		if(TWEENEDIT)
 		{
 			CURRENTTWEEN.fillcolour.active=true;
-			$("twimgfillcol").className="choice100";
+			CURRENTTWEEN.setTweenTimeBox();
 		}
 	}
 	else if (coltype=='S')
@@ -352,7 +352,7 @@ function setColor()
 		if(TWEENEDIT)
 		{
 			CURRENTTWEEN.shadow.active=true;
-			$("twimgshadow").className="choice100";
+			CURRENTTWEEN.setTweenTimeBox();
 		}
 	}	
 	else if (coltype=='L')
@@ -374,7 +374,7 @@ function setColor()
 		if(TWEENEDIT)
 		{
 			CURRENTTWEEN.linecolour.active=true;
-			$("twimglinecol").className="choice100";
+			CURRENTTWEEN.setTweenTimeBox();
 		}
 	}
 	else
@@ -420,7 +420,7 @@ function setColor()
 		if(TWEENEDIT)
 		{
 			CURRENTTWEEN.gradfill.active=true;
-			$("twimggradfill").className="choice100";
+			CURRENTTWEEN.setTweenTimeBox();
 		}
 	}
 	endMovement();

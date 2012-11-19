@@ -810,6 +810,36 @@ inner img {
 	left:50px;
 }
 
+#tweenpathscontent img{
+	position:absolute;
+	left:2px;
+	border: solid 1px black;
+	width:10%;
+	cursor:default;
+}
+
+#tweenpathscontent p.text_input input {
+	left:40px;
+}
+
+#tweenpathscontent p.text_input span {
+	left:50px;
+}
+
+#twfirst {
+	border:1px solid black;
+	padding-left:2px;
+	padding-right:2px;
+	background-color: #66FFFF;
+}
+
+#twlast {
+	border:1px solid black;
+	padding-left:2px;
+	padding-right:2px;
+	background-color: #66FFFF;
+}
+
 .defaultp input {
 	left:5px;
 }
@@ -1839,9 +1869,14 @@ function main()
 	$("tweentimebox").style.left=(SCRW-250)+"px";
 	$("tweentimebox").style.top="60px";
 	$("tweentimebox").style.width="220px";
-	$("tweentimebox").style.height=(SCRH-200)+"px";
+	$("tweentimebox").style.height="300px"; //max height (SCRH-200)+"px";
 	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";
 	$("tweentimecontent").style.height=(parseInt($("tweentimebox").style.height)-25)+"px";
+	$("tweenpathsbox").style.left=(SCRW-550)+"px";
+	$("tweenpathsbox").style.top="60px";
+	$("tweenpathsbox").style.width="250px";
+	$("tweenpathsbox").style.height="160px";
+	$("tweenpathscontent").style.height=(parseInt($("tweenpathsbox").style.height)-25)+"px";
 	$("filmbuildbox").style.left="200px";
 	$("filmbuildbox").style.width="375px";
 	$("filmbuildbox").style.height="270px";
@@ -2140,8 +2175,34 @@ function main()
 	{
 		$('ifas').innerHTML='Open Files';
 	}
-	
-/*	
+	//tweentimecontent innerHTML fixed part
+	ttcfxdhtml='<p class="defaultp">';
+	ttcfxdhtml+='<label for="defaulttime">&nbsp; Time for All Tweens</label><br><input type="text" name="defaulttime" id="defaulttime" size=5 value=60 /><span>&nbsp;&nbsp;Secs</span>';
+	ttcfxdhtml+='<input type="button" id="deftimebutton" value=" Set All " onclick="setTimeAll(this)" /></p>';
+	ttcfxdhtml+='<p class="defaultp">';
+	ttcfxdhtml+='<label for="defaultrepeats">&nbsp; Number for All Traces</label><br><input class="title" type="text" name="defaultrepeats" id="defaultrepeats" size=5 value=1 />';
+	ttcfxdhtml+='<input type="button" id="defrepbutton" value=" Set All " onclick="setRepAll(this)" /></p>';
+	ttcfxdhtml+='<p class="defaultp">';
+	ttcfxdhtml+='<label for="defaultyoyo">&nbsp;  All Yoyos</label><br><input type="checkbox" name="defaultyoyo" id="defaultyoyo" />';
+	ttcfxdhtml+='<input type="button" id="defyobutton" value=" Set All " onclick="setYoAll(this)" /></p>';
+	ttcfxdhtml+='<p class="text_input">';
+	ttcfxdhtml+='<div id="nodetweens" class="choice40" onclick="showNodePathList()" onmouseover="this.className='+squote+'choice100'+squote+'" onmouseout="this.className='+squote+'choice40'+squote+'"><img src="assets/nodepath.png" alt="Corner Path" title="Corner Path" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Corner Paths</div><br></p>';
+	//corner paths active checkbox
+	ttccathtml='<p>&nbsp;&nbsp;&nbsp;Corner Paths Active&nbsp;&nbsp;<input type="checkbox" id="twnodetween" onclick="setNodeTweening(this)"></p>';
+	//corner paths active fixed
+	ttccfxhtml='<p>&nbsp;&nbsp;&nbsp;Corner Paths Active</p>';
+	//labels
+	ttclbshtml='<p>&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo</p>';
+	//properties
+	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate"></p>';
+	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"></p>';
+	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
+	ttclclhtml='<p class="text_input"><img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol"></p>';
+	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
+	ttcgdfhtml='<p class="text_input"><img alt="gradient fill" title="gradient fill" id="gradimg" src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill"></p>';
+	ttcshdhtml='<p class="text_input"><img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad"></p>';
+
+ /* 
 	A=new Group();
 	A.members=["a","b","c"];
 	D=new Group();
@@ -2498,7 +2559,7 @@ function main()
 </div>
 
 <!--Header bar ............................................................... -->
-<div id="heading"><div id='msg' style='top:2px; left:750px; width:300px ;height:40px; '> </div>
+<div id="heading"><div id='msg' style='top:2px; left:1200px; width:300px ;height:40px; '> </div>
  <div id='logo'><img alt="" src="assets/logo.png"></div>
   
   <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
@@ -2519,8 +2580,12 @@ function main()
   	<input sprite="" id="savesp" type="button" value="Save Sprite" onclick="savesprite(this.sprite)" /> 
   </div>
   <div id="twbuttons">
-  	<input tween="" id="checktw" type="button" value="Tween Check" onclick="checktween(this.tween,true)" /> 
-  	<input tween="" id="savetw" type="button" value="Save Tween" onclick="savetween(this.tween)" /> 
+  	<input tween="" id="checktw" type="button" value="Tween Check" onclick="checktween(this.tween)" /> 
+  	<input tween="" id="savetw" type="button" value="Save Tween" onclick="savetween(this.tween)" />
+  	<span id="twfirst">First</span>
+  	<input tween="" id="swaptw" type="button" value=" --> Reverse --> " onclick="swaptween(this.tween)" />
+  	<span id="twlast">Last</span>
+  	 
   </div>
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'>
@@ -2871,50 +2936,7 @@ function main()
 
 <div id='tweentimebox' class="dialoguebox">
 	<div id='tweentimecontent' class='content'>
-			<p class="defaultp">
-				<label for="defaulttime">&nbsp; Time for All Tweens</label><br><input type="text" name="defaulttime" id="defaulttime" size=5 value=60 /><span>&nbsp;&nbsp;Secs</span>
-				<input type="button" id="deftimebutton" value=" Set All " onclick="setTimeAll(this)" />
-			</p>
-			<p class="defaultp">
-				<label for="defaultrepeats">&nbsp; Number for All Traces</label><br><input class="title" type="text" name="defaultrepeats" id="defaultrepeats" size=5 value=1 />
-				<input type="button" id="defrepbutton" value=" Set All " onclick="setRepAll(this)" />
-			</p>
-			<p class="defaultp">
-				<label for="defaultyoyo">&nbsp;  All Yoyos</label><br><input type="checkbox" name="defaultyoyo" id="defaultyoyo" />
-				<input type="button" id="defyobutton" value=" Set All " onclick="setYoAll(this)" />
-			</p>
-			<p class="text_input">
-				<div id="nodetweens" class="choice40" onclick="showNodePathList()" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"><img src="assets/nodepath.png" alt="Corner Path" title="Corner Path" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Corner Paths</div><br>
-			</p>
-			<p>
-				&nbsp;&nbsp;&nbsp;Corner Paths Active&nbsp;&nbsp;<input type="checkbox" id="twnodetween" onclick="setNodeTweening(this)">
-			</p>
-			<p>
-			&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo</p>
-			<p class="text_input">
-				<img src="assets/translate.png" id="twimgtranslate" alt="translate" title="translate" class="choice40"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate">
-			</p>
-			<p class="text_input">
-				<img  id="twimgrotate" src="assets/rotate.png" alt="rotate" title="rotate" class="choice40"> <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate">
-			</p>
-			<p class="text_input">
-				<img  id="twimgmirror" src="assets/mirror.png" alt="mirror" title="mirror" class="choice40"> <input type="text" name="twmirror" id="twmirror" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepmirror">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyomirror">
-			</p>
-			<p class="text_input">
-				<img  id="twimgstyles" alt="line styles" title="line styles" src="assets/stylelines.png" class="choice40"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles">
-			</p>
-			<p class="text_input">
-				<img  id="twimglinecol" alt="line colour" title="line colour" src="assets/collines.png" class="choice40"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol">
-			</p>
-			<p class="text_input">
-				<img  id="twimgfillcol" alt="fill colour" title="fill colour" id='colimg' src="assets/colfill.png" class="choice40"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol">
-			</p>
-			<p class="text_input">
-				<img  id="twimggradfill" alt="gradient fill" title="gradient fill" id='gradimg' src="assets/gradfill.png" class="choice40"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill">
-			</p>
-			<p class="text_input">
-				<img  id="twimgshadow" alt="shadow" title="shadow" src="assets/shadow.png" class="choice40"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad">
-			</p>	
+	
 	</div>
 	<div id='tweentimehead' class='head'>&nbsp; Tween Timings
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
@@ -2924,11 +2946,15 @@ function main()
 
 <div id='tweenpathsbox' class="dialoguebox">
 	<div id='tweenpathscontent' class='content'>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo&nbsp;&nbsp;&nbsp;Active</p>
 		<p class="text_input">
-			<img src="assets/editlines.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">
+			<img src="assets/editlines.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twacteditline">
 		</p>
+		<input type="button" id="twnpbutton" value=" Change " onclick="updateTweenPath(this)" OKnode=""/>
+		<input type="button" value=" Close " onclick="closedialogue(this)" />
 	</div>
-	<div id='tweenpathshead' class='head'>&nbsp; Tween Timings
+	<div id='tweenpathshead' class='head'>&nbsp; Corner Paths
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweenpathscontent")'/>
 	</div>

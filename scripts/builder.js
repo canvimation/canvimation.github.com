@@ -326,8 +326,10 @@ function buildTween()
 	
 	$("checktw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
 	$("savetw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
+	$("swaptw").tween="nofilm!!!!,nosprite!!!!,"+tween.name;
 	TWEENEDIT=true;
 	CURRENTTWEEN=tween;
+	tween.setTweenTimeBox();
 	openStage('tween');
 }
 
@@ -1193,7 +1195,7 @@ function tweenEdit(n)
 		else
 		{
 			var topsprite=SPRITES[topname];
-			var data=topsprite.getTween(name);
+			var data=topsprite.getTween();
 			var tween=data.tween;
 			var path=data.path;
 		}
@@ -1202,7 +1204,7 @@ function tweenEdit(n)
 	{
 		var film=FILMS[filmname];
 		var topsprite=film.getFlel(topname);
-		var data=topsprite.getTween(name);
+		var data=topsprite.getTween();
 		var tween=data.tween;
 		var path=film.title+"/"+data.path;
 	}
@@ -1229,6 +1231,9 @@ function tweenEdit(n)
 	CURRENT[shape.name]=shape;
 	$("checktw").tween=filmname+','+topname+","+tween.name;
 	$("savetw").tween=filmname+','+topname+","+tween.name;
+	$("swaptw").tween=filmname+','+topname+","+tween.name;
+	TWEENEDIT=true;
+	CURRENTTWEEN=tween;
 	openStage('tween');	
 	$("tweeneditbox").style.top=$("tweenbuildbox").style.top;
 	$("tweeneditbox").style.left=$("tweenbuildbox").style.left;
