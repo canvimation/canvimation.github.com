@@ -64,7 +64,8 @@ function Node(point,ctrl1,ctrl2)
 	this.copyNodeTo=copyNodeTo;
 	this.setNodePathBox=setNodePathBox;
 	this.pathTweeningPoints=pathTweeningPoints;
-	this.TransformTweeningPoints=TransformTweeningPoints;
+	this.translateTweeningPoints=translateTweeningPoints;
+	this.transformTweeningPoints=transformTweeningPoints;
 }
 
 function setNode(point,ctrl1,ctrl2)

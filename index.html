@@ -2191,16 +2191,17 @@ function main()
 	ttccathtml='<p>&nbsp;&nbsp;&nbsp;Corner Paths Active&nbsp;&nbsp;<input type="checkbox" id="twnodetween" onclick="setNodeTweening(this)"></p>';
 	//corner paths active fixed
 	ttccfxhtml='<p>&nbsp;&nbsp;&nbsp;Corner Paths Active</p>';
+	ttccrnhtml=ttccathtml;
 	//labels
 	ttclbshtml='<p>&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo</p>';
 	//properties
-	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate"></p>';
-	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"></p>';
-	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
-	ttclclhtml='<p class="text_input"><img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol"></p>';
-	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
-	ttcgdfhtml='<p class="text_input"><img alt="gradient fill" title="gradient fill" id="gradimg" src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill"></p>';
-	ttcshdhtml='<p class="text_input"><img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=60 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad"></p>';
+	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate"></p>';
+	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"></p>';
+	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
+	ttclclhtml='<p class="text_input"><img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol"></p>';
+	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
+	ttcgdfhtml='<p class="text_input"><img alt="gradient fill" title="gradient fill" id="gradimg" src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill"></p>';
+	ttcshdhtml='<p class="text_input"><img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad"></p>';
 
  /* 
 	A=new Group();
@@ -2559,7 +2560,7 @@ function main()
 </div>
 
 <!--Header bar ............................................................... -->
-<div id="heading"><div id='msg' style='top:2px; left:1200px; width:300px ;height:40px; '> </div>
+<div id="heading"><div id='msg' style='top:2px; left:900px; width:300px ;height:40px; '> </div>
  <div id='logo'><img alt="" src="assets/logo.png"></div>
   
   <div class="choice40" id='export'  onclick="$('fopts').style.visibility='visible'" onmouseover="this.className='choice100'" onmouseout="this.className='choice40'"> <img alt="To HTML" title="To HTML" src="assets/export.png"> </div>
