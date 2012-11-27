@@ -66,6 +66,9 @@ function Node(point,ctrl1,ctrl2)
 	this.pathTweeningPoints=pathTweeningPoints;
 	this.translateTweeningPoints=translateTweeningPoints;
 	this.transformTweeningPoints=transformTweeningPoints;
+	this.setCtrlPaths=setCtrlPaths;
+	this.setCtrl1Path=setCtrl1Path;
+	this.setCtrl2Path=setCtrl2Path;
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -124,7 +127,7 @@ function getAngle() //angle from current centre
 
 function getAngleTo(node)  //relative to current centre
 {
-	var theta = node.getAngle()-this.getAngle();
+	var theta = node.getAngle()-this.getAngle();alert(["get",node.getAngle()*180/Math.PI,this.getAngle()*180/Math.PI])
 	if(theta<0)
 	{
 		theta+=2*Math.PI;

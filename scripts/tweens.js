@@ -26,8 +26,10 @@ function Tween(name)
 	this.shapes={};
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
-	this.tweens=[];  //list of shapes forming Tween
+	//this.tweens=[];  //list of shapes forming Tween
 	this.nodePaths={} //list of paths between shape nodes and copy nodes
+	this.ctrl1paths={};
+	this.ctrl2paths={};
 	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translae and rotate both acitve must share twtime, repeat and yoyo
 	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -35,7 +37,7 @@ function Tween(name)
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.gradfill={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
-	this.nodeTweening={active:false,repeat:1,counter:0,yoyo:false}; //can be on (translate/rotate off) or off (translate/rotate on)
+	this.nodeTweening={active:false,twtime:10,repeat:1,counter:0,yoyo:false}; //can be on (translate/rotate off) or off (translate/rotate on)
 	this.pointTweening=false;  // if node changed - point or controls - then true and translate rotate off
 	this.reverse=false;
 	this.maxrun=0;
@@ -63,6 +65,7 @@ function Tween(name)
 	this.updateTweenPtrs=updateTweenPtrs;
 	this.tweenplay=tweenplay;
 	this.setTweenActives=setTweenActives;
+	this.getTweenActives=getTweenActives;
 	this.transformTweeningPoints=transformTweeningPoints;
 }
 
@@ -204,6 +207,17 @@ function checktween(tweendata)
 	$("toolbar").style.visibility="hidden";
 	$("menushape").style.visibility="hidden";
 	$("grid").style.visibility="hidden";
+	$('tweentimebox').style.visibility="hidden";
+	$("tweenpathsstage").style.visibility="hidden";
+	$("shadowbox").style.visibility="hidden";
+	closeAllDialogues();
+	clear($("markerdrop"));
+	removeGradLine();
+	closeStops();
+	removeRotate();
+	closeColor();
+	$("rotatebox").style.visibility="hidden";
+	$("gradfillbox").style.visibility="hidden";
 	STOPCHECKING=false;
 	tween.setTweenActives();
 	tween.prepareTweens();
@@ -213,7 +227,6 @@ function checktween(tweendata)
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
 	node=shape.path.next;
-	var endptr=node.tweennodes.length;
 	tween.zeroTweenPtrs();
 	tween.tweenplay();
 }
@@ -280,7 +293,7 @@ function startNodePaths()
 		node.nodepath=new Shape("NodePath"+SCOUNT,"NodePath"+(SCOUNT++),true,true,"curve",this.nodePaths);
 		node.nodepath.zIndex=10000000;
 		node.nodepath.strokeStyle=[0,255,0,1];
-		node.nodepath.nodeTweening={active:true,twtime:10,repeat:1,yoyo:false};
+		node.nodepath.nodeTweening={active:true,twtime:this.nodeTweening.twtime,repeat:this.nodeTweening.repeat,yoyo:this.nodeTweening.yoyo};
 		node.nodepath.addTo($("tweenpathsstage"));
 		copynode.nodepath=node.nodepath;
 		point=new Point(node.point.x,node.point.y);
@@ -294,6 +307,7 @@ function startNodePaths()
 		ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
 		ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
 		last.setNode(point,ctrl1,ctrl2);
+		node.setCtrlPaths(copynode);
 		node=node.next;
 		copynode=copynode.next;
 	}
@@ -316,6 +330,7 @@ function setNodePaths()
 		start.setNode(node.point);
 		last=node.nodepath.path.prev;
 		last.setNode(copynode.point,last.ctrl1,last.ctrl2);
+		node.setCtrlPaths(copynode);
 		node=node.next;
 		copynode=copynode.next;
 	}
@@ -338,15 +353,15 @@ function showNodePathList(nodein)
 	{
 		tween.setNodePaths();
 	}
+	tween.setTweenTimeBox();
 	tween.nodeTweening.active=true;
-	$("nodetweens").className="choice80";
-	$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
 	if(!tween.pointTweening)
 	{
 		$("twnodetween").checked=true;
 	}
 	clear($("boundarydrop"));
 	$("markerdrop").style.visibility="visible";
+	clear($("tweenpathsstage"));
 	$("tweenpathsstage").style.visibility="visible";
 	$("backstage").style.visibility="visible";
 	$("boundarydrop").style.visibility="hidden"
@@ -389,43 +404,79 @@ function showNodePathList(nodein)
 	pathnode.addFixedPointMark();
 	pathnode.addCtrl1Mark();
 	pathnode.addCtrl2Mark();
+nodein.nodepath.addTo($("tweenpathsstage"));		
 	nodein.nodepath.draw();
 	nodein.nodepath.drawBezGuides();
-	nodein.setNodePathBox();
+if(nodein.next.vertex=="B")
+{
+	nodein.next.ctrl1path.addTo($("tweenpathsstage"));
+	nodein.next.ctrl1path.draw();
+	nodein.next.ctrl1path.drawBezGuides();	
 }
+if(!shape.open && nodein.prev.point.x=="end")
+{
+	if(nodein.prev.prev.vertex=="B")
+	{
+		nodein.prev.prev.ctrl2path.addTo($("tweenpathsstage"));
+		nodein.prev.prev.ctrl2path.draw();
+		nodein.prev.prev.ctrl2path.drawBezGuides();	
+	}
+}
+else	
+{
+	if(nodein.vertex=="B")
+	{
+		nodein.ctrl2path.draw();
+		nodein.ctrl2path.drawBezGuides();	
+	}
+}		
+	nodein.setNodePathBox();
 
-
+}
 
 function prepareTweens()
 {
+	var twnode;
+	var p;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
 	var node=shape.path.next;
 	var copynode=copy.path.next;
 	if(this.nodeTweening.active)
 	{
-		while(node.next.point.x!="end")
+		while(node.point.x!="end")
 		{
-			if(node.nodepath.nodeTweening)
+			node.tweennodes=[]; //nodes on tween path for node
+			node.ptr=0;
+			node.repeat=node.nodepath.nodeTweening.repeat;
+			node.yoyo=node.nodepath.nodeTweening.yoyo;
+			node.Ttick=node.nodepath.nodeTweening.twtime*1000;
+			node.tick=50;
+			while(node.ptr<node.Ttick)
 			{
-				node.nodepath.path.next.pathTweeningPoints(node.nodepath.path.prev);
-			}
-			else
-			{
-				node.nodepath.path.next.translateTweeningPoints(node.nodepath.path.prev);
+				p=new Point(0,0);
+				twnode=new TweenNode(p);
+				node.tweennodes.push(twnode);
+				node.ptr+=node.tick;
 			}
 			node=node.next;
+			copynode=copynode.next;
 		}
-		if(shape.open)
+		var node=shape.path.next;
+		var copynode=copy.path.next;
+		while(node.point.x!="end")
 		{
-			if(node.nodepath.nodeTweening)
+			if(node.nodepath.nodeTweening.active)
 			{
-				node.nodepath.path.next.pathTweeningPoints(node.nodepath.path.prev);
+				node.pathTweeningPoints(copynode);
+				//node.ctrlTweeningPaths(copynode);
 			}
 			else
 			{
-				node.nodepath.path.next.translateTweeningPoints(node.nodepath.path.prev);
+				node.translateTweeningPoints(copynode);
 			}
+			node=node.next;
+			copynode=copynode.next;
 		}
 	}
 	else
@@ -453,25 +504,166 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
-	
-
 }
 
-function pathTweeningPoints(last) //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
+function setCtrlPaths(copynode) //uses the tweenpath between node and copy node to create path from node ctrl points to copynode ctrl points
 {
+	if(!this.shape.open && this.prev.point.x=="end")
+	{
+		if(this.prev.prev.vertex=="B")
+		{
+			this.prev.prev.nodepath=this.nodepath;
+			this.prev.prev.setCtrl2Path(copynode.prev.prev);
+			this.ctrl2path=this.prev.prev.ctrl2path;
+		}
+	}
+	else
+	{
+		if(this.vertex=="B")
+		{
+			this.setCtrl2Path(copynode);
+		}
+	}
+	if(this.vertex=="B")
+	{
+		this.setCtrl1Path(copynode);
+	}
+}
 	
+function setCtrl1Path(copynode)
+{
+	var node;
+	var open=this.shape.open;
+	var startx=this.prev.nodepath.path.next.point.x;
+	var starty=this.prev.nodepath.path.next.point.y;
+	var lastx=this.prev.nodepath.path.prev.point.x;
+	var lasty=this.prev.nodepath.path.prev.point.y;
+	var thetanode=arctan(lasty-starty,lastx-startx);
+	var startc1x=this.ctrl1.x;
+	var startc1y=this.ctrl1.y;
+	var lastc1x=copynode.ctrl1.x;
+	var lastc1y=copynode.ctrl1.y;
+	var c1scale=(lastc1x-startc1x)/(lastx-startx);
+	var thetactrl1=arctan(lastc1y-startc1y,lastc1x-startc1x);
+	var theta=thetactrl1-thetanode;
+	this.ctrl1path=makeCopy(this.prev.nodepath,0,$("tweenpathsstage"),{});
+	node=this.ctrl1path.path.next;
+	while(node.point.x!="end")
+	{
+		node.point.x=(node.point.x-startx)*c1scale;
+		node.point.y=(node.point.y-starty)*c1scale;
+		if(node.ctrl1.x!="non")
+		{
+			node.ctrl1.x=(node.ctrl1.x-startx)*c1scale;
+			node.ctrl1.y=(node.ctrl1.y-starty)*c1scale;
+			node.ctrl2.x=(node.ctrl2.x-startx)*c1scale;
+			node.ctrl2.y=(node.ctrl2.y-starty)*c1scale;
+		}
+		node.rotate(theta);
+		node.translate(-startc1x,-startc1y);
+		node=node.next;
+	}
+	node=this.ctrl1path.path.prev;
+	node.point.x=lastc1x;
+	node.point.y=lastc1y;
 }
 
-function translateTweeningPoints(last) //node and ctrl points for node translated  if node.nodepath.nodeTweening is false
+function setCtrl2Path(copynode)
 {
+	var open=this.shape.open;
+	var startx=this.nodepath.path.next.point.x;
+	var starty=this.nodepath.path.next.point.y;
+	var lastx=this.nodepath.path.prev.point.x;
+	var lasty=this.nodepath.path.prev.point.y;
+	var thetanode=arctan(lasty-starty,lastx-startx);
+	var startc2x=this.ctrl2.x;
+	var startc2y=this.ctrl2.y;
+	var lastc2x=copynode.ctrl2.x;
+	var lastc2y=copynode.ctrl2.y;
+	var c2scale=(lastc2x-startc2x)/(lastx-startx);
+	var thetactrl2=arctan(lastc2y-startc2y,lastc2x-startc2x);
+	var theta=thetactrl2-thetanode;
+	this.ctrl2path=makeCopy(this.nodepath,0,$("tweenstage"),{});
+	var node=this.ctrl2path.path.next;
+	while(node.point.x!="end")
+	{
+		node.point.x=(node.point.x-startx)*c2scale;
+		node.point.y=(node.point.y-starty)*c2scale;
+		if(node.ctrl1.x!="non")
+		{
+			node.ctrl1.x=(node.ctrl1.x-startx)*c2scale;
+			node.ctrl1.y=(node.ctrl1.y-starty)*c2scale;
+			node.ctrl2.x=(node.ctrl2.x-startx)*c2scale;
+			node.ctrl2.y=(node.ctrl2.y-starty)*c2scale;
+		}
+		node.rotate(theta);
+		node.translate(-startc2x,-startc2y);
+		node=node.next;
+	}
+	node=this.ctrl2path.path.prev;
+	node.point.x=lastc2x;
+	node.point.y=lastc2y;
+}
+
+function pathTweeningPoints() //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
+{
+	var start=this.nodepath.path.next;
+	var last=this.nodepath.path.prev;
+}
+
+function translateTweeningPoints(copynode) //node and ctrl points for node translated  if node.nodepath.nodeTweening is false
+{
+	var open=this.shape.open;
+	var start=this.nodepath.path.next.point;
+	var last=this.nodepath.path.prev.point;
 	
+	var startc1=this.next.ctrl1;
+	var lastc1=copynode.next.ctrl1;
+	if(!open && this.prev.point.x=="end")
+	{
+		var startc2=this.prev.prev.ctrl2;
+		var lastc2=copynode.prev.prev.ctrl2;
+	}
+	else
+	{
+		var startc2=this.ctrl2;
+		var lastc2=copynode.ctrl2;
+	}
+	var xtranslate=last.x-start.x;  //x translation
+	var ytranslate=last.y-start.y;  //y translation
+	if(startc1.x!="non")
+	{
+		var xC1translate=lastc1.x-startc1.x;  //ctrl1 x translation
+		var yC1translate=lastc1.y-startc1.y;  //ctrl1 y translation
+	}
+	if(startc2.x!="non")
+	{
+		var xC2translate=lastc2.x-startc2.x;  //ctrl1 x translation
+		var yC2translate=lastc2.y-startc2.y;  //ctrl1 y translation
+	}
+	var tick=50;
+	for(var i=0; i<this.tweennodes.length;i++)
+	{
+		this.tweennodes[i].point.x=start.x+xtranslate*i*tick/this.Ttick;
+		this.tweennodes[i].point.y=start.y+ytranslate*i*tick/this.Ttick;
+		if(!isNaN(startc1.x))
+		{
+			this.next.tweennodes[i].ctrl1.x=startc1.x+xC1translate*i*tick/this.Ttick;
+			this.next.tweennodes[i].ctrl1.y=startc1.y+yC1translate*i*tick/this.Ttick;
+		}
+		if(!isNaN(startc2.x))
+		{
+			this.tweennodes[i].ctrl2.x=startc2.x+xC2translate*i*tick/this.Ttick;
+			this.tweennodes[i].ctrl2.y=startc2.y+yC2translate*i*tick/this.Ttick;
+		}
+	}
 }
 
 function transformTweeningPoints(node)  //node follows rotate translate path if node.nodepath.nodeTweening is false
 {
 	var theta; //theta is change in angle
 	var cx,cy; //centre of rotation
-	var tween=CURRENTTWEEN;
+	//var tween=CURRENTTWEEN;
 	node.tweennodes=[]; //nodes on tween path for node
 	node.ptr=0;
 	node.tweennodes.push(node);
@@ -593,15 +785,16 @@ function setNodeTweening(chkbx)
 	if(chkbx.checked)
 	{
 		CURRENTTWEEN.nodeTweening.active=true;
-		$("nodetweens").className="choice80";
-		$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
+		//$("nodetweens").className="choice40green";
+		//$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
 	}
 	else
 	{
 		CURRENTTWEEN.nodeTweening.active=false;
-		$("nodetweens").className="choice40";
-		$("nodetweens").onmouseout=function() {$("nodetweens").className="choice40";}
+		//$("nodetweens").className="choice40";
+		//$("nodetweens").onmouseout=function() {$("nodetweens").className="choice40";}
 	}
+	CURRENTTWEEN.setTweenTimeBox();
 }
 
 function updateTweenPath(okbut)
@@ -670,13 +863,17 @@ function setTweenTimeBox()
 	}
 	ttccontenthtml+=ttcprphtml;
 	$("tweentimecontent").innerHTML=ttccontenthtml;
+	$("defaulttime").value=this.nodeTweening.twtime;
+	$("defaultrepeats").value=this.nodeTweening.repeat;
+	$("defaultyoyo").checked=this.nodeTweening.yoyo;
 	if(!this.pointTweening)
 	{
 		$("twnodetween").checked=this.nodeTweening.active;
 	}
 	$("tweentimebox").style.height=ttheight+"px";
 	$("tweentimecontent").style.height=(parseInt($("tweentimebox").style.height)-25)+"px";
-	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";			
+	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";
+	this.getTweenActives();			
 }
 
 function zeroTweenPtrs()
@@ -715,9 +912,10 @@ function zeroTweenPtrs()
 
 function tweenplay()
 {
+	var shape=this.getShape();
 	if(!STOPCHECKING)
 	{
-		var shape=this.getShape();
+		
 		var node=shape.path.next;
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
 		{
@@ -746,11 +944,27 @@ function tweenplay()
 		var tween=this;
 		setTimeout(function() {tween.tweenplay()},50);
 	}
+	else
+	{
+		alert('Check completed');
+		$("twbuttons").style.visibility="visible";
+		$("checkdone").style.visibility="hidden";
+		$("toolbar").style.visibility="visible";
+		$("grid").style.visibility="inherit";
+		$('tweentimebox').style.visibility="visible";
+		var copy=this.copy.getShape();
+		clear($("tweenstage"));
+		$("boundarydrop").style.visibility="visible";
+		shape.addTo($("tweenstage"));
+		copy.addTo($("tweenstage"));
+		shape.draw();
+		copy.draw();
+	}
 }
 
 function updateTweenPtrs()
 {
-	var finshedtween=true;
+	var finishedtween=true;
 	var shape=this.getShape();
 	var node;
 	if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
@@ -758,13 +972,14 @@ function updateTweenPtrs()
 		node=shape.path.next;
 		while(node.point.x!="end")
 		{
+			finishedtween=true;
 			if(node.counter<node.repeat || isNaN(node.repeat))
 			{
 				finishedtween=false;
 				node.ptr+=node.dir;
 				if(node.dir>0)
 				{
-					if(node.ptr>node.tweennodes.length)
+					if(node.ptr>=node.tweennodes.length)
 					{
 						if(node.yoyo)
 						{
@@ -802,7 +1017,7 @@ function updateTweenPtrs()
 			this.linestyles.ptr+=this.linestyles.dir;
 			if(this.linestyles.dir>0)
 			{
-				if(this.linestyles.ptr>this.linestyles.points.length)
+				if(this.linestyles.ptr>=this.linestyles.points.length)
 				{
 					if(this.linestyles.yoyo)
 					{
@@ -838,7 +1053,7 @@ function updateTweenPtrs()
 			this.fillcolour.ptr+=this.fillcolour.dir;
 			if(this.fillcolour.dir>0)
 			{
-				if(this.fillcolour.ptr>this.fillcolour.points.length)
+				if(this.fillcolour.ptr>=this.fillcolour.points.length)
 				{
 					if(this.fillcolour.yoyo)
 					{
@@ -874,7 +1089,7 @@ function updateTweenPtrs()
 			this.shadow.ptr+=this.shadow.dir;
 			if(this.shadow.dir>0)
 			{
-				if(this.shadow.ptr>this.shadow.points.length)
+				if(this.shadow.ptr>=this.shadow.points.length)
 				{
 					if(this.shadow.yoyo)
 					{
@@ -910,7 +1125,7 @@ function updateTweenPtrs()
 			this.linecolour.ptr+=this.linecolour.dir;
 			if(this.linecolour.dir>0)
 			{
-				if(this.linecolour.ptr>this.linecolour.points.length)
+				if(this.linecolour.ptr>=this.linecolour.points.length)
 				{
 					if(this.linecolour.yoyo)
 					{
@@ -946,7 +1161,7 @@ function updateTweenPtrs()
 			this.gradfill.ptr+=this.gradfill.dir;
 			if(this.gradfill.dir>0)
 			{
-				if(this.gradfill.ptr>this.gradfill.points.length)
+				if(this.gradfill.ptr>=this.gradfill.points.length)
 				{
 					if(this.gradfill.yoyo)
 					{
@@ -993,9 +1208,9 @@ function setTweenActives()
 	}
 	if(this.linestyles.active)
 	{
-		this.styles.twtime=$("twstyles").value;
-		this.styles.repeat=$("twrepstyles").value;
-		this.styles.yoyo=$("twyostyles").checked;	
+		this.linestyles.twtime=$("twstyles").value;
+		this.linestyles.repeat=$("twrepstyles").value;
+		this.linestyles.yoyo=$("twyostyles").checked;	
 	}
 	if(this.fillcolour.active)
 	{
@@ -1011,9 +1226,9 @@ function setTweenActives()
 	}
 	if(this.linecolour.active)
 	{
-		this.linecolour.twtime=$("twfillcol").value;
-		this.linecolour.repeat=$("twrepfillcol").value;
-		this.linecolour.yoyo=$("twyofillcol").checked;		
+		this.linecolour.twtime=$("twlinecol").value;
+		this.linecolour.repeat=$("twreplinecol").value;
+		this.linecolour.yoyo=$("twyolinecol").checked;		
 	}
 	if(this.gradfill.active)
 	{
@@ -1021,4 +1236,147 @@ function setTweenActives()
 		this.gradfill.repeat=$("twrepgradfill").value;
 		this.gradfill.yoyo=$("twyogradfill").checked;	
 	}
+}
+
+function getTweenActives()
+{	
+	if(this.translate.active && !this.nodeTweening.active && !this.pointTweening)
+	{
+		$("twtranslate").value=this.translate.twtime;
+		$("twreptranslate").value=this.translate.repeat;
+		$("twyotranslate").checked=this.translate.yoyo;
+	}
+	if(this.rotate.active && !this.nodeTweening.active && !this.pointTweening)
+	{
+		$("twrotate").value=this.rotate.twtime;
+		$("twreprotate").value=this.rotate.repeat;
+		$("twyorotate").checked=this.rotate.yoyo;
+	}
+	if(this.linestyles.active)
+	{
+		$("twstyles").value=this.linestyles.twtime;
+		$("twrepstyles").value=this.linestyles.repeat;
+		$("twyostyles").checked=this.linestyles.yoyo;	
+	}
+	if(this.fillcolour.active)
+	{
+		$("twfillcol").value=this.fillcolour.twtime;
+		$("twrepfillcol").value=this.fillcolour.repeat;
+		$("twyofillcol").checked=this.fillcolour.yoyo;	
+	}
+	if(this.shadow.active)
+	{
+		$("twshad").value=this.shadow.twtime;
+		$("twrepshad").value=this.shadow.repeat;
+		$("twyoshad").checked=this.shadow.yoyo;	
+	}
+	if(this.linecolour.active)
+	{
+		$("twlinecol").value=this.linecolour.twtime;
+		$("twreplinecol").value=this.linecolour.repeat;
+		$("twyolinecol").checked=this.linecolour.yoyo;		
+	}
+	if(this.gradfill.active)
+	{
+		$("twgradfill").value=this.gradfill.twtime;
+		$("twrepgradfill").value=this.gradfill.repeat;
+		$("twyogradfill").checked=this.gradfill.yoyo;	
+	}
+}
+
+function rotationset()
+{
+	if(CURRENTTWEEN.rotate.active)
+	{
+		$("twrotate").value=$("twtranslate").value;
+		$("twreprotate").value=$("twreptranslate").value;
+		$("twyorotate").checked=$("twyotranslate").checked;
+		CURRENTTWEEN.rotate.twtime=$("twtranslate").value;
+		CURRENTTWEEN.rotate.repeat=$("twreptranslate").value;
+		CURRENTTWEEN.rotate.yoyo=$("twyotranslate").checked;
+	}
+}
+
+function transset()
+{
+	if(CURRENTTWEEN.translate.active)
+	{
+		$("twtranslate").value=$("twrotate").value;
+		$("twreptranslate").value=$("twreprotate").value;
+		$("twyotranslate").checked=$("twyorotate").checked;
+		CURRENTTWEEN.translate.twtime=$("twrotate").value;
+		CURRENTTWEEN.translate.repeat=$("twreprotate").value;
+		CURRENTTWEEN.translate.yoyo=$("twyorotate").checked;
+	}
+}
+
+function setTimeAll()
+{
+	var v=$("defaulttime").value;
+	var tween=CURRENTTWEEN;
+	tween.translate.twtime=v;
+	tween.rotate.twtime=v;
+	tween.linestyles.twtime=v;
+	tween.linecolour.twtime=v;
+	tween.fillcolour.twtime=v;
+	tween.gradfill.twtime=v;
+	tween.shadow.twtime=v;
+	tween.nodeTweening.twtime=v;
+	for(var name in tween.nodePaths)
+	{
+		tween.nodePaths[name].nodeTweening.twtime=v;
+	}
+	tween.getTweenActives();
+	$("tweditline").value=v;
+}
+
+function setRepAll()
+{
+	var v=$("defaultrepeats").value;
+	var tween=CURRENTTWEEN;
+	tween.translate.repeat=v;
+	tween.rotate.repeat=v;
+	tween.linestyles.repeat=v;
+	tween.linecolour.repeat=v;
+	tween.fillcolour.repeat=v;
+	tween.gradfill.repeat=v;
+	tween.shadow.repeat=v;
+	tween.nodeTweening.repeat=v;
+	for(var name in tween.nodePaths)
+	{
+		tween.nodePaths[name].nodeTweening.repeat=v;
+	}
+	tween.getTweenActives();
+	$("twrepeditline").value=v;
+}
+
+function setYoAll()
+{
+	var v=$("defaultyoyo").checked;
+	var tween=CURRENTTWEEN;
+	tween.translate.yoyo=v;
+	tween.rotate.yoyo=v;
+	tween.linestyles.yoyo=v;
+	tween.linecolour.yoyo=v;
+	tween.fillcolour.yoyo=v;
+	tween.gradfill.yoyo=v;
+	tween.shadow.yoyo=v;
+	tween.nodeTweening.yoyo=v;
+	for(var name in tween.nodePaths)
+	{
+		tween.nodePaths[name].nodeTweening.yoyo=v;
+	}
+	tween.getTweenActives();
+	$("twyoeditline").value=v;
+}
+
+function setPathAll()
+{
+	var v=$("defaultpath").checked;
+	var tween=CURRENTTWEEN;
+	for(var name in tween.nodePaths)
+	{
+		tween.nodePaths[name].nodeTweening.active=v;
+	}
+	$("twacteditline").checked=v;
 }
