@@ -285,8 +285,8 @@ function pointEdit(mark)
 		}
 		else
 		{
-			$("p_smooth").style.visibility="visible";
-			$("p_inline").style.visibility="visible";
+			$("p_smooth").style.visibility="inherit";
+			$("p_inline").style.visibility="inherit";
 		}
 		$("p_smooth").style.top=50+"px";
 		$("p_inline").style.top=75+"px";
@@ -297,7 +297,7 @@ function pointEdit(mark)
 		}
 		else
 		{
-			$("p_open").style.visibility="visible";
+			$("p_open").style.visibility="inherit";
 		}
 		$("p_open").style.top=(125-dt)+"px";
 		if(mark.node.shape.type=="curve" && mark.node.next.point.x=="end")
@@ -306,13 +306,13 @@ function pointEdit(mark)
 		}
 		else
 		{
-			$("p_segments").style.visibility="visible";
-			$("p_line").style.visibility="visible";
-			$("p_line2").style.visibility="visible";
+			$("p_segments").style.visibility="inherit";
+			$("p_line").style.visibility="inherit";
+			$("p_line2").style.visibility="inherit";
 			if(!TWEENEDIT || mark.node.shape.name.substr(0,8)=="NodePath")
 			{
-				$("p_add").style.visibility="visible";
-				$("p_add2").style.visibility="visible";
+				$("p_add").style.visibility="inherit";
+				$("p_add2").style.visibility="inherit";
 			}
 			else
 			{
@@ -331,8 +331,8 @@ function pointEdit(mark)
 		$("p_add2").style.top=(200-dt)+"px";
 		if(mark.node.shape.type=="curve")
 		{
-			$("p_paths").style.visibility="visible";
-			$("p_close").style.visibility="visible";
+			$("p_paths").style.visibility="inherit";
+			$("p_close").style.visibility="inherit";
 		}
 		else
 		{

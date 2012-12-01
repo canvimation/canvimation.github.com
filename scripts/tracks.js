@@ -60,7 +60,7 @@ function setLengths()
 	var node=path.next; // from first node
 	while(node.next.point.x!="end")  // check if next node is a point or end node, if point calculate length of path between nodes
 	{
-	  switch (node.vertex)
+	  switch (node.next.vertex)
 	  {
 		case 'B':
 			sl = curvelength(node);

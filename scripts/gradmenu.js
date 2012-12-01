@@ -29,13 +29,13 @@ function gradfill()
 	}
 	else if (SELECTEDSHAPE.stopn==0)
 	{
-		$('gAdd').style.visibility='visible';
+		$('gAdd').style.visibility='inherit';
 		$('gDel').style.visibility='hidden';
 	}
 	else
 	{
-		$('gAdd').style.visibility='visible';
-		$('gDel').style.visibility='visible';
+		$('gAdd').style.visibility='inherit';
+		$('gDel').style.visibility='inherit';
 	}
 	if (SELECTEDSHAPE.justfill)
 	{
@@ -44,8 +44,11 @@ function gradfill()
 	else
 	{
 		showGradLine(SELECTEDSHAPE)
-	}	
-	$("gradfillbox").style.visibility="visible";
+	}
+	if(!TWEENEDIT)	
+	{
+		$("gradfillbox").style.visibility="visible";
+	}
 }
 
 

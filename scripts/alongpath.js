@@ -19,19 +19,19 @@ function curvelength(node) //from node to node.next
 		cx=x(t);
 		cy=y(t);
 	}
-	
+
 	return s;
 	
 	function x(t)
 	{
 	
-		return (1-t)*(1-t)*(1-t)*parseInt(node.point.x) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.x) + 3*(1-t)*t*t*parseInt(node.ctrl2.x) + t*t*t*parseInt(next.point.x)
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.x) + 3*(1-t)*(1-t)*t*parseInt(next.ctrl1.x) + 3*(1-t)*t*t*parseInt(next.ctrl2.x) + t*t*t*parseInt(next.point.x)
 	}
 	
 	function y(t)
 	{
 	
-		return (1-t)*(1-t)*(1-t)*parseInt(node.point.y) + 3*(1-t)*(1-t)*t*parseInt(node.ctrl1.y) + 3*(1-t)*t*t*parseInt(node.ctrl2.y) + t*t*t*parseInt(next.point.y)
+		return (1-t)*(1-t)*(1-t)*parseInt(node.point.y) + 3*(1-t)*(1-t)*t*parseInt(next.ctrl1.y) + 3*(1-t)*t*t*parseInt(next.ctrl2.y) + t*t*t*parseInt(next.point.y)
 	}
 }
 

@@ -36,6 +36,8 @@ function Tween(name)
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.gradfill={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
+	this.linegrads=[];
+	this.radgrads=[];
 	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.nodeTweening={active:false,twtime:10,repeat:1,counter:0,yoyo:false}; //can be on (translate/rotate off) or off (translate/rotate on)
 	this.pointTweening=false;  // if node changed - point or controls - then true and translate rotate off
@@ -120,6 +122,8 @@ function copytween(theatre)
 	tween.gradfill.counter=0;
 	tween.gradfill.ptr=0;
 	tween.gradfill.points=[];
+	tween.linegrads=[];
+	tween.radgrads=[];
 	tween.shadow.active=this.shadow.active;
 	tween.shadow.twtime=this.shadow.twtime;
 	tween.shadow.repeat=this.shadow.repeat;
@@ -219,6 +223,22 @@ function checktween(tweendata)
 	$("rotatebox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	STOPCHECKING=false;
+	if(tween.nodeTweening.active || tween.pointTweening)
+	{
+		var npths=0;
+		for(var name in tween.nodePaths)
+		{
+			npths++
+		}
+		if(npths==0)
+		{
+			tween.startNodePaths();
+		}
+		else
+		{
+			tween.setNodePaths();
+		}
+	}
 	tween.setTweenActives();
 	tween.prepareTweens();
 	var shape=tween.getShape();
@@ -226,6 +246,7 @@ function checktween(tweendata)
 	clear($("boundarydrop"));
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
+	tween.tweenshape.draw();
 	node=shape.path.next;
 	tween.zeroTweenPtrs();
 	tween.tweenplay();
@@ -361,7 +382,7 @@ function showNodePathList(nodein)
 	}
 	clear($("boundarydrop"));
 	$("markerdrop").style.visibility="visible";
-	clear($("tweenpathsstage"));
+	//clear($("tweenpathsstage"));
 	$("tweenpathsstage").style.visibility="visible";
 	$("backstage").style.visibility="visible";
 	$("boundarydrop").style.visibility="hidden"
@@ -404,32 +425,9 @@ function showNodePathList(nodein)
 	pathnode.addFixedPointMark();
 	pathnode.addCtrl1Mark();
 	pathnode.addCtrl2Mark();
-nodein.nodepath.addTo($("tweenpathsstage"));		
+//nodein.nodepath.addTo($("tweenpathsstage"));		
 	nodein.nodepath.draw();
-	nodein.nodepath.drawBezGuides();
-if(nodein.next.vertex=="B")
-{
-	nodein.next.ctrl1path.addTo($("tweenpathsstage"));
-	nodein.next.ctrl1path.draw();
-	nodein.next.ctrl1path.drawBezGuides();	
-}
-if(!shape.open && nodein.prev.point.x=="end")
-{
-	if(nodein.prev.prev.vertex=="B")
-	{
-		nodein.prev.prev.ctrl2path.addTo($("tweenpathsstage"));
-		nodein.prev.prev.ctrl2path.draw();
-		nodein.prev.prev.ctrl2path.drawBezGuides();	
-	}
-}
-else	
-{
-	if(nodein.vertex=="B")
-	{
-		nodein.ctrl2path.draw();
-		nodein.ctrl2path.drawBezGuides();	
-	}
-}		
+	nodein.nodepath.drawBezGuides();		
 	nodein.setNodePathBox();
 
 }
@@ -469,7 +467,6 @@ function prepareTweens()
 			if(node.nodepath.nodeTweening.active)
 			{
 				node.pathTweeningPoints(copynode);
-				//node.ctrlTweeningPaths(copynode);
 			}
 			else
 			{
@@ -501,6 +498,45 @@ function prepareTweens()
 				tempcol[i]=parseInt(shape.fillStyle[i])+tick*(parseInt(copy.fillStyle[i])-parseInt(shape.fillStyle[i]))/FCtick;
 			}
 			this.fillcolour.points.push(tempcol);
+			tick+=50;
+		}
+	}
+	if(this.gradfill.active)
+	{
+		var GFtick=tween.gradfill.twtime*1000;
+		var tick=0;
+		this.gradfill.points=[];
+		this.linegrads=[];
+		this.radgrads=[];
+		var tempcolstops=[];
+		var tempcol=[];
+		var templg=[];
+		var temprg=[]
+		while(tick<=GFtick)
+		{
+			tempcolstops=[];
+			templg=[];
+			temprg=[];
+			for(var i=0;i<4;i++)
+			{
+				templg[i]=parseInt(shape.lineGrad[i])+tick*(parseInt(copy.lineGrad[i])-parseInt(shape.lineGrad[i]))/GFtick;
+			}
+			this.linegrads.push(templg);
+			for(var i=0;i<6;i++)
+			{
+				temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/GFtick;
+			}
+			this.radgrads.push(temprg);
+			for(var c=0; c<shape.colorStops.length;c++)
+			{
+				tempcol=[];
+				for(var i=0;i<4;i++)
+				{
+					tempcol[i]=parseInt(shape.colorStops[c][i])+tick*(parseInt(copy.colorStops[c][i])-parseInt(shape.colorStops[c][i]))/GFtick;
+				}
+				tempcolstops.push(tempcol);
+			}
+			this.gradfill.points.push(tempcolstops);
 			tick+=50;
 		}
 	}
@@ -605,10 +641,59 @@ function setCtrl2Path(copynode)
 	node.point.y=lastc2y;
 }
 
-function pathTweeningPoints() //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
+function pathTweeningPoints(copynode) //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
 {
-	var start=this.nodepath.path.next;
-	var last=this.nodepath.path.prev;
+	this.nodepath.getLengths();
+	if(this.vertex=="B")
+	{
+		var ctrl1node=this.ctrl1path.path.next;
+		var ctrl2node=this.ctrl2path.path.next;	
+		var lastctrl1=this.ctrl1path.path.prev;
+		var lastctrl2=this.ctrl2path.path.prev;
+	}
+	var ntwlen=this.tweennodes.length;
+	this.tweennodes=[];
+	var points;
+	var i=0;
+	var t,dt;
+	var p,c1,c2,twnode;
+	var node=this.nodepath.path.next;
+	var lastnode=this.nodepath.path.prev;
+	while(node.next.point.x!="end")
+	{
+		points=Math.round(this.nodepath.lengths[i]*ntwlen/this.nodepath.length);
+		dt=1/points;
+		t=0;
+		while(t<=1)
+		{
+			if(node.next.vertex=="L")
+			{
+				p=new Point(node.linx(t),node.liny(t));
+				twnode=new TweenNode(p);
+				if(this.vertex=="B")
+				{
+					twnode.ctrl1=new Point(ctrl1node.linx(t),ctrl1node.liny(t));
+					twnode.ctrl2=new Point(ctrl2node.linx(t),ctrl2node.liny(t));
+				}
+				this.tweennodes.push(twnode);
+			}
+			else
+			{
+				p=new Point(node.bezx(t),node.bezy(t));
+				twnode=new TweenNode(p);
+				if(this.vertex=="B")
+				{
+					twnode.ctrl1=new Point(ctrl1node.bezx(t),ctrl1node.bezy(t));
+					twnode.ctrl2=new Point(ctrl2node.bezx(t),ctrl2node.bezy(t));
+				}
+				this.tweennodes.push(twnode);
+			}
+			t+=dt;
+		}
+		node=node.next
+		i++;
+	}
+	this.tweennodes.push(twnode);
 }
 
 function translateTweeningPoints(copynode) //node and ctrl points for node translated  if node.nodepath.nodeTweening is false
@@ -785,14 +870,10 @@ function setNodeTweening(chkbx)
 	if(chkbx.checked)
 	{
 		CURRENTTWEEN.nodeTweening.active=true;
-		//$("nodetweens").className="choice40green";
-		//$("nodetweens").onmouseout=function() {$("nodetweens").className="choice80";}
 	}
 	else
 	{
 		CURRENTTWEEN.nodeTweening.active=false;
-		//$("nodetweens").className="choice40";
-		//$("nodetweens").onmouseout=function() {$("nodetweens").className="choice40";}
 	}
 	CURRENTTWEEN.setTweenTimeBox();
 }
@@ -939,6 +1020,25 @@ function tweenplay()
 				this.tweenshape.fillStyle[i]=Math.round(this.fillcolour.points[this.fillcolour.ptr][i]);
 			}
 		}
+		if(this.gradfill.active)
+		{
+			var colstops=this.gradfill.points[this.gradfill.ptr];
+			for(var c=0; c<colstops.length;c++)
+			{
+				for(var i=0;i<4;i++)
+				{
+					this.tweenshape.colorStops[c][i]=Math.round(colstops[c][i]);
+				}
+			}
+			for(var i=0;i<4;i++)
+			{
+				this.tweenshape.lineGrad[i]=Math.round(this.linegrads[this.gradfill.ptr][i]);
+			}
+			for(var i=0;i<6;i++)
+			{
+				this.tweenshape.radGrad[i]=Math.round(this.radgrads[this.gradfill.ptr][i]);
+			}
+		}
 		this.tweenshape.draw();
 		this.updateTweenPtrs();
 		var tween=this;
@@ -989,7 +1089,14 @@ function updateTweenPtrs()
 						else
 						{
 							node.counter++;
-							node.ptr--;
+							if(node.counter<node.repeat || isNaN(node.repeat))
+							{
+								node.ptr=0;
+							}
+							else
+							{
+								node.ptr--;
+							}
 						}
 					}
 				}
@@ -1193,14 +1300,14 @@ function updateTweenPtrs()
 }
 
 function setTweenActives()
-{	
-	if(this.translate.active && !this.nodeTweening.active && !this.pointTweening)
+{
+	if(this.translate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		this.translate.twtime=$("twtranslate").value;
 		this.translate.repeat=$("twreptranslate").value;
 		this.translate.yoyo=$("twyotranslate").checked;
 	}
-	if(this.rotate.active && !this.nodeTweening.active && !this.pointTweening)
+	if(this.rotate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		this.rotate.twtime=$("twrotate").value;
 		this.rotate.repeat=$("twreprotate").value;
@@ -1240,13 +1347,13 @@ function setTweenActives()
 
 function getTweenActives()
 {	
-	if(this.translate.active && !this.nodeTweening.active && !this.pointTweening)
+	if(this.translate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		$("twtranslate").value=this.translate.twtime;
 		$("twreptranslate").value=this.translate.repeat;
 		$("twyotranslate").checked=this.translate.yoyo;
 	}
-	if(this.rotate.active && !this.nodeTweening.active && !this.pointTweening)
+	if(this.rotate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		$("twrotate").value=this.rotate.twtime;
 		$("twreprotate").value=this.rotate.repeat;
@@ -1379,4 +1486,24 @@ function setPathAll()
 		tween.nodePaths[name].nodeTweening.active=v;
 	}
 	$("twacteditline").checked=v;
+}
+
+function bezx(t)
+{
+	return (1-t)*(1-t)*(1-t)*parseInt(this.point.x) + 3*(1-t)*(1-t)*t*parseInt(this.next.ctrl1.x) + 3*(1-t)*t*t*parseInt(this.next.ctrl2.x) + t*t*t*parseInt(this.next.point.x)
+}
+
+function bezy(t)
+{
+	return (1-t)*(1-t)*(1-t)*parseInt(this.point.y) + 3*(1-t)*(1-t)*t*parseInt(this.next.ctrl1.y) + 3*(1-t)*t*t*parseInt(this.next.ctrl2.y) + t*t*t*parseInt(this.next.point.y)
+}
+
+function linx(t)
+{
+	return this.next.point.x+(this.next.point.x-this.point.x)*t;
+}
+
+function liny(t)
+{
+	return this.next.point.y+(this.next.point.y-this.point.y)*t;
 }

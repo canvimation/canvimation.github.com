@@ -69,6 +69,10 @@ function Node(point,ctrl1,ctrl2)
 	this.setCtrlPaths=setCtrlPaths;
 	this.setCtrl1Path=setCtrl1Path;
 	this.setCtrl2Path=setCtrl2Path;
+	this.linx=linx;
+	this.liny=liny;
+	this.bezx=bezx;
+	this.bezy=bezy;
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -127,7 +131,7 @@ function getAngle() //angle from current centre
 
 function getAngleTo(node)  //relative to current centre
 {
-	var theta = node.getAngle()-this.getAngle();alert(["get",node.getAngle()*180/Math.PI,this.getAngle()*180/Math.PI])
+	var theta = node.getAngle()-this.getAngle();
 	if(theta<0)
 	{
 		theta+=2*Math.PI;
@@ -233,7 +237,8 @@ function Shape(name,title,open,editable,type,STORE)
 	this.addAllMarks=addAllMarks; 
 	this.ShapeToText=ShapeToText; 
 	this.drawjustpath=drawjustpath;
-	this.shapeHTML=shapeHTML;	
+	this.shapeHTML=shapeHTML;
+	this.getLengths=getLengths;	
    	return this;
    	
 }
@@ -1367,6 +1372,31 @@ function addAllMarks()
 		}
 		node=node.next;
 	}
+}
+
+function getLengths()
+{
+	this.length=0; //cummulative total of section lengths
+	this.lengths=[]; //array of section lengths
+	var sl;  //section length
+	path=this.path;
+	var node=path.next; // from first node
+	while(node.next.point.x!="end")  // check if next node is a point or end node, if point calculate length of path between nodes
+	{
+	  switch (node.next.vertex)
+	  {
+		case 'B':
+			sl = curvelength(node);
+			
+		break
+		case 'L':
+			sl=linelength(node);
+		break
+	  }
+	  this.length += sl;
+	  this.lengths.push(sl);
+	  node=node.next;
+	};
 }
 
 function setNodePathBox()
