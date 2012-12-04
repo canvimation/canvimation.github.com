@@ -889,7 +889,11 @@ function gradlinetransform()
 	var tick=50;
 	var templg=[];
 	var temprg=[];
-	var sradius,nradius,edradius;
+	var slradius=Math.sqrt((shape.lineGrad[0]-shape.group.centreOfRotation.x)*(shape.lineGrad[0]-shape.group.centreOfRotation.x)+(shape.lineGrad[1]-shape.group.centreOfRotation.y)*(shape.lineGrad[1]-shape.group.centreOfRotation.y));
+	var elradius=Math.sqrt((copy.lineGrad[0]-copy.group.centreOfRotation.x)*(copy.lineGrad[0]-copy.group.centreOfRotation.x)+(copy.lineGrad[1]-copy.group.centreOfRotation.y)*(copy.lineGrad[1]-copy.group.centreOfRotation.y));
+	var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
+	var ytranslate=copy.group.centreOfRotation.y-shape.group.centreOfRotation.y;  //y translation 
+	var ndradius;
 	var doTranslate=this.translate.active;
 	var doRotate=this.rotate.active;
 	while(doTranslate || doRotate)
@@ -900,26 +904,26 @@ function gradlinetransform()
 		{
 			if(doRotate)
 			{
-				cx=shape.group.centreOfRotation.x+tick*(copy.group.centreOfRotation.x-shape.group.centreOfRotation.x)/Rtick;
-				cy=shape.group.centreOfRotation.y+tick*(copy.group.centreOfRotation.y-shape.group.centreOfRotation.y)/Rtick;
+				cx=shape.group.centreOfRotation.x+tick*xtranslate/Rtick;
+				cy=shape.group.centreOfRotation.y+tick*ytranslate/Rtick;
 				theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
-				slradius1=Math.sqrt((shape.lineGrad[0]-cx)*(shape.lineGrad[0]-cx)+(shape.lineGrad[1]-cy)*(shape.lineGrad[1]-cy));
-				slradius2=Math.sqrt((shape.lineGrad[2]-cx)*(shape.lineGrad[2]-cx)+(shape.lineGrad[3]-cy)*(shape.lineGrad[3]-cy));
-				elradius1=Math.sqrt((copy.lineGrad[0]-cx)*(copy.lineGrad[0]-cx)+(copy.lineGrad[1]-cy)*(copy.lineGrad[1]-cy));
-				elradius2=Math.sqrt((copy.lineGrad[2]-cx)*(copy.lineGrad[2]-cx)+(copy.lineGrad[3]-cy)*(copy.lineGrad[3]-cy));
-				nlradius1=slradius1+tick*(elradius1-slradius1)/Rtick;
-				nlradius2=slradius2+tick*(elradius2-slradius2)/Rtick;
-				templg[0]=nlradius1*Math.cos(theta)+cx;
-				templg[1]=nlradius1*Math.sin(theta)+cy;
-				templg[2]=nlradius2*Math.cos(theta)+cx;
-				templg[3]=nlradius2*Math.sin(theta)+cy;
+				nlradius=slradius+tick*(elradius-slradius)/Rtick;
+				scale=nlradius/slradius;
+				p=new Point(parseInt(shape.lineGrad[0])+tick*xtranslate/Rtick-cx,parseInt(shape.lineGrad[1])+tick*ytranslate/Rtick-cy);
+				p=p.pointRotate(theta);
+				templg[0]=p.x*scale+cx;
+				templg[1]=p.y*scale+cy;
+				p=new Point(parseInt(shape.lineGrad[2])+tick*xtranslate/Rtick-cx,parseInt(shape.lineGrad[3])+tick*ytranslate/Rtick-cy);
+				p=p.pointRotate(theta);
+				templg[2]=p.x*scale+cx;
+				templg[3]=p.y*scale+cy;//$("msg").innerHTML+=templg[0]+","+templg[1]+","+templg[2]+","+templg[3]+"<br>"
 				this.linegrads.push(templg);
 				for(var i=0;i<6;i++)
 				{
 					temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Rtick;
-					templg[i]-=c[i%2];
-					templg[i]*=t[i%2];
-					templg[i]+=c[i%2];
+					temprg[i]-=c[i%2];
+					temprg[i]*=t[i%2];
+					temprg[i]+=c[i%2];
 				}
 				this.radgrads.push(temprg);
 			}
@@ -944,8 +948,6 @@ function gradlinetransform()
 			cx=shape.group.centreOfRotation.x;
 			cy=shape.group.centreOfRotation.y;
 			theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
-			slradius=Math.sqrt((shape.lineGrad[0]-cx)*(shape.lineGrad[0]-cx)+(shape.lineGrad[1]-cy)*(shape.lineGrad[1]-cy));
-			elradius=Math.sqrt((copy.lineGrad[0]-cx)*(copy.lineGrad[0]-cx)+(copy.lineGrad[1]-cy)*(copy.lineGrad[1]-cy));
 			nlradius=slradius+tick*(elradius-slradius)/Rtick;
 			scale=nlradius/slradius;
 			p=new Point(shape.lineGrad[0]-cx,shape.lineGrad[1]-cy);

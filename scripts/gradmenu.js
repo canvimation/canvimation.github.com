@@ -95,7 +95,7 @@ function setradial()
 function addStop()
 {
 	var shape=SELECTEDSHAPE;
-	var p=shape.stopn;alert(p);
+	var p=shape.stopn;
 	var s=(shape.colorStops[p][0]+shape.colorStops[p+1][0])/2;
 	var tempcsn=[s,shape.colorStops[p][1],shape.colorStops[p][2],shape.colorStops[p][3],shape.colorStops[p][4]];
 

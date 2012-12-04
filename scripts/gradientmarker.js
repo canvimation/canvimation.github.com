@@ -36,7 +36,7 @@ function gradMarker(gdmrks)
 											for(var name in shapeNames)
 											{
 												shape=shapeNames[name];
-												shape.stopn=parseInt(this.id.substr(3));$("msg").innerHTML=this.id;
+												shape.stopn=parseInt(this.id.substr(3));
 											}
 										}
 										if ($('gradfillbox'))
@@ -415,7 +415,7 @@ function updategradpoints(gdp)
 		}
 	}
 	else
-	{$("msg").innerHTML="drag "+gdp.id;
+	{
 		if (SELECTEDSHAPE.linearfill)
 		{
 			var newp = SELECTEDSHAPE.colorStops[i][0]+dx/(SELECTEDSHAPE.lineGrad[2]-SELECTEDSHAPE.lineGrad[0]);
