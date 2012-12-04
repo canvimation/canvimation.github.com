@@ -21,7 +21,6 @@ function gradMarker()
 	   									this.style.cursor="default";
 	   									$("frontmarkerdrop").onclick=function(e) {
 	   																			noBubble(e);
-	   																			alert("here");
 	   																			checkBoundary(shiftdown(e),getPosition(e));
 	   																			BACKDROP.Canvas.ctx.clearRect(0,0,SCRW,SCRH);
 	   																			$("frontmarkerdrop").style.visibility="hidden";

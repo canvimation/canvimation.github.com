@@ -103,7 +103,7 @@ function addStop()
 		for(var name in shapeNames)
 		{
 			shape=shapeNames[name];
-			shape.colorStops.splice(-1,0,tempcsn);
+			shape.colorStops.splice(p+1,0,tempcsn);
 			shape.stopn=p+1;
 			shape.justfill=false;
 		}
