@@ -1408,3 +1408,15 @@ function setNodePathBox()
 	$("twacteditline").checked=this.nodepath.nodeTweening.active;
 	$("tweenpathsbox").style.visibility="visible";
 }
+
+function betweenAngle(a,b,t)  // b start angle, a end angle, t parameter between 0 and 1
+{
+	if(Math.abs(a-b)<=Math.PI)
+	{
+		return (b+t*(a-b));
+	}
+	else
+	{
+		return ((2*Math.PI+b-t*(2*Math.PI-(a-b))) % (2*Math.PI));
+	}
+}

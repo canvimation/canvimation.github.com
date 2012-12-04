@@ -69,6 +69,7 @@ function Tween(name)
 	this.setTweenActives=setTweenActives;
 	this.getTweenActives=getTweenActives;
 	this.transformTweeningPoints=transformTweeningPoints;
+	this.gradlinetransform=gradlinetransform;
 }
 
 function copytween(theatre)
@@ -438,6 +439,30 @@ function prepareTweens()
 	var p;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
+	if(shape.justfill && !copy.justfill)
+	{
+		for(var c=0;c<shape.colorStops.length;c++)
+		{
+			for(var i=1; i<5;i++)
+			{
+				shape.colorStops[c][i]=shape.fillStyle[i-1];
+			}
+		}
+		shape.justfill=false;
+		this.gradfill.active=true;
+	}
+	else if(!shape.justfill && copy.justfill)
+	{
+		for(var c=0;c<copy.colorStops.length;c++)
+		{
+			for(var i=1; i<5;i++)
+			{
+				copy.colorStops[c][i]=copy.fillStyle[i-1];
+			}
+		}
+		copy.justfill=false;
+		this.gradfill.active=true;
+	}
 	var node=shape.path.next;
 	var copynode=copy.path.next;
 	if(this.nodeTweening.active)
@@ -484,6 +509,7 @@ function prepareTweens()
 			node=node.next;
 		}
 	}
+	this.gradlinetransform();
 	if(this.fillcolour.active)
 	{
 		var FCtick=tween.fillcolour.twtime*1000;
@@ -506,31 +532,15 @@ function prepareTweens()
 		var GFtick=tween.gradfill.twtime*1000;
 		var tick=0;
 		this.gradfill.points=[];
-		this.linegrads=[];
-		this.radgrads=[];
 		var tempcolstops=[];
 		var tempcol=[];
-		var templg=[];
-		var temprg=[]
 		while(tick<=GFtick)
 		{
 			tempcolstops=[];
-			templg=[];
-			temprg=[];
-			for(var i=0;i<4;i++)
-			{
-				templg[i]=parseInt(shape.lineGrad[i])+tick*(parseInt(copy.lineGrad[i])-parseInt(shape.lineGrad[i]))/GFtick;
-			}
-			this.linegrads.push(templg);
-			for(var i=0;i<6;i++)
-			{
-				temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/GFtick;
-			}
-			this.radgrads.push(temprg);
 			for(var c=0; c<shape.colorStops.length;c++)
 			{
-				tempcol=[];
-				for(var i=0;i<4;i++)
+				tempcol=[shape.colorStops[c][0]];
+				for(var i=1;i<5;i++)
 				{
 					tempcol[i]=parseInt(shape.colorStops[c][i])+tick*(parseInt(copy.colorStops[c][i])-parseInt(shape.colorStops[c][i]))/GFtick;
 				}
@@ -747,7 +757,7 @@ function translateTweeningPoints(copynode) //node and ctrl points for node trans
 function transformTweeningPoints(node)  //node follows rotate translate path if node.nodepath.nodeTweening is false
 {
 	var theta; //theta is change in angle
-	var cx,cy; //centre of rotation
+	var c,p; //centre of rotation
 	//var tween=CURRENTTWEEN;
 	node.tweennodes=[]; //nodes on tween path for node
 	node.ptr=0;
@@ -863,6 +873,103 @@ function transformTweeningPoints(node)  //node follows rotate translate path if 
 		if(tick>Ttick) {doTranslate=false};
 		if(tick>Rtick) {doRotate=false};
 	}	
+}
+
+function gradlinetransform()
+{
+	var theta; //theta is change in angle
+	var c=[]; //centre of rotation
+	var t=[]; //trig values
+	this.linegrads=[];
+	this.radgrads=[];
+	var shape=this.getShape();
+	var copy=this.copy.getShape();
+	var Ttick=this.translate.twtime*1000;
+	var Rtick=this.rotate.twtime*1000;
+	var tick=50;
+	var templg=[];
+	var temprg=[];
+	var sradius,nradius,edradius;
+	var doTranslate=this.translate.active;
+	var doRotate=this.rotate.active;
+	while(doTranslate || doRotate)
+	{
+		templg=[];
+		temprg=[];
+		if(doTranslate)
+		{
+			if(doRotate)
+			{
+				cx=shape.group.centreOfRotation.x+tick*(copy.group.centreOfRotation.x-shape.group.centreOfRotation.x)/Rtick;
+				cy=shape.group.centreOfRotation.y+tick*(copy.group.centreOfRotation.y-shape.group.centreOfRotation.y)/Rtick;
+				theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
+				slradius1=Math.sqrt((shape.lineGrad[0]-cx)*(shape.lineGrad[0]-cx)+(shape.lineGrad[1]-cy)*(shape.lineGrad[1]-cy));
+				slradius2=Math.sqrt((shape.lineGrad[2]-cx)*(shape.lineGrad[2]-cx)+(shape.lineGrad[3]-cy)*(shape.lineGrad[3]-cy));
+				elradius1=Math.sqrt((copy.lineGrad[0]-cx)*(copy.lineGrad[0]-cx)+(copy.lineGrad[1]-cy)*(copy.lineGrad[1]-cy));
+				elradius2=Math.sqrt((copy.lineGrad[2]-cx)*(copy.lineGrad[2]-cx)+(copy.lineGrad[3]-cy)*(copy.lineGrad[3]-cy));
+				nlradius1=slradius1+tick*(elradius1-slradius1)/Rtick;
+				nlradius2=slradius2+tick*(elradius2-slradius2)/Rtick;
+				templg[0]=nlradius1*Math.cos(theta)+cx;
+				templg[1]=nlradius1*Math.sin(theta)+cy;
+				templg[2]=nlradius2*Math.cos(theta)+cx;
+				templg[3]=nlradius2*Math.sin(theta)+cy;
+				this.linegrads.push(templg);
+				for(var i=0;i<6;i++)
+				{
+					temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Rtick;
+					templg[i]-=c[i%2];
+					templg[i]*=t[i%2];
+					templg[i]+=c[i%2];
+				}
+				this.radgrads.push(temprg);
+			}
+			else
+			{
+				//translate only
+				for(var i=0;i<4;i++)
+				{
+					templg[i]=parseInt(shape.lineGrad[i])+tick*(parseInt(copy.lineGrad[i])-parseInt(shape.lineGrad[i]))/Ttick;
+				}
+				this.linegrads.push(templg);
+				for(var i=0;i<6;i++)
+				{
+					temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Ttick;
+				}
+				this.radgrads.push(temprg);
+			}
+		}
+		else
+		{
+			//rotate only
+			cx=shape.group.centreOfRotation.x;
+			cy=shape.group.centreOfRotation.y;
+			theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
+			slradius=Math.sqrt((shape.lineGrad[0]-cx)*(shape.lineGrad[0]-cx)+(shape.lineGrad[1]-cy)*(shape.lineGrad[1]-cy));
+			elradius=Math.sqrt((copy.lineGrad[0]-cx)*(copy.lineGrad[0]-cx)+(copy.lineGrad[1]-cy)*(copy.lineGrad[1]-cy));
+			nlradius=slradius+tick*(elradius-slradius)/Rtick;
+			scale=nlradius/slradius;
+			p=new Point(shape.lineGrad[0]-cx,shape.lineGrad[1]-cy);
+			p=p.pointRotate(theta);
+			templg[0]=p.x*scale+cx;
+			templg[1]=p.y*scale+cy;
+			p=new Point(shape.lineGrad[2]-cx,shape.lineGrad[3]-cy);
+			p=p.pointRotate(theta);
+			templg[2]=p.x*scale+cx;
+			templg[3]=p.y*scale+cy;
+			this.linegrads.push(templg);
+			for(var i=0;i<6;i++)
+			{
+				temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Rtick;
+				temprg[i]-=c[i%2];
+				temprg[i]*=t[i%2];
+				temprg[i]+=c[i%2];
+			}
+			this.radgrads.push(temprg); 
+		}
+		tick+=50;
+		if(tick>Ttick) {doTranslate=false};
+		if(tick>Rtick) {doRotate=false};
+	}
 }
 
 function setNodeTweening(chkbx)
@@ -996,7 +1103,6 @@ function tweenplay()
 	var shape=this.getShape();
 	if(!STOPCHECKING)
 	{
-		
 		var node=shape.path.next;
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
 		{
@@ -1012,6 +1118,22 @@ function tweenplay()
 				node=node.next;
 				tweennode=tweennode.next;
 			}
+			if(this.rotate.active)
+			{
+				var ptr=this.rotate.ptr;
+			}
+			if(this.translate.active)
+			{
+				var ptr=this.translate.ptr;
+			}
+			for(var i=0;i<4;i++)
+			{
+				this.tweenshape.lineGrad[i]=Math.round(this.linegrads[ptr][i]);
+			}
+			for(var i=0;i<6;i++)
+			{
+				this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
+			}
 		}
 		if(this.fillcolour.active)
 		{
@@ -1025,18 +1147,11 @@ function tweenplay()
 			var colstops=this.gradfill.points[this.gradfill.ptr];
 			for(var c=0; c<colstops.length;c++)
 			{
-				for(var i=0;i<4;i++)
+				this.tweenshape.colorStops[c][0]=colstops[c][0];
+				for(var i=1;i<5;i++)
 				{
 					this.tweenshape.colorStops[c][i]=Math.round(colstops[c][i]);
 				}
-			}
-			for(var i=0;i<4;i++)
-			{
-				this.tweenshape.lineGrad[i]=Math.round(this.linegrads[this.gradfill.ptr][i]);
-			}
-			for(var i=0;i<6;i++)
-			{
-				this.tweenshape.radGrad[i]=Math.round(this.radgrads[this.gradfill.ptr][i]);
 			}
 		}
 		this.tweenshape.draw();
@@ -1115,6 +1230,86 @@ function updateTweenPtrs()
 			}
 			node=node.next;	
 		}
+	}
+	if(shape.linearfill)
+	{
+		var colpoints=this.linegrads.length;
+	}
+	else
+	{
+		var colpoints=this.radgrads.length;
+	}
+	if(this.translate.active)
+	{
+		if(this.translate.counter<this.translate.repeat || isNaN(this.translate.repeat))
+		{
+			finishedtween=false;
+			this.translate.ptr+=this.translate.dir;
+			if(this.translate.dir>0)
+			{
+				if(this.translate.ptr>=colpoints)
+				{
+					if(this.translate.yoyo)
+					{
+						this.translate.dir=-1;
+						this.translate.ptr-=2;
+					}
+					else
+					{
+						this.translate.counter++;
+						this.translate.ptr--;
+					}
+				}
+			}
+			else
+			{
+				if(this.translate.ptr<0)
+				{
+					if(this.translate.yoyo)
+					{
+						this.translate.dir=1;
+						this.translate.counter++;
+						this.translate.ptr++;
+					}
+				}
+			}
+		}	
+	}
+	if(this.rotate.active)  //rotation of gradient stops
+	{
+		if(this.rotate.counter<this.rotate.repeat || isNaN(this.rotate.repeat))
+		{
+			finishedtween=false;
+			this.rotate.ptr+=this.rotate.dir;
+			if(this.rotate.dir>0)
+			{
+				if(this.rotate.ptr>=colpoints)
+				{
+					if(this.rotate.yoyo)
+					{
+						this.rotate.dir=-1;
+						this.rotate.ptr-=2;
+					}
+					else
+					{
+						this.rotate.counter++;
+						this.rotate.ptr--;
+					}
+				}
+			}
+			else
+			{
+				if(this.rotate.ptr<0)
+				{
+					if(this.rotate.yoyo)
+					{
+						this.rotate.dir=1;
+						this.rotate.counter++;
+						this.rotate.ptr++;
+					}
+				}
+			}
+		}	
 	}
 	if(this.linestyles.active)
 	{
@@ -1262,9 +1457,10 @@ function updateTweenPtrs()
 	}
 	if(this.gradfill.active)
 	{
-		finishedtween=false;
+		
 		if(this.gradfill.counter<this.gradfill.repeat || isNaN(this.gradfill.repeat))
 		{
+			finishedtween=false;
 			this.gradfill.ptr+=this.gradfill.dir;
 			if(this.gradfill.dir>0)
 			{

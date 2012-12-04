@@ -88,8 +88,6 @@ function updateangle(phi)
 		{
 			group.clockwise=(phi>group.phi);
 		}
-
-		$("msg").innerHTML=group.clockwise;
 		group.groupRotate(phi-group.phi);
 		group.phi=phi;
 		$("rotateangle").value=Math.round(group.phi*180/Math.PI);
