@@ -509,7 +509,10 @@ function prepareTweens()
 			node=node.next;
 		}
 	}
-	this.gradlinetransform();
+	if(this.gradfill.active || this.rotate.active || this.translate.active)
+	{
+		this.gradlinetransform();
+	}
 	if(this.fillcolour.active)
 	{
 		var FCtick=tween.fillcolour.twtime*1000;
@@ -784,7 +787,7 @@ function transformTweeningPoints(node)  //node follows rotate translate path if 
 	}
 	var Ttick=this.translate.twtime*1000;
 	var Rtick=this.rotate.twtime*1000;
-	var tick=50;
+	var tick=0;
 	var doTranslate=this.translate.active;
 	var doRotate=this.rotate.active;
 	while(doTranslate || doRotate)
@@ -878,99 +881,89 @@ function transformTweeningPoints(node)  //node follows rotate translate path if 
 function gradlinetransform()
 {
 	var theta; //theta is change in angle
-	var c=[]; //centre of rotation
-	var t=[]; //trig values
+	var p; //temp point
 	this.linegrads=[];
 	this.radgrads=[];
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
-	var Ttick=this.translate.twtime*1000;
-	var Rtick=this.rotate.twtime*1000;
-	var tick=50;
+	if(this.translate.active)
+	{
+		var Gtick=this.translate.twtime*1000;
+	}
+	if(this.rotate.active)
+	{
+		var Gtick=this.rotate.twtime*1000;
+	}
+	if(this.gradfill.active)
+	{
+		var Gtick=this.gradfill.twtime*1000;
+	}
+	var tick=0;
 	var templg=[];
 	var temprg=[];
-	var slradius=Math.sqrt((shape.lineGrad[0]-shape.group.centreOfRotation.x)*(shape.lineGrad[0]-shape.group.centreOfRotation.x)+(shape.lineGrad[1]-shape.group.centreOfRotation.y)*(shape.lineGrad[1]-shape.group.centreOfRotation.y));
-	var elradius=Math.sqrt((copy.lineGrad[0]-copy.group.centreOfRotation.x)*(copy.lineGrad[0]-copy.group.centreOfRotation.x)+(copy.lineGrad[1]-copy.group.centreOfRotation.y)*(copy.lineGrad[1]-copy.group.centreOfRotation.y));
+	var nltheta0,nltheta1,nlx0,nly0,nlx1,nly1;
+	var nrtheta0,nrtheta1,nrx0,nry0,nrx1,nry1;
+	var nlradius,nrradius;
+	var sltheta0=arctan(shape.lineGrad[1]-shape.group.centreOfRotation.y,shape.lineGrad[0]-shape.group.centreOfRotation.x);
+	var	sltheta1=arctan(shape.lineGrad[3]-shape.group.centreOfRotation.y,shape.lineGrad[2]-shape.group.centreOfRotation.x);
+	var cltheta0=arctan(copy.lineGrad[1]-copy.group.centreOfRotation.y,copy.lineGrad[0]-copy.group.centreOfRotation.x);
+	var	cltheta1=arctan(copy.lineGrad[3]-copy.group.centreOfRotation.y,copy.lineGrad[2]-copy.group.centreOfRotation.x);
+	var srtheta0=arctan(shape.radGrad[1]-shape.group.centreOfRotation.y,shape.radGrad[0]-shape.group.centreOfRotation.x);
+	var	srtheta1=arctan(shape.radGrad[4]-shape.group.centreOfRotation.y,shape.radGrad[3]-shape.group.centreOfRotation.x);
+	var crtheta0=arctan(copy.radGrad[1]-copy.group.centreOfRotation.y,copy.radGrad[0]-copy.group.centreOfRotation.x);
+	var	crtheta1=arctan(copy.radGrad[4]-copy.group.centreOfRotation.y,copy.radGrad[3]-copy.group.centreOfRotation.x);
+	
 	var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
 	var ytranslate=copy.group.centreOfRotation.y-shape.group.centreOfRotation.y;  //y translation 
-	var ndradius;
-	var doTranslate=this.translate.active;
-	var doRotate=this.rotate.active;
-	while(doTranslate || doRotate)
+	var slp0=new Point(shape.lineGrad[0]-shape.group.centreOfRotation.x,shape.lineGrad[1]-shape.group.centreOfRotation.y);
+	p=slp0.pointRotate(cltheta0-sltheta0);
+	var ldx0=copy.lineGrad[0]-(p.x+shape.group.centreOfRotation.x+xtranslate);
+	var ldy0=copy.lineGrad[1]-(p.y+shape.group.centreOfRotation.y+ytranslate);
+	var slp1=new Point(shape.lineGrad[2]-shape.group.centreOfRotation.x,shape.lineGrad[3]-shape.group.centreOfRotation.y);
+	p=slp1.pointRotate(cltheta1-sltheta1);
+	var ldx1=copy.lineGrad[2]-(p.x+shape.group.centreOfRotation.x+xtranslate);
+	var ldy1=copy.lineGrad[3]-(p.y+shape.group.centreOfRotation.y+ytranslate);
+
+	var srp0=new Point(shape.radGrad[0]-shape.group.centreOfRotation.x,shape.radGrad[1]-shape.group.centreOfRotation.y);
+	p=srp0.pointRotate(crtheta0-srtheta0);
+	var rdx0=copy.radGrad[0]-(p.x+shape.group.centreOfRotation.x+xtranslate);
+	var rdy0=copy.radGrad[1]-(p.y+shape.group.centreOfRotation.y+ytranslate);
+	var srp1=new Point(shape.radGrad[3]-shape.group.centreOfRotation.x,shape.radGrad[4]-shape.group.centreOfRotation.y);
+	p=srp1.pointRotate(crtheta1-srtheta1);
+	var rdx1=copy.radGrad[3]-(p.x+shape.group.centreOfRotation.x+xtranslate);
+	var rdy1=copy.radGrad[4]-(p.y+shape.group.centreOfRotation.y+ytranslate);
+	
+	var doColor=this.gradfill.active || this.rotate.active || this.translate.active;
+	while(doColor)
 	{
 		templg=[];
 		temprg=[];
-		if(doTranslate)
-		{
-			if(doRotate)
-			{
-				cx=shape.group.centreOfRotation.x+tick*xtranslate/Rtick;
-				cy=shape.group.centreOfRotation.y+tick*ytranslate/Rtick;
-				theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
-				nlradius=slradius+tick*(elradius-slradius)/Rtick;
-				scale=nlradius/slradius;
-				p=new Point(parseInt(shape.lineGrad[0])+tick*xtranslate/Rtick-cx,parseInt(shape.lineGrad[1])+tick*ytranslate/Rtick-cy);
-				p=p.pointRotate(theta);
-				templg[0]=p.x*scale+cx;
-				templg[1]=p.y*scale+cy;
-				p=new Point(parseInt(shape.lineGrad[2])+tick*xtranslate/Rtick-cx,parseInt(shape.lineGrad[3])+tick*ytranslate/Rtick-cy);
-				p=p.pointRotate(theta);
-				templg[2]=p.x*scale+cx;
-				templg[3]=p.y*scale+cy;//$("msg").innerHTML+=templg[0]+","+templg[1]+","+templg[2]+","+templg[3]+"<br>"
-				this.linegrads.push(templg);
-				for(var i=0;i<6;i++)
-				{
-					temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Rtick;
-					temprg[i]-=c[i%2];
-					temprg[i]*=t[i%2];
-					temprg[i]+=c[i%2];
-				}
-				this.radgrads.push(temprg);
-			}
-			else
-			{
-				//translate only
-				for(var i=0;i<4;i++)
-				{
-					templg[i]=parseInt(shape.lineGrad[i])+tick*(parseInt(copy.lineGrad[i])-parseInt(shape.lineGrad[i]))/Ttick;
-				}
-				this.linegrads.push(templg);
-				for(var i=0;i<6;i++)
-				{
-					temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Ttick;
-				}
-				this.radgrads.push(temprg);
-			}
-		}
-		else
-		{
-			//rotate only
-			cx=shape.group.centreOfRotation.x;
-			cy=shape.group.centreOfRotation.y;
-			theta=betweenAngle(copy.group.phi,shape.group.phi,tick/Rtick);
-			nlradius=slradius+tick*(elradius-slradius)/Rtick;
-			scale=nlradius/slradius;
-			p=new Point(shape.lineGrad[0]-cx,shape.lineGrad[1]-cy);
-			p=p.pointRotate(theta);
-			templg[0]=p.x*scale+cx;
-			templg[1]=p.y*scale+cy;
-			p=new Point(shape.lineGrad[2]-cx,shape.lineGrad[3]-cy);
-			p=p.pointRotate(theta);
-			templg[2]=p.x*scale+cx;
-			templg[3]=p.y*scale+cy;
-			this.linegrads.push(templg);
-			for(var i=0;i<6;i++)
-			{
-				temprg[i]=parseInt(shape.radGrad[i])+tick*(parseInt(copy.radGrad[i])-parseInt(shape.radGrad[i]))/Rtick;
-				temprg[i]-=c[i%2];
-				temprg[i]*=t[i%2];
-				temprg[i]+=c[i%2];
-			}
-			this.radgrads.push(temprg); 
-		}
+		
+		nltheta0=betweenAngle(cltheta0,sltheta0,tick/Gtick);
+		nltheta1=betweenAngle(cltheta1,sltheta1,tick/Gtick);
+
+		p=slp0.pointRotate(nltheta0-sltheta0);
+		templg[0]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+ldx0)/Gtick;
+		templg[1]=p.y+shape.group.centreOfRotation.y+tick*(ytranslate+ldy0)/Gtick;
+		p=slp1.pointRotate(nltheta1-sltheta1);
+		templg[2]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+ldx1)/Gtick;
+		templg[3]=p.y+shape.group.centreOfRotation.y+tick*(ytranslate+ldy1)/Gtick;
+		this.linegrads.push(templg);
+		
+		nrtheta0=betweenAngle(crtheta0,srtheta0,tick/Gtick);
+		nrtheta1=betweenAngle(crtheta1,srtheta1,tick/Gtick);
+
+		p=srp0.pointRotate(nrtheta0-srtheta0);
+		temprg[0]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+rdx0)/Gtick;
+		temprg[1]=p.y+shape.group.centreOfRotation.y+tick*(ytranslate+rdy0)/Gtick;
+		temprg[2]=shape.radGrad[2]+tick*(copy.radGrad[2]-shape.radGrad[2])/Gtick;
+		p=srp1.pointRotate(nrtheta1-srtheta1);
+		temprg[3]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+rdx1)/Gtick;
+		temprg[4]=p.y+shape.group.centreOfRotation.y+tick*(ytranslate+rdy1)/Gtick;
+		temprg[5]=shape.radGrad[5]+tick*(copy.radGrad[5]-shape.radGrad[5])/Gtick;
+		this.radgrads.push(temprg);
 		tick+=50;
-		if(tick>Ttick) {doTranslate=false};
-		if(tick>Rtick) {doRotate=false};
+		if(tick>Gtick) {doColor=false};
 	}
 }
 
@@ -1104,7 +1097,7 @@ function tweenplay()
 {
 	var shape=this.getShape();
 	if(!STOPCHECKING)
-	{
+	{//$("msg").innerHTML+=this.translate.ptr+","+this.rotate.ptr+","+this.gradfill.ptr+","+this.linegrads.length+","+this.gradfill.points.length+","+this.translate.length+"<br>";
 		var node=shape.path.next;
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
 		{
@@ -1137,6 +1130,18 @@ function tweenplay()
 				this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
 			}
 		}
+		if (this.gradfill.active)
+		{
+			var ptr=this.gradfill.ptr;
+			for(var i=0;i<4;i++)
+			{
+				this.tweenshape.lineGrad[i]=Math.round(this.linegrads[ptr][i]);
+			}
+			for(var i=0;i<6;i++)
+			{
+				this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
+			}
+		}
 		if(this.fillcolour.active)
 		{
 			for(var i=0;i<4;i++)
@@ -1157,12 +1162,13 @@ function tweenplay()
 			}
 		}
 		this.tweenshape.draw();
+//$("frontmarkerdrop").style.visibilty="visible";$("backstage").style.visibility="visible";showGradLine(this.tweenshape);		
 		this.updateTweenPtrs();
 		var tween=this;
 		setTimeout(function() {tween.tweenplay()},50);
 	}
 	else
-	{
+	{//$("frontmarkerdrop").style.visibilty="visible";$("backstage").style.visibility="visible";showGradLine(this.tweenshape);
 		alert('Check completed');
 		$("twbuttons").style.visibility="visible";
 		$("checkdone").style.visibility="hidden";
@@ -1233,15 +1239,7 @@ function updateTweenPtrs()
 			node=node.next;	
 		}
 	}
-	if(shape.linearfill)
-	{
-		var colpoints=this.linegrads.length;
-	}
-	else
-	{
-		var colpoints=this.radgrads.length;
-	}
-	if(this.translate.active)
+	if(this.translate.active && !shape.justfill)
 	{
 		if(this.translate.counter<this.translate.repeat || isNaN(this.translate.repeat))
 		{
@@ -1249,7 +1247,7 @@ function updateTweenPtrs()
 			this.translate.ptr+=this.translate.dir;
 			if(this.translate.dir>0)
 			{
-				if(this.translate.ptr>=colpoints)
+				if(this.translate.ptr>=this.linegrads.length)
 				{
 					if(this.translate.yoyo)
 					{
@@ -1277,7 +1275,7 @@ function updateTweenPtrs()
 			}
 		}	
 	}
-	if(this.rotate.active)  //rotation of gradient stops
+	if(this.rotate.active && !shape.justfill)  //rotation of gradient stops
 	{
 		if(this.rotate.counter<this.rotate.repeat || isNaN(this.rotate.repeat))
 		{
@@ -1285,7 +1283,7 @@ function updateTweenPtrs()
 			this.rotate.ptr+=this.rotate.dir;
 			if(this.rotate.dir>0)
 			{
-				if(this.rotate.ptr>=colpoints)
+				if(this.rotate.ptr>=this.rotate.length)
 				{
 					if(this.rotate.yoyo)
 					{

@@ -451,6 +451,11 @@ function updategradpoints(gdp)
 		}
 	}
 	drawgradpoints(SELECTEDSHAPE);
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.gradfill.active=true;
+		CURRENTTWEEN.setTweenTimeBox();
+	}
 }
 
 function updaterad(rdp)
@@ -498,4 +503,9 @@ function updaterad(rdp)
 		}
 	}
 	drawgradpoints(SELECTEDSHAPE);
+	if(TWEENEDIT)
+	{
+		CURRENTTWEEN.gradfill.active=true;
+		CURRENTTWEEN.setTweenTimeBox();
+	}
 }
