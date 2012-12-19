@@ -323,7 +323,7 @@ function updatePointNode(cursor)
 			this.shape.drawBezGuides();
 			this.shape.setCorners();
 		break
-		case "rounded_rectangle":
+		case "rounded_rectangle":		
 			var start=this.shape.path.next; 			
 			this.mark.style.top=(start.point.y-2)+"px";
 			var w=(this.shape.btmrgtcrnr.x-this.shape.tplftcrnr.x)/2;

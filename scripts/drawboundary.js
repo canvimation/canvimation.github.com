@@ -15,6 +15,7 @@ function checkBoundary(shiftdown,cursor)
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
+	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	
@@ -151,6 +152,11 @@ function drawBoundary()
 												boundary.style.left=(boundary.group.left+dx)+"px";
 												boundary.style.top=(boundary.group.top+dy)+"px";
 											}
+											if(TWEENEDIT)
+											{
+												CURRENTTWEEN.translate.active=true;
+												CURRENTTWEEN.setTweenTimeBox();
+											}
    										}
     this.boundary.DD.onMouseUp=function(e) {
 								noBubble(e);
@@ -204,11 +210,7 @@ function drawBoundary()
 									group.update(l,t,dx,dy,1,1);
 									group.drawBoundary();
 								};
-									if(TWEENEDIT)
-									{
-										CURRENTTWEEN.translate.active=true;
-										CURRENTTWEEN.setTweenTimeBox();
-									}
+									
 							  };
 	this.boundary.cc.DD.onDrag =function(e) {
 												noBubble(e);
@@ -237,6 +239,12 @@ function drawBoundary()
 												{
 													$(this.id).style.top=(parseInt(boundary.style.height)-5)+"px";
 													$(this.id).style.left=(parseInt(boundary.style.width)-5)+"px";
+												}
+												if(TWEENEDIT)
+												{
+													CURRENTTWEEN.nodeTweening.active=true;
+													CURRENTTWEEN.pointTweening=true;
+													CURRENTTWEEN.setTweenTimeBox();
 												}
 											};
 			
@@ -283,12 +291,6 @@ function drawBoundary()
 							  		}
 							  		group.update(l,t,0,0,scale,scale)
 								}
-								if(TWEENEDIT)
-								{
-									CURRENTTWEEN.nodeTweening.active=true;
-									CURRENTTWEEN.pointTweening=true;
-									CURRENTTWEEN.setTweenTimeBox();
-								}
 							}
 //right handle
 	this.boundary.rh.DD.onDrag =function(e) {
@@ -314,6 +316,12 @@ function drawBoundary()
 												else
 												{
 													$(this.id).style.left=(parseInt(boundary.style.width)-5)+"px";
+												}
+																								if(TWEENEDIT)
+												{
+													CURRENTTWEEN.nodeTweening.active=true;
+													CURRENTTWEEN.pointTweening=true;
+													CURRENTTWEEN.setTweenTimeBox();
 												}
 											};
 			
@@ -360,12 +368,6 @@ function drawBoundary()
 							  		}
 							  		group.update(l,t,0,0,scale,1);
 								}
-								if(TWEENEDIT)
-								{
-									CURRENTTWEEN.nodeTweening.active=true;
-									CURRENTTWEEN.pointTweening=true;
-									CURRENTTWEEN.setTweenTimeBox();
-								}
 							}
 //bottom handle
 	this.boundary.bh.DD.onDrag =function(e) {
@@ -391,6 +393,12 @@ function drawBoundary()
 												else
 												{
 													$(this.id).style.top=(parseInt(boundary.style.height)-5)+"px";
+												}
+												if(TWEENEDIT)
+												{
+													CURRENTTWEEN.nodeTweening.active=true;
+													CURRENTTWEEN.pointTweening=true;
+													CURRENTTWEEN.setTweenTimeBox();
 												}
 											};
 			
@@ -436,12 +444,6 @@ function drawBoundary()
 										shape.draw();
 							  		}
 									group.update(l,t,0,0,1,scale);
-								}
-								if(TWEENEDIT)
-								{
-									CURRENTTWEEN.nodeTweening.active=true;
-									CURRENTTWEEN.pointTweening=true;
-									CURRENTTWEEN.setTweenTimeBox();
 								}
 							}
 }

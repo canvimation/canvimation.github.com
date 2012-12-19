@@ -84,6 +84,7 @@ function openStage(theatre)
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
+	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	BUILDCLOSED=true;
 	rewritelists();

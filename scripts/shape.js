@@ -238,7 +238,8 @@ function Shape(name,title,open,editable,type,STORE)
 	this.ShapeToText=ShapeToText; 
 	this.drawjustpath=drawjustpath;
 	this.shapeHTML=shapeHTML;
-	this.getLengths=getLengths;	
+	this.getLengths=getLengths;
+	this.setRndRect=setRndRect;	
    	return this;
    	
 }
@@ -470,7 +471,7 @@ function drawGuide(cursor)
 			node.setNode(p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
-			this.setRndRect=setRndRect;
+			//this.setRndRect=setRndRect;
 			this.setRndRect();
 		break
 		case "triangle":

@@ -1650,6 +1650,10 @@ function main()
 	$('rotatebox').style.width=130+"px";
 	$('rotatebox').style.height=120+"px";
 	
+	//rotatetweenbox
+	$('rotatetweenbox').style.width=135+"px";
+	$('rotatetweenbox').style.height=220+"px";
+	
 	//totextbox
 	$("totextbox").style.width=300+"px";
 	$("totextbox").style.height=200+"px";
@@ -2197,6 +2201,8 @@ function main()
 	//properties
 	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=10 onchange="rotationset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate" onchange="rotationset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate" onchange="rotationset()" ></p>';
 	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=10 onchange="transset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate" onchange="transset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"  onchange="transset()" ></p>';
+	ttcrothtml+='<p class="chk_radio_input"><input type="radio" name="rotdir" id="clockwise"  onchange="setlclock()" /> <img src="assets/clock.png" alt="clockwise" title="clockwise">';
+	ttcrothtml+='<input type="radio" name="rotdir" id="anticlockwise" onchange="setanti()" /> <img src="assets/anti.png" alt="anti-clockwise" title="anti-clockwise"></p>'
 	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
 	ttclclhtml='<p class="text_input"><img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol"></p>';
 	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
@@ -2461,6 +2467,25 @@ function main()
 	<div id='rotatehead' class='head'>&nbsp; Rotate
 		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"rotatecontent")'/>
+	</div>
+</div>
+
+<!--dialogue box rotation for tween value -->
+<div id='rotatetweenbox' class="dialoguebox">
+	<div id='rotatetweencontent' class='content'>
+		<p class="text_input">
+			<label for="rotatetweenangle">Angle</label> <input type="text" name="rotatetweenangle" id="rotatetweenangle" value=0 size=3 style="left:15px"/><span style="left:20px">&deg;</span>
+		</p>
+		<p class="chk_radio_input">
+			 <input type="radio" name="rotdir" id="clockwise"  onchange="setlclock()" /><label for="clockwise">Clockwise</label>
+			 <input type="radio" name="rotdir" id="anticlockwise" onchange="setanti()" /><label for="anticlockwise">Anti-Clockwise</label>
+		</p>
+		<input type="button" value=" OK " id="rotatetweenOK" onclick="updateangle($('rotatetweenangle').value)" />
+		<input type="button" value=" Close " id="rotatetweenClose" onclick="closedialogue(this)" />
+	</div>	
+	<div id='rotatetweenhead' class='head'>&nbsp; rotate
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"rotatetweencontent")'/>
 	</div>
 </div>
 
