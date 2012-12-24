@@ -31,7 +31,7 @@ function Tween(name)
 	this.ctrl1paths={};
 	this.ctrl2paths={};
 	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translae and rotate both acitve must share twtime, repeat and yoyo
-	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0};
+	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0,clkw:true};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -1057,7 +1057,7 @@ function setTweenTimeBox()
 		ttheight+=40*(ttcnum+1);
 		if(this.rotate.active && !this.nodeTweening.active && !this.pointTweening)
 		{
-			ttheight+=40;
+			ttheight+=30;
 		}
 		if(ttheight>SCRH-200) {ttheight=SCRH-200}
 		ttccontenthtml+=ttclbshtml;
@@ -1072,8 +1072,20 @@ function setTweenTimeBox()
 		$("twnodetween").checked=this.nodeTweening.active;
 	}
 	$("tweentimebox").style.height=ttheight+"px";
+	
 	$("tweentimecontent").style.height=(parseInt($("tweentimebox").style.height)-25)+"px";
 	$("tweentimebox").style.clip="rect(1px,"+(parseInt($("tweentimebox").style.width)+2)+"px,"+(parseInt($("tweentimebox").style.height)+2)+"px,0px)";
+	if(this.rotate.active && !this.nodeTweening.active && !this.pointTweening)
+	{
+			if(this.rotate.clkw)
+			{
+				$("Clockwise").checked="checked";
+			}
+			else
+			{
+				$("Anticlockwise").checked="checked";
+			}
+	}
 	this.getTweenActives();			
 }
 

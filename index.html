@@ -802,6 +802,15 @@ inner img {
 	cursor:default;
 }
 
+#tweentimecontent p.chk_radio_input img{
+	float: none;
+	position:relative;
+	left:10px;
+	width: 10%;
+	height:10%;
+	border: none;
+}
+
 #tweentimecontent p.text_input input {
 	left:40px;
 }
@@ -2201,8 +2210,8 @@ function main()
 	//properties
 	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=10 onchange="rotationset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate" onchange="rotationset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate" onchange="rotationset()" ></p>';
 	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=10 onchange="transset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate" onchange="transset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"  onchange="transset()" ></p>';
-	ttcrothtml+='<p class="chk_radio_input"><input type="radio" name="rotdir" id="clockwise"  onchange="setlclock()" /> <img src="assets/clock.png" alt="clockwise" title="clockwise">';
-	ttcrothtml+='<input type="radio" name="rotdir" id="anticlockwise" onchange="setanti()" /> <img src="assets/anti.png" alt="anti-clockwise" title="anti-clockwise"></p>'
+	ttcrothtml+='<p class="chk_radio_input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="rotdir" id="Clockwise"  checked="checked" onclick="CURRENTTWEEN.rotate.clkw=true" /><img src="assets/clock.png" alt="clockwise" title="clockwise">';
+	ttcrothtml+='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="rotdir" id="Anticlockwise" onclick="CURRENTTWEEN.rotate.clkw=false" /><img src="assets/anti.png" alt="anti-clockwise" title="anti-clockwise"></p>'
 	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
 	ttclclhtml='<p class="text_input"><img alt="line colour" title="line colour" src="assets/collines.png"> <input type="text" name="twlinecol" id="twlinecol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreplinecol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyolinecol"></p>';
 	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
