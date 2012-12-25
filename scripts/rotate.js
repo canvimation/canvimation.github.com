@@ -9,14 +9,7 @@ function shaperotate()
 {
 	removeRotate();
 	removeGradLine();
-	if(TWEENEDIT)
-	{
-		$("rotatetweenbox").style.visibility="visible";
-	}
-	else
-	{
-		$("rotatebox").style.visibility="visible";
-	}
+	$("rotatebox").style.visibility="visible";
 	var shape=SELECTEDSHAPE;
 	var group=shape.group;
 	$("rotateCentre").style.left=(group.centreOfRotation.x-6)+"px";
@@ -31,7 +24,6 @@ function shaperotate()
 	$("rotateMove").left=parseInt($("rotateMove").style.left);
 	$("rotateMove").top=parseInt($("rotateMove").style.top);
 	$("rotateangle").value=Math.round(group.phi*180/Math.PI);
-	$("rotatetweenangle").value=Math.round(group.phi*180/Math.PI);
 }
 
 function removeRotate()
@@ -99,7 +91,6 @@ function updateangle(phi)
 		group.groupRotate(phi-group.phi);
 		group.phi=phi;
 		$("rotateangle").value=Math.round(group.phi*180/Math.PI);
-		$("rotatetweenangle").value=Math.round(group.phi*180/Math.PI);
 	}
 	if(TWEENEDIT)
 	{

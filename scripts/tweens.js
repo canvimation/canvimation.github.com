@@ -70,6 +70,7 @@ function Tween(name)
 	this.getTweenActives=getTweenActives;
 	this.transformTweeningPoints=transformTweeningPoints;
 	this.gradlinetransform=gradlinetransform;
+	this.betweenAngle=betweenAngle;
 }
 
 function copytween(theatre)
@@ -222,7 +223,6 @@ function checktween(tweendata)
 	removeRotate();
 	closeColor();
 	$("rotatebox").style.visibility="hidden";
-	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	STOPCHECKING=false;
 	if(tween.nodeTweening.active || tween.pointTweening)
@@ -794,9 +794,9 @@ function transformTweeningPoints(node)  //node follows rotate translate path if 
 		{
 			theta=2*Math.PI-theta;
 		}			
-		if(!copy.group.clockwise)
+		if(!this.rotate.clkw)
 		{
-			theta=-theta;
+			theta=-(2*Math.PI-theta);
 		}
 	}
 	var Ttick=this.translate.twtime*1000;
@@ -953,8 +953,8 @@ function gradlinetransform()
 		templg=[];
 		temprg=[];
 		
-		nltheta0=betweenAngle(cltheta0,sltheta0,tick/Gtick);
-		nltheta1=betweenAngle(cltheta1,sltheta1,tick/Gtick);
+		nltheta0=this.betweenAngle(cltheta0,sltheta0,tick/Gtick);
+		nltheta1=this.betweenAngle(cltheta1,sltheta1,tick/Gtick);
 
 		p=slp0.pointRotate(nltheta0-sltheta0);
 		templg[0]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+ldx0)/Gtick;
@@ -964,8 +964,8 @@ function gradlinetransform()
 		templg[3]=p.y+shape.group.centreOfRotation.y+tick*(ytranslate+ldy1)/Gtick;
 		this.linegrads.push(templg);
 		
-		nrtheta0=betweenAngle(crtheta0,srtheta0,tick/Gtick);
-		nrtheta1=betweenAngle(crtheta1,srtheta1,tick/Gtick);
+		nrtheta0=this.betweenAngle(crtheta0,srtheta0,tick/Gtick);
+		nrtheta1=this.betweenAngle(crtheta1,srtheta1,tick/Gtick);
 
 		p=srp0.pointRotate(nrtheta0-srtheta0);
 		temprg[0]=p.x+shape.group.centreOfRotation.x+tick*(xtranslate+rdx0)/Gtick;
@@ -1320,7 +1320,7 @@ function updateTweenPtrs()
 			this.rotate.ptr+=this.rotate.dir;
 			if(this.rotate.dir>0)
 			{
-				if(this.rotate.ptr>=this.rotate.length)
+				if(this.rotate.ptr>=this.linegrads.length)
 				{
 					if(this.rotate.yoyo)
 					{
@@ -1739,4 +1739,14 @@ function linx(t)
 function liny(t)
 {
 	return this.next.point.y+(this.next.point.y-this.point.y)*t;
+}
+
+function betweenAngle(e,s,t)  // s start angle, e end angle, t parameter between 0 and 1
+{
+	var ang=(2*Math.PI+e-s) % (2*Math.PI);
+	if(!this.rotate.clkw)
+	{
+		ang=-(2*Math.PI-ang);
+	}
+	return s+t*ang;
 }

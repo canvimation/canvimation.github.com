@@ -1410,7 +1410,7 @@ function setNodePathBox()
 	$("tweenpathsbox").style.visibility="visible";
 }
 
-function betweenAngle(a,b,t)  // b start angle, a end angle, t parameter between 0 and 1
+function oldbetweenAngle(a,b,t)  // b start angle, a end angle, t parameter between 0 and 1
 {
 	if(Math.abs(a-b)<=Math.PI)
 	{

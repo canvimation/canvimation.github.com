@@ -992,7 +992,6 @@ function sceneEdit(n)  //edits the selected scene shapes
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
-	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	closeColor();
@@ -1094,7 +1093,6 @@ function trackEdit(n)
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
-	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	closeColor();
@@ -1215,7 +1213,6 @@ function tweenEdit(n)
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
-	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	closeColor();
@@ -1293,7 +1290,6 @@ function spriteEdit(n)
 	closeStops();
 	removeRotate();
 	$("rotatebox").style.visibility="hidden";
-	$("rotatetweenbox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
 	hideTools();
 	closeColor();
