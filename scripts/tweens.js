@@ -36,6 +36,7 @@ function Tween(name)
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.gradfill={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
+	this.edit={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.linegrads=[];
 	this.radgrads=[];
 	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -567,6 +568,19 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
+	if(this.edit.active)
+	{
+		var EDtick=tween.edit.twtime*1000;
+		var tick=0;
+		this.edit.points=[];
+		var temped;
+		while(tick<=EDtick)
+		{
+			temped=shape.lineWidth+tick*(copy.lineWidth-shape.lineWidth)/EDtick;
+			this.edit.points.push(temped);
+			tick+=50;
+		}
+	}
 }
 
 function setCtrlPaths(copynode) //uses the tweenpath between node and copy node to create path from node ctrl points to copynode ctrl points
@@ -1026,6 +1040,16 @@ function setTweenTimeBox()
 		ttcprphtml+=ttcrothtml;
 		ttcnum++;
 	}
+	if((this.rotate.active && !this.nodeTweening.active && !this.pointTweening) || this.gradfill.active)
+	{
+		ttcprphtml+=ttcdirhtml;
+		ttcnum++;
+	}
+	if(this.gradfill.active)
+	{
+		ttcprphtml+=ttcgdfhtml;
+		ttcnum++;	
+	}
 	if(this.linestyles.active)
 	{
 		ttcprphtml+=ttcstyhtml;
@@ -1046,12 +1070,11 @@ function setTweenTimeBox()
 		ttcprphtml+=ttclclhtml;
 		ttcnum++;	
 	}
-	if(this.gradfill.active)
+	if(this.edit.active)
 	{
-		ttcprphtml+=ttcgdfhtml;
+		ttcprphtml+=ttcedthtml;
 		ttcnum++;	
 	}
-	
 	if(ttcnum>0)
 	{
 		ttheight+=40*(ttcnum+1);

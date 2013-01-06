@@ -351,8 +351,13 @@ function updatePointNode(cursor)
 	}
 	if(TWEENEDIT)
 	{
-		var l=this.shape.name.substr(0,1).toUpperCase();
-		if(l=="A" || l=="B")
+		var l=this.shape.name.substr(0,1).toUpperCase();$("msg").innerHTML=this.shape.type;
+		if(this.shape.type=="rounded_rectangle" || this.shape.type=="arc" || this.shape.type=="segment" || this.shape.type=="sector")
+		{
+			CURRENTTWEEN.edit.active=true;
+			CURRENTTWEEN.setTweenTimeBox();
+		}
+		else if(l=="A" || l=="B")
 		{
 			CURRENTTWEEN.nodeTweening.active=true;
 			CURRENTTWEEN.pointTweening=true;

@@ -76,18 +76,6 @@ function updateangle(phi)
 	for (var groupName in SELECTED)
 	{
 		var group=SELECTED[groupName];
-		if(group.phi>6 && phi<0.1)
-		{
-			group.clockwise=true;
-		}
-		else if(group.phi<0.1 && phi>6)
-		{
-			group.clockwise=false;
-		}
-		else
-		{
-			group.clockwise=(phi>group.phi);
-		}
 		group.groupRotate(phi-group.phi);
 		group.phi=phi;
 		$("rotateangle").value=Math.round(group.phi*180/Math.PI);

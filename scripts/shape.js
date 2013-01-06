@@ -211,6 +211,15 @@ function Shape(name,title,open,editable,type,STORE)
    	this.shadowColor = [0, 0, 0, 0];
    	this.zIndex=0;
    	this.crnradius=10;
+   	this.archeight=0;
+   	this.arcwidth=0;
+   	this.arccentre=0;
+   	p=new Point(0,0);
+	this.bnode=new Node(p);
+	p=new Point(0,0);
+	this.lnode=new Node(p);
+	p=new Point(0,0);
+	this.tnode=new Node(p);
    	p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
@@ -1052,7 +1061,12 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	copy.shadowBlur  = shape.shadowBlur ;
 	copy.zIndex = shape.zIndex;
 	copy.crnradius = shape.crnradius;
-
+	copy.archeight=shape.archeight;
+   	copy.arcwidth=shape.arcwidth;
+   	copy.arccentre=shape.arccentre;
+   	copy.bnode=shape.bnode;
+   	copy.lnode=shape.lnode;
+   	copy.tnode=shape.tnode;
 	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
 	copy.tplftcrnr=p; //coordinates of top left of boundary box;
 	p=new Point(shape.btmrgtcrnr.x+offset,shape.btmrgtcrnr.y+offset);
