@@ -201,8 +201,9 @@ function drawBoundary()
 										shape.radGrad[1] +=dy;
 										shape.radGrad[3] +=dx;
 										shape.radGrad[4] +=dy;
-										//shape.cx +=dx;
-										//shape.cy +=dy;
+										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
+										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
 
 										shape.draw();
 									}
@@ -265,6 +266,9 @@ function drawBoundary()
 										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
 										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
+										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
+										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -340,6 +344,9 @@ function drawBoundary()
 										shape=shapeNames[name];
 										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
 										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
+										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
+										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -417,6 +424,9 @@ function drawBoundary()
 										shape=shapeNames[name];
 										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
+										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
+										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -481,12 +491,23 @@ function markLine()
 	{
 		case "line":
 		case "arc":
+			node=SELECTEDSHAPE.path.next;
+			node.addPointMark();
+			node=SELECTEDSHAPE.path.prev;
+			node.addPointMark();
+		break
 		case "segment":
+			node=SELECTEDSHAPE.path.next;
+			node.addPointMark();
+			node=SELECTEDSHAPE.path.prev.prev;
+			node.addPointMark();
+		break
 		case "sector":
 			node=SELECTEDSHAPE.path.next;
 			node.addPointMark();
-			node=node.next;
+			node=SELECTEDSHAPE.path.prev.prev.prev;
 			node.addPointMark();
+		break
 		break
 		case "rounded_rectangle":
 			node=SELECTEDSHAPE.path.next;

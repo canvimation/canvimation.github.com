@@ -110,10 +110,12 @@ function updatePointNode(cursor)
 			
 			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
 			var node=this.shape.path.next;
+//$("msg").innerHTML="......<br>";			
 			while(node.point.x!="end")
 			{
 				node.translate(this.shape.arccentre.x,this.shape.arccentre.y); //put origin at arccentre
 				node.scaleY(1/sY); //scale ellipse to circle
+//$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";				
 				node=node.next;
 			}
 			var alpha=arctan((cursor.y-this.shape.arccentre.y)/sY,cursor.x-this.shape.arccentre.x);//angle cursor makes
@@ -121,10 +123,17 @@ function updatePointNode(cursor)
 			this.setNode(p); //put current node on circle C using point found from cursor
 			
 			var startAngle=this.shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
-			var endAngle=this.shape.path.prev.getAngle();//find angle of last node in list between 0 and 2PI
-			if(this.shape.type=="sector")
+			switch (this.shape.type)
 			{
-				endAngle=this.shape.path.prev.prev.getAngle();
+				case "arc":
+					var endAngle=this.shape.path.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+				break
+				case "segment":
+					var endAngle=this.shape.path.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+				break
+				case "sector":
+					var endAngle=this.shape.path.prev.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+				break
 			}
 			if(endAngle>startAngle)
 			{
@@ -139,10 +148,12 @@ function updatePointNode(cursor)
 			
 			this.shape.bnode.removeNode();//remove right, bottom and left node as first arc is between 0 an 90 degrees
 			this.shape.lnode.removeNode();
-			this.shape.tnode.removeNode();
+			this.shape.tnode.removeNode();//$("msg").innerHTML=this.shape.type+","+this.startAngle+","+this.endAngle+","+theta*180/Math.PI;
 			node=this.shape.path.next; //start node
+			var last=this.shape.path.prev;
 			p=new Point(radius,0); //set node on circle angle 0 degrees
 			node.setNode(p);
+			last.setNode(p);
 			node=node.next; //end node
 			if(theta>Math.PI/2)
 			{
