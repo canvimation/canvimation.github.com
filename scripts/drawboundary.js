@@ -203,8 +203,8 @@ function drawBoundary()
 										shape.radGrad[4] +=dy;
 										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
 										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
-
+										shape.arccentre.x+=dx;
+										shape.arccentre.y+=dy;
 										shape.draw();
 									}
 									group.update(l,t,dx,dy,1,1);
@@ -268,7 +268,8 @@ function drawBoundary()
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
 										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
 										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
+										shape.arccentre.x=shape.arcwidth/2;
+										shape.arccentre.y=shape.archeight/2;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -345,8 +346,7 @@ function drawBoundary()
 										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
 										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
 										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
-										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
+										shape.arccentre.x=shape.arcwidth/2;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -426,7 +426,7 @@ function drawBoundary()
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
 										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
 										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre=new Point(shape.tplftcrnr.x,shape.btmrgtcrnr.y);
+										shape.arccentre.y=shape.archeight/2;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -687,6 +687,14 @@ function inRect(sp,ep)
 function sqdistance(p,q)
 {
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
+}
+
+function drawcrnrs()
+{
+	this.Canvas.ctx.beginPath();
+	this.Canvas.ctx.moveTo(this.tplftcrnr.x,this.tplftcrnr.y);
+	this.Canvas.ctx.lineTo(this.btmrgtcrnr.x,this.btmrgtcrnr.y);
+	this.Canvas.ctx.stroke();
 }
 
 

@@ -36,7 +36,7 @@ function Tween(name)
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.gradfill={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
-	this.edit={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
+	this.edit={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0};
 	this.linegrads=[];
 	this.radgrads=[];
 	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -437,8 +437,8 @@ function showNodePathList(nodein)
 
 function prepareTweens()
 {
-	var twnode;
-	var p;
+	var twnode,stnode,start;
+	var p,c1,c2;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
 	if(shape.justfill && !copy.justfill)
@@ -517,7 +517,7 @@ function prepareTweens()
 	}
 	if(this.fillcolour.active)
 	{
-		var FCtick=tween.fillcolour.twtime*1000;
+		var FCtick=this.fillcolour.twtime*1000;
 		var tick=0;
 		this.fillcolour.points=[];
 		var tempcol=[];
@@ -534,7 +534,7 @@ function prepareTweens()
 	}
 	if(this.gradfill.active)
 	{
-		var GFtick=tween.gradfill.twtime*1000;
+		var GFtick=this.gradfill.twtime*1000;
 		var tick=0;
 		this.gradfill.points=[];
 		var tempcolstops=[];
@@ -557,7 +557,7 @@ function prepareTweens()
 	}
 	if(this.linestyles.active)
 	{
-		var LStick=tween.linestyles.twtime*1000;
+		var LStick=this.linestyles.twtime*1000;
 		var tick=0;
 		this.linestyles.points=[];
 		var templs;
@@ -570,14 +570,92 @@ function prepareTweens()
 	}
 	if(this.edit.active)
 	{
-		var EDtick=tween.edit.twtime*1000;
+		var EDtick=this.edit.twtime*1000;
 		var tick=0;
-		this.edit.points=[];
-		var temped;
+		switch (shape.type)
+		{
+			case "rounded_rectangle":
+				node=shape.path.next;
+				while(node.point.x!="end")
+				{
+					node.tweennodes=[];
+					node.repeat=this.edit.repeat;
+					node.yoyo=this.edit.yoyo;
+					node=node.next;
+				}
+				var crnradius,brcx,brcy,tlcx,tlcy;
+			break
+			case "arc":
+			break
+			case "segment":
+			break
+			case "sector":
+			break
+		}
 		while(tick<=EDtick)
 		{
-			temped=shape.lineWidth+tick*(copy.lineWidth-shape.lineWidth)/EDtick;
-			this.edit.points.push(temped);
+			switch (shape.type)
+			{
+				case "rounded_rectangle":
+					crnradius=shape.crnradius+tick*(copy.crnradius-shape.crnradius)/EDtick;
+					brcx=shape.btmrgtcrnr.x+tick*(copy.btmrgtcrnr.x-shape.btmrgtcrnr.x)/EDtick;
+					brcy=shape.btmrgtcrnr.y+tick*(copy.btmrgtcrnr.y-shape.btmrgtcrnr.y)/EDtick;
+					tlcx=shape.tplftcrnr.x+tick*(copy.tplftcrnr.x-shape.tplftcrnr.x)/EDtick;
+					tlcy=shape.tplftcrnr.y+tick*(copy.tplftcrnr.y-shape.tplftcrnr.y)/EDtick;				
+					p=new Point(tlcx+crnradius,tlcy);
+					sp=new Point(tlcx+crnradius,tlcy);
+					node=shape.path.next;
+					twnode=new TweenNode(p);  //top left;
+					stnode=new TweenNode(sp);
+					node.tweennodes.push(twnode);
+					node=node.next;
+					p=new Point(brcx-crnradius,stnode.point.y);
+					twnode=new TweenNode(p);// top right
+					node.tweennodes.push(twnode);
+					c1=new Point(p.x+crnradius*K,p.y);
+					p=new Point(brcx,p.y+crnradius);
+					c2=new Point(p.x,p.y-crnradius*K);
+					node=node.next;
+					twnode=new TweenNode(p,c1,c2);//right top
+					node.tweennodes.push(twnode);
+					p=new Point(p.x,brcy-crnradius);					
+					node=node.next;
+					twnode=new TweenNode(p);//right bottom
+					node.tweennodes.push(twnode);
+					c1=new Point(p.x,p.y+crnradius*K);
+					p=new Point(brcx-crnradius,brcy);
+					c2=new Point(p.x+crnradius*K,p.y)
+					node=node.next;
+					twnode=new TweenNode(p,c1,c2);//bottom right
+					node.tweennodes.push(twnode);
+					p=new Point(stnode.point.x,p.y);
+					node=node.next;
+					twnode=new TweenNode(p);//bottom left
+					node.tweennodes.push(twnode);
+					c1=new Point(p.x-crnradius*K,p.y);
+					p=new Point(tlcx,p.y-crnradius);
+					c2=new Point(p.x,p.y+crnradius*K);
+					node=node.next;
+					twnode=new TweenNode(p,c1,c2);//left bottom
+					node.tweennodes.push(twnode);
+					p=new Point(p.x,stnode.point.y+crnradius);
+					node=node.next;
+					twnode=new TweenNode(p);//left top
+					node.tweennodes.push(twnode);
+					c1=new Point(p.x,p.y-crnradius*K);
+					p=new Point(stnode.point.x,stnode.point.y);
+					c2=new Point(p.x-crnradius*K,p.y);
+					node=node.next;
+					twnode=new TweenNode(p,c1,c2);//top left again
+					node.tweennodes.push(twnode);			
+				break
+				case "arc":
+				break
+				case "segment":
+				break
+				case "sector":
+				break
+			}
 			tick+=50;
 		}
 	}
@@ -1152,9 +1230,9 @@ function tweenplay()
 	if(!STOPCHECKING)
 	{//$("msg").innerHTML+=this.translate.ptr+","+this.rotate.ptr+","+this.gradfill.ptr+","+this.linegrads.length+","+this.gradfill.points.length+","+this.translate.length+"<br>";
 		var node=shape.path.next;
-		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
+		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
 		{
-			var tweennode=this.tweenshape.path.next;
+			var tweennode=this.tweenshape.path.next;//$("msg").innerHTML+=node.ptr+"<br>";
 			while(node.point.x!="end")
 			{
 				tweennode.point.x=node.tweennodes[node.ptr].point.x;
@@ -1250,7 +1328,7 @@ function updateTweenPtrs()
 	var finishedtween=true;
 	var shape=this.getShape();
 	var node;
-	if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening)
+	if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening  || this.edit.active)
 	{
 		node=shape.path.next;
 		while(node.point.x!="end")
@@ -1599,6 +1677,12 @@ function setTweenActives()
 		this.gradfill.repeat=$("twrepgradfill").value;
 		this.gradfill.yoyo=$("twyogradfill").checked;	
 	}
+	if(this.edit.active)
+	{
+		this.edit.twtime=$("twedit").value;
+		this.edit.repeat=$("twrepedit").value;
+		this.edit.yoyo=$("twyoedit").checked;	
+	}
 }
 
 function getTweenActives()
@@ -1644,6 +1728,12 @@ function getTweenActives()
 		$("twgradfill").value=this.gradfill.twtime;
 		$("twrepgradfill").value=this.gradfill.repeat;
 		$("twyogradfill").checked=this.gradfill.yoyo;	
+	}
+	if(this.edit.active)
+	{
+		$("tweditfill").value=this.edit.twtime;
+		$("twrepeditfill").value=this.edit.repeat;
+		$("twyoeditfill").checked=this.edit.yoyo;	
 	}
 }
 

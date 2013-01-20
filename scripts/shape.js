@@ -72,7 +72,7 @@ function Node(point,ctrl1,ctrl2)
 	this.linx=linx;
 	this.liny=liny;
 	this.bezx=bezx;
-	this.bezy=bezy;
+	this.bezy=bezy;	
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -211,6 +211,8 @@ function Shape(name,title,open,editable,type,STORE)
    	this.shadowColor = [0, 0, 0, 0];
    	this.zIndex=0;
    	this.crnradius=10;
+   	this.arccentre=new Point(0,0);
+   	this.radius=10;
    	p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
@@ -240,6 +242,7 @@ function Shape(name,title,open,editable,type,STORE)
 	this.shapeHTML=shapeHTML;
 	this.getLengths=getLengths;
 	this.setRndRect=setRndRect;	
+this.drawcrnrs=drawcrnrs;	
    	return this;
    	
 }
@@ -558,11 +561,6 @@ function drawEnd(cursor)
 			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
 			var start=this.path.next;
 			var arcend=start.next;
-/*			if(this.type=="sector")
-			{
-				last.setNode(this.arccentre);
-				last=last.prev;
-			}	*/		
 			if(this.arcwidth*this.archeight<0)//swap nodes so that going clockwise start node is before last node
 			{
 				this.arcwidth=Math.abs(this.arcwidth);
@@ -593,6 +591,7 @@ function drawEnd(cursor)
 			this.tnode.removeNode();
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
+			this.radius=this.arcwidth;
 			this.setCorners();
 		break
 		case "freeform":
@@ -1063,6 +1062,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	p=new Point(shape.btmrgtcrnr.x+offset,shape.btmrgtcrnr.y+offset);
 	copy.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
 	copy.lineWidth=shape.lineWidth;
+	copy.radius=shape.radius;
 	for(var i=0; i<4;i++)
 	{
 		copy.fillStyle[i]=shape.fillStyle[i];
@@ -1094,24 +1094,34 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
    			c1=new Point(shape.bnode.ctrl1.x+offset,shape.bnode.ctrl1.y+offset);
    			c2=new Point(shape.bnode.ctrl2.x+offset,shape.bnode.ctrl2.y+offset);
    			copy.bnode=new Node(p,c1,c2);
+   			copy.bnode.vertex=shape.bnode.vertex;
+   			copy.bnode.corner=shape.bnode.corner;
+   			copy.bnode.shape=copy;
    			p=new Point(shape.lnode.point.x+offset,shape.lnode.point.y+offset);
    			c1=new Point(shape.lnode.ctrl1.x+offset,shape.lnode.ctrl1.y+offset);
    			c2=new Point(shape.lnode.ctrl2.x+offset,shape.lnode.ctrl2.y+offset);
    			copy.lnode=new Node(p,c1,c2);
+   			copy.lnode.vertex=shape.lnode.vertex;
+   			copy.lnode.corner=shape.lnode.corner;
+   			copy.lnode.shape=copy;
    			p=new Point(shape.tnode.point.x+offset,shape.tnode.point.y+offset);
    			c1=new Point(shape.tnode.ctrl1.x+offset,shape.tnode.ctrl1.y+offset);
    			c2=new Point(shape.tnode.ctrl2.x+offset,shape.tnode.ctrl2.y+offset);
    			copy.tnode=new Node(p,c1,c2);
-   			copy.arcwidth=copy.btmrgtcrnr.x-copy.tplftcrnr.x;
-			copy.archeight=copy.btmrgtcrnr.y-copy.tplftcrnr.y;
-			copy.arccentre=new Point(copy.tplftcrnr.x,copy.btmrgtcrnr.y);
+   			copy.tnode.vertex=shape.tnode.vertex;
+   			copy.tnode.corner=shape.tnode.corner;
+   			copy.tnode.shape=copy;
+   			copy.arcwidth=Math.abs(copy.btmrgtcrnr.x-copy.tplftcrnr.x);
+			copy.archeight=Math.abs(copy.btmrgtcrnr.y-copy.tplftcrnr.y);
 			var nodes=0
 			var node=shape.path.next;
 			while(node.point.x!="end")
 			{
 				nodes++;
+//$("msg").innerHTML+=node.shape.name+"...."+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";				
 				node=node.next;
 			}
+//$("msg").innerHTML+=shape.name+","+shape.arccentre.x+","+shape.arccentre.y+"<br><br>";			
 			node=shape.path.next;
 			p=new Point(node.point.x+offset,node.point.y+offset);
 			n=new Node(p);
@@ -1122,18 +1132,18 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			switch (copy.type)
 			{
 				case "arc":
-					var arcend=this.shape.path.prev;
+					var arcend=shape.path.prev;
 				break
 				case "segment":
-					var arcend=this.shape.path.prev.prev;
+					var arcend=shape.path.prev.prev;
 					nodes--;
 				break
 				case "sector":
-					var arcend=this.shape.path.prev.prev.prev;
+					var arcend=shape.path.prev.prev.prev;
 					nodes--;
 					nodes--;
 				break
-			}alert(nodes);
+			}
 			p=new Point(arcend.point.x+offset,arcend.point.y+offset);
 			c1=new Point(arcend.ctrl1.x+offset,arcend.ctrl1.y+offset);
 			c2=new Point(arcend.ctrl2.x+offset,arcend.ctrl2.y+offset);
@@ -1141,6 +1151,8 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			carcend.corner=arcend.corner;
 			carcend.vertex=arcend.vertex;
 			carcend.shape=copy;
+//$("msg").innerHTML+="arcend...."+arcend.shape.name+"...."+arcend.point.x+","+arcend.point.y+","+arcend.ctrl1.x+","+arcend.ctrl1.y+","+arcend.ctrl2.x+","+arcend.ctrl2.y+"<br>";
+//$("msg").innerHTML+="carcend...."+carcend.shape.name+"...."+carcend.point.x+","+carcend.point.y+","+carcend.ctrl1.x+","+carcend.ctrl1.y+","+carcend.ctrl2.x+","+carcend.ctrl2.y+"<br><br>";						
 			copy.addNode(carcend);
 			carcend.insertNodeBefore(copy.bnode);
 			carcend.insertNodeBefore(copy.lnode);
@@ -1151,7 +1163,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			switch (copy.type)
 			{
 				case "segment":
-					node=this.shape.path.prev;
+					node=shape.path.prev;
 					p=new Point(node.point.x+offset,node.point.y+offset);
 					n=new Node(p);
 					n.corner=node.corner;
@@ -1160,14 +1172,14 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 					copy.addNode(n);
 				break
 				case "sector":
-					node=this.shape.path.prev.prev;//add centre
+					node=shape.path.prev.prev;//add centre
 					p=new Point(node.point.x+offset,node.point.y+offset);
 					n=new Node(p);
 					n.corner=node.corner;
 					n.vertex=node.vertex;
 					n.shape=copy;
 					copy.addNode(n);
-					node=this.shape.path.prev;
+					node=shape.path.prev;
 					p=new Point(node.point.x+offset,node.point.y+offset);
 					n=new Node(p);
 					n.corner=node.corner;
@@ -1188,6 +1200,15 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			{
 				copy.tnode.restoreNode();
 			}
+			copy.arccentre.x=shape.arccentre.x+offset;
+			copy.arccentre.y=shape.arccentre.y+offset;
+/*node=copy.path.next;			
+while(node.point.x!="end")
+{
+$("msg").innerHTML+=node.shape.name+"...."+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
+node=node.next;				
+}
+$("msg").innerHTML+=copy.name+","+copy.arccentre.x+","+copy.arccentre.y+"<br><br>";		*/	
 		break
 		default :
 			var node=shape.path.next;

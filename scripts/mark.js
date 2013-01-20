@@ -105,17 +105,13 @@ function updatePointNode(cursor)
 		case "segment":
 		case "sector":
 			//all angles to be measured clockwise about centre from +ve x axis;
-			
-			var radius = this.shape.arcwidth;//set radius for cicle C centre arccentre
-			
+			var radius=this.shape.radius;
 			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
-			var node=this.shape.path.next;
-//$("msg").innerHTML="......<br>";			
+			var node=this.shape.path.next;			
 			while(node.point.x!="end")
 			{
 				node.translate(this.shape.arccentre.x,this.shape.arccentre.y); //put origin at arccentre
-				node.scaleY(1/sY); //scale ellipse to circle
-//$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";				
+				node.scaleY(1/sY); //scale ellipse to circle				
 				node=node.next;
 			}
 			var alpha=arctan((cursor.y-this.shape.arccentre.y)/sY,cursor.x-this.shape.arccentre.x);//angle cursor makes
@@ -148,7 +144,7 @@ function updatePointNode(cursor)
 			
 			this.shape.bnode.removeNode();//remove right, bottom and left node as first arc is between 0 an 90 degrees
 			this.shape.lnode.removeNode();
-			this.shape.tnode.removeNode();//$("msg").innerHTML=this.shape.type+","+this.startAngle+","+this.endAngle+","+theta*180/Math.PI;
+			this.shape.tnode.removeNode();
 			node=this.shape.path.next; //start node
 			var last=this.shape.path.prev;
 			p=new Point(radius,0); //set node on circle angle 0 degrees
@@ -194,7 +190,7 @@ function updatePointNode(cursor)
 			{
 				node.rotate(startAngle);
 				node.scaleY(sY);
-				node.translate(-this.shape.arccentre.x,-this.shape.arccentre.y);
+				node.translate(-this.shape.arccentre.x,-this.shape.arccentre.y);				
 				node=node.next;
 			}
 			this.shape.draw();
@@ -362,7 +358,7 @@ function updatePointNode(cursor)
 	}
 	if(TWEENEDIT)
 	{
-		var l=this.shape.name.substr(0,1).toUpperCase();$("msg").innerHTML=this.shape.type;
+		var l=this.shape.name.substr(0,1).toUpperCase();
 		if(this.shape.type=="rounded_rectangle" || this.shape.type=="arc" || this.shape.type=="segment" || this.shape.type=="sector")
 		{
 			CURRENTTWEEN.edit.active=true;
