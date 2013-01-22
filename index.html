@@ -2204,8 +2204,8 @@ function main()
 	//labels
 	ttclbshtml='<p>&nbsp;Prty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo</p>';
 	//properties
-	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=10 onchange="rotationset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate" onchange="rotationset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate" onchange="rotationset()" ></p>';
-	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=10 onchange="transset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate" onchange="transset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"  onchange="transset()" ></p>';
+	ttctrnhtml='<p class="text_input"><img src="assets/translate.png" alt="translate" title="translate"> <input type="text" name="twtranslate" id="twtranslate" size=5 value=10 onchange="trotationset();teditset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreptranslate" onchange="trotationset();teditset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyotranslate" onchange="trotationset();teditset()" ></p>';
+	ttcrothtml='<p class="text_input"><img src="assets/rotate.png" alt="rotate" title="rotate"> <input type="text" name="twrotate" id="twrotate" size=5 value=10 onchange="rtransset();reditset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twreprotate" onchange="rtransset();reditset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyorotate"  onchange="rtransset();reditset()" ></p>';
 	ttcdirhtml='<p class="chk_radio_input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="rotdir" id="Clockwise"  checked="checked" onclick="CURRENTTWEEN.rotate.clkw=true" /><img src="assets/clock.png" alt="clockwise" title="clockwise">';
 	ttcdirhtml+='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="rotdir" id="Anticlockwise" onclick="CURRENTTWEEN.rotate.clkw=false" /><img src="assets/anti.png" alt="anti-clockwise" title="anti-clockwise"></p>'
 	ttcstyhtml='<p class="text_input"><img alt="line styles" title="line styles" src="assets/stylelines.png"> <input type="text" name="twstyles" id="twstyles" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepstyles">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyostyles"></p>';
@@ -2213,7 +2213,7 @@ function main()
 	ttcfclhtml='<p class="text_input"><img alt="fill colour" title="fill colour" id="colimg" src="assets/colfill.png"> <input type="text" name="twfillcol" id="twfillcol" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepfillcol">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyofillcol"></p>';
 	ttcgdfhtml='<p class="text_input"><img alt="gradient fill" title="gradient fill" id="gradimg" src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill"></p>';
 	ttcshdhtml='<p class="text_input"><img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad"></p>';
-	ttcedthtml='<p class="text_input"><img alt="edit" title="edit" src="assets/editlines.png"> <input type="text" name="twedit" id="twedit" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepedit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoedit"></p>';
+	ttcedthtml='<p class="text_input"><img alt="edit" title="edit" src="assets/editshapes.png"> <input type="text" name="twedit" id="twedit" size=5 value=10 onchange="erotationset();etransset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepedit" onchange="erotationset();etransset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoedit" onchange="erotationset();etransset()" ></p>';
  /* 
 	A=new Group();
 	A.members=["a","b","c"];
@@ -2983,7 +2983,7 @@ function main()
 		</p>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traces&nbsp;&nbsp;&nbsp;Yoyo&nbsp;&nbsp;&nbsp;Path</p>
 		<p class="text_input">
-			<img src="assets/editlines.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twacteditline">
+			<img src="assets/nodepath.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twacteditline">
 		</p>
 		<input type="button" id="twnpbutton" value=" Change " onclick="updateTweenPath(this)" OKnode=""/>
 		<input type="button" value=" Close " onclick="closedialogue(this)" />

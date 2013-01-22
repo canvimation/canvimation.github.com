@@ -427,8 +427,7 @@ function showNodePathList(nodein)
 	}
 	pathnode.addFixedPointMark();
 	pathnode.addCtrl1Mark();
-	pathnode.addCtrl2Mark();
-//nodein.nodepath.addTo($("tweenpathsstage"));		
+	pathnode.addCtrl2Mark();		
 	nodein.nodepath.draw();
 	nodein.nodepath.drawBezGuides();		
 	nodein.setNodePathBox();
@@ -1786,7 +1785,7 @@ function getTweenActives()
 	}
 }
 
-function rotationset()
+function trotationset()
 {
 	if(CURRENTTWEEN.rotate.active)
 	{
@@ -1799,7 +1798,20 @@ function rotationset()
 	}
 }
 
-function transset()
+function erotationset()
+{
+	if(CURRENTTWEEN.rotate.active)
+	{
+		$("twrotate").value=$("twedit").value;
+		$("twreprotate").value=$("twrepedit").value;
+		$("twyorotate").checked=$("twyoedit").checked;
+		CURRENTTWEEN.rotate.twtime=$("twedit").value;
+		CURRENTTWEEN.rotate.repeat=$("twrepedit").value;
+		CURRENTTWEEN.rotate.yoyo=$("twyoedit").checked;
+	}
+}
+
+function rtransset()
 {
 	if(CURRENTTWEEN.translate.active)
 	{
@@ -1809,6 +1821,45 @@ function transset()
 		CURRENTTWEEN.translate.twtime=$("twrotate").value;
 		CURRENTTWEEN.translate.repeat=$("twreprotate").value;
 		CURRENTTWEEN.translate.yoyo=$("twyorotate").checked;
+	}
+}
+
+function etransset()
+{
+	if(CURRENTTWEEN.translate.active)
+	{
+		$("twtranslate").value=$("twedit").value;
+		$("twreptranslate").value=$("twrepedit").value;
+		$("twyotranslate").checked=$("twyoedit").checked;
+		CURRENTTWEEN.translate.twtime=$("twedit").value;
+		CURRENTTWEEN.translate.repeat=$("twrepedit").value;
+		CURRENTTWEEN.translate.yoyo=$("twyoedit").checked;
+	}
+}
+
+function reditset()
+{
+	if(CURRENTTWEEN.edit.active)
+	{
+		$("twedit").value=$("twrotate").value;
+		$("twrepedit").value=$("twreprotate").value;
+		$("twyoedit").checked=$("twyorotate").checked;
+		CURRENTTWEEN.edit.twtime=$("twrotate").value;
+		CURRENTTWEEN.edit.repeat=$("twreprotate").value;
+		CURRENTTWEEN.edit.yoyo=$("twyorotate").checked;
+	}
+}
+
+function teditset()
+{
+	if(CURRENTTWEEN.edit.active)
+	{
+		$("twedit").value=$("twtranslate").value;
+		$("twrepedit").value=$("twreptranslate").value;
+		$("twyoedit").checked=$("twyotranslate").checked;
+		CURRENTTWEEN.edit.twtime=$("twtranslate").value;
+		CURRENTTWEEN.edit.repeat=$("twreptranslate").value;
+		CURRENTTWEEN.edit.yoyo=$("twyotranslate").checked;
 	}
 }
 
@@ -1823,6 +1874,7 @@ function setTimeAll()
 	tween.fillcolour.twtime=v;
 	tween.gradfill.twtime=v;
 	tween.shadow.twtime=v;
+	tween.edit.twtime=v;
 	tween.nodeTweening.twtime=v;
 	for(var name in tween.nodePaths)
 	{
@@ -1843,6 +1895,7 @@ function setRepAll()
 	tween.fillcolour.repeat=v;
 	tween.gradfill.repeat=v;
 	tween.shadow.repeat=v;
+	tween.edit.repeat=v;
 	tween.nodeTweening.repeat=v;
 	for(var name in tween.nodePaths)
 	{
@@ -1863,6 +1916,7 @@ function setYoAll()
 	tween.fillcolour.yoyo=v;
 	tween.gradfill.yoyo=v;
 	tween.shadow.yoyo=v;
+	tween.edit.yoyo=v;
 	tween.nodeTweening.yoyo=v;
 	for(var name in tween.nodePaths)
 	{
