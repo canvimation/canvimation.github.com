@@ -1118,10 +1118,8 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			while(node.point.x!="end")
 			{
 				nodes++;
-//$("msg").innerHTML+=node.shape.name+"...."+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";				
 				node=node.next;
-			}
-//$("msg").innerHTML+=shape.name+","+shape.arccentre.x+","+shape.arccentre.y+"<br><br>";			
+			}			
 			node=shape.path.next;
 			p=new Point(node.point.x+offset,node.point.y+offset);
 			n=new Node(p);
@@ -1151,8 +1149,6 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			carcend.corner=arcend.corner;
 			carcend.vertex=arcend.vertex;
 			carcend.shape=copy;
-//$("msg").innerHTML+="arcend...."+arcend.shape.name+"...."+arcend.point.x+","+arcend.point.y+","+arcend.ctrl1.x+","+arcend.ctrl1.y+","+arcend.ctrl2.x+","+arcend.ctrl2.y+"<br>";
-//$("msg").innerHTML+="carcend...."+carcend.shape.name+"...."+carcend.point.x+","+carcend.point.y+","+carcend.ctrl1.x+","+carcend.ctrl1.y+","+carcend.ctrl2.x+","+carcend.ctrl2.y+"<br><br>";						
 			copy.addNode(carcend);
 			carcend.insertNodeBefore(copy.bnode);
 			carcend.insertNodeBefore(copy.lnode);
@@ -1202,13 +1198,6 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			}
 			copy.arccentre.x=shape.arccentre.x+offset;
 			copy.arccentre.y=shape.arccentre.y+offset;
-/*node=copy.path.next;			
-while(node.point.x!="end")
-{
-$("msg").innerHTML+=node.shape.name+"...."+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
-node=node.next;				
-}
-$("msg").innerHTML+=copy.name+","+copy.arccentre.x+","+copy.arccentre.y+"<br><br>";		*/	
 		break
 		default :
 			var node=shape.path.next;

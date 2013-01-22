@@ -438,7 +438,7 @@ function showNodePathList(nodein)
 function prepareTweens()
 {
 	var twnode,stnode,start;
-	var p,c1,c2;
+	var c,p,c1,c2;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
 	if(shape.justfill && !copy.justfill)
@@ -572,6 +572,18 @@ function prepareTweens()
 	{
 		var EDtick=this.edit.twtime*1000;
 		var tick=0;
+		var p1;
+		var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
+		var ytranslate=copy.group.centreOfRotation.y-shape.group.centreOfRotation.y;  //y translation 
+		theta=copy.group.phi-shape.group.phi;
+		if(copy.group.phi<shape.group.phi)
+		{
+			theta=2*Math.PI-theta;
+		}			
+		if(!this.rotate.clkw)
+		{
+			theta=-(2*Math.PI-theta);
+		}
 		switch (shape.type)
 		{
 			case "rounded_rectangle":
@@ -598,10 +610,17 @@ function prepareTweens()
 			{
 				case "rounded_rectangle":
 					crnradius=shape.crnradius+tick*(copy.crnradius-shape.crnradius)/EDtick;
-					brcx=shape.btmrgtcrnr.x+tick*(copy.btmrgtcrnr.x-shape.btmrgtcrnr.x)/EDtick;
+					brcx=shape.btmrgtcrnr.x+tick*xtranslate/EDtick;
+					brcy=shape.btmrgtcrnr.y+tick*ytranslate/EDtick;
+					tlcx=shape.tplftcrnr.x+tick*xtranslate/EDtick;
+					tlcy=shape.tplftcrnr.y+tick*ytranslate/EDtick;
+					
+/*					brcx=shape.btmrgtcrnr.x+tick*(copy.btmrgtcrnr.x-shape.btmrgtcrnr.x)/EDtick;
 					brcy=shape.btmrgtcrnr.y+tick*(copy.btmrgtcrnr.y-shape.btmrgtcrnr.y)/EDtick;
 					tlcx=shape.tplftcrnr.x+tick*(copy.tplftcrnr.x-shape.tplftcrnr.x)/EDtick;
-					tlcy=shape.tplftcrnr.y+tick*(copy.tplftcrnr.y-shape.tplftcrnr.y)/EDtick;				
+					tlcy=shape.tplftcrnr.y+tick*(copy.tplftcrnr.y-shape.tplftcrnr.y)/EDtick;
+*/					
+					c=new Point(shape.group.centreOfRotation.x+xtranslate*tick/EDtick,shape.group.centreOfRotation.y+ytranslate*tick/EDtick); //centre of rotation 				
 					p=new Point(tlcx+crnradius,tlcy);
 					sp=new Point(tlcx+crnradius,tlcy);
 					node=shape.path.next;
@@ -618,13 +637,13 @@ function prepareTweens()
 					node=node.next;
 					twnode=new TweenNode(p,c1,c2);//right top
 					node.tweennodes.push(twnode);
-					p=new Point(p.x,brcy-crnradius);					
+					p=new Point(p.x,brcy-crnradius);	
 					node=node.next;
 					twnode=new TweenNode(p);//right bottom
 					node.tweennodes.push(twnode);
 					c1=new Point(p.x,p.y+crnradius*K);
 					p=new Point(brcx-crnradius,brcy);
-					c2=new Point(p.x+crnradius*K,p.y)
+					c2=new Point(p.x+crnradius*K,p.y);
 					node=node.next;
 					twnode=new TweenNode(p,c1,c2);//bottom right
 					node.tweennodes.push(twnode);
@@ -647,7 +666,38 @@ function prepareTweens()
 					c2=new Point(p.x-crnradius*K,p.y);
 					node=node.next;
 					twnode=new TweenNode(p,c1,c2);//top left again
-					node.tweennodes.push(twnode);			
+					node.tweennodes.push(twnode);
+					if(this.rotate.active)
+					{
+						node=shape.path.next;
+						while(node.point.x!="end")
+						{
+							twnode=node.tweennodes.pop();//$("msg").innerHTML+=twnode.point.x+","+twnode.point.y+"<br>";
+							p=twnode.point;
+							c1=twnode.ctrl1;
+							c2=twnode.ctrl2;
+							p.x-=c.x;
+							p.y-=c.y;
+							p1=p.pointRotate(shape.group.phi+theta*tick/EDtick);
+							p.x=p1.x+c.x;
+							p.y=p1.y+c.y;//$("msg").innerHTML+=p.x+","+p.y+"<br>";
+							if(c1.x!="non")
+							{
+								c1.x-=c.x;
+								c1.y-=c.y;
+								p1=c1.pointRotate(shape.group.phi+theta*tick/EDtick);
+								c1.x=p1.x+c.x;
+								c1.y=p1.y+c.y;
+								c2.x-=c.x;
+								c2.y-=c.y;
+								p1=c2.pointRotate(shape.group.phi+theta*tick/EDtick);
+								c2.x=p1.x+c.x;
+								c2.y=p1.y+c.y;
+							}
+							node.tweennodes.push(twnode);//$("msg").innerHTML+=twnode.point.x+","+twnode.point.y+"<br><br>";
+							node=node.next;
+						}
+					}			
 				break
 				case "arc":
 				break
@@ -1228,11 +1278,11 @@ function tweenplay()
 {
 	var shape=this.getShape();
 	if(!STOPCHECKING)
-	{//$("msg").innerHTML+=this.translate.ptr+","+this.rotate.ptr+","+this.gradfill.ptr+","+this.linegrads.length+","+this.gradfill.points.length+","+this.translate.length+"<br>";
+	{
 		var node=shape.path.next;
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
 		{
-			var tweennode=this.tweenshape.path.next;//$("msg").innerHTML+=node.ptr+"<br>";
+			var tweennode=this.tweenshape.path.next;
 			while(node.point.x!="end")
 			{
 				tweennode.point.x=node.tweennodes[node.ptr].point.x;
@@ -1299,14 +1349,13 @@ function tweenplay()
 				}
 			}
 		}
-		this.tweenshape.draw();
-//$("frontmarkerdrop").style.visibilty="visible";$("backstage").style.visibility="visible";showGradLine(this.tweenshape);		
+		this.tweenshape.draw();		
 		this.updateTweenPtrs();
 		var tween=this;
 		setTimeout(function() {tween.tweenplay()},50);
 	}
 	else
-	{//$("frontmarkerdrop").style.visibilty="visible";$("backstage").style.visibility="visible";showGradLine(this.tweenshape);
+	{
 		alert('Check completed');
 		$("twbuttons").style.visibility="visible";
 		$("checkdone").style.visibility="hidden";
@@ -1731,9 +1780,9 @@ function getTweenActives()
 	}
 	if(this.edit.active)
 	{
-		$("tweditfill").value=this.edit.twtime;
-		$("twrepeditfill").value=this.edit.repeat;
-		$("twyoeditfill").checked=this.edit.yoyo;	
+		$("twedit").value=this.edit.twtime;
+		$("twrepedit").value=this.edit.repeat;
+		$("twyoedit").checked=this.edit.yoyo;	
 	}
 }
 
