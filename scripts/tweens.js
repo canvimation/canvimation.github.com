@@ -567,7 +567,7 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		var EDtick=this.edit.twtime*1000;
 		var tick=0;
@@ -613,12 +613,6 @@ function prepareTweens()
 					brcy=shape.btmrgtcrnr.y+tick*ytranslate/EDtick;
 					tlcx=shape.tplftcrnr.x+tick*xtranslate/EDtick;
 					tlcy=shape.tplftcrnr.y+tick*ytranslate/EDtick;
-					
-/*					brcx=shape.btmrgtcrnr.x+tick*(copy.btmrgtcrnr.x-shape.btmrgtcrnr.x)/EDtick;
-					brcy=shape.btmrgtcrnr.y+tick*(copy.btmrgtcrnr.y-shape.btmrgtcrnr.y)/EDtick;
-					tlcx=shape.tplftcrnr.x+tick*(copy.tplftcrnr.x-shape.tplftcrnr.x)/EDtick;
-					tlcy=shape.tplftcrnr.y+tick*(copy.tplftcrnr.y-shape.tplftcrnr.y)/EDtick;
-*/					
 					c=new Point(shape.group.centreOfRotation.x+xtranslate*tick/EDtick,shape.group.centreOfRotation.y+ytranslate*tick/EDtick); //centre of rotation 				
 					p=new Point(tlcx+crnradius,tlcy);
 					sp=new Point(tlcx+crnradius,tlcy);
@@ -699,10 +693,115 @@ function prepareTweens()
 					}			
 				break
 				case "arc":
-				break
 				case "segment":
-				break
 				case "sector":
+					var radius=shape.radius+tick*(copy.radius-shape.radius)/EDtick;
+					var archeight=shape.archeight+tick*(copy.archeight-shape.archeight)/EDtick;
+					var sY=archeight/arcwidth; // ratio of height of ellipse to radius
+					var arccentrex=shape.arccentre.x+tick*xtranslate/EDtick;
+					var arccentrey=shape.arccentre.y+tick*ytranslate/EDtick;
+					var startAngleS=shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
+					var startAngleC=copy.path.next.getAngle();
+					var startAngle=startAngleS+tick*(startAngleC-startAngleS)/EDtick;
+					switch (shape.type)
+					{
+						case "arc":
+							var endAngleS=shape.path.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+							var endAngleC=copy.path.prev.getAngle();
+						break
+						case "segment":
+							var endAngleS=shape.path.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+							var endAngleC=copy.path.prev.prev.getAngle();
+						break
+						case "sector":
+							var endAngleS=shape.path.prev.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
+							var endAngleC=shape.path.prev.prev.prev.getAngle();
+						break
+					}
+					var endAngle=endAngleS+tick*(endAngleC-endAngleS)/EDtick;
+					if(endAngle>startAngle)
+					{
+						var theta=endAngle-startAngle;
+					}
+					else
+					{
+						var theta=2*Math.PI-(startAngle-endAngle)
+					}
+					var nodecountS=0;
+					node=shape.path.next;
+					while(node.point.x!="end")
+					{
+						nodecountS++;
+						node=node.next;
+					}
+					var nodecountC=0;
+					node=copy.path.next;
+					while(node.point.x!="end")
+					{
+						nodecountC++;
+						node=node.next;
+					}
+					var p=new Point(radius*Math.cos(startAngle),radius*Math.sin(startAngle));//
+					
+					twnode=new TweenNode(p); 
+					node.tweennodes.push(twnode);
+			
+					
+					
+			
+					var phi=0;//to break theta into an acute angle (psi) and multiples of PI/2 (phi)
+			
+					shape.bnode.removeNode();//remove right, bottom and left node as first arc is between 0 an 90 degrees
+					shape.lnode.removeNode();
+					shape.tnode.removeNode();
+					node=shape.path.next; //start node
+					var last=shape.path.prev;
+					p=new Point(radius,0); //set node on circle angle 0 degrees
+					node.setNode(p);
+					last.setNode(p);
+					node=node.next; //end node
+					if(theta>Math.PI/2)
+					{
+						phi=Math.PI/2;
+						shape.bnode.restoreNode(); 
+						shape.lnode.removeNode();
+						shape.tnode.removeNode();
+						p=new Point(0,radius); //set node on circle at 90 degrees
+						var c1=new Point(radius,radius*K);
+						var c2=new Point(radius*K,radius);
+						shape.bnode.setNode(p,c1,c2);
+					}
+					if(theta>Math.PI)
+					{
+						phi=Math.PI;
+						shape.lnode.restoreNode();
+						shape.tnode.removeNode();
+						p=new Point(-radius,0); //set node on circle at 180 degrees
+						c1=new Point(-radius*K,radius);
+						c2=new Point(-radius,radius*K);
+						shape.lnode.setNode(p,c1,c2);	
+					}
+					if(theta>3*Math.PI/2)
+					{
+						phi=3*Math.PI/2;
+						shape.tnode.restoreNode();
+						p=new Point(0,-radius); // set node on circle at 270 degrees
+						c1=new Point(-radius,-radius*K);
+						c2=new Point(-radius*K,-radius);
+						shape.tnode.setNode(p,c1,c2);
+					}
+					var psi=theta-phi;
+					var b=baseArcBez(radius,psi/2);
+					node.setNode(b.p2,b.c1,b.c2);
+					node.rotate(phi+psi/2);
+					var node=shape.path.next;
+					while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
+					{
+						node.rotate(startAngle);
+						node.scaleY(sY);
+						node.translate(-shape.arccentre.x,-shape.arccentre.y);				
+						node=node.next;
+					}
 				break
 			}
 			tick+=50;
@@ -1197,7 +1296,7 @@ function setTweenTimeBox()
 		ttcprphtml+=ttclclhtml;
 		ttcnum++;	
 	}
-	if(this.edit.active)
+	if(this.edit.active && !this.nodeTweening.active && !this.pointTweening)
 	{
 		ttcprphtml+=ttcedthtml;
 		ttcnum++;	
@@ -1725,7 +1824,7 @@ function setTweenActives()
 		this.gradfill.repeat=$("twrepgradfill").value;
 		this.gradfill.yoyo=$("twyogradfill").checked;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		this.edit.twtime=$("twedit").value;
 		this.edit.repeat=$("twrepedit").value;
@@ -1777,7 +1876,7 @@ function getTweenActives()
 		$("twrepgradfill").value=this.gradfill.repeat;
 		$("twyogradfill").checked=this.gradfill.yoyo;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		$("twedit").value=this.edit.twtime;
 		$("twrepedit").value=this.edit.repeat;
