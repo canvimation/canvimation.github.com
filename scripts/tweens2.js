@@ -17,10 +17,6 @@ function TweenNode(point,ctrl1,ctrl2)
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
 	}
-	
-	this.rotate=rotate;
-	this.scaleY=scaleY;
-	this.translate=translate;
 }
 
 function Tween(name)
@@ -34,7 +30,8 @@ function Tween(name)
 	this.nodePaths={} //list of paths between shape nodes and copy nodes
 	this.ctrl1paths={};
 	this.ctrl2paths={};
-	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translae and rotate both acitve must share twtime, repeat and yoyo
+	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translate and rotate both acitve must share twtime, repeat and yoyo
+alert(this.translate.twtime);
 	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0,clkw:true};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -76,6 +73,11 @@ function Tween(name)
 	this.transformTweeningPoints=transformTweeningPoints;
 	this.gradlinetransform=gradlinetransform;
 	this.betweenAngle=betweenAngle;
+	this.rotate=rotate;
+	this.scaleY=scaleY;
+	this.translate=translate;
+	
+	this.setTweenTimeBox();
 }
 
 function copytween(theatre)
@@ -380,7 +382,7 @@ function showNodePathList(nodein)
 	else
 	{
 		tween.setNodePaths();
-	}
+	}alert("DDD");
 	tween.setTweenTimeBox();
 	tween.nodeTweening.active=true;
 	if(!tween.pointTweening)
@@ -440,7 +442,7 @@ function showNodePathList(nodein)
 
 function prepareTweens()
 {
-	var twnode,stnode,start;
+	var twnode,stnode,start,newnode;
 	var c,p,c1,c2;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
@@ -571,7 +573,7 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		var EDtick=this.edit.twtime*1000;
 		var tick=0;
@@ -603,22 +605,6 @@ function prepareTweens()
 			case "arc":
 			case "segment":
 			case "sector":
-				var sYs=shape.archeight/shape.arcwidth; // ratio of height of ellipse to radius
-				node=shape.path.next;			
-				while(node.point.x!="end")
-				{
-					node.translate(shape.arccentre.x,shape.arccentre.y); //put origin at arccentre
-					node.scaleY(1/sYs); //scale ellipse to circle				
-					node=node.next;
-				}
-				var sYc=copy.archeight/copy.arcwidth; // ratio of height of ellipse to radius
-				node=copy.path.next;			
-				while(node.point.x!="end")
-				{
-					node.translate(copy.arccentre.x,copy.arccentre.y); //put origin at arccentre
-					node.scaleY(1/sYc); //scale ellipse to circle				
-					node=node.next;
-				}
 				var startAngleS=shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
 				var startAngleC=copy.path.next.getAngle();
 				switch (shape.type)
@@ -638,43 +624,11 @@ function prepareTweens()
 					case "sector":
 						var endnode=shape.path.prev.prev.prev;
 						var endAngleS=shape.path.prev.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
-						var endAngleC=copy.path.prev.prev.prev.getAngle();
+						var endAngleC=shape.path.prev.prev.prev.getAngle();
 						var extra=2; //two extra nodes, centre and end
 					break
 				}
-				if(endAngleS>startAngleS)
-				{
-					var thetaS=endAngleS-startAngleS;
-				}
-				else
-				{
-					var thetaS=2*Math.PI-(startAngleS-endAngleS)
-				}
-				if(endAngleC>startAngleC)
-				{
-					var thetaC=endAngleC-startAngleC;
-				}
-				else
-				{
-					var thetaC=2*Math.PI-(startAngleC-endAngleC)
-				}
-				node=shape.path.next;
-				while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
-				{
-					//node.rotate(startAngleS);
-					node.scaleY(sYs);
-					node.translate(-shape.arccentre.x,-shape.arccentre.y);				
-					node=node.next;
-				}
-				node=copy.path.next;
-				while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
-				{
-					//node.rotate(startAngleC);
-					node.scaleY(sYc);
-					node.translate(-copy.arccentre.x,-copy.arccentre.y);				
-					node=node.next;
-				}
-				var nodecountS=-extra; //nodecountS from startnode to endnode inclusive
+				var nodecountS=-extra; //nodecounts from startnode to endnode inclusive
 				node=shape.path.next;
 				while(node.point.x!="end")
 				{
@@ -690,7 +644,7 @@ function prepareTweens()
 				}
 				var nodediff=nodecountC-nodecountS;
 				var diff=nodediff;
-				stnode=shape.path.next;
+				stnode=start.path.next;
 				node=stnode.next;
 				while(diff>0)
 				{
@@ -707,15 +661,7 @@ function prepareTweens()
 				{
 					var zeros=1-nodediff;
 				}
-				node=shape.path.next;
-				while(node.point.x!="end")
-				{
-					node.tweennodes=[];
-					node.repeat=this.edit.repeat;
-					node.yoyo=this.edit.yoyo;
-					node=node.next;
-				}
-				var radius, archeight, sY, arccentrey, theta;			
+				var radius, archeight, sY, arccentrey, startAngle, endAngle;
 			break
 		}
 		while(tick<=EDtick)
@@ -727,7 +673,7 @@ function prepareTweens()
 					brcx=shape.btmrgtcrnr.x+tick*xtranslate/EDtick;
 					brcy=shape.btmrgtcrnr.y+tick*ytranslate/EDtick;
 					tlcx=shape.tplftcrnr.x+tick*xtranslate/EDtick;
-					tlcy=shape.tplftcrnr.y+tick*ytranslate/EDtick;					
+					tlcy=shape.tplftcrnr.y+tick*ytranslate/EDtick;
 					c=new Point(shape.group.centreOfRotation.x+xtranslate*tick/EDtick,shape.group.centreOfRotation.y+ytranslate*tick/EDtick); //centre of rotation 				
 					p=new Point(tlcx+crnradius,tlcy);
 					sp=new Point(tlcx+crnradius,tlcy);
@@ -810,35 +756,32 @@ function prepareTweens()
 				case "arc":
 				case "segment":
 				case "sector":
-					radius=shape.radius+tick*(copy.radius-shape.radius)/EDtick;
+					radius=shape.radius+tick*(copy.radius-shape.radius)/EDtick;$("msg").innerHTML=tick;
 					archeight=shape.archeight+tick*(copy.archeight-shape.archeight)/EDtick;
-					arcwidth=shape.arcwidth+tick*(copy.arcwidth-shape.arcwidth)/EDtick;
 					sY=archeight/arcwidth; // ratio of height of ellipse to radius
 					arccentrex=shape.arccentre.x+tick*xtranslate/EDtick;
 					arccentrey=shape.arccentre.y+tick*ytranslate/EDtick;
-					theta=thetaS+tick*(thetaC-thetaS)/EDtick;
 					startAngle=startAngleS+tick*(startAngleC-startAngleS)/EDtick;
-//$("msg").innerHTML+=startAngle*180/Math.PI+","+theta*180/Math.PI+"<br>";					
+					endAngle=endAngleS+tick*(endAngleC-endAngleS)/EDtick;
+					if(endAngle>startAngle)
+					{
+						var theta=endAngle-startAngle;
+					}
+					else
+					{
+						var theta=2*Math.PI-(startAngle-endAngle)
+					}
 					var phi=0;//to break theta into an acute angle (psi) and multiples of PI/2 (phi)
 					node=shape.path.next; //start node
-					
+					var last=shape.path.prev;
 					p=new Point(radius,0); //set node on circle angle 0 degrees
 					twnode=new TweenNode(p);
-					switch (shape.type)
+					node.tweennodes.push(twnode);
+					last.tweennodes.push(twnode);
+					for(var i=1;i<zeroes;i++)
 					{
-						case "segment":
-						case "sector":
-							var last=shape.path.prev;
-							last.tweennodes.push(twnode);
-						break
-					}
-					for(var i=0;i<zeros;i++)
-					{
-						p=new Point(radius,0);
-						twnode=new TweenNode(p);
-						node.tweennodes.push(twnode);
 						node=node.next;
-						
+						node.tweennodes.push(twnode);
 					}
 					if(theta>Math.PI/2)
 					{
@@ -873,30 +816,29 @@ function prepareTweens()
 						node.prev.prev.tweennodes.pop();
 						node.prev.prev.tweennodes.push(twnode_90);
 					}
-					var psi=theta-phi;//$("msg").innerHTML+=tick+","+(theta*180/Math.PI)+","+(phi*180/Math.PI)+","+(psi*180/Math.PI)+"<br>";
+					var psi=theta-phi;
 					var b=baseArcBez(radius,psi/2);
-					var twnode_theta=new TweenNode(b.p2,b.c1,b.c2);
+					node=node.next;
+					var twnode_theta=new TweenNode(b.p,b.c1,b.c2);
 					twnode_theta.rotate(phi+psi/2);
 					node.tweennodes.push(twnode_theta);
 					if(shape.type=="sector")
 					{
 						node=node.next;
 						var p_C=new Point(0,0);
-						twnode=new TweenNode(p_C);
+						twnode=new TweenNode(p);
 						node.tweennodes.push(twnode);
 					}
 					
 					var node=shape.path.next;
 					while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
 					{
-//$("msg").innerHTML+=Math.round(node.tweennodes[node.tweennodes.length-1].point.x)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.y)+"<br>";						
-						node.tweennodes[node.tweennodes.length-1].rotate(startAngle);
-						node.tweennodes[node.tweennodes.length-1].scaleY(sY);
-						node.tweennodes[node.tweennodes.length-1].translate(-arccentrex,-arccentrey);
-									
+						node.tweennodes[tweennodes.lenght-1].rotate(startAngle);
+						node.tweennodes[tweennodes.lenght-1].scaleY(sY);
+						node.tweennodes[tweennodes.lenght-1].translate(arccentrex,arccentrey);
+										
 						node=node.next;
 					}
-//$("msg").innerHTML+="<br>";								
 				break
 			}
 			tick+=50;
@@ -1325,7 +1267,7 @@ function setNodeTweening(chkbx)
 	else
 	{
 		CURRENTTWEEN.nodeTweening.active=false;
-	}
+	}alert("EEE");
 	CURRENTTWEEN.setTweenTimeBox();
 }
 
@@ -1339,7 +1281,7 @@ function updateTweenPath(okbut)
 }
 
 function setTweenTimeBox()
-{
+{alert(["CCC",this.translate.twtime,this.translate.repeat]);
 	if(this.pointTweening)
 	{
 		var ttccontenthtml=ttcfxdhtml+ttccfxhtml;
@@ -1391,7 +1333,7 @@ function setTweenTimeBox()
 		ttcprphtml+=ttclclhtml;
 		ttcnum++;	
 	}
-	if(this.edit.active)
+	if(this.edit.active && !this.nodeTweening.active && !this.pointTweening)
 	{
 		ttcprphtml+=ttcedthtml;
 		ttcnum++;	
@@ -1429,8 +1371,8 @@ function setTweenTimeBox()
 			{
 				$("Anticlockwise").checked="checked";
 			}
-	}
-	this.getTweenActives();			
+	}alert(["AAA",this.translate.twtime,this.translate.repeat]);
+	this.getTweenActives();	alert(["BBB",this.translate.twtime,this.translate.repeat]);		
 }
 
 function zeroTweenPtrs()
@@ -1879,7 +1821,7 @@ function setTweenActives()
 {
 	if(this.translate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
-		this.translate.twtime=$("twtranslate").value;
+		this.translate.twtime=$("twtranslate").value;alert("setttweenactive")
 		this.translate.repeat=$("twreptranslate").value;
 		this.translate.yoyo=$("twyotranslate").checked;
 	}
@@ -1919,7 +1861,7 @@ function setTweenActives()
 		this.gradfill.repeat=$("twrepgradfill").value;
 		this.gradfill.yoyo=$("twyogradfill").checked;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		this.edit.twtime=$("twedit").value;
 		this.edit.repeat=$("twrepedit").value;
@@ -1931,7 +1873,7 @@ function getTweenActives()
 {	
 	if(this.translate.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
-		$("twtranslate").value=this.translate.twtime;
+		$("twtranslate").value=this.translate.twtime;alert(["FFF",this.translate.twtime]);
 		$("twreptranslate").value=this.translate.repeat;
 		$("twyotranslate").checked=this.translate.yoyo;
 	}
@@ -1971,7 +1913,7 @@ function getTweenActives()
 		$("twrepgradfill").value=this.gradfill.repeat;
 		$("twyogradfill").checked=this.gradfill.yoyo;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		$("twedit").value=this.edit.twtime;
 		$("twrepedit").value=this.edit.repeat;
@@ -2012,7 +1954,7 @@ function rtransset()
 		$("twtranslate").value=$("twrotate").value;
 		$("twreptranslate").value=$("twreprotate").value;
 		$("twyotranslate").checked=$("twyorotate").checked;
-		CURRENTTWEEN.translate.twtime=$("twrotate").value;
+		CURRENTTWEEN.translate.twtime=$("twrotate").value;alert("rtrans");
 		CURRENTTWEEN.translate.repeat=$("twreprotate").value;
 		CURRENTTWEEN.translate.yoyo=$("twyorotate").checked;
 	}
@@ -2025,7 +1967,7 @@ function etransset()
 		$("twtranslate").value=$("twedit").value;
 		$("twreptranslate").value=$("twrepedit").value;
 		$("twyotranslate").checked=$("twyoedit").checked;
-		CURRENTTWEEN.translate.twtime=$("twedit").value;
+		CURRENTTWEEN.translate.twtime=$("twedit").value;alert("etrans");
 		CURRENTTWEEN.translate.repeat=$("twrepedit").value;
 		CURRENTTWEEN.translate.yoyo=$("twyoedit").checked;
 	}
