@@ -21,10 +21,11 @@ function draw()
 	
 	this.Canvas.ctx.beginPath();
 	var node=this.path.next;
-	this.Canvas.ctx.moveTo(node.point.x,node.point.y);
+	this.Canvas.ctx.moveTo(node.point.x,node.point.y);if(doit){$("msg").innerHTML+=node.point.x+","+node.point.y+"<br>"};
 	while (node.next.point.x !="end")
 	{
 	   	node=node.next;
+if(doit){$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>"};
 	   	if (node.vertex=="L")
 	   	{ 
 		    this.Canvas.ctx.lineTo(node.point.x,node.point.y);
@@ -34,7 +35,7 @@ function draw()
 			this.Canvas.ctx.bezierCurveTo(node.ctrl1.x,node.ctrl1.y,node.ctrl2.x,node.ctrl2.y,node.point.x,node.point.y)
 	   	}
 	} 
-
+if(doit){$("msg").innerHTML+="----------------------------<br>"};
 	if (!this.open) 
 	{
 		this.Canvas.ctx.closePath()

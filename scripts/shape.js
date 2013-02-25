@@ -1199,7 +1199,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			copy.arccentre.x=shape.arccentre.x+offset;
 			copy.arccentre.y=shape.arccentre.y+offset;
 		break
-		default :
+		default :		
 			var node=shape.path.next;
 			while(node.point.x!="end")
 			{

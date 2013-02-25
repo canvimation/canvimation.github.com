@@ -253,6 +253,24 @@ function checktween(tweendata)
 	clear($("boundarydrop"));
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
+	tween.tweenshape.bnode.removeNode();//will be restored as and when needed
+	tween.tweenshape.lnode.removeNode();
+	tween.tweenshape.tnode.removeNode();
+var node=shape.path.next;
+while(node.point.x!="end")
+{
+	$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
+	node=node.next;
+}
+$("msg").innerHTML+="<br>";	
+var tnode=tween.tweenshape.path.next;
+while(tnode.point.x!="end")
+{
+	$("msg").innerHTML+=tnode.point.x+","+tnode.point.y+","+tnode.ctrl1.x+","+tnode.ctrl1.y+","+tnode.ctrl2.x+","+tnode.ctrl2.y+"<br>";
+	tnode=tnode.next;
+}
+alert("stop");
+$("msg").innerHTML="";	
 	tween.tweenshape.draw();
 	node=shape.path.next;
 	tween.zeroTweenPtrs();
@@ -699,17 +717,10 @@ function prepareTweens()
 					node.insertNodeBefore(newnode);
 					diff--;
 				}
-				if(nodecountC>nodecountS)
-				{
-					var zeros=nodecountS+nodediff-1 
-				}
-				else
-				{
-					var zeros=1-nodediff;
-				}
+				zeros=nodediff+1;		
 				node=shape.path.next;
 				while(node.point.x!="end")
-				{
+				{					
 					node.tweennodes=[];
 					node.repeat=this.edit.repeat;
 					node.yoyo=this.edit.yoyo;
@@ -831,49 +842,57 @@ function prepareTweens()
 							var last=shape.path.prev;
 							last.tweennodes.push(twnode);
 						break
-					}
+					}				
 					for(var i=0;i<zeros;i++)
 					{
+//$("msg").innerHTML+=(i+1)+"<br>";
 						p=new Point(radius,0);
 						twnode=new TweenNode(p);
 						node.tweennodes.push(twnode);
 						node=node.next;
 						
 					}
+					//node is now node at end of arc
 					if(theta>Math.PI/2)
 					{
+						prev=node.prev;
 						phi=Math.PI/2;
 						var p_90=new Point(0,radius); //set node on circle at 90 degrees
 						var c1_90=new Point(radius,radius*K);
 						var c2_90=new Point(radius*K,radius);
 						var twnode_90=new TweenNode(p_90,c1_90,c2_90);
-						node.tweennodes.push(twnode_90);
+						prev.tweennodes.pop();
+						prev.tweennodes.push(twnode_90);
 					}
 					if(theta>Math.PI)
 					{
+						prev=node.next;
 						phi=Math.PI;
 						var p_180=new Point(-radius,0); //set node on circle at 180 degrees
 						var c1_180=new Point(-radius*K,radius);
 						var c2_180=new Point(-radius,radius*K);
 						var twnode_180=new TweenNode(p_180,c1_180,c2_180);
-						node.tweennodes.push(twnode_180);
-						node.prev.tweennodes.pop();
-						node.prev.tweennodes.push(twnode_90);	
+						prev.tweennodes.pop();
+						prev.tweennodes.push(twnode_180);
+						prev.prev.tweennodes.pop();
+						prev.prev.tweennodes.push(twnode_90);	
 					}
 					if(theta>3*Math.PI/2)
 					{
+						prev=node.next;
 						phi=3*Math.PI/2;
 						var p_270=new Point(0,-radius); // set node on circle at 270 degrees
 						var c1_270=new Point(-radius,-radius*K);
 						var c2_270=new Point(-radius*K,-radius);
 						var twnode_270=new TweenNode(p_270,c1_270,c2_270);
-						node.tweennodes.push(twnode_270);
-						node.prev.tweennodes.pop();
-						node.prev.tweennodes.push(twnode_180);
-						node.prev.prev.tweennodes.pop();
-						node.prev.prev.tweennodes.push(twnode_90);
+						prev.tweennodes.pop();
+						prev.tweennodes.push(twnode_270);
+						prev.prev.tweennodes.pop();
+						prev.prev.tweennodes.push(twnode_180);
+						prev.prev.prev.tweennodes.pop();
+						prev.prev.prev.tweennodes.push(twnode_90);
 					}
-					var psi=theta-phi;//$("msg").innerHTML+=tick+","+(theta*180/Math.PI)+","+(phi*180/Math.PI)+","+(psi*180/Math.PI)+"<br>";
+					var psi=theta-phi;//$("msg").innerHTML+=">>>"+tick+","+(theta*180/Math.PI)+","+(phi*180/Math.PI)+","+(psi*180/Math.PI)+"<br>";
 					var b=baseArcBez(radius,psi/2);
 					var twnode_theta=new TweenNode(b.p2,b.c1,b.c2);
 					twnode_theta.rotate(phi+psi/2);
@@ -887,13 +906,14 @@ function prepareTweens()
 					}
 					
 					var node=shape.path.next;
+//$("msg").innerHTML+=theta*180/Math.PI+"<br>............<br>";					
 					while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
-					{
-//$("msg").innerHTML+=Math.round(node.tweennodes[node.tweennodes.length-1].point.x)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.y)+"<br>";						
+					{						
+					
 						node.tweennodes[node.tweennodes.length-1].rotate(startAngle);
 						node.tweennodes[node.tweennodes.length-1].scaleY(sY);
 						node.tweennodes[node.tweennodes.length-1].translate(-arccentrex,-arccentrey);
-									
+//$("msg").innerHTML+=(node.tweennodes.length-1)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.x)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.y)+"<br>";										
 						node=node.next;
 					}
 //$("msg").innerHTML+="<br>";								
@@ -901,6 +921,26 @@ function prepareTweens()
 			}
 			tick+=50;
 		}
+/*$("msg").innerHTML+="__________________________________________________________<br>";	
+node=shape.path.next;
+L=	node.tweennodes.length	;
+//for(xx=0;xx<L;xx++)
+{node=shape.path.next;
+			while(node.point.x!="end")
+			{
+//				tweennode.point.x=node.tweennodes[node.ptr].point.x;
+//				tweennode.point.y=node.tweennodes[node.ptr].point.y;
+//$("msg").innerHTML+=xx+","+Math.round(node.tweennodes[xx].point.x)+","+Math.round(node.tweennodes[xx].point.y)+"<br>";					
+//				tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
+//				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
+//				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
+//				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
+
+//				node=node.next;
+//				tweennode=tweennode.next;
+			}
+//$("msg").innerHTML+="<br>";				
+//}	*/	
 	}
 }
 
@@ -1465,6 +1505,7 @@ function zeroTweenPtrs()
 		node.counter=0;
 		node=node.next;
 	}
+doit=true;	
 }
 
 function tweenplay()
@@ -1475,15 +1516,22 @@ function tweenplay()
 		var node=shape.path.next;
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
 		{
+//$("msg").innerHTML+="__________________________________________________________<br>";			
 			var tweennode=this.tweenshape.path.next;
 			while(node.point.x!="end")
 			{
 				tweennode.point.x=node.tweennodes[node.ptr].point.x;
 				tweennode.point.y=node.tweennodes[node.ptr].point.y;
+//$("msg").innerHTML+=tweennode.vertex;				
+//$("msg").innerHTML+=Math.round(node.tweennodes[node.ptr].point.x)+","+Math.round(node.tweennodes[node.ptr].point.y)+"<br>";					
 				tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
 				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
 				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
 				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
+				if(tweennode.ctrl1.x!="non" && tweennode.vertex=="L")
+				{
+					tweennode.vertex="B";
+				}
 				node=node.next;
 				tweennode=tweennode.next;
 			}
