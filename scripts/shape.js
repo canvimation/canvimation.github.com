@@ -81,10 +81,8 @@ function setNode(point,ctrl1,ctrl2)
 	this.point.y=point.y;
 	if (arguments.length>1)
 	{
-		this.ctrl1.x=ctrl1.x;
-		this.ctrl1.y=ctrl1.y;
-		this.ctrl2.x=ctrl2.x;
-		this.ctrl2.y=ctrl2.y;
+		this.ctrl1=ctrl1;
+		this.ctrl2=ctrl2;
 		this.vertex="B";
 	}
 }
@@ -577,22 +575,22 @@ function drawEnd(cursor)
 				start.addPointMark();
 				arcend.addPointMark();				
 			}
-			point=new Point(0,0);
+			point=new Point(start.point.x,start.point.y);
 			this.bnode=new Node(point);//node for 90 degrees
 			arcend.insertNodeBefore(this.bnode);
-			point=new Point(0,0);
+			point=new Point(start.point.x,start.point.y);
 			this.lnode=new Node(point);//node for 180 degrees
 			arcend.insertNodeBefore(this.lnode);
-			point=new Point(0,0);
+			point=new Point(start.point.x,start.point.y);
 			this.tnode=new Node(point);//node for 270 degrees
 			arcend.insertNodeBefore(this.tnode);
-			this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
-			this.lnode.removeNode();//will be restored as and when needed
-			this.tnode.removeNode();
+			//this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
+			//this.lnode.removeNode();//will be restored as and when needed
+			//this.tnode.removeNode();
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
 			this.radius=this.arcwidth;
-			this.setCorners();
+			this.setCorners();			
 		break
 		case "freeform":
 			var last=this.path.prev;
@@ -1035,7 +1033,6 @@ function shapecopy(offset)
 function makeCopy(shape,offset,theatre,STORE,COLLECTION) 
 {
 	var p,n,c1,c2;
-	var non=new Point("non","non");
 	if(theatre.id=="shapestage")
 	{
 		var name="Shape"+(SCOUNT++);
@@ -1085,151 +1082,48 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 			copy.colorStops[i][j]=shape.colorStops[i][j];
 		}
 	}
+	var node=shape.path.next;
+	while(node.point.x!="end")
+	{
+		p=new Point(node.point.x+offset,node.point.y+offset);
+		if(node.ctrl1.x=="non")
+		{
+			c1=new Point("non","non");;
+		}
+		else
+		{
+			c1=new Point(node.ctrl1.x+offset,node.ctrl1.y+offset);
+		}
+		if(node.ctrl2.x=="non")
+		{
+			c2=new Point("non","non");;
+		}
+		else
+		{
+			c2=new Point(node.ctrl2.x+offset,node.ctrl2.y+offset);
+		}
+		n=new Node(p,c1,c2);
+		n.corner=node.corner;
+		n.vertex=node.vertex;
+		n.shape=copy;
+		copy.addNode(n);
+		node=node.next;
+	}
 	switch (copy.type)
 	{
 		case "arc":
 		case "sector":
 		case "segment":
-			p=new Point(shape.bnode.point.x+offset,shape.bnode.point.y+offset);
-   			c1=new Point(shape.bnode.ctrl1.x+offset,shape.bnode.ctrl1.y+offset);
-   			c2=new Point(shape.bnode.ctrl2.x+offset,shape.bnode.ctrl2.y+offset);
-   			copy.bnode=new Node(p,c1,c2);
-   			copy.bnode.vertex=shape.bnode.vertex;
-   			copy.bnode.corner=shape.bnode.corner;
-   			copy.bnode.shape=copy;
-   			p=new Point(shape.lnode.point.x+offset,shape.lnode.point.y+offset);
-   			c1=new Point(shape.lnode.ctrl1.x+offset,shape.lnode.ctrl1.y+offset);
-   			c2=new Point(shape.lnode.ctrl2.x+offset,shape.lnode.ctrl2.y+offset);
-   			copy.lnode=new Node(p,c1,c2);
-   			copy.lnode.vertex=shape.lnode.vertex;
-   			copy.lnode.corner=shape.lnode.corner;
-   			copy.lnode.shape=copy;
-   			p=new Point(shape.tnode.point.x+offset,shape.tnode.point.y+offset);
-   			c1=new Point(shape.tnode.ctrl1.x+offset,shape.tnode.ctrl1.y+offset);
-   			c2=new Point(shape.tnode.ctrl2.x+offset,shape.tnode.ctrl2.y+offset);
-   			copy.tnode=new Node(p,c1,c2);
-   			copy.tnode.vertex=shape.tnode.vertex;
-   			copy.tnode.corner=shape.tnode.corner;
-   			copy.tnode.shape=copy;
-   			copy.arcwidth=Math.abs(copy.btmrgtcrnr.x-copy.tplftcrnr.x);
-			copy.archeight=Math.abs(copy.btmrgtcrnr.y-copy.tplftcrnr.y);
-			var nodes=0
-			var node=shape.path.next;
-			while(node.point.x!="end")
-			{
-				nodes++;
-				node=node.next;
-			}			
-			node=shape.path.next;
-			p=new Point(node.point.x+offset,node.point.y+offset);
-			n=new Node(p);
-			n.corner=node.corner;
-			n.vertex=node.vertex;
-			n.shape=copy;
-			copy.addNode(n);
-			switch (copy.type)
-			{
-				case "arc":
-					var arcend=shape.path.prev;
-				break
-				case "segment":
-					var arcend=shape.path.prev.prev;
-					nodes--;
-				break
-				case "sector":
-					var arcend=shape.path.prev.prev.prev;
-					nodes--;
-					nodes--;
-				break
-			}
-			p=new Point(arcend.point.x+offset,arcend.point.y+offset);
-			c1=new Point(arcend.ctrl1.x+offset,arcend.ctrl1.y+offset);
-			c2=new Point(arcend.ctrl2.x+offset,arcend.ctrl2.y+offset);
-			var carcend=new Node(p,c1,c2);
-			carcend.corner=arcend.corner;
-			carcend.vertex=arcend.vertex;
-			carcend.shape=copy;
-			copy.addNode(carcend);
-			carcend.insertNodeBefore(copy.bnode);
-			carcend.insertNodeBefore(copy.lnode);
-			carcend.insertNodeBefore(copy.tnode);
-			copy.bnode.removeNode();//will be restored as and when needed
-			copy.lnode.removeNode();
-			copy.tnode.removeNode();
-			switch (copy.type)
-			{
-				case "segment":
-					node=shape.path.prev;
-					p=new Point(node.point.x+offset,node.point.y+offset);
-					n=new Node(p);
-					n.corner=node.corner;
-					n.vertex=node.vertex;
-					n.shape=copy;
-					copy.addNode(n);
-				break
-				case "sector":
-					node=shape.path.prev.prev;//add centre
-					p=new Point(node.point.x+offset,node.point.y+offset);
-					n=new Node(p);
-					n.corner=node.corner;
-					n.vertex=node.vertex;
-					n.shape=copy;
-					copy.addNode(n);
-					node=shape.path.prev;
-					p=new Point(node.point.x+offset,node.point.y+offset);
-					n=new Node(p);
-					n.corner=node.corner;
-					n.vertex=node.vertex;
-					n.shape=copy;
-					copy.addNode(n);
-				break
-			}
-			if(nodes>2)
-			{
-				copy.bnode.restoreNode();
-			}
-			if(nodes>3)
-			{
-				copy.lnode.restoreNode();
-			}
-			if(nodes>4)
-			{
-				copy.tnode.restoreNode();
-			}
+			node=copy.path.next;
+			copy.bnode=node.next;
+			copy.lnode=node.next.next;
+			copy.tnode=node.next.next.next;
+			copy.arcwidth=shape.arcwidth;
+			copy.archeight=shape.archeight;
+			copy.radius=shape.radius;
 			copy.arccentre.x=shape.arccentre.x+offset;
 			copy.arccentre.y=shape.arccentre.y+offset;
-		break
-		default :		
-			var node=shape.path.next;
-			while(node.point.x!="end")
-			{
-				p=new Point(node.point.x+offset,node.point.y+offset);
-				if(node.ctrl1.x=="non")
-				{
-					c1=non;
-				}
-				else
-				{
-					c1=new Point(node.ctrl1.x+offset,node.ctrl1.y+offset);
-				}
-				if(node.ctrl2.x=="non")
-				{
-					c2=non;
-				}
-				else
-				{
-					c2=new Point(node.ctrl2.x+offset,node.ctrl2.y+offset);
-				}
-				n=new Node(p,c1,c2);
-				n.corner=node.corner;
-				n.vertex=node.vertex;
-				n.shape=copy;
-				copy.addNode(n);
-				node=node.next;
-			}
-		break
-	}
-	
+	}	
 	copy.addTo(theatre);
 	return copy;
 }
@@ -1267,7 +1161,6 @@ function aligntop()
 				}
 				node=node.next;
 			}
-			//shape.sctop=shape.btop;
 			shape.tplftcrnr.y+=dmnt;
 			shape.btmrgtcrnr.y+=dmnt;
 			shape.lineGrad[1]+=dmnt;

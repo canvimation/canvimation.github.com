@@ -201,8 +201,6 @@ function drawBoundary()
 										shape.radGrad[1] +=dy;
 										shape.radGrad[3] +=dx;
 										shape.radGrad[4] +=dy;
-										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
-										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
 										shape.arccentre.x+=dx;
 										shape.arccentre.y+=dy;
 										shape.draw();
@@ -262,14 +260,15 @@ function drawBoundary()
 									for(var name in shapeNames)
 									{
 										shape=shapeNames[name];
-										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
-										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
+										//shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
+										//shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
 										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
-										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
-										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre.x=shape.arcwidth/2;
-										shape.arccentre.y=shape.archeight/2;
+										shape.arcwidth*=scale;//Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
+										shape.archeight*=scale;//Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre.x=group.left+(shape.arccentre.x-group.left)*scale;
+										shape.arccentre.y=group.top+(shape.arccentre.y-group.top)*scale;
+										shape.radius*=scale;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
@@ -343,21 +342,16 @@ function drawBoundary()
 									for(var name in shapeNames)
 									{
 										shape=shapeNames[name];
-										shape.tplftcrnr.x=group.left+(shape.tplftcrnr.x-group.left)*scale;
 										shape.btmrgtcrnr.x=group.left+(shape.btmrgtcrnr.x-group.left)*scale;
-										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
-										shape.arccentre.x=shape.arcwidth/2;
+										shape.arcwidth*=scale;
+										shape.radius*=scale;
+										shape.arccentre.x=group.left+(shape.arccentre.x-group.left)*scale;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()
 										}
 										else
 										{
-
-											//selected[s].scx=scx;
-											//selected[s].scy=scy;
-											//selected[s].sox=selected[s].bleft+(selected[s].ox-selected[s].bleft)*scx;
-											//selected[s].soy=selected[s].btop+(selected[s].oy-selected[s].btop)*scy;
 											node=shape.path.next;
 											while(node.point.x!="end")
 											{
@@ -422,11 +416,10 @@ function drawBoundary()
 									for(var name in shapeNames)
 									{
 										shape=shapeNames[name];
-										shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
+										//shape.tplftcrnr.y=group.top+(shape.tplftcrnr.y-group.top)*scale;
 										shape.btmrgtcrnr.y=group.top+(shape.btmrgtcrnr.y-group.top)*scale;
-										shape.arcwidth=Math.abs(shape.btmrgtcrnr.x-shape.tplftcrnr.x);
-										shape.archeight=Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
-										shape.arccentre.y=shape.archeight/2;
+										shape.archeight*=scale;//Math.abs(shape.btmrgtcrnr.y-shape.tplftcrnr.y);
+										shape.arccentre.y=group.top+(shape.arccentre.y-group.top)*scale;
 										if (shape.type=='rounded_rectangle')
 										{
 											shape.setRndRect()

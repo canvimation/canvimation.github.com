@@ -92,8 +92,6 @@ function removeMark()
 
 function updatePointNode(cursor)
 { 
-	//cursor.x=Math.round(cursor.x/xgrid)*xgrid;
-	//cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	switch (this.shape.type)
 	{
 		case "line":
@@ -106,8 +104,8 @@ function updatePointNode(cursor)
 		case "sector":
 			//all angles to be measured clockwise about centre from +ve x axis;
 			var radius=this.shape.radius;
-			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius
-			var node=this.shape.path.next;			
+			var sY=this.shape.archeight/this.shape.arcwidth; // ratio of height of ellipse to radius			
+			var node=this.shape.path.next;		
 			while(node.point.x!="end")
 			{
 				node.translate(this.shape.arccentre.x,this.shape.arccentre.y); //put origin at arccentre
@@ -115,19 +113,21 @@ function updatePointNode(cursor)
 				node=node.next;
 			}
 			var alpha=arctan((cursor.y-this.shape.arccentre.y)/sY,cursor.x-this.shape.arccentre.x);//angle cursor makes
-			var p=new Point(radius*Math.cos(alpha),radius*Math.sin(alpha));//point cursor would be at on C
-			this.setNode(p); //put current node on circle C using point found from cursor
-			
+			var p=new Point(radius*Math.cos(alpha),radius*Math.sin(alpha));//point cursor would be at on circumference of circle
+			this.setNode(p); //put current node on circle C using point found from cursor			
 			var startAngle=this.shape.path.next.getAngle(); //find angle of first node in node list between 0 and 2PI
 			switch (this.shape.type)
 			{
 				case "arc":
+					var arcend=this.shape.path.prev;
 					var endAngle=this.shape.path.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 				break
 				case "segment":
+					var arcend=this.shape.path.prev.prev;
 					var endAngle=this.shape.path.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 				break
 				case "sector":
+					var arcend=this.shape.path.prev.prev.prev;
 					var endAngle=this.shape.path.prev.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 				break
 			}
@@ -141,41 +141,58 @@ function updatePointNode(cursor)
 			}
 			
 			var phi=0;//to break theta into an acute angle (psi) and multiples of PI/2 (phi)
-			
-			this.shape.bnode.removeNode();//remove right, bottom and left node as first arc is between 0 an 90 degrees
-			this.shape.lnode.removeNode();
-			this.shape.tnode.removeNode();
+			p=new Point(radius,0);// set right, bottom and left node for 0 degrees
+			this.shape.bnode.setNode(p);
+			this.shape.bnode.vertex="L";
+			p=new Point(radius,0);
+			this.shape.lnode.setNode(p);
+			this.shape.lnode.vertex="L";
+			p=new Point(radius,0);
+			this.shape.tnode.setNode(p);
+			this.shape.tnode.vertex="L"; 
 			node=this.shape.path.next; //start node
-			var last=this.shape.path.prev;
-			p=new Point(radius,0); //set node on circle angle 0 degrees
+			p=new Point(radius,0); //set start node on circle angle 0 degrees
 			node.setNode(p);
-			last.setNode(p);
-			node=node.next; //end node
-			if(theta>Math.PI/2)
+			switch (this.shape.type)
+			{
+				case "segment":
+				case "sector":
+					var last=this.shape.path.prev;
+					p=new Point(radius,0);
+					last.setNode(p);
+				break
+			}
+			if(Math.PI/2<theta && theta<=Math.PI)
 			{
 				phi=Math.PI/2;
-				this.shape.bnode.restoreNode(); 
-				this.shape.lnode.removeNode();
-				this.shape.tnode.removeNode();
 				p=new Point(0,radius); //set node on circle at 90 degrees
 				var c1=new Point(radius,radius*K);
 				var c2=new Point(radius*K,radius);
-				this.shape.bnode.setNode(p,c1,c2);
+				this.shape.tnode.setNode(p,c1,c2);
 			}
-			if(theta>Math.PI)
+			if(Math.PI<theta && theta<=3*Math.PI/2)
 			{
 				phi=Math.PI;
-				this.shape.lnode.restoreNode();
-				this.shape.tnode.removeNode();
+				p=new Point(0,radius); //set node on circle at 90 degrees
+				var c1=new Point(radius,radius*K);
+				var c2=new Point(radius*K,radius);
+				this.shape.lnode.setNode(p,c1,c2);
 				p=new Point(-radius,0); //set node on circle at 180 degrees
 				c1=new Point(-radius*K,radius);
 				c2=new Point(-radius,radius*K);
-				this.shape.lnode.setNode(p,c1,c2);	
+				this.shape.tnode.setNode(p,c1,c2);	
 			}
 			if(theta>3*Math.PI/2)
 			{
 				phi=3*Math.PI/2;
-				this.shape.tnode.restoreNode();
+				p=new Point(0,radius); //set node on circle at 90 degrees
+				var c1=new Point(radius,radius*K);
+				var c2=new Point(radius*K,radius);
+				this.shape.bnode.setNode(p,c1,c2);
+				p=new Point(-radius,0); //set node on circle at 180 degrees
+				c1=new Point(-radius*K,radius);
+				c2=new Point(-radius,radius*K);
+				this.shape.lnode.setNode(p,c1,c2);
 				p=new Point(0,-radius); // set node on circle at 270 degrees
 				c1=new Point(-radius,-radius*K);
 				c2=new Point(-radius*K,-radius);
@@ -183,8 +200,8 @@ function updatePointNode(cursor)
 			}
 			var psi=theta-phi;
 			var b=baseArcBez(radius,psi/2);
-			node.setNode(b.p2,b.c1,b.c2);
-			node.rotate(phi+psi/2);
+			arcend.setNode(b.p2,b.c1,b.c2);
+			arcend.rotate(phi+psi/2);
 			var node=this.shape.path.next;
 			while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
 			{
@@ -196,7 +213,7 @@ function updatePointNode(cursor)
 			this.shape.draw();
 			$(this.mark.id).style.left=(this.point.x-2)+"px";
 			$(this.mark.id).style.top=(this.point.y-2)+"px";
-			this.shape.setCorners();
+			this.shape.setCorners();			
 		break
 		case "curve":
 			var dx=cursor.x-this.point.x;

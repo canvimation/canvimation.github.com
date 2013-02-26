@@ -11,11 +11,13 @@ function TweenNode(point,ctrl1,ctrl2)
 	{
 		this.ctrl1=ctrl1;
 		this.ctrl2=ctrl2;
+		this.vertex="B";
 	}
 	else
 	{
 		this.ctrl1=new Point("non","non");
 		this.ctrl2=new Point("non","non");
+		this.vertex="L"
 	}
 	
 	this.rotate=rotate;
@@ -253,26 +255,19 @@ function checktween(tweendata)
 	clear($("boundarydrop"));
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
-	tween.tweenshape.bnode.removeNode();//will be restored as and when needed
-	tween.tweenshape.lnode.removeNode();
-	tween.tweenshape.tnode.removeNode();
-var node=shape.path.next;
+	tween.tweenshape.draw();
+/*stnode=shape.path.next;	
+for(var i=0;i<stnode.tweennodes.length;i++)
+{	
+node=shape.path.next;
 while(node.point.x!="end")
 {
-	$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
+	$("msg").innerHTML+=node.point.x+","+node.point.y+"......"+node.tweennodes[i].point.x+","+node.tweennodes[i].point.y+","+node.tweennodes[i].ctrl1.x+","+node.tweennodes[i].ctrl1.y+","+node.tweennodes[i].ctrl2.x+","+node.tweennodes[i].ctrl2.y+"<br>";
 	node=node.next;
 }
-$("msg").innerHTML+="<br>";	
-var tnode=tween.tweenshape.path.next;
-while(tnode.point.x!="end")
-{
-	$("msg").innerHTML+=tnode.point.x+","+tnode.point.y+","+tnode.ctrl1.x+","+tnode.ctrl1.y+","+tnode.ctrl2.x+","+tnode.ctrl2.y+"<br>";
-	tnode=tnode.next;
+$("msg").innerHTML+="^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>";
 }
-alert("stop");
-$("msg").innerHTML="";	
-	tween.tweenshape.draw();
-	node=shape.path.next;
+alert("stop"); */
 	tween.zeroTweenPtrs();
 	tween.tweenplay();
 }
@@ -642,19 +637,19 @@ function prepareTweens()
 				switch (shape.type)
 				{
 					case "arc":
-						var endnode=shape.path.prev;
+						var arcend=shape.path.prev;
 						var endAngleS=shape.path.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 						var endAngleC=copy.path.prev.getAngle();
 						var extra=0;
 					break
 					case "segment":
-						var endnode=shape.path.prev.prev;
+						var arcend=shape.path.prev.prev;
 						var endAngleS=shape.path.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 						var endAngleC=copy.path.prev.prev.getAngle();
 						var extra=1 //one extra node at end
 					break
 					case "sector":
-						var endnode=shape.path.prev.prev.prev;
+						var arcend=shape.path.prev.prev.prev;
 						var endAngleS=shape.path.prev.prev.prev.getAngle();//find angle of last node on arc between 0 and 2PI
 						var endAngleC=copy.path.prev.prev.prev.getAngle();
 						var extra=2; //two extra nodes, centre and end
@@ -679,7 +674,6 @@ function prepareTweens()
 				node=shape.path.next;
 				while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
 				{
-					//node.rotate(startAngleS);
 					node.scaleY(sYs);
 					node.translate(-shape.arccentre.x,-shape.arccentre.y);				
 					node=node.next;
@@ -687,37 +681,10 @@ function prepareTweens()
 				node=copy.path.next;
 				while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
 				{
-					//node.rotate(startAngleC);
 					node.scaleY(sYc);
 					node.translate(-copy.arccentre.x,-copy.arccentre.y);				
 					node=node.next;
 				}
-				var nodecountS=-extra; //nodecountS from startnode to endnode inclusive
-				node=shape.path.next;
-				while(node.point.x!="end")
-				{
-					nodecountS++;
-					node=node.next;
-				}
-				var nodecountC=-extra;
-				node=copy.path.next;
-				while(node.point.x!="end")
-				{
-					nodecountC++;
-					node=node.next;
-				}
-				var nodediff=nodecountC-nodecountS;
-				var diff=nodediff;
-				stnode=shape.path.next;
-				node=stnode.next;
-				while(diff>0)
-				{
-					p=new Point(stnode.point.x,stnode.point.y);
-					newnode=new Node(p);
-					node.insertNodeBefore(newnode);
-					diff--;
-				}
-				zeros=nodediff+1;		
 				node=shape.path.next;
 				while(node.point.x!="end")
 				{					
@@ -726,7 +693,7 @@ function prepareTweens()
 					node.yoyo=this.edit.yoyo;
 					node=node.next;
 				}
-				var radius, archeight, sY, arccentrey, theta;			
+				var radius, archeight, sY, arccentrex, arccentrey, theta;			
 			break
 		}
 		while(tick<=EDtick)
@@ -791,7 +758,7 @@ function prepareTweens()
 						node=shape.path.next;
 						while(node.point.x!="end")
 						{
-							twnode=node.tweennodes.pop();//$("msg").innerHTML+=twnode.point.x+","+twnode.point.y+"<br>";
+							twnode=node.tweennodes.pop();
 							p=twnode.point;
 							c1=twnode.ctrl1;
 							c2=twnode.ctrl2;
@@ -813,7 +780,7 @@ function prepareTweens()
 								c2.x=p1.x+c.x;
 								c2.y=p1.y+c.y;
 							}
-							node.tweennodes.push(twnode);//$("msg").innerHTML+=twnode.point.x+","+twnode.point.y+"<br><br>";
+							node.tweennodes.push(twnode);
 							node=node.next;
 						}
 					}			
@@ -828,31 +795,17 @@ function prepareTweens()
 					arccentrex=shape.arccentre.x+tick*xtranslate/EDtick;
 					arccentrey=shape.arccentre.y+tick*ytranslate/EDtick;
 					theta=thetaS+tick*(thetaC-thetaS)/EDtick;
-					startAngle=startAngleS+tick*(startAngleC-startAngleS)/EDtick;
-//$("msg").innerHTML+=startAngle*180/Math.PI+","+theta*180/Math.PI+"<br>";					
+					startAngle=startAngleS+tick*(startAngleC-startAngleS)/EDtick;					
 					var phi=0;//to break theta into an acute angle (psi) and multiples of PI/2 (phi)
-					node=shape.path.next; //start node
-					
-					p=new Point(radius,0); //set node on circle angle 0 degrees
-					twnode=new TweenNode(p);
-					switch (shape.type)
+					node=shape.path.next;
+					while(node.point.x!="end")// set all nodes for 0 degrees
 					{
-						case "segment":
-						case "sector":
-							var last=shape.path.prev;
-							last.tweennodes.push(twnode);
-						break
-					}				
-					for(var i=0;i<zeros;i++)
-					{
-//$("msg").innerHTML+=(i+1)+"<br>";
 						p=new Point(radius,0);
 						twnode=new TweenNode(p);
 						node.tweennodes.push(twnode);
 						node=node.next;
-						
-					}
-					//node is now node at end of arc
+					}		
+					node=arcend;
 					if(theta>Math.PI/2)
 					{
 						prev=node.prev;
@@ -866,7 +819,7 @@ function prepareTweens()
 					}
 					if(theta>Math.PI)
 					{
-						prev=node.next;
+						prev=node.prev;
 						phi=Math.PI;
 						var p_180=new Point(-radius,0); //set node on circle at 180 degrees
 						var c1_180=new Point(-radius*K,radius);
@@ -874,12 +827,16 @@ function prepareTweens()
 						var twnode_180=new TweenNode(p_180,c1_180,c2_180);
 						prev.tweennodes.pop();
 						prev.tweennodes.push(twnode_180);
+						var p_90=new Point(0,radius); //set node on circle at 90 degrees
+						var c1_90=new Point(radius,radius*K);
+						var c2_90=new Point(radius*K,radius);
+						var twnode_90=new TweenNode(p_90,c1_90,c2_90);
 						prev.prev.tweennodes.pop();
 						prev.prev.tweennodes.push(twnode_90);	
 					}
 					if(theta>3*Math.PI/2)
 					{
-						prev=node.next;
+						prev=node.prev;
 						phi=3*Math.PI/2;
 						var p_270=new Point(0,-radius); // set node on circle at 270 degrees
 						var c1_270=new Point(-radius,-radius*K);
@@ -887,8 +844,16 @@ function prepareTweens()
 						var twnode_270=new TweenNode(p_270,c1_270,c2_270);
 						prev.tweennodes.pop();
 						prev.tweennodes.push(twnode_270);
+						var p_180=new Point(-radius,0); //set node on circle at 180 degrees
+						var c1_180=new Point(-radius*K,radius);
+						var c2_180=new Point(-radius,radius*K);
+						var twnode_180=new TweenNode(p_180,c1_180,c2_180);
 						prev.prev.tweennodes.pop();
 						prev.prev.tweennodes.push(twnode_180);
+						var p_90=new Point(0,radius); //set node on circle at 90 degrees
+						var c1_90=new Point(radius,radius*K);
+						var c2_90=new Point(radius*K,radius);
+						var twnode_90=new TweenNode(p_90,c1_90,c2_90);
 						prev.prev.prev.tweennodes.pop();
 						prev.prev.prev.tweennodes.push(twnode_90);
 					}
@@ -896,51 +861,28 @@ function prepareTweens()
 					var b=baseArcBez(radius,psi/2);
 					var twnode_theta=new TweenNode(b.p2,b.c1,b.c2);
 					twnode_theta.rotate(phi+psi/2);
+					node.tweennodes.pop();
 					node.tweennodes.push(twnode_theta);
 					if(shape.type=="sector")
 					{
 						node=node.next;
 						var p_C=new Point(0,0);
 						twnode=new TweenNode(p_C);
+						node.tweennodes.pop();
 						node.tweennodes.push(twnode);
-					}
-					
-					var node=shape.path.next;
-//$("msg").innerHTML+=theta*180/Math.PI+"<br>............<br>";					
+					}				
+					var node=shape.path.next;				
 					while(node.point.x!="end") //rotate to start angle, scale and translate back to correct position;
-					{						
-					
+					{
 						node.tweennodes[node.tweennodes.length-1].rotate(startAngle);
 						node.tweennodes[node.tweennodes.length-1].scaleY(sY);
 						node.tweennodes[node.tweennodes.length-1].translate(-arccentrex,-arccentrey);
-//$("msg").innerHTML+=(node.tweennodes.length-1)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.x)+","+Math.round(node.tweennodes[node.tweennodes.length-1].point.y)+"<br>";										
 						node=node.next;
-					}
-//$("msg").innerHTML+="<br>";								
+					}						
 				break
 			}
 			tick+=50;
 		}
-/*$("msg").innerHTML+="__________________________________________________________<br>";	
-node=shape.path.next;
-L=	node.tweennodes.length	;
-//for(xx=0;xx<L;xx++)
-{node=shape.path.next;
-			while(node.point.x!="end")
-			{
-//				tweennode.point.x=node.tweennodes[node.ptr].point.x;
-//				tweennode.point.y=node.tweennodes[node.ptr].point.y;
-//$("msg").innerHTML+=xx+","+Math.round(node.tweennodes[xx].point.x)+","+Math.round(node.tweennodes[xx].point.y)+"<br>";					
-//				tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
-//				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
-//				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
-//				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
-
-//				node=node.next;
-//				tweennode=tweennode.next;
-			}
-//$("msg").innerHTML+="<br>";				
-//}	*/	
 	}
 }
 
@@ -1505,7 +1447,7 @@ function zeroTweenPtrs()
 		node.counter=0;
 		node=node.next;
 	}
-doit=true;	
+//doit=true;	
 }
 
 function tweenplay()
@@ -1513,25 +1455,20 @@ function tweenplay()
 	var shape=this.getShape();
 	if(!STOPCHECKING)
 	{
-		var node=shape.path.next;
+		
 		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
 		{
-//$("msg").innerHTML+="__________________________________________________________<br>";			
+			var node=shape.path.next;		
 			var tweennode=this.tweenshape.path.next;
 			while(node.point.x!="end")
 			{
 				tweennode.point.x=node.tweennodes[node.ptr].point.x;
-				tweennode.point.y=node.tweennodes[node.ptr].point.y;
-//$("msg").innerHTML+=tweennode.vertex;				
-//$("msg").innerHTML+=Math.round(node.tweennodes[node.ptr].point.x)+","+Math.round(node.tweennodes[node.ptr].point.y)+"<br>";					
+				tweennode.point.y=node.tweennodes[node.ptr].point.y;			
 				tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
 				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
 				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
 				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
-				if(tweennode.ctrl1.x!="non" && tweennode.vertex=="L")
-				{
-					tweennode.vertex="B";
-				}
+				tweennode.vertex=node.tweennodes[node.ptr].vertex;
 				node=node.next;
 				tweennode=tweennode.next;
 			}

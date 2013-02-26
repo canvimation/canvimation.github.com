@@ -35,7 +35,7 @@ if(doit){$("msg").innerHTML+=node.point.x+","+node.point.y+","+node.ctrl1.x+","+
 			this.Canvas.ctx.bezierCurveTo(node.ctrl1.x,node.ctrl1.y,node.ctrl2.x,node.ctrl2.y,node.point.x,node.point.y)
 	   	}
 	} 
-if(doit){$("msg").innerHTML+="----------------------------<br>"};
+if(doit){$("msg").innerHTML+="------------------------------------------------------------------------------------------------------------<br>"};
 	if (!this.open) 
 	{
 		this.Canvas.ctx.closePath()
