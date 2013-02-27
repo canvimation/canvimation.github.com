@@ -44,6 +44,7 @@ function Node(point,ctrl1,ctrl2)
 	
 	//methods
 	this.setNode=setNode;
+	this.addFixedPointMark=addFixedPointMark;
 	this.addPointMark=addPointMark;
 	this.addCtrl1Mark=addCtrl1Mark;
 	this.addCtrl2Mark=addCtrl2Mark;
@@ -61,6 +62,17 @@ function Node(point,ctrl1,ctrl2)
 	this.scaleY=scaleY;
 	this.translate=translate;
 	this.copyNodeTo=copyNodeTo;
+	this.setNodePathBox=setNodePathBox;
+	this.pathTweeningPoints=pathTweeningPoints;
+	this.translateTweeningPoints=translateTweeningPoints;
+	this.transformTweeningPoints=transformTweeningPoints;
+	this.setCtrlPaths=setCtrlPaths;
+	this.setCtrl1Path=setCtrl1Path;
+	this.setCtrl2Path=setCtrl2Path;
+	this.linx=linx;
+	this.liny=liny;
+	this.bezx=bezx;
+	this.bezy=bezy;	
 }
 
 function setNode(point,ctrl1,ctrl2)
@@ -69,10 +81,8 @@ function setNode(point,ctrl1,ctrl2)
 	this.point.y=point.y;
 	if (arguments.length>1)
 	{
-		this.ctrl1.x=ctrl1.x;
-		this.ctrl1.y=ctrl1.y;
-		this.ctrl2.x=ctrl2.x;
-		this.ctrl2.y=ctrl2.y;
+		this.ctrl1=ctrl1;
+		this.ctrl2=ctrl2;
 		this.vertex="B";
 	}
 }
@@ -199,6 +209,8 @@ function Shape(name,title,open,editable,type,STORE)
    	this.shadowColor = [0, 0, 0, 0];
    	this.zIndex=0;
    	this.crnradius=10;
+   	this.arccentre=new Point(0,0);
+   	this.radius=10;
    	p=new Point("end","end");
    	this.path=new Node(p);
    	this.path.next=this.path;
@@ -225,7 +237,10 @@ function Shape(name,title,open,editable,type,STORE)
 	this.addAllMarks=addAllMarks; 
 	this.ShapeToText=ShapeToText; 
 	this.drawjustpath=drawjustpath;
-	this.shapeHTML=shapeHTML;	
+	this.shapeHTML=shapeHTML;
+	this.getLengths=getLengths;
+	this.setRndRect=setRndRect;	
+this.drawcrnrs=drawcrnrs;	
    	return this;
    	
 }
@@ -289,6 +304,12 @@ function setPath(cursor)
 			point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
 			node=new Node(point);
 			this.addNode(node);
+			if(this.type=="sector"  || this.type=="segment")
+			{
+				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
+				node=new Node(point);
+				this.addNode(node);
+			}
 			if(this.type=="sector")
 			{
 				point=new Point(Math.round(cursor.x/xgrid)*xgrid,Math.round((cursor.y)/ygrid)*ygrid);
@@ -364,7 +385,7 @@ function drawGuide(cursor)
 	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
 	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	this.btmrgtcrnr.x=cursor.x;
-	this.btmrgtcrnr.y=cursor.y; 
+	this.btmrgtcrnr.y=cursor.y;
 	switch (this.type)
 	{
 		case "line":
@@ -457,7 +478,6 @@ function drawGuide(cursor)
 			node.setNode(p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
-			this.setRndRect=setRndRect;
 			this.setRndRect();
 		break
 		case "triangle":
@@ -494,7 +514,7 @@ while(node.point.x!="end")
 	$("msg").innerHTML+=node.vertex+","+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
 	node=node.next;
 }
-$("msg").innerHTML+="........................<br>";		
+$("msg").innerHTML+="........................<br>";	
 	this.draw();
 }
 
@@ -544,12 +564,7 @@ function drawEnd(cursor)
 			this.archeight=this.btmrgtcrnr.y-this.tplftcrnr.y;
 			this.arccentre=new Point(this.tplftcrnr.x,this.btmrgtcrnr.y);
 			var start=this.path.next;
-			var last=this.path.prev;
-			if(this.type=="sector")
-			{
-				last.setNode(this.arccentre);
-				last=last.prev;
-			}			
+			var arcend=start.next;
 			if(this.arcwidth*this.archeight<0)//swap nodes so that going clockwise start node is before last node
 			{
 				this.arcwidth=Math.abs(this.arcwidth);
@@ -560,27 +575,25 @@ function drawEnd(cursor)
 				var cs1=new Point(last.ctrl2.x,last.ctrl2.y);
 				var cs2=new Point(last.ctrl1.x,last.ctrl1.y);
 				start.setNode(sp);
-				last.setNode(lp,cs1,cs2);
+				arcend.setNode(lp,cs1,cs2);
 				start.removeMark();
-				last.removeMark(0);
+				arcend.removeMark(0);
 				start.addPointMark();
-				last.addPointMark();				
+				arcend.addPointMark();				
 			}
-			point=new Point(0,0);
+			point=new Point(start.point.x,start.point.y);
 			this.bnode=new Node(point);//node for 90 degrees
-			last.insertNodeBefore(this.bnode);
-			point=new Point(0,0);
+			arcend.insertNodeBefore(this.bnode);
+			point=new Point(start.point.x,start.point.y);
 			this.lnode=new Node(point);//node for 180 degrees
-			last.insertNodeBefore(this.lnode);
-			point=new Point(0,0);
+			arcend.insertNodeBefore(this.lnode);
+			point=new Point(start.point.x,start.point.y);
 			this.tnode=new Node(point);//node for 270 degrees
-			last.insertNodeBefore(this.tnode);
-			this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
-			this.lnode.removeNode();//will be restored as and when needed
-			this.tnode.removeNode();
+			arcend.insertNodeBefore(this.tnode);
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
-			this.setCorners();
+			this.radius=this.arcwidth;
+			this.setCorners();			
 		break
 		case "freeform":
 			var last=this.path.prev;
@@ -609,7 +622,8 @@ function drawEnd(cursor)
 			{
 				node.addFullMarks();
 				node=node.next;  
-			}this.draw();
+			}
+			this.draw();
 			this.drawBezGuides();
 			DEFAULTKEYDOWN
 			this.setCorners();
@@ -635,6 +649,7 @@ function drawEnd(cursor)
 		showTools();
 		setTools(false);
    	}
+this.drawBezGuides()   	
 }
 
 function setRndRect() //bottom right corner
@@ -843,13 +858,14 @@ function showTools()
 	$('sname').style.visibility='inherit'
 	$('colfill').style.visibility='inherit';
 	$('gradfill').style.visibility='inherit';
-	$('shadow').style.visibility='inherit';	
+	$('shadow').style.visibility='inherit';		
 	if(DELETES.length>0) {$('lundo').style.visibility='inherit';}
 }
 
 function setTools(scene)
 {
 	$("tracktext").innerHTML="&nbsp;&nbsp;Select just one shape.";
+	$("tweentext").innerHTML="&nbsp;&nbsp;Select just one shape.";
 	var agroup=false;
 	var boundary,members,memlen;
 	var slctd=$("boundarydrop").childNodes;
@@ -881,6 +897,7 @@ function setTools(scene)
 		if(memlen==1)
 		{
 			$("tracktext").innerHTML="&nbsp;&nbsp;From selected shape.";
+			$("tweentext").innerHTML="&nbsp;&nbsp;From selected shape.";
 			for(var name in members)
 			{
 				shape=members[name];
@@ -976,7 +993,7 @@ function hideTools()
 	$('shadow').style.visibility='hidden';
 	$('sname').style.visibility='hidden';
 	$('pointsbox').style.visibility='hidden';
-	$('lundo').style.visibility='hidden';	
+	$('lundo').style.visibility='hidden';
 	close_p_content();
 }
 
@@ -1020,7 +1037,6 @@ function shapecopy(offset)
 function makeCopy(shape,offset,theatre,STORE,COLLECTION) 
 {
 	var p,n,c1,c2;
-	var non=new Point("non","non");
 	if(theatre.id=="shapestage")
 	{
 		var name="Shape"+(SCOUNT++);
@@ -1042,12 +1058,12 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	copy.shadowBlur  = shape.shadowBlur ;
 	copy.zIndex = shape.zIndex;
 	copy.crnradius = shape.crnradius;
-
 	p=new Point(shape.tplftcrnr.x+offset,shape.tplftcrnr.y+offset);
 	copy.tplftcrnr=p; //coordinates of top left of boundary box;
 	p=new Point(shape.btmrgtcrnr.x+offset,shape.btmrgtcrnr.y+offset);
 	copy.btmrgtcrnr=p; //coordinates of bottom right of boundary box;
 	copy.lineWidth=shape.lineWidth;
+	copy.radius=shape.radius;
 	for(var i=0; i<4;i++)
 	{
 		copy.fillStyle[i]=shape.fillStyle[i];
@@ -1076,7 +1092,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 		p=new Point(node.point.x+offset,node.point.y+offset);
 		if(node.ctrl1.x=="non")
 		{
-			c1=non;
+			c1=new Point("non","non");;
 		}
 		else
 		{
@@ -1084,7 +1100,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 		}
 		if(node.ctrl2.x=="non")
 		{
-			c2=non;
+			c2=new Point("non","non");;
 		}
 		else
 		{
@@ -1097,6 +1113,21 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 		copy.addNode(n);
 		node=node.next;
 	}
+	switch (copy.type)
+	{
+		case "arc":
+		case "sector":
+		case "segment":
+			node=copy.path.next;
+			copy.bnode=node.next;
+			copy.lnode=node.next.next;
+			copy.tnode=node.next.next.next;
+			copy.arcwidth=shape.arcwidth;
+			copy.archeight=shape.archeight;
+			copy.radius=shape.radius;
+			copy.arccentre.x=shape.arccentre.x+offset;
+			copy.arccentre.y=shape.arccentre.y+offset;
+	}	
 	copy.addTo(theatre);
 	return copy;
 }
@@ -1134,7 +1165,6 @@ function aligntop()
 				}
 				node=node.next;
 			}
-			//shape.sctop=shape.btop;
 			shape.tplftcrnr.y+=dmnt;
 			shape.btmrgtcrnr.y+=dmnt;
 			shape.lineGrad[1]+=dmnt;
@@ -1362,5 +1392,52 @@ function addAllMarks()
 			node.addFullMarks();
 		}
 		node=node.next;
+	}
+}
+
+function getLengths()
+{
+	this.length=0; //cummulative total of section lengths
+	this.lengths=[]; //array of section lengths
+	var sl;  //section length
+	path=this.path;
+	var node=path.next; // from first node
+	while(node.next.point.x!="end")  // check if next node is a point or end node, if point calculate length of path between nodes
+	{
+	  switch (node.next.vertex)
+	  {
+		case 'B':
+			sl = curvelength(node);
+			
+		break
+		case 'L':
+			sl=linelength(node);
+		break
+	  }
+	  this.length += sl;
+	  this.lengths.push(sl);
+	  node=node.next;
+	};
+}
+
+function setNodePathBox()
+{
+	$("twnpbutton").OKnode=this;
+	$("tweditline").value=this.nodepath.nodeTweening.twtime;
+	$("twrepeditline").value=this.nodepath.nodeTweening.repeat;
+	$("twyoeditline").checked=this.nodepath.nodeTweening.yoyo;
+	$("twacteditline").checked=this.nodepath.nodeTweening.active;
+	$("tweenpathsbox").style.visibility="visible";
+}
+
+function oldbetweenAngle(a,b,t)  // b start angle, a end angle, t parameter between 0 and 1
+{
+	if(Math.abs(a-b)<=Math.PI)
+	{
+		return (b+t*(a-b));
+	}
+	else
+	{
+		return ((2*Math.PI+b-t*(2*Math.PI-(a-b))) % (2*Math.PI));
 	}
 }
