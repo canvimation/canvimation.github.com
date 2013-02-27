@@ -256,18 +256,6 @@ function checktween(tweendata)
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
 	tween.tweenshape.draw();
-/*stnode=shape.path.next;	
-for(var i=0;i<stnode.tweennodes.length;i++)
-{	
-node=shape.path.next;
-while(node.point.x!="end")
-{
-	$("msg").innerHTML+=node.point.x+","+node.point.y+"......"+node.tweennodes[i].point.x+","+node.tweennodes[i].point.y+","+node.tweennodes[i].ctrl1.x+","+node.tweennodes[i].ctrl1.y+","+node.tweennodes[i].ctrl2.x+","+node.tweennodes[i].ctrl2.y+"<br>";
-	node=node.next;
-}
-$("msg").innerHTML+="^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>";
-}
-alert("stop"); */
 	tween.zeroTweenPtrs();
 	tween.tweenplay();
 }
@@ -1373,7 +1361,7 @@ function setTweenTimeBox()
 		ttcprphtml+=ttclclhtml;
 		ttcnum++;	
 	}
-	if(this.edit.active)
+	if(this.edit.active && !this.nodeTweening.active && !this.pointTweening)
 	{
 		ttcprphtml+=ttcedthtml;
 		ttcnum++;	
@@ -1904,7 +1892,7 @@ function setTweenActives()
 		this.gradfill.repeat=$("twrepgradfill").value;
 		this.gradfill.yoyo=$("twyogradfill").checked;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		this.edit.twtime=$("twedit").value;
 		this.edit.repeat=$("twrepedit").value;
@@ -1956,7 +1944,7 @@ function getTweenActives()
 		$("twrepgradfill").value=this.gradfill.repeat;
 		$("twyogradfill").checked=this.gradfill.yoyo;	
 	}
-	if(this.edit.active)
+	if(this.edit.active  && !this.nodeTweening.active && !this.pointTweening)
 	{
 		$("twedit").value=this.edit.twtime;
 		$("twrepedit").value=this.edit.repeat;

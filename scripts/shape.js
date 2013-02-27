@@ -478,7 +478,6 @@ function drawGuide(cursor)
 			node.setNode(p,c1,c2);//back at top
 		break
 		case "rounded_rectangle":
-			//this.setRndRect=setRndRect;
 			this.setRndRect();
 		break
 		case "triangle":
@@ -509,6 +508,13 @@ function drawGuide(cursor)
 			node.setNode(p);
 		break
 	}
+node=this.path.next;
+while(node.point.x!="end")
+{
+	$("msg").innerHTML+=node.vertex+","+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
+	node=node.next;
+}
+$("msg").innerHTML+="........................<br>";	
 	this.draw();
 }
 
@@ -584,9 +590,6 @@ function drawEnd(cursor)
 			point=new Point(start.point.x,start.point.y);
 			this.tnode=new Node(point);//node for 270 degrees
 			arcend.insertNodeBefore(this.tnode);
-			//this.bnode.removeNode();//remove bottom, left and top node as first arc is between 0 an 90 degrees
-			//this.lnode.removeNode();//will be restored as and when needed
-			//this.tnode.removeNode();
 			this.arcwidth=Math.abs(this.arcwidth);//possibility of both being negative
 			this.archeight=Math.abs(this.archeight);
 			this.radius=this.arcwidth;
@@ -646,6 +649,7 @@ function drawEnd(cursor)
 		showTools();
 		setTools(false);
    	}
+this.drawBezGuides()   	
 }
 
 function setRndRect() //bottom right corner
