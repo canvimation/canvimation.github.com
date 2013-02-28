@@ -643,8 +643,7 @@ function drawEnd(cursor)
 		hideTools();
 		showTools();
 		setTools(false);
-   	}
-this.drawBezGuides()   	
+   	}  	
 }
 
 function setRndRect() //bottom right corner

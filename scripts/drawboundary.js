@@ -86,10 +86,9 @@ function checkBoundary(shiftdown,cursor)
 		}
 		
 	}
-	if(TWEENEDIT && (CURRENTTWEEN.nodeTweening.active || CURRENTTWEEN.pointTweening))
+	if(TWEENEDIT && CURRENTTWEEN.nodeTweening.active)
 	{
 		CURRENTTWEEN.nodeTweening.active=false;
-		CURRENTTWEEN.pointTweening=false;
 		CURRENTTWEEN.setTweenTimeBox();
 	}
 	if(TWEENEDIT  && shapefound)

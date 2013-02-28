@@ -32,11 +32,10 @@ function Tween(name)
 	this.shapes={};
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
-	//this.tweens=[];  //list of shapes forming Tween
 	this.nodePaths={} //list of paths between shape nodes and copy nodes
 	this.ctrl1paths={};
 	this.ctrl2paths={};
-	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translae and rotate both acitve must share twtime, repeat and yoyo
+	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translate and rotate both acitve must share twtime, repeat and yoyo
 	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0,clkw:true};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -368,7 +367,6 @@ function setNodePaths()
 function closetweenpathsbox()
 {
 	CURRENTTWEEN.nodeTweening.active=false;
-	CURRENTTWEEN.pointTweening=false;
 	CURRENTTWEEN.setTweenTimeBox();
 	clear($("tweenpathsstage"));
 	clear($("markerdrop"));
@@ -1471,7 +1469,10 @@ function tweenplay()
 				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
 				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
 				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
-				tweennode.vertex=node.tweennodes[node.ptr].vertex;
+				if(this.edit.active) 
+				{
+					tweennode.vertex=node.tweennodes[node.ptr].vertex;
+				}
 				node=node.next;
 				tweennode=tweennode.next;
 			}
