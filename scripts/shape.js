@@ -81,8 +81,10 @@ function setNode(point,ctrl1,ctrl2)
 	this.point.y=point.y;
 	if (arguments.length>1)
 	{
-		this.ctrl1=ctrl1;
-		this.ctrl2=ctrl2;
+		this.ctrl1.x=ctrl1.x;
+		this.ctrl1.y=ctrl1.y;
+		this.ctrl2.x=ctrl2.x;
+		this.ctrl2.y=ctrl2.y;
 		this.vertex="B";
 	}
 }
