@@ -312,8 +312,8 @@ function addAllToStage(theatre)
 
 function startNodePaths()
 {
-	clear($("tweenpathsstage"));
 	var shape=this.getShape();
+	clear($("tweenpathsstage"));
 	var copy=this.copy.getShape();
 	var node=shape.path.next;
 	var copynode=copy.path.next;
@@ -1366,17 +1366,30 @@ function updateTweenPath(okbut)
 
 function setTweenTimeBox()
 {
-	if(this.pointTweening)
+	var shape=this.getShape();
+	if(shape.type=="arc" || shape.type=="segment" || shape.type=="sector" || shape.type=="rounded_rectangle")
 	{
-		var ttccontenthtml=ttcfxdhtml+ttccfxhtml;
+		var ttccontenthtml=ttcfxdhtml;
+		var rigid=true;
+		var ttheight=250;
 	}
 	else
 	{
-		var ttccontenthtml=ttcfxdhtml+ttccathtml;
+		var ttccontenthtml=ttcfxdhtml+ttcrgdhtml;
+		var rigid=false;
+		var ttheight=300;
+		if(this.pointTweening)
+		{
+			ttccontenthtml+=ttccfxhtml;
+		}
+		else
+		{
+			ttccontenthtml+=ttccathtml;
+		}
 	}
 	var ttcprphtml="";
 	var ttcnum=0;
-	var ttheight=300;
+	
 	if(this.translate.active && !this.nodeTweening.active && !this.pointTweening)
 	{
 		ttcprphtml+=ttctrnhtml;
@@ -1437,7 +1450,7 @@ function setTweenTimeBox()
 	$("defaulttime").value=this.nodeTweening.twtime;
 	$("defaultrepeats").value=this.nodeTweening.repeat;
 	$("defaultyoyo").checked=this.nodeTweening.yoyo;
-	if(!this.pointTweening)
+	if(!this.pointTweening  && !rigid)
 	{
 		$("twnodetween").checked=this.nodeTweening.active;
 	}
