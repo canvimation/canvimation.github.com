@@ -41,6 +41,7 @@ function Tween(name)
 	this.linecolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.fillcolour={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.gradfill={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
+	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.edit={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0};
 	this.linegrads=[];
 	this.radgrads=[];
@@ -482,6 +483,22 @@ function prepareTweens()
 		copy.justfill=false;
 		this.gradfill.active=true;
 	}
+	if(shape.shadow && !copy.shadow)
+	{
+		copy.shadow=false;
+   		copy.shadowOffsetX = 0;   
+   		copy.shadowOffsetY = 0;   
+   		copy.shadowBlur = 0;   
+   		copy.shadowColor = [255, 255, 255, 0];
+	}
+	if(!shape.shadow && copy.shadow)
+	{
+		shape.shadow=false;
+   		shape.shadowOffsetX = 0;   
+   		shape.shadowOffsetY = 0;   
+   		shape.shadowBlur = 0;   
+   		shape.shadowColor = [255, 255, 255, 0];
+	}
 	var node=shape.path.next;
 	var copynode=copy.path.next;
 	if(this.nodeTweening.active)
@@ -582,6 +599,29 @@ function prepareTweens()
 		{
 			templs=shape.lineWidth+tick*(copy.lineWidth-shape.lineWidth)/LStick;
 			this.linestyles.points.push(templs);
+			tick+=50;
+		}
+	}
+	if(this.shadow.active)
+	{
+		var SHtick=this.shadow.twtime*1000;
+		var tick=0;
+		this.shadow.points=[];
+		var tempsh;
+		while(tick<=SHtick)
+		{
+			tempsh={
+					shox:parseInt(shape.shadowOffsetX)+tick*(parseInt(copy.shadowOffsetX)-parseInt(shape.shadowOffsetX))/SHtick,
+					shoy:parseInt(shape.shadowOffsetY)+tick*(parseInt(copy.shadowOffsetY)-parseInt(shape.shadowOffsetY))/SHtick,
+					sblr:parseInt(shape.shadowBlur)+tick*(parseInt(copy.shadowBlur)-parseInt(shape.shadowBlur))/SHtick,
+					shclr:[
+							parseInt(shape.shadowColor[0])+tick*(parseInt(copy.shadowColor[0])-parseInt(shape.shadowColor[0]))/SHtick,
+							parseInt(shape.shadowColor[1])+tick*(parseInt(copy.shadowColor[1])-parseInt(shape.shadowColor[1]))/SHtick,
+							parseInt(shape.shadowColor[2])+tick*(parseInt(copy.shadowColor[2])-parseInt(shape.shadowColor[2]))/SHtick,
+							parseInt(shape.shadowColor[3])+tick*(parseInt(copy.shadowColor[3])-parseInt(shape.shadowColor[3]))/SHtick,
+						  ]
+					}
+			this.shadow.points.push(tempsh);
 			tick+=50;
 		}
 	}
@@ -1530,6 +1570,19 @@ function tweenplay()
 					this.tweenshape.colorStops[c][i]=Math.round(colstops[c][i]);
 				}
 			}
+		}
+		if(this.shadow.active)
+		{
+			this.tweenshape.shadow=true;
+			var shobj=this.shadow.points[this.shadow.ptr];
+			this.tweenshape.shadowOffsetX=shobj.shox;
+			this.tweenshape.shadowOffsetY=shobj.shoy;
+			this.tweenshape.shadowBlur=shobj.sblr;
+			for(var i=0;i<4;i++)
+			{
+				this.tweenshape.shadowColor[i]=Math.round(shobj.shclr[i]);$("msg").innerHTML+=this.tweenshape.shadowColor[i]+",";
+			}
+			$("msg").innerHTML+="<br>";
 		}
 		this.tweenshape.draw();		
 		this.updateTweenPtrs();
