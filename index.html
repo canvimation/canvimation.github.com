@@ -2986,10 +2986,10 @@ function main()
 			<img src="assets/nodepath.png" alt="edit path" title="edit path" > <input type="text" name="tweditline" id="tweditline" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoeditline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twacteditline">
 		</p>
 		<input type="button" id="twnpbutton" value=" Change " onclick="updateTweenPath(this)" OKnode=""/>
-		<input type="button" value=" Close " onclick="closedialogue(this)" />
+		<input type="button" value=" Close " onclick="closetweenpathsbox();closedialogue(this)" />
 	</div>
 	<div id='tweenpathshead' class='head'>&nbsp; Corner Tweens
-		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+		<img alt="" src='assets/x.png' onclick='closetweenpathsbox();closedialogue(this)'/>
     	<img alt="" src='assets/up.png' onclick='updialogue(this,"tweenpathscontent")'/>
 	</div>
 </div>

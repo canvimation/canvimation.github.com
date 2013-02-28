@@ -510,13 +510,6 @@ function drawGuide(cursor)
 			node.setNode(p);
 		break
 	}
-node=this.path.next;
-while(node.point.x!="end")
-{
-	$("msg").innerHTML+=node.vertex+","+node.point.x+","+node.point.y+","+node.ctrl1.x+","+node.ctrl1.y+","+node.ctrl2.x+","+node.ctrl2.y+"<br>";
-	node=node.next;
-}
-$("msg").innerHTML+="........................<br>";	
 	this.draw();
 }
 

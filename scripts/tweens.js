@@ -365,8 +365,24 @@ function setNodePaths()
 	}
 }
 
+function closetweenpathsbox()
+{
+	CURRENTTWEEN.nodeTweening.active=false;
+	CURRENTTWEEN.pointTweening=false;
+	CURRENTTWEEN.setTweenTimeBox();
+	clear($("tweenpathsstage"));
+	clear($("markerdrop"));
+	$("markerdrop").style.visibility="hidden";
+	$("tweenpathsstage").style.visibility="hidden";
+	$("backstage").style.visibility="hidden";
+	$("boundarydrop").style.visibility="visible";
+}
+
 function showNodePathList(nodein)
 {
+	closeAllDialogues();
+	$("toolbar").style.visibility="visible";
+	$("tweentimebox").style.visibility="visible";
 	$("tweenpathsbox").style.visibility="visible";
 	var tween=CURRENTTWEEN;
 	var npths=0;
@@ -390,7 +406,6 @@ function showNodePathList(nodein)
 	}
 	clear($("boundarydrop"));
 	$("markerdrop").style.visibility="visible";
-	//clear($("tweenpathsstage"));
 	$("tweenpathsstage").style.visibility="visible";
 	$("backstage").style.visibility="visible";
 	$("boundarydrop").style.visibility="hidden"
