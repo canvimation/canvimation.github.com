@@ -45,7 +45,6 @@ function Tween(name)
 	this.edit={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0};
 	this.linegrads=[];
 	this.radgrads=[];
-	this.shadow={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
 	this.nodeTweening={active:false,twtime:10,repeat:1,counter:0,yoyo:false}; //can be on (translate/rotate off) or off (translate/rotate on)
 	this.pointTweening=false;  // if node changed - point or controls - then true and translate rotate off
 	this.reverse=false;
@@ -78,6 +77,7 @@ function Tween(name)
 	this.transformTweeningPoints=transformTweeningPoints;
 	this.gradlinetransform=gradlinetransform;
 	this.betweenAngle=betweenAngle;
+	this.reverseAll=reverseAll;
 }
 
 function copytween(theatre)
@@ -255,8 +255,11 @@ function checktween(tweendata)
 	clear($("boundarydrop"));
 	$("boundarydrop").style.visibility="hidden";
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
-	tween.tweenshape.draw();
 	tween.zeroTweenPtrs();
+	if(tween.reverse)
+	{
+		tween.reverseAll();
+	}
 	tween.tweenplay();
 }
 
@@ -1487,8 +1490,7 @@ function zeroTweenPtrs()
 		node.dir=1;
 		node.counter=0;
 		node=node.next;
-	}
-//doit=true;	
+	}	
 }
 
 function tweenplay()
@@ -1578,11 +1580,11 @@ function tweenplay()
 			this.tweenshape.shadowOffsetX=shobj.shox;
 			this.tweenshape.shadowOffsetY=shobj.shoy;
 			this.tweenshape.shadowBlur=shobj.sblr;
-			for(var i=0;i<4;i++)
+			for(var i=0;i<3;i++)
 			{
-				this.tweenshape.shadowColor[i]=Math.round(shobj.shclr[i]);$("msg").innerHTML+=this.tweenshape.shadowColor[i]+",";
+				this.tweenshape.shadowColor[i]=Math.round(shobj.shclr[i]);
 			}
-			$("msg").innerHTML+="<br>";
+			this.tweenshape.shadowColor[3]=shobj.shclr[3];
 		}
 		this.tweenshape.draw();		
 		this.updateTweenPtrs();
@@ -2201,4 +2203,39 @@ function betweenAngle(e,s,t)  // s start angle, e end angle, t parameter between
 		ang=-(2*Math.PI-ang);
 	}
 	return s+t*ang;
+}
+
+function reverseAll()
+{
+	var shape=this.getShape();
+	if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
+	{
+		var node=shape.path.next;		
+		while(node.point.x!="end")
+		{
+			node.tweennodes.reverse();
+			node=node.next;
+		}
+	}
+	if (this.gradfill.active)
+	{
+		this.linegrads.reverse();
+		this.radgrads.reverse();
+	}
+	if(this.fillcolour.active)
+	{
+		this.fillcolour.points.reverse();
+	}
+	if(this.linestyles.active)
+	{
+		this.linestyles.points.reverse();
+	}
+	if(this.gradfill.active)
+	{
+		this.gradfill.points.reverse();
+	}
+	if(this.shadow.active)
+	{
+		this.shadow.points.reverse();
+	}	
 }
