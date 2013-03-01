@@ -16,7 +16,7 @@ function Track(name)
 	this.length;
 	this.lengths=[];
 	this.times=[];
-	this.ptime; //time over path from sprite.ptime;
+	this.ptime=0; //time over path from sprite.ptime;
 	
 	//methods
 	this.setAniStage=setAniStage;

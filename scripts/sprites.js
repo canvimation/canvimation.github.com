@@ -81,6 +81,9 @@ function copysprite(theatre)
 		case "scene":
 			sprite.train=this.train.copyscene(theatre);
 		break
+		case "tween":
+			sprite.train=this.train.copytween(theatre);
+		break
 		case "sprite":
 			sprite.train=this.train.copysprite(theatre);
 		break
@@ -355,6 +358,17 @@ function inTheatre(theatre)
 				shape.addTo(theatre);
 			}
 		break
+		case "tween":
+			if(this.train.reverse)
+			{
+				shape=this.train.copy.getShape();
+			}
+			else
+			{
+				shape=this.train.getShape();
+			}
+			shape.addTo(theatre);
+		break
 		case "sprite":
 			this.train.inTheatre(theatre);
 		break
@@ -394,6 +408,11 @@ function saveCanvases()
 				shape.Canvas.ctx.save();
 			}
 		break
+		case "tween":
+			shape=this.train.getShape();
+			shape.Canvas.ctx.save();
+		break
+		break
 		case "sprite":
 			shape=this.track.getShape();
 			shape.Canvas.ctx.save();
@@ -415,6 +434,12 @@ function restoreCanvases()
 				shape=this.train.shapes[name];
 				shape.Canvas.ctx.restore();
 			}
+		break
+		case "tween":
+			shape=this.track.getShape();
+			shape.Canvas.ctx.restore();
+			shape=this.train.getShape();
+			shape.Canvas.ctx.restore();
 		break
 		case "sprite":
 			shape=this.track.getShape();
@@ -444,6 +469,16 @@ function transform()
 				}
 				shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
 			}
+		break
+		case "tween":
+			shape=this.train.getShape();
+			shape.Canvas.ctx.translate(p.x,p.y);
+			if (this.usevec)
+			{
+				var psi=p.phi-this.vector.psi;
+				shape.Canvas.ctx.rotate(psi);
+			}
+			shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
 		break
 		case "sprite":
 			var v=this.vector;
