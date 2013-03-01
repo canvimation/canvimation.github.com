@@ -370,7 +370,6 @@ function setNodePaths()
 
 function closetweenpathsbox()
 {
-	CURRENTTWEEN.nodeTweening.active=false;
 	CURRENTTWEEN.setTweenTimeBox();
 	clear($("tweenpathsstage"));
 	clear($("markerdrop"));
