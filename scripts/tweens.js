@@ -155,14 +155,13 @@ function drawtween()
 {
 	if(this.reverse)
 	{
-		var copy=this.copy.getShape();
-		copy.draw();
+		var shape=this.copy.getShape();
 	}
 	else
 	{
 		var shape=this.getShape();
-		shape.draw();
-	}	
+	}
+	shape.draw();
 	shape.Canvas.ctx.restore();
 	shape.Canvas.ctx.save();
 }

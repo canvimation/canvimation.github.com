@@ -236,8 +236,8 @@ function followPath(showpathline)
 
 function setPoints()
 {
-  	var track=this.track;
-  	track.ptime=this.ptime*1000;
+  	var track=this.track;console.trace();
+  	track.ptime=this.ptime*1000;console.trace();
   	track.setLengths();
   	track.setTimes();
   	var s=0; //section number
@@ -281,7 +281,7 @@ function setPoints()
 		  	this.points.push(this.points[i-1]);
 	  	}
   	}
-  	if (this.engine !='scene')
+  	if (this.engine =='sprite')
  	{
 	 	this.train.setPoints();  
   	}
@@ -378,7 +378,7 @@ function inTheatre(theatre)
 function zeroPointers()
 {
 	this.pointer=0;
-	if (this.engine!='scene')
+	if (this.engine=='sprite')
 	{
 		this.train.zeroPointers();
 	}
@@ -471,7 +471,7 @@ function transform()
 			}
 		break
 		case "tween":
-			shape=this.train.getShape();
+			shape=this.train.getShape();alert(shape.title);
 			shape.Canvas.ctx.translate(p.x,p.y);
 			if (this.usevec)
 			{
