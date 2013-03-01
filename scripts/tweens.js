@@ -147,15 +147,22 @@ function copytween(theatre)
 	tween.pointTweening=this.pointTweening;
 	tween.reverse=this.reverse;
 	tween.maxrun=this.maxrun;
+	tween.ptime=this.ptime;
 	return tween;
 }
 
 function drawtween()
 {
-	var shape=this.getShape();
-	var copy=this.copy.getShape();
-	shape.draw();
-	copy.draw();
+	if(this.reverse)
+	{
+		var copy=this.copy.getShape();
+		copy.draw();
+	}
+	else
+	{
+		var shape=this.getShape();
+		shape.draw();
+	}	
 	shape.Canvas.ctx.restore();
 	shape.Canvas.ctx.save();
 }

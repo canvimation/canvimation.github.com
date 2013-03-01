@@ -95,6 +95,9 @@ function drawsprite()
 		case "scene":
 			this.train.drawscene();
 		break
+		case "tween":
+			this.train.drawtween();
+		break
 		case "sprite":
 			this.train.drawsprite();
 		break
@@ -107,6 +110,9 @@ function drawrailway(showpathline)
 	{
 		case "scene":
 			this.train.drawscene();
+		break
+		case "tween":
+			this.train.drawtween();
 		break
 		case "sprite":
 			this.train.transform();

@@ -15,6 +15,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * 
  * Track-->track@track parameters^shape parameters¬group parameters
  * 
+ * Tween-->tween@tween parameters^shape parameters^copy parameters
+ * 
  * Base can be a scene or a tween(tween not yet available)
  * 
  * Sprite-->sprite@base~track~sprite parameters#track~sprite parameters#....#track~sprite parameters
@@ -247,7 +249,16 @@ function TrackToText()
 
 function TweenToText()
 {
-	
+	var params='';
+	params +=this.name+'|'+this.title+'^';
+	params+=this.tweenparams()+'^';
+	var shape=this.getShape();
+	params+=shape.ShapeToText()+'¬';
+	params+=shape.group.GroupToText()+"^";
+	var copy=this.copy.getShape();
+	params+=copy.ShapeToText()+'¬';
+	params+=copy.group.GroupToText();
+	return params;
 }
 
 function FilmToText()
