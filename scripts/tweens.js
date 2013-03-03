@@ -48,7 +48,7 @@ function Tween(name)
 	this.nodeTweening={active:false,twtime:10,repeat:1,counter:0,yoyo:false}; //can be on (translate/rotate off) or off (translate/rotate on)
 	this.pointTweening=false;  // if node changed - point or controls - then true and translate rotate off
 	this.reverse=false;
-	this.maxrun=0;
+	this.maxruntime=0;
 	this.ptime; //time over path from sprite.ptime;
 	
 	//methods
@@ -511,6 +511,7 @@ function prepareTweens()
 	var copynode=copy.path.next;
 	if(this.nodeTweening.active)
 	{
+		
 		while(node.point.x!="end")
 		{
 			node.tweennodes=[]; //nodes on tween path for node
@@ -518,6 +519,11 @@ function prepareTweens()
 			node.repeat=node.nodepath.nodeTweening.repeat;
 			node.yoyo=node.nodepath.nodeTweening.yoyo;
 			node.Ttick=node.nodepath.nodeTweening.twtime*1000;
+			this.maxruntime=Math.max(this.maxruntime,node.repeat*node.Ttick);
+			if(node.yoyo)
+			{
+				this.maxruntime*=2;
+			}
 			node.tick=50;
 			while(node.ptr<node.Ttick)
 			{
@@ -560,6 +566,11 @@ function prepareTweens()
 	if(this.fillcolour.active)
 	{
 		var FCtick=this.fillcolour.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,FCtick*this.fillcolour.repeat);
+		if(this.fillcolour.yoyo)
+		{
+			this.maxruntime*=2;
+		}
 		var tick=0;
 		this.fillcolour.points=[];
 		var tempcol=[];
@@ -574,9 +585,36 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
+	if(this.linecolour.active)
+	{
+		var LCtick=this.linecolour.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,LCtick*this.linecolour.repeat);
+		if(this.linecolour.yoyo)
+		{
+			this.maxruntime*=2;
+		}
+		var tick=0;
+		this.linecolour.points=[];
+		var tempcol=[];
+		while(tick<=LCtick)
+		{
+			tempcol=[];
+			for(var i=0;i<4;i++)
+			{
+				tempcol[i]=parseInt(shape.strokeStyle[i])+tick*(parseInt(copy.strokeStyle[i])-parseInt(shape.strokeStyle[i]))/LCtick;
+			}
+			this.linecolour.points.push(tempcol);
+			tick+=50;
+		}
+	}
 	if(this.gradfill.active)
 	{
 		var GFtick=this.gradfill.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,GFtick*this.gradfill.repeat);
+		if(this.gradfill.yoyo)
+		{
+			this.maxruntime*=2;
+		}
 		var tick=0;
 		this.gradfill.points=[];
 		var tempcolstops=[];
@@ -600,6 +638,11 @@ function prepareTweens()
 	if(this.linestyles.active)
 	{
 		var LStick=this.linestyles.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,LStick*this.linestyles.repeat);
+		if(this.linestyles.yoyo)
+		{
+			this.maxruntime*=2;
+		}
 		var tick=0;
 		this.linestyles.points=[];
 		var templs;
@@ -610,9 +653,15 @@ function prepareTweens()
 			tick+=50;
 		}
 	}
+	
 	if(this.shadow.active)
 	{
 		var SHtick=this.shadow.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,SHtick*this.shadow.repeat);
+		if(this.shadow.yoyo)
+		{
+			this.maxruntime*=2;
+		}
 		var tick=0;
 		this.shadow.points=[];
 		var tempsh;
@@ -636,6 +685,11 @@ function prepareTweens()
 	if(this.edit.active)
 	{
 		var EDtick=this.edit.twtime*1000;
+		this.maxruntime=Math.max(this.maxruntime,EDtick*this.edit.repeat);
+		if(this.edit.yoyo)
+		{
+			this.maxruntime*=2;
+		}
 		var tick=0;
 		var p1;
 		var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
@@ -1575,6 +1629,13 @@ function tweenplay()
 				this.tweenshape.fillStyle[i]=Math.round(this.fillcolour.points[this.fillcolour.ptr][i]);
 			}
 		}
+		if(this.linecolour.active)
+		{
+			for(var i=0;i<4;i++)
+			{
+				this.tweenshape.strokeStyle[i]=Math.round(this.linecolour.points[this.linecolour.ptr][i]);
+			}
+		}
 		if(this.linestyles.active)
 		{
 			this.tweenshape.lineWidth=this.linestyles.points[this.linestyles.ptr];
@@ -1820,6 +1881,42 @@ function updateTweenPtrs()
 						this.fillcolour.dir=1;
 						this.fillcolour.counter++;
 						this.fillcolour.ptr++;
+					}
+				}
+			}
+		}	
+	}
+	if(this.linecolour.active)
+	{
+		if(this.linecolour.counter<this.linecolour.repeat || isNaN(this.linecolour.repeat))
+		{
+			finishedtween=false;
+			this.linecolour.ptr+=this.linecolour.dir;
+			if(this.linecolour.dir>0)
+			{
+				if(this.linecolour.ptr>=this.linecolour.points.length)
+				{
+					if(this.linecolour.yoyo)
+					{
+						this.linecolour.dir=-1;
+						this.linecolour.ptr-=2;
+					}
+					else
+					{
+						this.linecolour.counter++;
+						this.linecolour.ptr--;
+					}
+				}
+			}
+			else
+			{
+				if(this.linecolour.ptr<0)
+				{
+					if(this.linecolour.yoyo)
+					{
+						this.linecolour.dir=1;
+						this.linecolour.counter++;
+						this.linecolour.ptr++;
 					}
 				}
 			}

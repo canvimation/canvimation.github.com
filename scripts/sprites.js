@@ -388,7 +388,7 @@ function clearTracks()
 {
 	var shape=this.track.getShape();
 	shape.Canvas.ctx.clearRect(-SCRW,-SCRH,2*SCRW,2*SCRH);
-	if (this.engine!='scene')
+	if (this.engine=='sprite')
 	{
 		this.train.clearTracks();
 	}
@@ -713,7 +713,7 @@ function maxruntime(mx)
 			}
 			else
 			{
-				mrt=this.tweenruntime(0);
+				mrt=this.maxruntime;
 				return Math.max(mx,mrt);
 			}
 		break
