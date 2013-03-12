@@ -33,8 +33,8 @@ function Tween(name)
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
 	this.nodePaths={} //list of paths between shape nodes and copy nodes
-	this.ctrl1paths={};
-	this.ctrl2paths={};
+	this.ctrl1Paths={};
+	this.ctrl2Paths={};
 	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translate and rotate both acitve must share twtime, repeat and yoyo
 	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0,clkw:true};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -66,12 +66,14 @@ function Tween(name)
 	this.addAllToStage=addAllToStage;
 	this.startNodePaths=startNodePaths; 
 	this.setNodePaths=setNodePaths;
+	//this.startCtrlPaths=startCtrlPaths;
 	this.prepareTweens=prepareTweens;
 	this.setPoints=setPoints;
 	this.setTweenTimeBox=setTweenTimeBox;
 	this.zeroTweenPtrs=zeroTweenPtrs;
 	this.updateTweenPtrs=updateTweenPtrs;
 	this.tweenplay=tweenplay;
+	this.tweenmove=tweenmove;
 	this.setTweenActives=setTweenActives;
 	this.getTweenActives=getTweenActives;
 	this.transformTweeningPoints=transformTweeningPoints;
@@ -237,7 +239,8 @@ function checktween(tweendata)
 	closeColor();
 	$("rotatebox").style.visibility="hidden";
 	$("gradfillbox").style.visibility="hidden";
-	STOPCHECKING=false;
+	tween.stopchecking=false;
+	STOPCHECKING=false;//set for check done button for sprite;
 	if(tween.nodeTweening.active || tween.pointTweening)
 	{
 		var npths=0;
@@ -258,9 +261,9 @@ function checktween(tweendata)
 	tween.prepareTweens();
 	var shape=tween.getShape();
 	clear($("tweenstage"));
+	tween.tweenshape.addTo($("tweenstage"));
 	clear($("boundarydrop"));
 	$("boundarydrop").style.visibility="hidden";
-	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
 	tween.zeroTweenPtrs();
 	if(tween.reverse)
 	{
@@ -318,14 +321,14 @@ function addAllToStage(theatre)
 
 function startNodePaths()
 {
+	var point,ctrl1,ctrl2;
+	var start,last;
+	this.nodeTweening.active=true;
 	var shape=this.getShape();
 	clear($("tweenpathsstage"));
 	var copy=this.copy.getShape();
 	var node=shape.path.next;
 	var copynode=copy.path.next;
-	var point,ctrl1,ctrl2;
-	var start,last;
-	this.nodeTweening.active=true;
 	while(node.point.x!="end")
 	{
 		node.nodepath=new Shape("NodePath"+SCOUNT,"NodePath"+(SCOUNT++),true,true,"curve",this.nodePaths);
@@ -345,10 +348,54 @@ function startNodePaths()
 		ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
 		ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
 		last.setNode(point,ctrl1,ctrl2);
-		node.setCtrlPaths(copynode);
+		if(node.vertex=="B")
+		{
+			node.linearCtrl2Path(copynode);
+			node.linearCtrl1Path(copynode);
+		}
 		node=node.next;
 		copynode=copynode.next;
 	}
+}
+
+function linearCtrl1Path(copynode)
+{
+	this.ctrl1path=new Shape("ctrl1"+this.shape.name,"ctrl1"+this.shape.title,true,true,"curve",{});
+	this.ctrl1path.zIndex=10000000;
+	this.ctrl1path.strokeStyle=[75,100,75,1];
+	this.ctrl1path.addTo($("tweenpathsstage"));	
+	copynode.ctrl1path=this.ctrl1path;
+	var point=new Point(this.ctrl1.x,this.ctrl1.y);
+	var start=new Node(point);
+	this.ctrl1path.addNode(start);
+	point=new Point(copynode.ctrl1.x,copynode.ctrl1.y);
+	var last=new Node(point);
+	this.ctrl1path.addNode(last);
+	start=this.ctrl1path.path.next;
+	last=this.ctrl1path.path.prev;
+	var ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
+	var ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
+	last.setNode(point,ctrl1,ctrl2);
+}
+
+function linearCtrl2Path(copynode)
+{
+	this.ctrl2path=new Shape("ctrl2"+this.shape.name,"ctrl2"+this.shape.title,true,true,"curve",{});
+	this.ctrl2path.zIndex=20000000;
+	this.ctrl2path.strokeStyle=[75,100,75,1];
+	this.ctrl2path.addTo($("tweenpathsstage"));
+	copynode.ctrl2path=this.ctrl2path;
+	var point=new Point(this.ctrl2.x,this.ctrl2.y);
+	var start=new Node(point);
+	this.ctrl2path.addNode(start);
+	point=new Point(copynode.ctrl2.x,copynode.ctrl2.y);
+	var last=new Node(point);
+	this.ctrl2path.addNode(last);
+	start=this.ctrl2path.path.next;
+	last=this.ctrl2path.path.prev;
+	var ctrl1=new Point(start.point.x+(last.point.x-start.point.x)/4, start.point.y+(last.point.y-start.point.y)/4);
+	var ctrl2=new Point(last.point.x+(start.point.x-last.point.x)/4, last.point.y+(start.point.y-last.point.y)/4);
+	last.setNode(point,ctrl1,ctrl2);
 }
 
 function setNodePaths()
@@ -364,6 +411,11 @@ function setNodePaths()
 	while(node.point.x!="end")
 	{
 		node.nodepath.addTo($("tweenpathsstage"));
+		if(node.vertex=="B")
+		{
+			node.ctrl2path.addTo($("tweenpathsstage"));
+			node.ctrl1path.addTo($("tweenpathsstage"));
+		}
 		start=node.nodepath.path.next;
 		start.setNode(node.point);
 		last=node.nodepath.path.prev;
@@ -371,6 +423,120 @@ function setNodePaths()
 		node.setCtrlPaths(copynode);
 		node=node.next;
 		copynode=copynode.next;
+	}
+}
+
+function setCtrlPaths(copynode) //sets the from node ctrl points to copynode ctrl points
+{
+	if(!this.shape.open && this.prev.point.x=="end")
+	{
+		if(this.prev.prev.vertex=="B")
+		{
+			this.prev.prev.nodepath=this.nodepath;
+			this.prev.prev.setCtrl2Path(copynode.prev.prev);
+			this.ctrl2path=this.prev.prev.ctrl2path;
+		}
+	}
+	else
+	{
+		if(this.vertex=="B")
+		{
+			this.setCtrl2Path(copynode);
+		}
+	}
+	if(this.next.vertex=="B")
+	{
+		this.next.setCtrl1Path(copynode.next);
+	}
+}
+	
+function setCtrl1Path(copynode)
+{//this.prev.nodepath.getLengths(); alert(this.prev.nodepath.length);
+	var startx=this.prev.nodepath.path.next.point.x; //follow nodepath from previous node
+	var starty=this.prev.nodepath.path.next.point.y;
+	var lastx=this.prev.nodepath.path.prev.point.x;
+	var lasty=this.prev.nodepath.path.prev.point.y;
+	var thetanode=arctan(lasty-starty,lastx-startx);
+	var startc1x=this.ctrl1.x;
+	var startc1y=this.ctrl1.y;
+	var lastc1x=copynode.ctrl1.x;
+	var lastc1y=copynode.ctrl1.y;
+	var nlen=Math.sqrt((lastx-startx)*(lastx-startx)+(lasty-starty)*(lasty-starty));
+	if(nlen<50)
+	{
+		this.linearCtrl1Path(copynode);
+	}
+	else
+	{
+		var c1len=Math.sqrt((lastc1x-startc1x)*(lastc1x-startc1x)+(lastc1y-startc1y)*(lastc1y-startc1y));
+		var c1scale=c1len/nlen;
+		var thetactrl1=arctan(lastc1y-startc1y,lastc1x-startc1x);
+		var theta=thetactrl1-thetanode;
+		this.ctrl1path=makeCopy(this.prev.nodepath,0,$("tweenpathsstage"),{});
+		var node=this.ctrl1path.path.next;
+		while(node.point.x!="end")
+		{
+			node.point.x=(node.point.x-startx)*c1scale;
+			node.point.y=(node.point.y-starty)*c1scale;
+			if(node.ctrl1.x!="non")
+			{
+				node.ctrl1.x=(node.ctrl1.x-startx)*c1scale;
+				node.ctrl1.y=(node.ctrl1.y-starty)*c1scale;
+				node.ctrl2.x=(node.ctrl2.x-startx)*c1scale;
+				node.ctrl2.y=(node.ctrl2.y-starty)*c1scale;
+			}
+			node.rotate(theta);
+			node.translate(-startc1x,-startc1y);
+			node=node.next;
+		}
+		node=this.ctrl1path.path.prev;
+		node.point.x=lastc1x;
+		node.point.y=lastc1y;
+	}
+}
+
+function setCtrl2Path(copynode)
+{
+	var startx=this.nodepath.path.next.point.x;
+	var starty=this.nodepath.path.next.point.y;
+	var lastx=this.nodepath.path.prev.point.x;
+	var lasty=this.nodepath.path.prev.point.y;
+	var thetanode=arctan(lasty-starty,lastx-startx);
+	var startc2x=this.ctrl2.x;
+	var startc2y=this.ctrl2.y;
+	var lastc2x=copynode.ctrl2.x;
+	var lastc2y=copynode.ctrl2.y;
+	var nlen=Math.sqrt((lastx-startx)*(lastx-startx)+(lasty-starty)*(lasty-starty));
+	if(nlen<50)
+	{
+		this.linearCtrl2Path(copynode);
+	}
+	else
+	{
+		var c2len=Math.sqrt((lastc2x-startc2x)*(lastc2x-startc2x)+(lastc2y-startc2y)*(lastc2y-startc2y));
+		var c2scale=c2len/nlen;
+		var thetactrl2=arctan(lastc2y-startc2y,lastc2x-startc2x);
+		var theta=thetactrl2-thetanode;
+		this.ctrl2path=makeCopy(this.nodepath,0,$("tweenstage"),{});
+		var node=this.ctrl2path.path.next;
+		while(node.point.x!="end")
+		{
+			node.point.x=(node.point.x-startx)*c2scale;
+			node.point.y=(node.point.y-starty)*c2scale;
+			if(node.ctrl1.x!="non")
+			{
+				node.ctrl1.x=(node.ctrl1.x-startx)*c2scale;
+				node.ctrl1.y=(node.ctrl1.y-starty)*c2scale;
+				node.ctrl2.x=(node.ctrl2.x-startx)*c2scale;
+				node.ctrl2.y=(node.ctrl2.y-starty)*c2scale;
+			}
+			node.rotate(theta);
+			node.translate(-startc2x,-startc2y);
+			node=node.next;
+		}
+		node=this.ctrl2path.path.prev;
+		node.point.x=lastc2x;
+		node.point.y=lastc2y;
 	}
 }
 
@@ -456,9 +622,18 @@ function showNodePathList(nodein)
 	pathnode.addCtrl1Mark();
 	pathnode.addCtrl2Mark();		
 	nodein.nodepath.draw();
-	nodein.nodepath.drawBezGuides();		
+	nodein.nodepath.drawBezGuides();
+if(nodein.vertex=="B")
+{	
+nodein.ctrl2path.draw();
+nodein.ctrl2path.drawBezGuides();
+}
+if(nodein.next.vertex=="B")
+{	
+nodein.next.ctrl1path.draw();
+nodein.next.ctrl1path.drawBezGuides();
+}		
 	nodein.setNodePathBox();
-
 }
 
 function prepareTweens()
@@ -519,11 +694,12 @@ function prepareTweens()
 			node.repeat=node.nodepath.nodeTweening.repeat;
 			node.yoyo=node.nodepath.nodeTweening.yoyo;
 			node.Ttick=node.nodepath.nodeTweening.twtime*1000;
-			this.maxruntime=Math.max(this.maxruntime,node.repeat*node.Ttick);
+			var mrt=node.repeat*node.Ttick;
 			if(node.yoyo)
 			{
-				this.maxruntime*=2;
+				mrt*=2;
 			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
 			node.tick=50;
 			while(node.ptr<node.Ttick)
 			{
@@ -566,11 +742,12 @@ function prepareTweens()
 	if(this.fillcolour.active)
 	{
 		var FCtick=this.fillcolour.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,FCtick*this.fillcolour.repeat);
+		var mrt=FCtick*this.fillcolour.repeat;
 		if(this.fillcolour.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var tick=0;
 		this.fillcolour.points=[];
 		var tempcol=[];
@@ -588,11 +765,12 @@ function prepareTweens()
 	if(this.linecolour.active)
 	{
 		var LCtick=this.linecolour.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,LCtick*this.linecolour.repeat);
+		var mrt=LCtick*this.linecolour.repeat;
 		if(this.linecolour.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var tick=0;
 		this.linecolour.points=[];
 		var tempcol=[];
@@ -610,11 +788,12 @@ function prepareTweens()
 	if(this.gradfill.active)
 	{
 		var GFtick=this.gradfill.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,GFtick*this.gradfill.repeat);
+		var mrt=GFtick*this.gradfill.repeat;
 		if(this.gradfill.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var tick=0;
 		this.gradfill.points=[];
 		var tempcolstops=[];
@@ -638,11 +817,12 @@ function prepareTweens()
 	if(this.linestyles.active)
 	{
 		var LStick=this.linestyles.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,LStick*this.linestyles.repeat);
+		var mrt=LStick*this.linestyles.repeat;
 		if(this.linestyles.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var tick=0;
 		this.linestyles.points=[];
 		var templs;
@@ -657,11 +837,12 @@ function prepareTweens()
 	if(this.shadow.active)
 	{
 		var SHtick=this.shadow.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,SHtick*this.shadow.repeat);
+		var mrt=SHtick*this.shadow.repeat;
 		if(this.shadow.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var tick=0;
 		this.shadow.points=[];
 		var tempsh;
@@ -685,12 +866,12 @@ function prepareTweens()
 	if(this.edit.active)
 	{
 		var EDtick=this.edit.twtime*1000;
-		this.maxruntime=Math.max(this.maxruntime,EDtick*this.edit.repeat);
+		var mrt=EDtick*this.edit.repeat;
 		if(this.edit.yoyo)
 		{
-			this.maxruntime*=2;
+			mrt*=2;
 		}
-		var tick=0;
+		this.maxruntime=Math.max(this.maxruntime,mrt);
 		var p1;
 		var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
 		var ytranslate=copy.group.centreOfRotation.y-shape.group.centreOfRotation.y;  //y translation 
@@ -989,114 +1170,17 @@ function prepareTweens()
 	}
 }
 
-function setCtrlPaths(copynode) //uses the tweenpath between node and copy node to create path from node ctrl points to copynode ctrl points
-{
-	if(!this.shape.open && this.prev.point.x=="end")
-	{
-		if(this.prev.prev.vertex=="B")
-		{
-			this.prev.prev.nodepath=this.nodepath;
-			this.prev.prev.setCtrl2Path(copynode.prev.prev);
-			this.ctrl2path=this.prev.prev.ctrl2path;
-		}
-	}
-	else
-	{
-		if(this.vertex=="B")
-		{
-			this.setCtrl2Path(copynode);
-		}
-	}
-	if(this.vertex=="B")
-	{
-		this.setCtrl1Path(copynode);
-	}
-}
-	
-function setCtrl1Path(copynode)
-{
-	var node;
-	var open=this.shape.open;
-	var startx=this.prev.nodepath.path.next.point.x;
-	var starty=this.prev.nodepath.path.next.point.y;
-	var lastx=this.prev.nodepath.path.prev.point.x;
-	var lasty=this.prev.nodepath.path.prev.point.y;
-	var thetanode=arctan(lasty-starty,lastx-startx);
-	var startc1x=this.ctrl1.x;
-	var startc1y=this.ctrl1.y;
-	var lastc1x=copynode.ctrl1.x;
-	var lastc1y=copynode.ctrl1.y;
-	var c1scale=(lastc1x-startc1x)/(lastx-startx);
-	var thetactrl1=arctan(lastc1y-startc1y,lastc1x-startc1x);
-	var theta=thetactrl1-thetanode;
-	this.ctrl1path=makeCopy(this.prev.nodepath,0,$("tweenpathsstage"),{});
-	node=this.ctrl1path.path.next;
-	while(node.point.x!="end")
-	{
-		node.point.x=(node.point.x-startx)*c1scale;
-		node.point.y=(node.point.y-starty)*c1scale;
-		if(node.ctrl1.x!="non")
-		{
-			node.ctrl1.x=(node.ctrl1.x-startx)*c1scale;
-			node.ctrl1.y=(node.ctrl1.y-starty)*c1scale;
-			node.ctrl2.x=(node.ctrl2.x-startx)*c1scale;
-			node.ctrl2.y=(node.ctrl2.y-starty)*c1scale;
-		}
-		node.rotate(theta);
-		node.translate(-startc1x,-startc1y);
-		node=node.next;
-	}
-	node=this.ctrl1path.path.prev;
-	node.point.x=lastc1x;
-	node.point.y=lastc1y;
-}
 
-function setCtrl2Path(copynode)
-{
-	var open=this.shape.open;
-	var startx=this.nodepath.path.next.point.x;
-	var starty=this.nodepath.path.next.point.y;
-	var lastx=this.nodepath.path.prev.point.x;
-	var lasty=this.nodepath.path.prev.point.y;
-	var thetanode=arctan(lasty-starty,lastx-startx);
-	var startc2x=this.ctrl2.x;
-	var startc2y=this.ctrl2.y;
-	var lastc2x=copynode.ctrl2.x;
-	var lastc2y=copynode.ctrl2.y;
-	var c2scale=(lastc2x-startc2x)/(lastx-startx);
-	var thetactrl2=arctan(lastc2y-startc2y,lastc2x-startc2x);
-	var theta=thetactrl2-thetanode;
-	this.ctrl2path=makeCopy(this.nodepath,0,$("tweenstage"),{});
-	var node=this.ctrl2path.path.next;
-	while(node.point.x!="end")
-	{
-		node.point.x=(node.point.x-startx)*c2scale;
-		node.point.y=(node.point.y-starty)*c2scale;
-		if(node.ctrl1.x!="non")
-		{
-			node.ctrl1.x=(node.ctrl1.x-startx)*c2scale;
-			node.ctrl1.y=(node.ctrl1.y-starty)*c2scale;
-			node.ctrl2.x=(node.ctrl2.x-startx)*c2scale;
-			node.ctrl2.y=(node.ctrl2.y-starty)*c2scale;
-		}
-		node.rotate(theta);
-		node.translate(-startc2x,-startc2y);
-		node=node.next;
-	}
-	node=this.ctrl2path.path.prev;
-	node.point.x=lastc2x;
-	node.point.y=lastc2y;
-}
 
 function pathTweeningPoints(copynode) //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
 {
 	this.nodepath.getLengths();
 	if(this.vertex=="B")
 	{
-		var ctrl1node=this.ctrl1path.path.next;
 		var ctrl2node=this.ctrl2path.path.next;	
-		var lastctrl1=this.ctrl1path.path.prev;
 		var lastctrl2=this.ctrl2path.path.prev;
+		var ctrl1node=this.ctrl1path.path.next;
+		var lastctrl1=this.ctrl1path.path.prev;
 	}
 	var ntwlen=this.tweennodes.length;
 	this.tweennodes=[];
@@ -1119,8 +1203,8 @@ function pathTweeningPoints(copynode) //node and ctrl points for node follows be
 				twnode=new TweenNode(p);
 				if(this.vertex=="B")
 				{
-					twnode.ctrl1=new Point(ctrl1node.linx(t),ctrl1node.liny(t));
 					twnode.ctrl2=new Point(ctrl2node.linx(t),ctrl2node.liny(t));
+					twnode.ctrl1=new Point(ctrl1node.linx(t),ctrl1node.liny(t));
 				}
 				this.tweennodes.push(twnode);
 			}
@@ -1130,8 +1214,8 @@ function pathTweeningPoints(copynode) //node and ctrl points for node follows be
 				twnode=new TweenNode(p);
 				if(this.vertex=="B")
 				{
-					twnode.ctrl1=new Point(ctrl1node.bezx(t),ctrl1node.bezy(t));
 					twnode.ctrl2=new Point(ctrl2node.bezx(t),ctrl2node.bezy(t));
+					twnode.ctrl1=new Point(ctrl1node.bezx(t),ctrl1node.bezy(t));
 				}
 				this.tweennodes.push(twnode);
 			}
@@ -1565,54 +1649,39 @@ function zeroTweenPtrs()
 	}	
 }
 
-function tweenplay()
+function tweenmove()
 {
 	var shape=this.getShape();
-	if(!STOPCHECKING)
+	
+	if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
 	{
-		
-		if(this.translate.active  || this.rotate.active || this.nodeTweening.active || this.pointTweening || this.edit.active)
+		var node=shape.path.next;		
+		var tweennode=this.tweenshape.path.next;
+		while(node.point.x!="end")
 		{
-			var node=shape.path.next;		
-			var tweennode=this.tweenshape.path.next;
-			while(node.point.x!="end")
+			tweennode.point.x=node.tweennodes[node.ptr].point.x;
+			tweennode.point.y=node.tweennodes[node.ptr].point.y;			
+			tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
+			tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
+			tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
+			tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
+			if(this.edit.active) 
 			{
-				tweennode.point.x=node.tweennodes[node.ptr].point.x;
-				tweennode.point.y=node.tweennodes[node.ptr].point.y;			
-				tweennode.ctrl1.x=node.tweennodes[node.ptr].ctrl1.x;
-				tweennode.ctrl1.y=node.tweennodes[node.ptr].ctrl1.y;
-				tweennode.ctrl2.x=node.tweennodes[node.ptr].ctrl2.x;
-				tweennode.ctrl2.y=node.tweennodes[node.ptr].ctrl2.y;
-				if(this.edit.active) 
-				{
-					tweennode.vertex=node.tweennodes[node.ptr].vertex;
-				}
-				node=node.next;
-				tweennode=tweennode.next;
+				tweennode.vertex=node.tweennodes[node.ptr].vertex;
 			}
-			if(this.rotate.active)
-			{
-				var ptr=this.rotate.ptr;
-			}
-			if(this.translate.active)
-			{
-				var ptr=this.translate.ptr;
-			}
-			if(this.rotate.active || this.translate.active)
-			{
-				for(var i=0;i<4;i++)
-				{
-					this.tweenshape.lineGrad[i]=Math.round(this.linegrads[ptr][i]);
-				}
-				for(var i=0;i<6;i++)
-				{
-					this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
-				}
-			}
+			node=node.next;
+			tweennode=tweennode.next;
 		}
-		if (this.gradfill.active)
+		if(this.rotate.active)
 		{
-			var ptr=this.gradfill.ptr;
+			var ptr=this.rotate.ptr;
+		}
+		if(this.translate.active)
+		{
+			var ptr=this.translate.ptr;
+		}
+		if(this.rotate.active || this.translate.active)
+		{
 			for(var i=0;i<4;i++)
 			{
 				this.tweenshape.lineGrad[i]=Math.round(this.linegrads[ptr][i]);
@@ -1622,62 +1691,83 @@ function tweenplay()
 				this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
 			}
 		}
-		if(this.fillcolour.active)
+	}
+	if (this.gradfill.active)
+	{
+		var ptr=this.gradfill.ptr;
+		for(var i=0;i<4;i++)
 		{
-			for(var i=0;i<4;i++)
+			this.tweenshape.lineGrad[i]=Math.round(this.linegrads[ptr][i]);
+		}
+		for(var i=0;i<6;i++)
+		{
+			this.tweenshape.radGrad[i]=Math.round(this.radgrads[ptr][i]);
+		}
+	}
+	if(this.fillcolour.active)
+	{
+		for(var i=0;i<4;i++)
+		{
+			this.tweenshape.fillStyle[i]=Math.round(this.fillcolour.points[this.fillcolour.ptr][i]);
+		}
+	}
+	if(this.linecolour.active)
+	{
+		for(var i=0;i<4;i++)
+		{
+			this.tweenshape.strokeStyle[i]=Math.round(this.linecolour.points[this.linecolour.ptr][i]);
+		}
+	}
+	if(this.linestyles.active)
+	{
+		this.tweenshape.lineWidth=this.linestyles.points[this.linestyles.ptr];
+	}
+	if(this.gradfill.active)
+	{
+		var colstops=this.gradfill.points[this.gradfill.ptr];
+		for(var c=0; c<colstops.length;c++)
+		{
+			this.tweenshape.colorStops[c][0]=colstops[c][0];
+			for(var i=1;i<5;i++)
 			{
-				this.tweenshape.fillStyle[i]=Math.round(this.fillcolour.points[this.fillcolour.ptr][i]);
+				this.tweenshape.colorStops[c][i]=Math.round(colstops[c][i]);
 			}
 		}
-		if(this.linecolour.active)
+	}
+	if(this.shadow.active)
+	{
+		this.tweenshape.shadow=true;
+		var shobj=this.shadow.points[this.shadow.ptr];
+		this.tweenshape.shadowOffsetX=shobj.shox;
+		this.tweenshape.shadowOffsetY=shobj.shoy;
+		this.tweenshape.shadowBlur=shobj.sblr;
+		for(var i=0;i<3;i++)
 		{
-			for(var i=0;i<4;i++)
-			{
-				this.tweenshape.strokeStyle[i]=Math.round(this.linecolour.points[this.linecolour.ptr][i]);
-			}
+			this.tweenshape.shadowColor[i]=Math.round(shobj.shclr[i]);
 		}
-		if(this.linestyles.active)
-		{
-			this.tweenshape.lineWidth=this.linestyles.points[this.linestyles.ptr];
-		}
-		if(this.gradfill.active)
-		{
-			var colstops=this.gradfill.points[this.gradfill.ptr];
-			for(var c=0; c<colstops.length;c++)
-			{
-				this.tweenshape.colorStops[c][0]=colstops[c][0];
-				for(var i=1;i<5;i++)
-				{
-					this.tweenshape.colorStops[c][i]=Math.round(colstops[c][i]);
-				}
-			}
-		}
-		if(this.shadow.active)
-		{
-			this.tweenshape.shadow=true;
-			var shobj=this.shadow.points[this.shadow.ptr];
-			this.tweenshape.shadowOffsetX=shobj.shox;
-			this.tweenshape.shadowOffsetY=shobj.shoy;
-			this.tweenshape.shadowBlur=shobj.sblr;
-			for(var i=0;i<3;i++)
-			{
-				this.tweenshape.shadowColor[i]=Math.round(shobj.shclr[i]);
-			}
-			this.tweenshape.shadowColor[3]=shobj.shclr[3];
-		}
-		this.tweenshape.draw();		
-		this.updateTweenPtrs();
+		this.tweenshape.shadowColor[3]=shobj.shclr[3];
+	}
+	this.tweenshape.draw();	
+	this.updateTweenPtrs();
+}
+
+function tweenplay()
+{
+	if(!(this.stopchecking || STOPCHECKING))
+	{
+		this.tweenmove();
 		var tween=this;
 		setTimeout(function() {tween.tweenplay()},50);
 	}
 	else
 	{
-		alert('Check completed');
+		alert('Tween Check completed');
 		$("twbuttons").style.visibility="visible";
 		$("checkdone").style.visibility="hidden";
 		$("toolbar").style.visibility="visible";
 		$("grid").style.visibility="inherit";
 		$('tweentimebox').style.visibility="visible";
+		var shape=this.getShape();
 		var copy=this.copy.getShape();
 		clear($("tweenstage"));
 		$("boundarydrop").style.visibility="visible";
@@ -2031,7 +2121,7 @@ function updateTweenPtrs()
 			}
 		}	
 	}
-	STOPCHECKING=finishedtween;
+	this.stopchecking=finishedtween;
 }
 
 function setTweenActives()

@@ -330,6 +330,7 @@ function buildTween()
 	TWEENEDIT=true;
 	CURRENTTWEEN=tween;
 	tween.setTweenTimeBox();
+	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
 	openStage('tween');
 }
 
@@ -377,6 +378,7 @@ function buildSprite()
 		case 'tween':
 			tween=TWEENS[elname];
 			train=tween.copytween("sprite");
+			train.tweenshape=tween.tweenshape;
 		break
 		case 'sprite':
 			topsprite=SPRITES[eltopname];

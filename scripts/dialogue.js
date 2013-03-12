@@ -272,8 +272,24 @@ function pointEdit(mark)
 		$("p_line2").onmouseout=function(){$("p_line").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		$("p_add").onmouseover=function() {this.style.backgroundColor="#F09898",$("p_add2").style.backgroundColor="#95B3D7"};
 		$("p_add").onmouseout=function(){this.style.backgroundColor="#FFFFFF",$("p_add2").style.backgroundColor="#FFFFFF"};
-		$("p_add").onclick=function() {extraNode(mark.node)};
-		$("p_add2").onclick=function() {extraNode(mark.node)};
+		$("p_add").onclick=function() 
+										{
+											extraNode(mark.node);
+											mark.node.shape.draw();
+											mark.node.shape.drawBezGuides();
+											clear($("markerdrop"));
+											mark.node.shape.addAllMarks();
+											pointEdit(mark);
+										};
+		$("p_add2").onclick=function()
+										{
+											extraNode(mark.node);
+											mark.node.shape.draw();
+											mark.node.shape.drawBezGuides();
+											clear($("markerdrop"));
+											mark.node.shape.addAllMarks();
+											pointEdit(mark);
+										};
 		$("p_add2").onmouseover=function() {$("p_add").style.backgroundColor="#F09898",this.style.backgroundColor="#95B3D7"};
 		$("p_add2").onmouseout=function(){$("p_add").style.backgroundColor="#FFFFFF",this.style.backgroundColor="#FFFFFF"};
 		var dt=0;
@@ -494,6 +510,16 @@ function updateCorner(node,corner)
 	node.corner=corner;
 	node.shape.draw();
 	node.shape.drawBezGuides();
+	if(TWEENEDIT)
+	{
+		var l=node.shape.name.substr(0,1).toUpperCase();
+		if(l=="A" || l=="B")
+		{
+			CURRENTTWEEN.nodeTweening.active=true;
+			CURRENTTWEEN.pointTweening=true;
+			CURRENTTWEEN.setTweenTimeBox();
+		}
+	}
 	pointEdit(node.mark)
 }
 
@@ -613,11 +639,14 @@ function extraNode(node)
 	}
 	midnode.shape=node.shape;
 	nextnode.insertNodeBefore(midnode);
-	node.shape.draw();
-	node.shape.drawBezGuides();
-	clear($("markerdrop"));
-	node.shape.addAllMarks();
-	pointEdit(node.mark);
+	return midnode;
+}
+
+function extraCtrlPathNodes(node)
+{
+	extraNode(node.c1node);
+	extraNode(node.c2node);
+	
 }
 
 function shapeName()

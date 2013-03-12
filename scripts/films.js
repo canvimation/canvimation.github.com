@@ -121,7 +121,7 @@ function addToFilm(el)
 		break
 		case "tween":
 			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
-			flel.maxruntime=flel.elm.tweenruntime(0);
+			flel.maxruntime=flel.elm.maxruntime;
 			flel.setRun();
 		break
 	}

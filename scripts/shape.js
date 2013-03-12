@@ -69,6 +69,8 @@ function Node(point,ctrl1,ctrl2)
 	this.setCtrlPaths=setCtrlPaths;
 	this.setCtrl1Path=setCtrl1Path;
 	this.setCtrl2Path=setCtrl2Path;
+	this.linearCtrl1Path=linearCtrl1Path;
+	this.linearCtrl2Path=linearCtrl2Path;
 	this.linx=linx;
 	this.liny=liny;
 	this.bezx=bezx;

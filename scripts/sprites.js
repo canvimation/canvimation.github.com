@@ -23,6 +23,7 @@ function Sprite(name)
 	this.setAniStage=setAniStage;
 	this.copysprite=copysprite;
 	this.drawsprite=drawsprite;
+	this.drawspritewithmove=drawspritewithmove;
 	this.drawrailway=drawrailway;
 	this.drawalltracks=drawalltracks;
 	this.inTheatre=inTheatre;
@@ -44,6 +45,7 @@ function Sprite(name)
 	this.getScene=getScene;
 	this.getTrack=getTrack;
 	this.getTween=getTween;
+	this.getMainTrain=getMainTrain;
 	this.expandspritelist=expandspritelist;
 	this.spriteHTML=spriteHTML;
 	this.SpriteToText=SpriteToText;
@@ -107,6 +109,24 @@ function drawsprite()
 	}
 }
 
+function drawspritewithmove()
+{
+	switch(this.engine)
+	{
+		case "scene":
+			this.train.drawscene();
+		break
+		case "tween":
+			this.train.tweenmove();
+			this.train.tweenshape.Canvas.ctx.restore();
+			this.train.tweenshape.Canvas.ctx.save();
+		break
+		case "sprite":
+			this.train.drawsprite();
+		break
+	}
+}
+
 function drawrailway(showpathline)
 {
 	switch (this.engine)
@@ -127,7 +147,7 @@ function drawrailway(showpathline)
 
 function drawalltracks(showpathline)
 {
-	if (this.engine !='scene')
+	if (this.engine =='sprite')
 	{
 		this.train.track.drawtrack(showpathline);
 		this.train.drawalltracks(showpathline);
@@ -178,6 +198,17 @@ function checksprite(spritedata,showpathline)
 		var sprite=topsprite.getSprite(spritename).sprite;
 	}
 	sprite.setVector();
+	var s=sprite.getShapes();
+	if(s.engine="tween")
+	{
+		tween.stopchecking=false;
+		s.train.prepareTweens();
+		s.train.zeroTweenPtrs();
+		if(s.train.reverse)
+		{
+		s.train.reverseAll();
+		}
+	}
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
 	$('checksp').style.visibility="hidden";
@@ -236,8 +267,8 @@ function followPath(showpathline)
 
 function setPoints()
 {
-  	var track=this.track;console.trace();
-  	track.ptime=this.ptime*1000;console.trace();
+  	var track=this.track;
+  	track.ptime=this.ptime*1000;
   	track.setLengths();
   	track.setTimes();
   	var s=0; //section number
@@ -314,13 +345,12 @@ function moveSprite(showpathline)
 	this.drawalltracks(showpathline);
 	if (!this.finishmove)
 	{
-		this.drawsprite();
+		this.drawspritewithmove();
 		var sprite=this;
 	  	setTimeout(function() {sprite.moveSprite(showpathline)},50);
 	}
 	else
 	{
-		//$("msg").innerHTML=HTMLmsg;
 		alert('Check completed');
 		$("checkdone").style.visibility="hidden";
 		STOPCHECKING=false;
@@ -368,6 +398,8 @@ function inTheatre(theatre)
 				shape=this.train.getShape();
 			}
 			shape.addTo(theatre);
+			//clear($("tweenstage"));
+			this.train.tweenshape.addTo(theatre);
 		break
 		case "sprite":
 			this.train.inTheatre(theatre);
@@ -409,7 +441,9 @@ function saveCanvases()
 			}
 		break
 		case "tween":
-			shape=this.train.getShape();
+			shape=this.track.getShape();
+			shape.Canvas.ctx.save();
+			shape=this.train.tweenshape;
 			shape.Canvas.ctx.save();
 		break
 		break
@@ -438,7 +472,7 @@ function restoreCanvases()
 		case "tween":
 			shape=this.track.getShape();
 			shape.Canvas.ctx.restore();
-			shape=this.train.getShape();
+			shape=this.train.tweenshape;
 			shape.Canvas.ctx.restore();
 		break
 		case "sprite":
@@ -471,7 +505,7 @@ function transform()
 			}
 		break
 		case "tween":
-			shape=this.train.getShape();alert(shape.title);
+			shape=this.train.tweenshape;
 			shape.Canvas.ctx.translate(p.x,p.y);
 			if (this.usevec)
 			{
@@ -502,7 +536,7 @@ function transform()
 
 function transformTrack(p,v)
 {
-	if (this.engine !='scene')
+	if (this.engine =='sprite')
 	{
 		var shape=this.train.track.getShape();
 		shape.Canvas.ctx.translate(p.x,p.y);//$("msg").innerHTML+=p.x+".."+p.y+"..."+p.phi*180/Math.PI+"<br>";
@@ -551,6 +585,9 @@ function getShapes()
 	{
 		case "scene":
 			return this.train.shapes;
+		break
+		case "tween":
+			return this;
 		break
 		case "sprite":
 			return this.train.getShapes();
@@ -610,6 +647,19 @@ function getSprite(spritename)
 		var spdata=this.train.getSprite(spritename);
 		return {path:this.title+"/"+spdata.path,sprite:spdata.sprite};
 	}
+}
+
+function getMainTrain()
+{
+	if(this.engine=="sprite")
+	{
+		return this.train.getMainTrain()
+	}
+	else
+	{
+		return this.train;
+	}
+	
 }
 
 function expandspritelist(fn,sn,box,col)
