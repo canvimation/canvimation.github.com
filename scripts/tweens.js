@@ -623,7 +623,7 @@ function showNodePathList(nodein)
 	pathnode.addCtrl2Mark();		
 	nodein.nodepath.draw();
 	nodein.nodepath.drawBezGuides();
-if(nodein.vertex=="B")
+/*if(nodein.vertex=="B")
 {	
 nodein.ctrl2path.draw();
 nodein.ctrl2path.drawBezGuides();
@@ -632,7 +632,7 @@ if(nodein.next.vertex=="B")
 {	
 nodein.next.ctrl1path.draw();
 nodein.next.ctrl1path.drawBezGuides();
-}		
+} */		
 	nodein.setNodePathBox();
 }
 

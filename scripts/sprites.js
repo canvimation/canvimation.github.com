@@ -201,7 +201,23 @@ function checksprite(spritedata,showpathline)
 	var s=sprite.getShapes();
 	if(s.engine="tween")
 	{
-		tween.stopchecking=false;
+		s.train.stopchecking=false;
+		if(s.train.nodeTweening.active || s.train.pointTweening)
+		{
+			var npths=0;
+			for(var name in s.train.nodePaths)
+			{
+				npths++
+			}
+			if(npths==0)
+			{
+				s.train.startNodePaths();
+			}
+			else
+			{
+				s.train.setNodePaths();
+			}
+		}
 		s.train.prepareTweens();
 		s.train.zeroTweenPtrs();
 		if(s.train.reverse)
