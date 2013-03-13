@@ -623,7 +623,7 @@ function showNodePathList(nodein)
 	pathnode.addCtrl2Mark();		
 	nodein.nodepath.draw();
 	nodein.nodepath.drawBezGuides();
-/*if(nodein.vertex=="B")
+if(nodein.vertex=="B")
 {	
 nodein.ctrl2path.draw();
 nodein.ctrl2path.drawBezGuides();
@@ -632,7 +632,7 @@ if(nodein.next.vertex=="B")
 {	
 nodein.next.ctrl1path.draw();
 nodein.next.ctrl1path.drawBezGuides();
-} */		
+} 		
 	nodein.setNodePathBox();
 }
 
@@ -1175,56 +1175,92 @@ function prepareTweens()
 function pathTweeningPoints(copynode) //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
 {
 	this.nodepath.getLengths();
+	var ntwlen=this.tweennodes.length;
 	if(this.vertex=="B")
 	{
+		this.ctrl1path.getLengths();
+		var c1points=Math.round(this.ctrl1path.lengths[0]*ntwlen/this.ctrl1path.length); //points for ctrl1path
+		var dtc1=1/c1points;
+		var tc1=0;
+		var accc1pl=c1points;
+		this.ctrl2path.getLengths();
+		var c2points=Math.round(this.ctrl2path.lengths[0]*ntwlen/this.ctrl2path.length); //points for ctrl2path
+		var dtc2=1/c2points;
+		var tc2=0;
+		var accc2pl=c2points;
 		var ctrl2node=this.ctrl2path.path.next;	
 		var lastctrl2=this.ctrl2path.path.prev;
 		var ctrl1node=this.ctrl1path.path.next;
 		var lastctrl1=this.ctrl1path.path.prev;
 	}
-	var ntwlen=this.tweennodes.length;
+	
 	this.tweennodes=[];
-	var points;
-	var i=0;
-	var t,dt;
-	var p,c1,c2,twnode;
+	var n=0,c1=0,c2=0;
+	var points=Math.round(this.nodepath.lengths[0]*ntwlen/this.nodepath.length);
+	var dt=1/points;
+	var t=0;
+	var p,twnode;
+	var accnpl=points;
 	var node=this.nodepath.path.next;
 	var lastnode=this.nodepath.path.prev;
-	while(node.next.point.x!="end")
+	for(var i=0;i<ntwlen;i++)
 	{
-		points=Math.round(this.nodepath.lengths[i]*ntwlen/this.nodepath.length);
-		dt=1/points;
-		t=0;
-		while(t<=1)
+		if(i>accnpl)
 		{
-			if(node.next.vertex=="L")
-			{
-				p=new Point(node.linx(t),node.liny(t));
-				twnode=new TweenNode(p);
-				if(this.vertex=="B")
-				{
-					twnode.ctrl2=new Point(ctrl2node.linx(t),ctrl2node.liny(t));
-					twnode.ctrl1=new Point(ctrl1node.linx(t),ctrl1node.liny(t));
-				}
-				this.tweennodes.push(twnode);
-			}
-			else
-			{
-				p=new Point(node.bezx(t),node.bezy(t));
-				twnode=new TweenNode(p);
-				if(this.vertex=="B")
-				{
-					twnode.ctrl2=new Point(ctrl2node.bezx(t),ctrl2node.bezy(t));
-					twnode.ctrl1=new Point(ctrl1node.bezx(t),ctrl1node.bezy(t));
-				}
-				this.tweennodes.push(twnode);
-			}
-			t+=dt;
+			node=node.next;
+			points=Math.round(this.nodepath.lengths[++n]*ntwlen/this.nodepath.length);
+			accnpl+=points;
+			dt=1/points;
+			t=0;
 		}
-		node=node.next
-		i++;
+		if(this.vertex=="B")
+		{
+			if(i>accc1pl)
+			{
+				ctrl1node=ctrl1node.next;
+				c1points=Math.round(this.ctrl1path.lengths[++c1]*ntwlen/this.ctrl1path.length); 
+				accc1pl+=c1points;
+				dtc1=1/c1points;
+				tc1=0;
+			}
+			if(i>accc2pl)
+			{
+				ctrl2node=ctrl2node.next;
+				
+				c2points=Math.round(this.ctrl2path.lengths[++c1]*ntwlen/this.ctrl2path.length); //points for ctrl1path
+				accc2pl+=c2points;
+				dtc2=1/c2points;
+				tc2=0;
+			}
+		}
+		if(node.next.vertex=="L")
+		{
+			p=new Point(node.linx(t),node.liny(t));
+			twnode=new TweenNode(p);
+			if(this.vertex=="B")
+			{
+				twnode.ctrl2=new Point(ctrl2node.linx(tc2),ctrl2node.liny(tc2));
+				twnode.ctrl1=new Point(ctrl1node.linx(tc1),ctrl1node.liny(tc1));
+			}
+		}
+		else
+		{
+			p=new Point(node.bezx(t),node.bezy(t));
+			twnode=new TweenNode(p);
+			if(this.vertex=="B")
+			{
+				twnode.ctrl2=new Point(ctrl2node.bezx(tc2),ctrl2node.bezy(tc2));
+				twnode.ctrl1=new Point(ctrl1node.bezx(tc1),ctrl1node.bezy(tc1));
+			}
+		}
+		this.tweennodes.push(twnode);
+		t+=dt;
+		if(this.vertex=="B")
+		{
+			tc2+=dtc2;
+			tc1+=dtc1;
+		}
 	}
-	this.tweennodes.push(twnode);
 }
 
 function translateTweeningPoints(copynode) //node and ctrl points for node translated  if node.nodepath.nodeTweening is false
