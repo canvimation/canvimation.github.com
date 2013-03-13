@@ -49,7 +49,7 @@ function Tween(name)
 	this.pointTweening=false;  // if node changed - point or controls - then true and translate rotate off
 	this.reverse=false;
 	this.maxruntime=0;
-	this.ptime; //time over path from sprite.ptime;
+	//this.ptime; //time over path from sprite.ptime;
 	
 	//methods
 	this.setAniStage=setAniStage;
@@ -411,11 +411,6 @@ function setNodePaths()
 	while(node.point.x!="end")
 	{
 		node.nodepath.addTo($("tweenpathsstage"));
-		if(node.vertex=="B")
-		{
-			node.ctrl2path.addTo($("tweenpathsstage"));
-			node.ctrl1path.addTo($("tweenpathsstage"));
-		}
 		start=node.nodepath.path.next;
 		start.setNode(node.point);
 		last=node.nodepath.path.prev;
@@ -451,7 +446,7 @@ function setCtrlPaths(copynode) //sets the from node ctrl points to copynode ctr
 }
 	
 function setCtrl1Path(copynode)
-{//this.prev.nodepath.getLengths(); alert(this.prev.nodepath.length);
+{
 	var startx=this.prev.nodepath.path.next.point.x; //follow nodepath from previous node
 	var starty=this.prev.nodepath.path.next.point.y;
 	var lastx=this.prev.nodepath.path.prev.point.x;
@@ -623,16 +618,6 @@ function showNodePathList(nodein)
 	pathnode.addCtrl2Mark();		
 	nodein.nodepath.draw();
 	nodein.nodepath.drawBezGuides();
-if(nodein.vertex=="B")
-{	
-nodein.ctrl2path.draw();
-nodein.ctrl2path.drawBezGuides();
-}
-if(nodein.next.vertex=="B")
-{	
-nodein.next.ctrl1path.draw();
-nodein.next.ctrl1path.drawBezGuides();
-} 		
 	nodein.setNodePathBox();
 }
 
@@ -1315,7 +1300,6 @@ function transformTweeningPoints(node)  //node follows rotate translate path if 
 {
 	var theta; //theta is change in angle
 	var c,p; //centre of rotation
-	//var tween=CURRENTTWEEN;
 	node.tweennodes=[]; //nodes on tween path for node
 	node.ptr=0;
 	node.tweennodes.push(node);

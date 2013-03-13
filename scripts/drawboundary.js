@@ -88,7 +88,6 @@ function checkBoundary(shiftdown,cursor)
 	}
 	if(TWEENEDIT && CURRENTTWEEN.nodeTweening.active)
 	{
-		CURRENTTWEEN.nodeTweening.active=false;
 		CURRENTTWEEN.setTweenTimeBox();
 	}
 	if(TWEENEDIT  && shapefound)
