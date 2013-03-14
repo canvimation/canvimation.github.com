@@ -60,13 +60,14 @@ function Tween(name)
 	//this.setTimes=setTimes;
 	//this.saveTween=saveTween;
 	//this.restoreTween=restoreTween;
-	//this.TweenToText=TweenToText;
+	this.TweenToText=TweenToText;
+	this.tweenparams=tweenparams;
+	this.nodepathparams=nodepathparams;
 	this.copy.getShape=getShape;
 	this.setNodeTweening;
 	this.addAllToStage=addAllToStage;
 	this.startNodePaths=startNodePaths; 
 	this.setNodePaths=setNodePaths;
-	//this.startCtrlPaths=startCtrlPaths;
 	this.prepareTweens=prepareTweens;
 	this.setPoints=setPoints;
 	this.setTweenTimeBox=setTweenTimeBox;
@@ -97,59 +98,64 @@ function copytween(theatre)
 	tween.translate.twtime=this.translate.twtime;
 	tween.translate.repeat=this.translate.repeat;
 	tween.translate.yoyo=this.translate.yoyo;
-	tween.translate.counter=0;
-	tween.translate.ptr=0;
 	tween.rotate.active=this.rotate.active;
 	tween.rotate.twtime=this.rotate.twtime;
 	tween.rotate.repeat=this.rotate.repeat;
 	tween.rotate.yoyo=this.rotate.yoyo;
-	tween.rotate.counter=0;
-	tween.rotate.ptr=0;
 	tween.linestyles.active=this.linestyles.active;
 	tween.linestyles.twtime=this.linestyles.twtime;
 	tween.linestyles.repeat=this.linestyles.repeat;
 	tween.linestyles.yoyo=this.linestyles.yoyo;
-	tween.linestyles.counter=0;
-	tween.linestyles.ptr=0;
-	tween.linestyles.points=[];
 	tween.linecolour.active=this.linecolour.active;
 	tween.linecolour.twtime=this.linecolour.twtime;
 	tween.linecolour.repeat=this.linecolour.repeat;
 	tween.linecolour.yoyo=this.linecolour.yoyo;
-	tween.linecolour.counter=0;
-	tween.linecolour.ptr=0;
-	tween.linecolour.points=[];
 	tween.fillcolour.active=this.fillcolour.active;
 	tween.fillcolour.twtime=this.fillcolour.twtime;
 	tween.fillcolour.repeat=this.fillcolour.repeat;
 	tween.fillcolour.yoyo=this.fillcolour.yoyo;
-	tween.fillcolour.counter=0;
-	tween.fillcolour.ptr=0;
-	tween.fillcolour.points=[];
 	tween.gradfill.active=this.gradfill.active;
 	tween.gradfill.twtime=this.gradfill.twtime;
 	tween.gradfill.repeat=this.gradfill.repeat;
 	tween.gradfill.yoyo=this.gradfill.yoyo;
-	tween.gradfill.counter=0;
-	tween.gradfill.ptr=0;
-	tween.gradfill.points=[];
-	tween.linegrads=[];
-	tween.radgrads=[];
 	tween.shadow.active=this.shadow.active;
 	tween.shadow.twtime=this.shadow.twtime;
 	tween.shadow.repeat=this.shadow.repeat;
 	tween.shadow.yoyo=this.shadow.yoyo;
-	tween.shadow.counter=0;
-	tween.shadow.ptr=0;
-	tween.shadow.points=[];
+	tween.edit.active=this.edit.active;
+	tween.edit.twtime=this.edit.twtime;
+	tween.edit.repeat=this.edit.repeat;
+	tween.edit.yoyo=this.edit.yoyo;
 	tween.nodeTweening.active=this.nodeTweening.active;
 	tween.nodeTweening.twtime=this.nodeTweening.twtime;
 	tween.nodeTweening.repeat=this.nodeTweening.repeat;
 	tween.nodeTweening.yoyo=this.nodeTweening.yoyo;
 	tween.pointTweening=this.pointTweening;
 	tween.reverse=this.reverse;
-	tween.maxrun=this.maxrun;
-	tween.ptime=this.ptime;
+	if(this.nodeTweening.active || this.pointTweening)
+	{
+		var node=this.getShape().path.next;
+		var newnode=tween.getShape().path.next;
+		var copynode=tween.copy.getShape().path.next;
+		while(node.point.x!="end")
+		{
+			newnode.nodepath=makeCopy(node.nodepath,0,$(theatre),tween.nodePaths,{});
+			newnode.nodepath.nodeTweening={};
+			newnode.nodepath.nodeTweening.active=node.nodepath.nodeTweening.active;
+			newnode.nodepath.nodeTweening.repeat=node.nodepath.nodeTweening.repeat;
+			newnode.nodepath.nodeTweening.yoyo=node.nodepath.nodeTweening.yoyo;
+			newnode.nodepath.nodeTweening.twtime=node.nodepath.nodeTweening.twtime;
+			copynode.nodepath=newnode.nodepath
+			if(node.vertex=="B")
+			{
+				newnode.ctrl1path=makeCopy(node.ctrl1path,0,$(theatre),{},{});
+				newnode.ctrl2path=makeCopy(node.ctrl2path,0,$(theatre),{},{});
+			}
+			node=node.next;
+			newnode=newnode.next;
+			copynode=copynode.next;
+		}
+	}
 	return tween;
 }
 
@@ -671,7 +677,6 @@ function prepareTweens()
 	var copynode=copy.path.next;
 	if(this.nodeTweening.active)
 	{
-		
 		while(node.point.x!="end")
 		{
 			node.tweennodes=[]; //nodes on tween path for node
@@ -710,7 +715,7 @@ function prepareTweens()
 			}
 			node=node.next;
 			copynode=copynode.next;
-		}
+		}//alert(["length",node.tweennodes.length])
 	}
 	else
 	{
@@ -1035,7 +1040,7 @@ function prepareTweens()
 							p.y-=c.y;
 							p1=p.pointRotate(shape.group.phi+theta*tick/EDtick);
 							p.x=p1.x+c.x;
-							p.y=p1.y+c.y;//$("msg").innerHTML+=p.x+","+p.y+"<br>";
+							p.y=p1.y+c.y;
 							if(c1.x!="non")
 							{
 								c1.x-=c.x;
@@ -1160,7 +1165,7 @@ function prepareTweens()
 function pathTweeningPoints(copynode) //node and ctrl points for node follows bezier path if node.nodepath.nodeTweening is true
 {
 	this.nodepath.getLengths();
-	var ntwlen=this.tweennodes.length;
+	var ntwlen=this.tweennodes.length;//alert(ntwlen);
 	if(this.vertex=="B")
 	{
 		this.ctrl1path.getLengths();

@@ -254,10 +254,75 @@ function TweenToText()
 	params+=this.tweenparams()+'^';
 	var shape=this.getShape();
 	params+=shape.ShapeToText()+'¬';
-	params+=shape.group.GroupToText()+"^";
+	//params+=shape.group.GroupToText()+"^";
 	var copy=this.copy.getShape();
 	params+=copy.ShapeToText()+'¬';
-	params+=copy.group.GroupToText();
+	//params+=copy.group.GroupToText();
+	if(this.nodeTweening || this.pointTweening)
+	{
+		params+=this.nodepathparams();
+	}
+	params=params.slice(0,-1);
+	return params;
+}
+
+function tweenparams()
+{
+	var params="";
+	params+=(1*this.translate.active)+"*";
+	params+=this.translate.twtime+"*";
+	params+=this.translate.repeat+"*";
+	params+=this.translate.yoyo+"*";
+	params+=(1*this.rotate.active)+"*";
+	params+=this.rotate.twtime+"*";
+	params+=this.rotate.repeat+"*";
+	params+=this.rotate.yoyo+"*";
+	params+=(1*this.linestyles.active)+"*";
+	params+=this.linestyles.twtime+"*";
+	params+=this.linestyles.repeat+"*";
+	params+=this.linestyles.yoyo+"*";
+	params+=(1*this.linecolour.active)+"*";
+	params+=this.linecolour.twtime+"*";
+	params+=this.linecolour.repeat+"*";
+	params+=this.linecolour.yoyo+"*";
+	params+=(1*this.fillcolour.active)+"*";
+	params+=this.fillcolour.twtime+"*";
+	params+=this.fillcolour.repeat+"*";
+	params+=this.fillcolour.yoyo+"*";
+	params+=(1*this.gradfill.active)+"*";
+	params+=this.gradfill.twtime+"*";
+	params+=this.gradfill.repeat+"*";
+	params+=(1*this.shadow.active)+"*";
+	params+=this.shadow.twtime+"*";
+	params+=this.shadow.repeat+"*";
+	params+=this.shadow.yoyo+"*";
+	params+=(1*this.edit.active)+"*";
+	params+=this.edit.twtime+"*";
+	params+=this.edit.repeat+"*";
+	params+=this.edit.yoyo+"*";
+	params+=(1*this.nodeTweening.active)+"*";
+	params+=this.nodeTweening.twtime+"*";
+	params+=this.nodeTweening.repeat+"*";
+	params+=this.nodeTweening.yoyo+"*";
+	params+=(1*this.pointTweening);	
+	return params;
+}
+
+function nodepathparams()
+{
+	var params="";
+	var path=this.getShape().path;
+	var node=path.next;
+	while(node.point.x!="end")
+	{
+		params+=node.nodepath.ShapeToText()+'¬';
+		if(node.vertex=="B")
+		{
+			params+=node.ctrl1path.ShapeToText()+'¬';
+			params+=node.ctrl2path.ShapeToText()+'¬';
+		}
+		node=node.next;
+	}
 	return params;
 }
 
@@ -445,7 +510,13 @@ function exportElements()
 	{
 		if($('cb'+TWEENS[name].name).checked)
 		{
-			TWEENS[name].tweentotext()
+			var twntxt="tween@";
+			twntxt+=TWEENS[name].TweenToText();
+			var re = /[\s\r]+/g;
+	 		twntxt=twntxt.replace(re,'`');
+			var newwindow=window.open(TWEENS[name].name,'Tween - '+TWEENS[name].name);
+ 			newwindow.document.write(twntxt);
+			newwindow.document.close();
 		}
 	}
 	for (var name in TRACKS)
