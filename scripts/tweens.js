@@ -140,6 +140,7 @@ function copytween(theatre)
 		while(node.point.x!="end")
 		{
 			newnode.nodepath=makeCopy(node.nodepath,0,$(theatre),tween.nodePaths,{});
+			newnode.nodepath.group={};
 			newnode.nodepath.nodeTweening={};
 			newnode.nodepath.nodeTweening.active=node.nodepath.nodeTweening.active;
 			newnode.nodepath.nodeTweening.repeat=node.nodepath.nodeTweening.repeat;
@@ -149,7 +150,9 @@ function copytween(theatre)
 			if(node.vertex=="B")
 			{
 				newnode.ctrl1path=makeCopy(node.ctrl1path,0,$(theatre),{},{});
+				newnode.ctrl1path={};
 				newnode.ctrl2path=makeCopy(node.ctrl2path,0,$(theatre),{},{});
+				newnode.ctrl2path={};
 			}
 			node=node.next;
 			newnode=newnode.next;
@@ -219,8 +222,8 @@ function checktween(tweendata)
 		}
 		else
 		{
-			var toptween=TWEENS[topname];
-			var tween=toptween.getTween().tween;
+			var topsprite=SPRITES[topname];
+			var tween=topsprite.getTween().tween;
 		}
 	}
 	else
@@ -247,11 +250,12 @@ function checktween(tweendata)
 	$("gradfillbox").style.visibility="hidden";
 	tween.stopchecking=false;
 	STOPCHECKING=false;//set for check done button for sprite;
+	console.log(tween.nodeTweening.active,tween.pointTweening)
 	if(tween.nodeTweening.active || tween.pointTweening)
 	{
 		var npths=0;
 		for(var name in tween.nodePaths)
-		{
+		{console.log(name);
 			npths++
 		}
 		if(npths==0)
@@ -292,8 +296,8 @@ function swaptween(tweendata)
 		}
 		else
 		{
-			var toptween=TWEENS[topname];
-			var tween=toptween.getTween(tweenname).tween;
+			var topsprite=SPRITES[topname];
+			var tween=topsprite.getTween().tween;
 		}
 	}
 	else
@@ -366,7 +370,7 @@ function startNodePaths()
 
 function linearCtrl1Path(copynode)
 {
-	this.ctrl1path=new Shape("ctrl1"+this.shape.name,"ctrl1"+this.shape.title,true,true,"curve",{});
+	this.ctrl1path=new Shape("ctrl1path"+SCOUNT,"ctrl1path"+(SCOUNT++),true,true,"curve",{});
 	this.ctrl1path.zIndex=10000000;
 	this.ctrl1path.strokeStyle=[75,100,75,1];
 	this.ctrl1path.addTo($("tweenpathsstage"));	
@@ -386,7 +390,7 @@ function linearCtrl1Path(copynode)
 
 function linearCtrl2Path(copynode)
 {
-	this.ctrl2path=new Shape("ctrl2"+this.shape.name,"ctrl2"+this.shape.title,true,true,"curve",{});
+	this.ctrl2path=new Shape("ctrl2path"+SCOUNT,"ctrl2path"+(SCOUNT++),true,true,"curve",{});
 	this.ctrl2path.zIndex=20000000;
 	this.ctrl2path.strokeStyle=[75,100,75,1];
 	this.ctrl2path.addTo($("tweenpathsstage"));
@@ -474,6 +478,7 @@ function setCtrl1Path(copynode)
 		var thetactrl1=arctan(lastc1y-startc1y,lastc1x-startc1x);
 		var theta=thetactrl1-thetanode;
 		this.ctrl1path=makeCopy(this.prev.nodepath,0,$("tweenpathsstage"),{});
+		this.ctrl1path.group={};
 		var node=this.ctrl1path.path.next;
 		while(node.point.x!="end")
 		{
@@ -519,6 +524,7 @@ function setCtrl2Path(copynode)
 		var thetactrl2=arctan(lastc2y-startc2y,lastc2x-startc2x);
 		var theta=thetactrl2-thetanode;
 		this.ctrl2path=makeCopy(this.nodepath,0,$("tweenstage"),{});
+		this.ctrl2path.group={};
 		var node=this.ctrl2path.path.next;
 		while(node.point.x!="end")
 		{

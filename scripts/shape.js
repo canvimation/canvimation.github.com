@@ -1030,7 +1030,7 @@ function shapecopy(offset)
 	}
 }
 
-function makeCopy(shape,offset,theatre,STORE,COLLECTION) 
+function makeCopy(shape,offset,theatre,STORE) 
 {
 	var p,n,c1,c2;
 	if(theatre.id=="shapestage")
@@ -1041,7 +1041,7 @@ function makeCopy(shape,offset,theatre,STORE,COLLECTION)
 	{
 		var name="SUBSH"+(NCOUNT++);
 	}
-	var copy=new Shape(name,shape.title,shape.open,shape.editable,shape.type,STORE);  		
+	var copy=new Shape(name,shape.title,shape.open,shape.editable,shape.type,STORE); 		
 	copy.lineWidth  = shape.lineWidth ;
 	copy.lineCap  = shape.lineCap ;
 	copy.lineJoin  = shape.lineJoin ;

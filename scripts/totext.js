@@ -15,7 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * 
  * Track-->track@track parameters^shape parameters¬group parameters
  * 
- * Tween-->tween@tween parameters^shape parameters^copy parameters
+ * Tween-->tween@tween parameters[shape parameters[copy parameters[nodeparameters
  * 
  * Base can be a scene or a tween(tween not yet available)
  * 
@@ -178,19 +178,26 @@ function SpriteToText()
 	
 function recordsprite()
 {
-	if (this.engine=='scene')
+	switch(this.engine)
 	{
-		var params=this.track.TrackToText()+'~';
-		params +=this.train.SceneToText()+'~';
-		params +=this.spriteparams()+'#';
-		return params;
-	}
-	else
-	{
-		var params=this.train.recordsprite();
-		params+=this.track.TrackToText()+'~';
-		params+=this.spriteparams()+"#";
-		return params;
+		case "scene":
+			var params=this.track.TrackToText()+'~';
+			params +=this.train.SceneToText()+'~';
+			params +=this.spriteparams()+'#';
+			return params;
+		break
+		case "tween":
+			var params=this.track.TrackToText()+'~';
+			params +=this.train.TweenToText()+'~';
+			params +=this.spriteparams()+'#';
+			return params;
+		break
+		case "sprite":
+			var params=this.train.recordsprite();
+			params+=this.track.TrackToText()+'~';
+			params+=this.spriteparams()+"#";
+			return params;
+		break
 	}
 }
 	
@@ -250,15 +257,15 @@ function TrackToText()
 function TweenToText()
 {
 	var params='';
-	params +=this.name+'|'+this.title+'^';
-	params+=this.tweenparams()+'^';
+	params +=this.name+'|'+this.title+'[';
+	params+=this.tweenparams()+'[';
 	var shape=this.getShape();
-	params+=shape.ShapeToText()+'¬';
-	//params+=shape.group.GroupToText()+"^";
+	shape.group={};
+	params+=shape.ShapeToText()+'[';
 	var copy=this.copy.getShape();
-	params+=copy.ShapeToText()+'¬';
-	//params+=copy.group.GroupToText();
-	if(this.nodeTweening || this.pointTweening)
+	copy.group={};
+	params+=copy.ShapeToText()+'[';
+	if(this.nodeTweening.active || this.pointTweening)
 	{
 		params+=this.nodepathparams();
 	}
@@ -304,7 +311,8 @@ function tweenparams()
 	params+=this.nodeTweening.twtime+"*";
 	params+=this.nodeTweening.repeat+"*";
 	params+=this.nodeTweening.yoyo+"*";
-	params+=(1*this.pointTweening);	
+	params+=(1*this.pointTweening)+"*";
+	params+=(1*this.reverse);	
 	return params;
 }
 
@@ -315,12 +323,20 @@ function nodepathparams()
 	var node=path.next;
 	while(node.point.x!="end")
 	{
+		node.nodepath.group={};
 		params+=node.nodepath.ShapeToText()+'¬';
+		params+=(1*node.nodepath.nodeTweening.active)+"*";
+		params+=node.nodepath.nodeTweening.twtime+"*";
+		params+=node.nodepath.nodeTweening.repeat+"*";
+		params+=node.nodepath.nodeTweening.yoyo;
 		if(node.vertex=="B")
 		{
-			params+=node.ctrl1path.ShapeToText()+'¬';
-			params+=node.ctrl2path.ShapeToText()+'¬';
+			node.ctrl1path.group={};
+			node.ctrl2path.group={};
+			params+="¬"+node.ctrl1path.ShapeToText()+"¬";
+			params+=node.ctrl2path.ShapeToText();
 		}
+		params+="]";
 		node=node.next;
 	}
 	return params;

@@ -176,7 +176,7 @@ function paramstoshape(p,Shape_Store,type)
 	
 	while (path.length>0)
 	{
-		nodedata=path.shift().split(":");
+		nodedata=path.shift().split(":");//console.log(nodedata);
 		point=new Point(parseFloat(nodedata[2]),parseFloat(nodedata[3]));
 		node=new Node(point);
 		node.vertex=nodedata[0];
@@ -333,7 +333,16 @@ function handleFileSelect(evt)
 			}
 		 break
 		 case 'tween':
-		 
+		 	try
+			{
+				resettween(t[1],"basetween");
+			}
+			catch(e)
+			{
+				alert(e.name + ": " + e.message + ": " + e.fileName + ": " + e.lineNumber);
+				alert('File data not recognised');
+				return;
+			}
 		 break
 		 case 'track':
 		 	try
@@ -402,6 +411,98 @@ function resettrack(trackfiletxt,type)
 	return track;
 }
 
+function resettween(tweenfiletxt,type)
+{
+	var tweenfile=tweenfiletxt.split("[");
+	var tweentxt=tweenfile[0];
+	var tweenparamstxt=tweenfile[1];
+	var tweenshapetxt=tweenfile[2];
+	var tweencopytxt=tweenfile[3];
+	var tweentitles=tweentxt.split('|');
+	var tween=new Tween("SUBTW"+(NCOUNT++));
+	if(type=="basetween") {TWEENS[tween.name]=tween};
+	tween.title=tweentitles[1];
+	var shape=paramstoshape(tweenshapetxt,tween.shapes);
+	var copy=paramstoshape(tweencopytxt,tween.copy.shapes);
+	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
+	var tweenparams=tweenparamstxt.split("*");
+	tween.translate.active=1==tweenparams[0];
+	tween.translate.twtime=1*tweenparams[1];
+	tween.translate.repeat=1*tweenparams[2];
+	tween.translate.yoyo=1==tweenparams[3];
+	tween.rotate.active=1==tweenparams[4];
+	tween.rotate.twtime=1*tweenparams[5];
+	tween.rotate.repeat=1*tweenparams[6];
+	tween.rotate.yoyo=1==tweenparams[7];
+	tween.linestyles.active=1==tweenparams[8];
+	tween.linestyles.twtime=1*tweenparams[9];
+	tween.linestyles.repeat=1*tweenparams[10];
+	tween.linestyles.yoyo=1==tweenparams[11];
+	tween.linecolour.active=1==tweenparams[12];
+	tween.linecolour.twtime=1*tweenparams[13];
+	tween.linecolour.repeat=1*tweenparams[14];
+	tween.linecolour.yoyo=1==tweenparams[15];
+	tween.fillcolour.active=1==tweenparams[16];
+	tween.fillcolour.twtime=1*tweenparams[17];
+	tween.fillcolour.repeat=1*tweenparams[18];
+	tween.fillcolour.yoyo=1==tweenparams[19];
+	tween.gradfill.active=1==tweenparams[20];
+	tween.gradfill.twtime=1*tweenparams[21];
+	tween.gradfill.repeat=1*tweenparams[22];
+	tween.shadow.active=1==tweenparams[23];
+	tween.shadow.twtime=1*tweenparams[24];
+	tween.shadow.repeat=1*tweenparams[25];
+	tween.shadow.yoyo=1==tweenparams[26];
+	tween.edit.active=1==tweenparams[27];
+	tween.edit.twtime=1*tweenparams[28];
+	tween.edit.repeat=1*tweenparams[29];
+	tween.edit.yoyo=1==tweenparams[30];
+	tween.nodeTweening.active=1==tweenparams[31];
+	tween.nodeTweening.twtime=1*tweenparams[32];
+	tween.nodeTweening.repeat=1*tweenparams[33];console.log("rep",isNaN(tween.nodeTweening.repeat));
+	tween.nodeTweening.yoyo=1==tweenparams[34];
+	tween.pointTweening=1==tweenparams[35];
+	tween.reverse=1==tweenparams[36];
+	if(tween.nodeTweening.active || tween.pointTweening)
+	{
+		var tweennodestxt=tweenfile[4];
+		var tweennodesections=tweennodestxt.split("]");
+		var tweennodesectiontxt;
+		var tweennodepathtxt;
+		var	tweenctrl1pathtxt;
+		var	tweenctrl2pathtxt;
+		var shape=tween.getShape();
+		var node=shape.path.next;
+		while(node.point.x!="end")
+		{
+			tweennodesectiontxt=tweennodesections.shift();//console.log(tweennodesectiontxt);
+			tweennodesection=tweennodesectiontxt.split("¬");
+			tweennodepathtxt=tweennodesection[0];//console.log("A",tweennodepathtxt);
+			node.nodepath=paramstoshape(tweennodepathtxt,tween.nodePaths);
+			tweennodeparamstxt=tweennodesection[1];
+			tweennodeparams=tweennodeparamstxt.split("*");
+			node.nodepath.nodeTweening={};
+			node.nodepath.nodeTweening.active=1==tweennodeparams[0];
+			node.nodepath.nodeTweening.twtime=1*tweennodeparams[1];
+			node.nodepath.nodeTweening.repeat=1*tweennodeparams[2];
+			node.nodepath.nodeTweening.yoyo=1==tweennodeparams[3];//console.log(node.vertex);
+			if(node.vertex=="B")
+			{
+				tweenctrl1pathtxt=tweennodesection[2];//console.log("C1",tweenctrl1pathtxt);
+				node.ctrl1path=paramstoshape(tweenctrl1pathtxt,{});
+				tweenctrl2pathtxt=tweennodesection[3];
+				node.ctrl2path=paramstoshape(tweenctrl2pathtxt,{});
+			}
+			node=node.next;
+		}
+	}
+	if(type=="basetween")
+	{
+		writetweenlist();
+	}
+	tween.setTweenTimeBox()
+}
+
 function resetsprite(spritetxt,type)
 {
 	var spriteobjs={}
@@ -419,6 +520,7 @@ function resetsprite(spritetxt,type)
 			sprite.train=resetscene(traintxt);
 		break
 		case "tween":
+			sprite.train=resettween(traintxt);
 		break
 	}
 	sprite.track=resettrack(tracktxt);
