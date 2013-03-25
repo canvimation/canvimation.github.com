@@ -459,7 +459,7 @@ function resettween(tweenfiletxt,type)
 	tween.edit.yoyo=1==tweenparams[30];
 	tween.nodeTweening.active=1==tweenparams[31];
 	tween.nodeTweening.twtime=1*tweenparams[32];
-	tween.nodeTweening.repeat=1*tweenparams[33];console.log("rep",isNaN(tween.nodeTweening.repeat));
+	tween.nodeTweening.repeat=1*tweenparams[33];
 	tween.nodeTweening.yoyo=1==tweenparams[34];
 	tween.pointTweening=1==tweenparams[35];
 	tween.reverse=1==tweenparams[36];
@@ -475,9 +475,9 @@ function resettween(tweenfiletxt,type)
 		var node=shape.path.next;
 		while(node.point.x!="end")
 		{
-			tweennodesectiontxt=tweennodesections.shift();//console.log(tweennodesectiontxt);
+			tweennodesectiontxt=tweennodesections.shift();
 			tweennodesection=tweennodesectiontxt.split("¬");
-			tweennodepathtxt=tweennodesection[0];//console.log("A",tweennodepathtxt);
+			tweennodepathtxt=tweennodesection[0];
 			node.nodepath=paramstoshape(tweennodepathtxt,tween.nodePaths);
 			tweennodeparamstxt=tweennodesection[1];
 			tweennodeparams=tweennodeparamstxt.split("*");
@@ -485,10 +485,10 @@ function resettween(tweenfiletxt,type)
 			node.nodepath.nodeTweening.active=1==tweennodeparams[0];
 			node.nodepath.nodeTweening.twtime=1*tweennodeparams[1];
 			node.nodepath.nodeTweening.repeat=1*tweennodeparams[2];
-			node.nodepath.nodeTweening.yoyo=1==tweennodeparams[3];//console.log(node.vertex);
+			node.nodepath.nodeTweening.yoyo=1==tweennodeparams[3];
 			if(node.vertex=="B")
 			{
-				tweenctrl1pathtxt=tweennodesection[2];//console.log("C1",tweenctrl1pathtxt);
+				tweenctrl1pathtxt=tweennodesection[2];
 				node.ctrl1path=paramstoshape(tweenctrl1pathtxt,{});
 				tweenctrl2pathtxt=tweennodesection[3];
 				node.ctrl2path=paramstoshape(tweenctrl2pathtxt,{});
@@ -500,7 +500,8 @@ function resettween(tweenfiletxt,type)
 	{
 		writetweenlist();
 	}
-	tween.setTweenTimeBox()
+	tween.setTweenTimeBox();
+	return tween;
 }
 
 function resetsprite(spritetxt,type)
