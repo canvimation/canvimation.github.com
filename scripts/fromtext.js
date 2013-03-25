@@ -428,38 +428,101 @@ function resettween(tweenfiletxt,type)
 	var tweenparams=tweenparamstxt.split("*");
 	tween.translate.active=1==tweenparams[0];
 	tween.translate.twtime=1*tweenparams[1];
-	tween.translate.repeat=1*tweenparams[2];
+	if(isNaN(tweenparams[2]))
+	{
+		tween.translate.repeat="C";
+	}
+	else
+	{
+		tween.translate.repeat=1*tweenparams[2];
+	}
 	tween.translate.yoyo=1==tweenparams[3];
 	tween.rotate.active=1==tweenparams[4];
 	tween.rotate.twtime=1*tweenparams[5];
-	tween.rotate.repeat=1*tweenparams[6];
+	if(isNaN(tweenparams[6]))
+	{
+		tween.rotate.repeat="C";
+	}
+	else
+	{
+		tween.rotate.repeat=1*tweenparams[6];
+	}
 	tween.rotate.yoyo=1==tweenparams[7];
 	tween.linestyles.active=1==tweenparams[8];
 	tween.linestyles.twtime=1*tweenparams[9];
-	tween.linestyles.repeat=1*tweenparams[10];
+	if(isNaN(tweenparams[10]))
+	{
+		tween.linestyles.repeat="C";
+	}
+	else
+	{
+		tween.linestyles.repeat=1*tweenparams[10];
+	}
 	tween.linestyles.yoyo=1==tweenparams[11];
 	tween.linecolour.active=1==tweenparams[12];
 	tween.linecolour.twtime=1*tweenparams[13];
-	tween.linecolour.repeat=1*tweenparams[14];
+	if(isNaN(tweenparams[14]))
+	{
+		tween.linecolour.repeat="C";
+	}
+	else
+	{
+		tween.linecolour.repeat=1*tweenparams[14];
+	}
 	tween.linecolour.yoyo=1==tweenparams[15];
 	tween.fillcolour.active=1==tweenparams[16];
 	tween.fillcolour.twtime=1*tweenparams[17];
-	tween.fillcolour.repeat=1*tweenparams[18];
+	if(isNaN(tweenparams[18]))
+	{
+		tween.fillcolour.repeat="C";
+	}
+	else
+	{
+		tween.fillcolour.repeat=1*tweenparams[18];
+	}
 	tween.fillcolour.yoyo=1==tweenparams[19];
 	tween.gradfill.active=1==tweenparams[20];
 	tween.gradfill.twtime=1*tweenparams[21];
-	tween.gradfill.repeat=1*tweenparams[22];
+	if(isNaN(tweenparams[22]))
+	{
+		tween.gradfill.repeat="C";
+	}
+	else
+	{
+		tween.gradfill.repeat=1*tweenparams[22];
+	}
 	tween.shadow.active=1==tweenparams[23];
 	tween.shadow.twtime=1*tweenparams[24];
-	tween.shadow.repeat=1*tweenparams[25];
+	if(isNaN(tweenparams[25]))
+	{
+		tween.shadow.repeat="C";
+	}
+	else
+	{
+		tween.shadow.repeat=1*tweenparams[25];
+	}
 	tween.shadow.yoyo=1==tweenparams[26];
 	tween.edit.active=1==tweenparams[27];
 	tween.edit.twtime=1*tweenparams[28];
-	tween.edit.repeat=1*tweenparams[29];
+	if(isNaN(tweenparams[29]))
+	{
+		tween.edit.repeat="C";
+	}
+	else
+	{
+		tween.edit.repeat=1*tweenparams[29];
+	}
 	tween.edit.yoyo=1==tweenparams[30];
 	tween.nodeTweening.active=1==tweenparams[31];
 	tween.nodeTweening.twtime=1*tweenparams[32];
-	tween.nodeTweening.repeat=1*tweenparams[33];
+	if(isNaN(tweenparams[33]))
+	{
+		tween.nodeTweening.repeat="C";
+	}
+	else
+	{
+		tween.nodeTweening.repeat=1*tweenparams[33];
+	}
 	tween.nodeTweening.yoyo=1==tweenparams[34];
 	tween.pointTweening=1==tweenparams[35];
 	tween.reverse=1==tweenparams[36];
@@ -484,7 +547,14 @@ function resettween(tweenfiletxt,type)
 			node.nodepath.nodeTweening={};
 			node.nodepath.nodeTweening.active=1==tweennodeparams[0];
 			node.nodepath.nodeTweening.twtime=1*tweennodeparams[1];
-			node.nodepath.nodeTweening.repeat=1*tweennodeparams[2];
+			if(isNaN(tweennodeparams[2]))
+			{
+				node.nodepath.nodeTweening.repeat="C";
+			}
+			else
+			{
+				node.nodepath.nodeTweening.repeat=1*tweennodeparams[2];
+			}
 			node.nodepath.nodeTweening.yoyo=1==tweennodeparams[3];
 			if(node.vertex=="B")
 			{
