@@ -161,7 +161,6 @@ function copyGroup(group,offset,theatre,STORE,COLLECTION)
 		else
 		{
 			var shape=group.members[i];
-			
 			var copy=makeCopy(shape,offset,theatre,STORE); 
 		
 			groupcopy.members.push(copy);
@@ -313,7 +312,7 @@ function contains(subgroup)
 
 function showmembers()
 {
-	var mem="[";
+	var mem="[";	
 		for(var i=0; i<this.members.length; i++)
 		{
 			if(this.members[i].elType=="_GROUP")
@@ -321,7 +320,7 @@ function showmembers()
 				mem+=this.members[i].name +"="+this.members[i].showmembers();
 			}
 			else
-			{
+			{console.log("shape",this.members[i])
 				var shape=this.members[i];
 				mem+=shape.name;
 			}

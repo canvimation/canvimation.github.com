@@ -119,8 +119,8 @@ function addToFilm(el)
 			flel.maxruntime=flel.elm.maxruntime(0);
 			flel.setRun();
 		break
-		case "tween":
-			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
+		case "tween":alert("here");
+			flel.elm=TWEENS[el.name].copytween("div"+flel.id);alert("1");
 			flel.maxruntime=flel.elm.maxruntime;
 			flel.setRun();
 		break

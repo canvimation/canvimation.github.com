@@ -820,10 +820,12 @@ function elementShapeCopy(FROM,TO,STORE,offset,theatre)  //FROM is associative a
 	var temps;
 	var shapelist=[];
 	var sel=false;
+console.log("b")	;
 	for(var name in FROM)  
 	{
+console.log("group",name);		
 		var group=FROM[name];
-		var groupcopy=copyGroup(group,offset,theatre,STORE,TO,NCOUNT)
+		var groupcopy=copyGroup(group,offset,theatre,STORE,TO)
 	}
 	return groupcopy;
 }

@@ -256,15 +256,28 @@ function TrackToText()
 
 function TweenToText()
 {
+	var group;
 	var params='';
 	params +=this.name+'|'+this.title+'[';
 	params+=this.tweenparams()+'[';
 	var shape=this.getShape();
-	shape.group={};
-	params+=shape.ShapeToText()+'[';
+	params+=shape.ShapeToText()+'+';
+	for(var name in this.groups)
+	{
+		group=this.groups[name];
+		params+=group.GroupToText()+'*';
+	}
+	params=params.slice(0,-1);
+	params+="[";	
 	var copy=this.copy.getShape();
-	copy.group={};
-	params+=copy.ShapeToText()+'[';
+	params+=copy.ShapeToText()+'+';
+	for(var name in this.copy.groups)
+	{
+		group=this.copy.groups[name];
+		params+=group.GroupToText()+'*';
+	}
+	params=params.slice(0,-1);
+	params+="[";
 	if(this.nodeTweening.active || this.pointTweening)
 	{
 		params+=this.nodepathparams();

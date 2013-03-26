@@ -413,6 +413,7 @@ function resettrack(trackfiletxt,type)
 
 function resettween(tweenfiletxt,type)
 {
+	var group;
 	var tweenfile=tweenfiletxt.split("[");
 	var tweentxt=tweenfile[0];
 	var tweenparamstxt=tweenfile[1];
@@ -422,8 +423,45 @@ function resettween(tweenfiletxt,type)
 	var tween=new Tween("SUBTW"+(NCOUNT++));
 	if(type=="basetween") {TWEENS[tween.name]=tween};
 	tween.title=tweentitles[1];
-	var shape=paramstoshape(tweenshapetxt,tween.shapes);
-	var copy=paramstoshape(tweencopytxt,tween.copy.shapes);
+	var tweenshape=tweenshapetxt.split("+");
+	var shape=paramstoshape(tweenshape[0],tween.shapes);
+	paramstogroup(tweenshape[1],tween.groups);
+	for(var name in tween.groups)
+	{
+		group=tween.groups[name];
+		for(var i=0; i<group.members.length; i++)
+		{
+			if(group.members[i][0]=="s")
+			{
+				group.members[i]=tween.shapes[group.members[i][1].trim()];
+			}
+			else
+			{
+				group.members[i]=tween.groups[group.members[i][1].trim()];
+			}
+		}
+	}
+	shape.group=tween.groups[shape.group];
+
+	var tweencopy=tweencopytxt.split("+");
+	var copy=paramstoshape(tweencopy[0],tween.copy.shapes);
+	paramstogroup(tweencopy[1],tween.copy.groups);
+	for(var name in tween.copy.groups)
+	{
+		group=tween.copy.groups[name];
+		for(var i=0; i<group.members.length; i++)
+		{
+			if(group.members[i][0]=="s")
+			{
+				group.members[i]=tween.copy.shapes[group.members[i][1].trim()];
+			}
+			else
+			{
+				group.members[i]=tween.copy.groups[group.members[i][1].trim()];
+			}
+		}
+	}
+	copy.group=tween.copy.groups[copy.group];	
 	tween.tweenshape=makeCopy(shape,0,$("tweenstage"),{});
 	var tweenparams=tweenparamstxt.split("*");
 	tween.translate.active=1==tweenparams[0];

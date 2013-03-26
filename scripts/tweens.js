@@ -92,8 +92,9 @@ function copytween(theatre)
 	var shape=tween.getShape();
 	shape.name="A"+shape.name;
 	elementShapeCopy(this.copy.groups,tween.copy.groups,tween.copy.shapes,0,$(theatre));
-	var copy=tween.getShape();
-	copy.name="B"+shape.name;
+	var copy=tween.copy.getShape();
+	copy.name="B"+copy.name;
+console.log(this.getShape().name,this.copy.getShape().name,shape.name,copy.name);
 	tween.translate.active=this.translate.active;
 	tween.translate.twtime=this.translate.twtime;
 	tween.translate.repeat=this.translate.repeat;
