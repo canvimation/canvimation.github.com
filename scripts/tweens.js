@@ -94,7 +94,6 @@ function copytween(theatre)
 	elementShapeCopy(this.copy.groups,tween.copy.groups,tween.copy.shapes,0,$(theatre));
 	var copy=tween.copy.getShape();
 	copy.name="B"+copy.name;
-console.log(this.getShape().name,this.copy.getShape().name,shape.name,copy.name);
 	tween.translate.active=this.translate.active;
 	tween.translate.twtime=this.translate.twtime;
 	tween.translate.repeat=this.translate.repeat;
@@ -251,12 +250,11 @@ function checktween(tweendata)
 	$("gradfillbox").style.visibility="hidden";
 	tween.stopchecking=false;
 	STOPCHECKING=false;//set for check done button for sprite;
-	console.log(tween.nodeTweening.active,tween.pointTweening)
 	if(tween.nodeTweening.active || tween.pointTweening)
 	{
 		var npths=0;
 		for(var name in tween.nodePaths)
-		{console.log(name);
+		{
 			npths++
 		}
 		if(npths==0)

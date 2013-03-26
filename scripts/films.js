@@ -119,12 +119,12 @@ function addToFilm(el)
 			flel.maxruntime=flel.elm.maxruntime(0);
 			flel.setRun();
 		break
-		case "tween":alert("here");
-			flel.elm=TWEENS[el.name].copytween("div"+flel.id);alert("1");
+		case "tween":
+			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
 			flel.maxruntime=flel.elm.maxruntime;
 			flel.setRun();
 		break
-	}
+	}alert("3");
 	flel.addToBoard();
 }
 
@@ -1132,16 +1132,16 @@ function setRun()
 	this.name=this.elm.name;
 	this.R=0;
 	this.run=document.createElement("div");
-	this.run.style.left="55px";
-	this.run.style.top=(thisTOP+5)+"px";
+	this.run.style.left="55px";alert("1")
+	this.run.style.top=(thisTOP+5)+"px";alert("2")
 	this.run.style.borderTop="2px solid blue";
 	this.run.style.borderLeft="2px solid blue";
-	this.run.style.borderRight="2px solid blue";
+	this.run.style.borderRight="2px solid blue";	
 	this.run.style.height=(parseInt($("timeline").style.top)-parseInt(this.run.style.top))+"px";
 	this.maxrun=document.createElement("div");
 	this.maxrun.style.borderTop="2px dotted red";
 	this.maxrun.style.borderRight="2px dotted red";
-	if(this.maxruntime=="c")  //is continuous
+	if(isNaN(this.maxruntime))  //is continuous
 	{
 		this.run.style.width=parseInt($("filmbuildstory").style.width)+"px";
 		this.maxrun.style.width=this.run.style.width;
@@ -1152,5 +1152,5 @@ function setRun()
 		this.run.style.width=this.maxruntime+"px";
 		this.maxrun.style.width=this.run.style.width;	
 		this.S=this.maxruntime;	
-	}	
+	}
 }

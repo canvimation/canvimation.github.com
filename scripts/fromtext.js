@@ -176,7 +176,7 @@ function paramstoshape(p,Shape_Store,type)
 	
 	while (path.length>0)
 	{
-		nodedata=path.shift().split(":");//console.log(nodedata);
+		nodedata=path.shift().split(":");
 		point=new Point(parseFloat(nodedata[2]),parseFloat(nodedata[3]));
 		node=new Node(point);
 		node.vertex=nodedata[0];

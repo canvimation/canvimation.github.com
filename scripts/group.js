@@ -320,7 +320,7 @@ function showmembers()
 				mem+=this.members[i].name +"="+this.members[i].showmembers();
 			}
 			else
-			{console.log("shape",this.members[i])
+			{
 				var shape=this.members[i];
 				mem+=shape.name;
 			}

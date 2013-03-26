@@ -199,7 +199,7 @@ function checksprite(spritedata,showpathline)
 	}
 	sprite.setVector();
 	var s=sprite.getShapes();
-	if(s.engine="tween")
+	if(s.engine=="tween")
 	{
 		s.train.stopchecking=false;
 		if(s.train.nodeTweening.active || s.train.pointTweening)
