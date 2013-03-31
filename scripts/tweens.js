@@ -33,8 +33,8 @@ function Tween(name)
 	this.groups={};
 	this.copy={shapes:{},groups:{}};
 	this.nodePaths={} //list of paths between shape nodes and copy nodes
-	this.ctrl1Paths={};
-	this.ctrl2Paths={};
+	//this.ctrl1Paths={};
+	//this.ctrl2Paths={};
 	this.translate={active:false,twtime:10,repeat:1,counter:0,yoyo:false,ptr:0}; //if translate and rotate both acitve must share twtime, repeat and yoyo
 	this.rotate={active:false,twtime:10,repeat:1,yoyo:false,ptr:0,mx:0,clkw:true};
 	this.linestyles={active:false,twtime:10,repeat:1,counter:0,yoyo:false,points:[],ptr:0};
@@ -635,6 +635,7 @@ function showNodePathList(nodein)
 function prepareTweens()
 {
 	var twnode,stnode,start;
+	var mrt;
 	var c,p,c1,c2;
 	var shape=this.getShape();
 	var copy=this.copy.getShape();
@@ -689,12 +690,19 @@ function prepareTweens()
 			node.repeat=node.nodepath.nodeTweening.repeat;
 			node.yoyo=node.nodepath.nodeTweening.yoyo;
 			node.Ttick=node.nodepath.nodeTweening.twtime*1000;
-			var mrt=node.repeat*node.Ttick;
-			if(node.yoyo)
+			if(isNaN(node.repeat)  || isNaN(this.maxruntime))
 			{
-				mrt*=2;
+				this.maxruntime="always";
 			}
-			this.maxruntime=Math.max(this.maxruntime,mrt);
+			else
+			{
+				mrt=node.repeat*node.Ttick;
+				if(node.yoyo)
+				{
+					mrt*=2;
+				}
+				this.maxruntime=Math.max(this.maxruntime,mrt);
+			}
 			node.tick=50;
 			while(node.ptr<node.Ttick)
 			{
@@ -720,7 +728,7 @@ function prepareTweens()
 			}
 			node=node.next;
 			copynode=copynode.next;
-		}//alert(["length",node.tweennodes.length])
+		}
 	}
 	else
 	{
@@ -737,12 +745,19 @@ function prepareTweens()
 	if(this.fillcolour.active)
 	{
 		var FCtick=this.fillcolour.twtime*1000;
-		var mrt=FCtick*this.fillcolour.repeat;
-		if(this.fillcolour.yoyo)
+		if(isNaN(this.fillcolour.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.fillcolour.repeat*FCtick;
+			if(this.fillcolour.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var tick=0;
 		this.fillcolour.points=[];
 		var tempcol=[];
@@ -760,12 +775,19 @@ function prepareTweens()
 	if(this.linecolour.active)
 	{
 		var LCtick=this.linecolour.twtime*1000;
-		var mrt=LCtick*this.linecolour.repeat;
-		if(this.linecolour.yoyo)
+		if(isNaN(this.linecolour.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.linecolour.repeat*LCtick;
+			if(this.linecolour.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var tick=0;
 		this.linecolour.points=[];
 		var tempcol=[];
@@ -783,12 +805,19 @@ function prepareTweens()
 	if(this.gradfill.active)
 	{
 		var GFtick=this.gradfill.twtime*1000;
-		var mrt=GFtick*this.gradfill.repeat;
-		if(this.gradfill.yoyo)
+		if(isNaN(this.gradfill.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.gradfill.repeat*GFtick;
+			if(this.gradfill.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var tick=0;
 		this.gradfill.points=[];
 		var tempcolstops=[];
@@ -812,12 +841,19 @@ function prepareTweens()
 	if(this.linestyles.active)
 	{
 		var LStick=this.linestyles.twtime*1000;
-		var mrt=LStick*this.linestyles.repeat;
-		if(this.linestyles.yoyo)
+		if(isNaN(this.linestyles.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.linestyles.repeat*LStick;
+			if(this.linestyles.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var tick=0;
 		this.linestyles.points=[];
 		var templs;
@@ -832,12 +868,19 @@ function prepareTweens()
 	if(this.shadow.active)
 	{
 		var SHtick=this.shadow.twtime*1000;
-		var mrt=SHtick*this.shadow.repeat;
-		if(this.shadow.yoyo)
+		if(isNaN(this.shadow.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.shadow.repeat*SHtick;
+			if(this.shadow.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var tick=0;
 		this.shadow.points=[];
 		var tempsh;
@@ -861,12 +904,19 @@ function prepareTweens()
 	if(this.edit.active)
 	{
 		var EDtick=this.edit.twtime*1000;
-		var mrt=EDtick*this.edit.repeat;
-		if(this.edit.yoyo)
+		if(isNaN(this.edit.repeat)  || isNaN(this.maxruntime))
 		{
-			mrt*=2;
+			this.maxruntime="always";
 		}
-		this.maxruntime=Math.max(this.maxruntime,mrt);
+		else
+		{
+			mrt=this.edit.repeat*EDtick;
+			if(this.edit.yoyo)
+			{
+				mrt*=2;
+			}
+			this.maxruntime=Math.max(this.maxruntime,mrt);
+		}
 		var p1;
 		var xtranslate=copy.group.centreOfRotation.x-shape.group.centreOfRotation.x;  //x translation
 		var ytranslate=copy.group.centreOfRotation.y-shape.group.centreOfRotation.y;  //y translation 

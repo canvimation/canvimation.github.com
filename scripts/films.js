@@ -121,10 +121,27 @@ function addToFilm(el)
 		break
 		case "tween":
 			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
-			flel.maxruntime=flel.elm.maxruntime;
+			if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
+			{
+				var npths=0;
+				for(var name in flel.elm.nodePaths)
+				{
+					npths++
+				}
+				if(npths==0)
+				{
+					flel.elm.startNodePaths();
+				}
+				else
+				{
+					flel.elm.setNodePaths();
+				}
+			}
+			flel.elm.prepareTweens();
+			flel.maxruntime=flel.elm.maxruntime/1000;
 			flel.setRun();
 		break
-	}alert("3");
+	}
 	flel.addToBoard();
 }
 
@@ -139,6 +156,18 @@ function addToBoard()
 	filmboard.appendChild(this.text);
 	$("flellist").appendChild(this.label);
 	
+	
+	this.setBoard();
+	$("dragstage").style.visibility="visible";
+	FLELTOP+=25;
+	FLELHEIGHT+=25;
+}
+
+function setBoard()
+{	
+	var filmboard=$("filmbuildboard");
+	var filmlines=$("filmbuildlines");
+	
 	$("currentel").innerHTML=" &nbsp;Current Element: "+this.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
 	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
 	$("currentel").el=this.id;
@@ -149,7 +178,12 @@ function addToBoard()
 			this.elm.drawscene();
 		break
 		case "tween":
+			filmlines.appendChild(this.maxrun);
+			filmlines.appendChild(this.run);
 			this.elm.drawtween();
+			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
+			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
+			this.elm.zeroTweenPtrs();
 		break
 		case "sprite":
 			filmlines.appendChild(this.maxrun);
@@ -164,50 +198,6 @@ function addToBoard()
 			this.elm.drawsprite();
 		break
 	}
-	this.setBoard();
-	this.DD=new YAHOO.util.DD(this.eldiv.id);
-	for(var name in FILMBOARD)
-	{
-		FILMBOARD[name].seen.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].seen.style.top))+"px";
-		if(FILMBOARD[name].source=="sprite")
-		{
-			FILMBOARD[name].run.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].run.style.top))+"px";
-			FILMBOARD[name].maxrun.style.height=(parseInt(FILMBOARD[name].run.style.height))+"px";
-		}
-		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
-		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
-		FILMBOARD[name].DD.unreg();
-	}
-	this.text.style.backgroundColor="yellow";
-	this.label.style.backgroundColor="yellow";
-	this.DD.setOuterHandleElId($("dragstage"));
-	this.DD.onMouseUp=function() {
-									this.clearConstraints();
-									var id=$(this.id).id;
-									var name=id.substr(3);
-									var len=name.length;
-									name=name.substr(0,len-5);
-									var flel=FILMBOARD[name];
-									flel.xOffset=parseInt($(this.id).style.left);
-									flel.yOffset=parseInt($(this.id).style.top);
-								}
-	this.DD.onMouseDown=function() {
-										if(xgrid>1)
-										{
-											this.setXConstraint(2*SCRW,2*SCRW,xgrid);
-										}
-										if(ygrid>1)
-										{
-											this.setYConstraint(2*SCRH,2*SCRW,xgrid);
-										}
-									}
-	$("dragstage").style.visibility="visible";
-	FLELTOP+=25;
-	FLELHEIGHT+=25;
-}
-
-function setBoard()
-{	
 	this.seen.style.left=(55+this.A)+"px";;
 	this.seen.style.top=(this.layer*25+15)+"px";
 	this.seen.style.height=(parseInt($("timeline").style.top)-parseInt(this.seen.style.top))+"px";
@@ -219,7 +209,7 @@ function setBoard()
 	}
 	else
 	{
-		this.seen.style.width=(this.D-this.A)+"px";
+		this.seen.style.width=BOARDZOOM*(this.D-this.A)+"px";
 		$("Din").style.left=(parseInt(this.seen.style.left)+parseInt(this.seen.style.width)+2)+"px";
 	}
 	$("Ain").value=this.A;
@@ -275,7 +265,7 @@ function setBoard()
 					}
 					else
 					{
-						this.run.style.width=(this.S-this.R)+"px";
+						this.run.style.width=BOARDZOOM*(this.S-this.R)+"px";
 						$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
 						$("Scin").value=this.S;
 						$("Sin").value=this.S;
@@ -288,13 +278,13 @@ function setBoard()
 				}
 				else
 				{	
-					this.run.style.width=(this.S-this.R)+"px";
+					this.run.style.width=BOARDZOOM*(this.S-this.R)+"px";
 					$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
 					$("Scin").value=this.S;
 					$("Sin").value=this.S;
 					if(this.S<this.maxruntime)
 					{
-						this.maxrun.style.width=(this.maxruntime-this.R)+"px";
+						this.maxrun.style.width=BOARDZOOM*(this.maxruntime-this.R)+"px";
 						this.maxrun.style.visibility="inherit";
 						$("MaxT").style.left=(parseInt(this.maxrun.style.left)+parseInt(this.maxrun.style.width)+2)+"px";
 						$("MaxT").innerHTML=this.maxruntime;
@@ -304,7 +294,7 @@ function setBoard()
 			}
 			else
 			{
-				this.run.style.width=(this.S-this.R)+"px";
+				this.run.style.width=BOARDZOOM*(this.S-this.R)+"px";
 				$("Sin").style.left=(parseInt(this.run.style.left)+parseInt(this.run.style.width)+2)+"px";
 				$("Scin").value=this.S;
 				$("Sin").value=this.S;
@@ -317,7 +307,7 @@ function setBoard()
 				{
 					if(this.S<this.maxruntime)
 					{
-						this.maxrun.style.width=(this.maxruntime-this.R)+"px";
+						this.maxrun.style.width=BOARDZOOM*(this.maxruntime-this.R)+"px";
 						this.maxrun.style.visibility="inherit";
 						$("MaxT").style.left=(parseInt(this.maxrun.style.left)+parseInt(this.maxrun.style.width)+2)+"px";
 						$("MaxT").innerHTML=this.maxruntime;
@@ -327,6 +317,42 @@ function setBoard()
 			}
 		break
 	}
+	this.DD=new YAHOO.util.DD(this.eldiv.id);
+	for(var name in FILMBOARD)
+	{
+		FILMBOARD[name].seen.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].seen.style.top))+"px";
+		if(FILMBOARD[name].source=="sprite" || FILMBOARD[name].source=="tween")
+		{
+			FILMBOARD[name].run.style.height=(parseInt($("timeline").style.top)-parseInt(FILMBOARD[name].run.style.top))+"px";
+			FILMBOARD[name].maxrun.style.height=(parseInt(FILMBOARD[name].run.style.height))+"px";
+		}
+		FILMBOARD[name].text.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
+		FILMBOARD[name].DD.unreg();
+	}
+	this.text.style.backgroundColor="yellow";
+	this.label.style.backgroundColor="yellow";
+	this.DD.setOuterHandleElId($("dragstage"));
+	this.DD.onMouseUp=function() {
+									this.clearConstraints();
+									var id=$(this.id).id;
+									var name=id.substr(3);
+									var len=name.length;
+									name=name.substr(0,len-5);
+									var flel=FILMBOARD[name];
+									flel.xOffset=parseInt($(this.id).style.left);
+									flel.yOffset=parseInt($(this.id).style.top);
+								}
+	this.DD.onMouseDown=function() {
+										if(xgrid>1)
+										{
+											this.setXConstraint(2*SCRW,2*SCRW,xgrid);
+										}
+										if(ygrid>1)
+										{
+											this.setYConstraint(2*SCRH,2*SCRW,xgrid);
+										}
+									}
 }
 
 function setA(inp)
@@ -346,14 +372,6 @@ function setA(inp)
 		inp.value=flel.A;
 		return;
 	}
-/*	if(inp.id=="Ain")
-	{
-		$("Acin").value=$("Ain").value;
-	}
-	else
-	{
-		$("Ain").value=$("Acin").value;
-	} */
 	flel.A=n;
 	
 	if(!(isNaN(flel.D)) && flel.D-flel.A<0.25)
@@ -373,13 +391,6 @@ function setA(inp)
 	$("filmbuildstory").style.width=Math.max((parseInt($("filmbuildbox").style.width)+10),FLELWIDTH)+"px";
 	$("scrolllr").style.width=((parseInt($("viewport").style.width)-42)*parseInt($("viewport").style.width)/(parseInt($("filmbuildstory").style.width)))+"px";
 	$("timeline").style.width=parseInt($("filmbuildstory").style.width)+"px";	
-/*	for(var name in FILMBOARD)
-	{
-		if(isNaN(FILMBOARD[name].D))
-		{
-			FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
-		}
-	} */
 	flel.setBoard();
 }
 
@@ -399,14 +410,6 @@ function setD(inp)
 		inp.value=flel.D;
 		return;
 	}
-/*	if(inp.id=="Din")
-	{
-		$("Dcin").value=$("Din").value;
-	}
-	else
-	{
-		$("Din").value=$("Dcin").value;
-	} */
 	if(isNaN(n))
 	{
 		flel.D="Never";
@@ -461,14 +464,6 @@ function setR(inp)
 			alert("Run At time is after the sprite will disappear.")
 		}
 	}
-/*	if(inp.id=="Rin")
-	{
-		$("Rcin").value=$("Rin").value;
-	}
-	else
-	{
-		$("Rin").value=$("Rcin").value;
-	} */
 	flel.R=n;
 
 	if(!(isNaN(flel.S)) && flel.S-flel.R<0.25)
@@ -519,14 +514,6 @@ function setS(inp)
 			return;
 		}
 	}
-/*	if(inp.id=="sin")
-	{
-		$("Scin").value=$("Sin").value;
-	}
-	else
-	{
-		$("Sin").value=$("Scin").value;
-	}*/
 	if(isNaN(flel.D))
 	{
 		if(isNaN(n))
@@ -565,60 +552,8 @@ function setflel(el)
 		FILMBOARD[name].label.style.backgroundColor="#FFFFFF";
 		FILMBOARD[name].DD.unreg();
 	}
-	flel.text.style.backgroundColor="yellow";
-	flel.label.style.backgroundColor="yellow";
-	flel.seen.style.zIndex=++FLELINDX;
-	$("currentel").innerHTML=" &nbsp;Current Element: "+flel.title+" A: <input id='Acin' type='text' size='4' value='0' onchange='setA(this)' />";
-	$("currentel").innerHTML+=" D: <input id='Dcin' type='text' size='4' value='Never' onchange='setD(this)' />";		
-	$("currentel").el=flel.id;
-	$("Ain").value=flel.A;
-	$("Acin").value=flel.A;
-	$("Ain").style.left=(parseInt(flel.seen.style.left)-48)+"px";;
-	$("Din").value=flel.D;
-	$("Dcin").value=flel.D;
-	$("Din").style.left=(parseInt(flel.seen.style.left)+2)+"px";
-	switch (flel.source)
-	{
-		case "scene":
-			$("Rin").style.visibility="hidden";
-			$("Sin").style.visibility="hidden";
-		break
-		case "tween":
-		case "sprite":
-			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
-			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
-			$("Rin").value=flel.R;
-			$("Rcin").value=flel.R;
-			$("Rin").style.left=(parseInt(flel.run.style.left)-48)+"px";
-			$("Sin").value=flel.S;
-			$("Scin").value=flel.S;
-			$("Sin").style.left=(parseInt(flel.run.style.left)+2)+"px";
-			$("Rin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			$("Sin").style.top=(parseInt($("timeline").style.top)+35)+"px";
-			$("Sin").style.visibility="inherit";
-			$("Rin").style.visibility="inherit";
-			flel.run.style.borderTop="2px solid blue";
-			flel.run.style.borderLeft="2px solid blue";
-			flel.run.style.borderRight="2px solid blue";
-		break
-	}
-	flel.DD=new YAHOO.util.DD("div"+flel.id+"stage");
-	flel.DD.setOuterHandleElId($("dragstage"));
-	flel.DD.onMouseUp=function() {
-									this.clearConstraints();
-									flel.xOffset=parseInt($(this.id).style.left);
-									flel.yOffset=parseInt($(this.id).style.top);
-								}
-	flel.DD.onMouseDown=function() {
-										if(xgrid>1)
-										{
-											this.setXConstraint(2*SCRW,2*SCRW,xgrid);
-										}
-										if(ygrid>1)
-										{
-											this.setYConstraint(2*SCRH,2*SCRW,xgrid);
-										}
-									}
+	flel.setBoard()	
+
 }
 
 function flelup()
@@ -649,6 +584,7 @@ function flelup()
 	switch (flel.source)
 	{
 		case "sprite":
+		case "tween":
 			flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
 			flel.run.style.height=(parseInt(flel.seen.style.height)-5)+"px";
 		break
@@ -656,6 +592,7 @@ function flelup()
 	switch (prev.source)
 	{
 		case "sprite":
+		case "tween":
 			prev.run.style.top=(parseInt(prev.seen.style.top)+5)+"px";
 			prev.run.style.height=(parseInt(prev.seen.style.height)-5)+"px";
 		break
@@ -696,6 +633,7 @@ function fleldown()
 	switch (flel.source)
 	{
 		case "sprite":
+		case "tween":
 			flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
 			flel.run.style.height=(parseInt(flel.seen.style.height)-5)+"px";
 		break
@@ -703,6 +641,7 @@ function fleldown()
 	switch (next.source)
 	{
 		case "sprite":
+		case "tween":
 			next.run.style.top=(parseInt(next.seen.style.top)+5)+"px";
 			next.run.style.height=(parseInt(next.seen.style.height)-5)+"px";
 		break
@@ -803,11 +742,11 @@ function cancelFilmBuild(child)
 {
 	if($("filmsave").value==" Save ")
 	{
-		var cnfmsg="Do you really want to cancel this Film Build?"
+		var cnfmsg="Do you really want to end this Film Build?"
 	}
 	else
 	{
-		var cnfmsg="Do you really want to cancel any changes to this Film?"
+		var cnfmsg="Do you really want to lose any changes to this Film?"
 	}
 	cancel=confirm(cnfmsg)
 	if(cancel)
@@ -1132,8 +1071,8 @@ function setRun()
 	this.name=this.elm.name;
 	this.R=0;
 	this.run=document.createElement("div");
-	this.run.style.left="55px";alert("1")
-	this.run.style.top=(thisTOP+5)+"px";alert("2")
+	this.run.style.left="55px";
+	this.run.style.top=(FLELTOP+5)+"px";
 	this.run.style.borderTop="2px solid blue";
 	this.run.style.borderLeft="2px solid blue";
 	this.run.style.borderRight="2px solid blue";	
@@ -1149,7 +1088,7 @@ function setRun()
 	}
 	else
 	{
-		this.run.style.width=this.maxruntime+"px";
+		this.run.style.width=BOARDZOOM*this.maxruntime+"px";
 		this.maxrun.style.width=this.run.style.width;	
 		this.S=this.maxruntime;	
 	}

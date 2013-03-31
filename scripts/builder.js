@@ -85,7 +85,6 @@ function flbb(newone)
 	$("MaxT").style.textAlign="right";
 	$("MaxT").style.backgroundColor="#FF9999";
 	$("timeline").style.width=(parseInt($("filmbuildlines").style.width)-25)+"px";
-	$("timeline").style.zIndex=1000000000;
 	ELCOUNT=0;
 	FLELTOP=15;
 	FLELWIDTH=350;
@@ -1416,14 +1415,21 @@ function filmEdit(n)
 		flel=film.elements[film.list[i][0]];
 		if(flel.source!="scene")
 		{
-			flel.maxruntime=flel.elm.maxruntime(0);
+			if(flel.source=="sprite")
+			{
+				flel.maxruntime=flel.elm.maxruntime(0);
+			}
+			else
+			{
+				flel.maxruntime=flel.elm.maxruntime/1000;
+			}
 			if(flel.maxruntime=="c")  //is continuous
 			{
 				flel.maxrun.style.width=parseInt($("filmbuildstory").style.width)+"px";
 			}
 			else
 			{
-				flel.maxrun.style.width=flel.maxruntime+"px";	
+				flel.maxrun.style.width=BOARDZOOM*flel.maxruntime+"px";	
 			}
 		}
 		flel.addToBoard();

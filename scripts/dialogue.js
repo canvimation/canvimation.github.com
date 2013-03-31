@@ -801,9 +801,9 @@ function resize(el)
 			{
 				FILMBOARD[name].seen.style.width=parseInt($("filmbuildstory").style.width)+"px";
 			
-				if(isNaN(FILMBOARD[name].S) && FILMBOARD[name].source=="sprite")
+				if(isNaN(FILMBOARD[name].S) && (FILMBOARD[name].source=="sprite" || FILMBOARD[name].source=="tween"))
 				{
-					FILMBOARD[name].run.style.width=parseInt($("filmbuildstory").style.width)+"px";
+					FILMBOARD[name].run.style.width=BOARDZOOM*parseInt($("filmbuildstory").style.width)+"px";
 				}
 			}
 		}
