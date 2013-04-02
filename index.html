@@ -1863,8 +1863,8 @@ function main()
 	{
 		BOXNAME=BOXES[i].id.substr(0,BOXES[i].id.length-3);
 		BOXES[i].style.top=(60+i*30)+"px";
-		BOXES[i].style.left=(100+i*220)+"px";
-		BOXES[i].style.width=250+"px";
+		BOXES[i].style.left=(100+i*230)+"px";
+		BOXES[i].style.width=200+"px";
 		BOXES[i].style.height=250+"px";
 		BOXES[i].style.clip="rect(1px,"+(parseInt(BOXES[i].style.width)+2)+"px,"+(parseInt(BOXES[i].style.height)+2)+"px,0px)";
 		BOXES[i].style.visibility="hidden";
@@ -2008,10 +2008,6 @@ function main()
 	DDtlbr.setHandleElId('tlbrhead');
 	DDtlbr.onMouseDown=onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};	
 	
-/*	DDtlbr=new YAHOO.util.DD('filmsbar');
-	DDtlbr.setHandleElId('filmsbarhead');
-	DDtlbr.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++}; */
-
 	DDanibr=new YAHOO.util.DD('anibar');
 	DDanibr.setHandleElId('anibarhd');
 	DDanibr.onMouseDown=function() {$(this.id).style.zIndex=ZBOX++};
@@ -2216,21 +2212,7 @@ function main()
 	ttcgdfhtml='<p class="text_input"><img alt="gradient fill" title="gradient fill" id="gradimg" src="assets/gradfill.png"> <input type="text" name="twgradfill" id="twgradfill" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepgradfill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyogradfill"></p>';
 	ttcshdhtml='<p class="text_input"><img alt="shadow" title="shadow" src="assets/shadow.png"> <input type="text" name="twshad" id="twshad" size=5 value=10 />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepshad">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoshad"></p>';
 	ttcedthtml='<p class="text_input"><img alt="edit" title="edit" src="assets/editshapes.png"> <input type="text" name="twedit" id="twedit" size=5 value=10 onchange="erotationset();etransset()" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="1" size="3" id="twrepedit" onchange="erotationset();etransset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="twyoedit" onchange="erotationset();etransset()" ></p>';
- /* 
-	A=new Group();
-	A.members=["a","b","c"];
-	D=new Group();
-	D.members=["d", "e", A];
-	F=new Group();
-	F.members=["f"];
-	G=new Group();
-	G.members=["g", "h"];
-	H=new Group();
-	H.members=[F,G];
-	K=new Group();
-	K.members=["k",D,H];
-	alert(separate(K.members));
-*/	
+
 }
 
 </script>

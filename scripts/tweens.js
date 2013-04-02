@@ -182,28 +182,64 @@ function savetween(tweendata)
 	var tweenarray=tweendata.split(",");
 	var filmname=tweenarray[0];
 	var topname=tweenarray[1];
-	var tweenname=tweenarray[2];
+	var name=tweenarray[2];
 	if(filmname=="nofilm!!!!")
 	{
 		if(topname=="nosprite!!!!")
 		{
-			var tween=TWEENS[tweenname];
+			var tween=TWEENS[name];
+			var path="";
 		}
 		else
 		{
-			var toptween=TWEENS[topname];
-			var tween=toptween.getTween().tween;
+			var topsprite=SPRITES[topname];
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=data.path;
 		}
 	}
 	else
 	{
 		var film=FILMS[filmname];
-		var toptween=film.getFlel(topname);
-		var tween=toptween.getTween().tween;
+		if(topname=="nosprite!!!!")
+		{
+			var tween=film.getFlel(name);
+			var path=film.title;
+		}
+		else
+		{
+			
+			var topsprite=film.getFlel(topname);
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=film.title+"/"+data.path;
+		}
+	}
+	if(tween.nodeTweening.active || tween.pointTweening)
+	{
+		var npths=0;
+		for(var name in tween.nodePaths)
+		{
+			npths++
+		}
+		if(npths==0)
+		{
+			tween.startNodePaths();
+		}
+		else
+		{
+			tween.setNodePaths();
+		}
 	}
 	$("twbuttons").style.visibility="hidden";
 	TWEENEDIT=false;
 	tween.setTweenActives();
+	tween.prepareTweens();
+	tween.zeroTweenPtrs();
+	if(tween.reverse)
+	{
+		tween.reverseAll();
+	}
 	closedone();
 }
 
@@ -213,25 +249,56 @@ function checktween(tweendata)
 	var tweenarray=tweendata.split(",");
 	var filmname=tweenarray[0];
 	var topname=tweenarray[1];
-	var tweenname=tweenarray[2];
+	var name=tweenarray[2];
 	if(filmname=="nofilm!!!!")
 	{
 		if(topname=="nosprite!!!!")
 		{
-			var tween=TWEENS[tweenname];
+			var tween=TWEENS[name];
+			var path="";
 		}
 		else
 		{
 			var topsprite=SPRITES[topname];
-			var tween=topsprite.getTween().tween;
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=data.path;
 		}
 	}
 	else
 	{
 		var film=FILMS[filmname];
-		var toptween=film.getFlel(topname);
-		var tween=toptween.getTween().tween;
+		if(topname=="nosprite!!!!")
+		{
+			var tween=film.getFlel(name);
+			var path=film.title;
+		}
+		else
+		{
+			
+			var topsprite=film.getFlel(topname);
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=film.title+"/"+data.path;
+		}
 	}
+	if(tween.nodeTweening.active || tween.pointTweening)
+	{
+		var npths=0;
+		for(var name in tween.nodePaths)
+		{
+			npths++
+		}
+		if(npths==0)
+		{
+			tween.startNodePaths();
+		}
+		else
+		{
+			tween.setNodePaths();
+		}
+	}
+	
 	$("twbuttons").style.visibility="hidden";
 	$("checkdone").style.visibility="visible";
 	$("toolbar").style.visibility="hidden";
@@ -286,24 +353,38 @@ function swaptween(tweendata)
 	var tweenarray=tweendata.split(",");
 	var filmname=tweenarray[0];
 	var topname=tweenarray[1];
-	var tweenname=tweenarray[2];
+	var name=tweenarray[2];
 	if(filmname=="nofilm!!!!")
 	{
 		if(topname=="nosprite!!!!")
 		{
-			var tween=TWEENS[tweenname];
+			var tween=TWEENS[name];
+			var path="";
 		}
 		else
 		{
 			var topsprite=SPRITES[topname];
-			var tween=topsprite.getTween().tween;
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=data.path;
 		}
 	}
 	else
 	{
 		var film=FILMS[filmname];
-		var toptween=film.getFlel(topname);
-		var tween=toptween.getTween(tweenname).tween;
+		if(topname=="nosprite!!!!")
+		{
+			var tween=film.getFlel(name);
+			var path=film.title;
+		}
+		else
+		{
+			
+			var topsprite=film.getFlel(topname);
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=film.title+"/"+data.path;
+		}
 	}
 	tween.reverse=!tween.reverse;
 	var twtemp=$("twfirst").innerHTML;

@@ -52,6 +52,7 @@ function Sprite(name)
 	this.recordsprite=recordsprite;
 	this.spriteparams=spriteparams;
 	this.maxruntime=maxruntime;
+	this.setTween=setTween;
 }
 
 function copysprite(theatre)
@@ -85,6 +86,7 @@ function copysprite(theatre)
 		break
 		case "tween":
 			sprite.train=this.train.copytween(theatre);
+			sprite.train.tweenshape=makeCopy(sprite.train.getShape(),0,$("tweenstage"),{});
 		break
 		case "sprite":
 			sprite.train=this.train.copysprite(theatre);
@@ -198,33 +200,7 @@ function checksprite(spritedata,showpathline)
 		var sprite=topsprite.getSprite(spritename).sprite;
 	}
 	sprite.setVector();
-	var s=sprite.getShapes();
-	if(s.engine=="tween")
-	{
-		s.train.stopchecking=false;
-		if(s.train.nodeTweening.active || s.train.pointTweening)
-		{
-			var npths=0;
-			for(var name in s.train.nodePaths)
-			{
-				npths++
-			}
-			if(npths==0)
-			{
-				s.train.startNodePaths();
-			}
-			else
-			{
-				s.train.setNodePaths();
-			}
-		}
-		s.train.prepareTweens();
-		s.train.zeroTweenPtrs();
-		if(s.train.reverse)
-		{
-		s.train.reverseAll();
-		}
-	}
+	sprite.setTween();
 	$('vecdiv').style.visibility="hidden";
 	$('spritecentre').style.visibility="hidden";
 	$('checksp').style.visibility="hidden";
@@ -263,10 +239,42 @@ function savesprite(spritedata)
 	}
 	sprite.setVector();
 	sprite.setPoints();
+	sprite.setTween();
 	$("checksp").style.visibility="hidden";
 	$("fullchecksp").style.visibility="hidden";
 	$("savesp").style.visibility="hidden";
 	closedone();
+}
+
+function setTween()
+{
+	var s=this.getShapes();
+	if(s.engine=="tween")
+	{
+		s.train.stopchecking=false;
+		if(s.train.nodeTweening.active || s.train.pointTweening)
+		{
+			var npths=0;
+			for(var name in s.train.nodePaths)
+			{
+				npths++
+			}
+			if(npths==0)
+			{
+				s.train.startNodePaths();
+			}
+			else
+			{
+				s.train.setNodePaths();
+			}
+		}
+		s.train.prepareTweens();
+		s.train.zeroTweenPtrs();
+		if(s.train.reverse)
+		{
+		s.train.reverseAll();
+		}
+	}
 }
 
 function followPath(showpathline)
@@ -673,7 +681,7 @@ function getMainTrain()
 	}
 	else
 	{
-		return this.train;
+		return {train:this.train,engine:this.engine};
 	}
 	
 }
@@ -779,8 +787,15 @@ function maxruntime(mx)
 			}
 			else
 			{
-				mrt=this.maxruntime;
-				return Math.max(mx,mrt);
+				mrt=this.train.maxruntime;
+				if(isNaN(mx) || isNaN(mrt))
+				{
+					return "c";
+				}
+				else
+				{
+					return Math.max(mx,mrt/1000);
+				}
 			}
 		break
 		case "sprite":

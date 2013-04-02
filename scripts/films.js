@@ -16,6 +16,7 @@ function Film(name)
 	this.FilmToText=FilmToText;
 	this.expandfilmlist=expandfilmlist;
 	this.getFlel=getFlel;
+	this.startFilm=startFilm;
 }
 
 function FilmElement(n)
@@ -116,11 +117,37 @@ function addToFilm(el)
 		break
 		case "sprite":
 			flel.elm=SPRITES[el.name].copysprite("div"+flel.id);
+			if(flel.elm.getMainTrain().engine=="tween")
+			{
+				var tween=flel.elm.getMainTrain().train;
+				if(tween.nodeTweening.active || tween.pointTweening)
+				{
+					var npths=0;
+					for(var name in tween.nodePaths)
+					{
+						npths++
+					}
+					if(npths==0)
+					{
+						tween.startNodePaths();
+					}
+					else
+					{
+						tween.setNodePaths();
+					}
+				}
+				tween.prepareTweens();
+				if(tween.reverse)
+				{
+					tween.reverseAll();
+				}
+			}
 			flel.maxruntime=flel.elm.maxruntime(0);
 			flel.setRun();
 		break
 		case "tween":
 			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
+			flel.elm.tweenshape=makeCopy(flel.elm.getShape(),0,$("tweenstage"),{});
 			if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
 			{
 				var npths=0;
@@ -138,7 +165,18 @@ function addToFilm(el)
 				}
 			}
 			flel.elm.prepareTweens();
-			flel.maxruntime=flel.elm.maxruntime/1000;
+			if(flel.elm.reverse)
+			{
+				flel.elm.reverseAll();
+			}
+			if(isNaN(flel.elm.maxruntime))
+			{
+				flel.maxruntime="c";
+			}
+			else
+			{
+				flel.maxruntime=flel.elm.maxruntime/1000;
+			}
 			flel.setRun();
 		break
 	}
@@ -180,6 +218,10 @@ function setBoard()
 		case "tween":
 			filmlines.appendChild(this.maxrun);
 			filmlines.appendChild(this.run);
+			if(this.elm.reverse)
+			{
+				this.elm.reverseAll();
+			}
 			this.elm.drawtween();
 			$("currentel").innerHTML+=" R: <input id='Rcin' type='text' size='4' value='0' onchange='setR(this)' />";
 			$("currentel").innerHTML+=" S: <input id='Scin' type='text' size='4' value='Never' onchange='setS(this)' />";
@@ -682,6 +724,7 @@ function fleldel()
 	switch (flel.source)
 	{
 		case "sprite":
+		case "tween":
 			flel.run.parentNode.removeChild(flel.run)
 			$("Rin").style.visibility="hidden";
 			$("Rcin").style.visibility="hidden";
@@ -692,6 +735,7 @@ function fleldel()
 	switch (next.source)
 	{
 		case "sprite":
+		case "tween":
 			$("Rin").style.visibility="visible";
 			$("Rcin").style.visibility="visible";
 			$("Sin").style.visibility="visible";
@@ -714,6 +758,7 @@ function fleldel()
 		switch(flel.source)
 		{
 			case "sprite":
+			case "tween":
 				flel.run.style.height=(parseInt(flel.run.style.height)-25)+"px";
 			break
 		}
@@ -728,6 +773,7 @@ function fleldel()
 		switch(flel.source)
 		{
 			case "sprite":
+			case "tween":
 				flel.run.style.top=(parseInt(flel.seen.style.top)+5)+"px";
 			break
 		}
@@ -787,11 +833,26 @@ function filmPlay(el)
 		film.stopped=false;
 		film.rewind=false;
 	}
-	film.active={};
-	for(var i=0;i<film.list.length;i++)
+	closeAllDialogues();
+	$("shapestage").style.visibility="hidden";
+	$("filmstage").style.visibility="visible";
+	$("rewindfm").style.visibility="visible";
+	$("pausefm").style.visibility="visible";
+	$("stopfm").style.visibility="visible";
+	$("filmtime").style.visibility="visible";
+	$("secsfm").style.visibility="visible";
+	film.startFilm();
+}
+
+function startFilm()
+{
+	var flel;
+	clear($("filmstage"));
+	this.active={};
+	for(var i=0;i<this.list.length;i++)
 	{
-		flel=film.elements[film.list[i][0]];
-		film.active[film.list[i][0]]=film.list[i][0];
+		flel=this.elements[this.list[i][0]];
+		this.active[this.list[i][0]]=this.list[i][0];
 		$("filmstage").appendChild(flel.eldiv);
 		clear(flel.eldiv);
 		flel.addToElStage();
@@ -802,30 +863,27 @@ function filmPlay(el)
 				flel.elm.drawscene();
 			break
 			case "tween":
-				flel.elm.drawtween();
+				flel.elm.zeroTweenPtrs();
 			break
 			case "sprite":
 			 	STOPCHECKING=false;
 			 	flel.elm.zeroPointers();
+			 	if(flel.elm.getMainTrain().engine=="tween")
+				{
+					flel.elm.getMainTrain().train.zeroTweenPtrs();
+				}
 			 	flel.elm.clearTracks();
 			 	flel.elm.saveCanvases();
 			 	flel.elm.track.drawtrack(false);
 				flel.elm.transform();
-				flel.elm.drawsprite();
+				flel.elm.drawspritewithmove();
 				flel.elm.drawalltracks(false);
 			break
 		}
 	}
-	closeAllDialogues();
-	$("shapestage").style.visibility="hidden";
-	$("filmstage").style.visibility="visible";
-	$("rewindfm").style.visibility="visible";
-	$("pausefm").style.visibility="visible";
-	$("stopfm").style.visibility="visible";
-	$("filmtime").style.visibility="visible";
-	$("secsfm").style.visibility="visible";
-	film.t=0; // time into film
-	film.play(0);
+	$("filmtime").innerHTML="0 ";
+	this.t=0; // time into this
+	this.play(0);
 }
 
 function play(t)
@@ -887,14 +945,21 @@ function play(t)
 			}
 			switch (flel.source)
 			{
-				case "sprite":
-					if(t>=flel.R*1000 && t<stoprun*1000)
-					{
-						flel.elm.transform();
-						flel.elm.drawalltracks(false);
-						flel.elm.drawsprite();
-					}
-				break
+					case "sprite":
+						if(t>=flel.R*1000 && t<stoprun*1000)
+						{
+							flel.elm.transform();
+							flel.elm.drawalltracks(false);
+							flel.elm.drawspritewithmove();
+						}	
+					break
+					case "tween":
+						if(t>=flel.R*1000 && t<stoprun*1000)
+						{
+							flel.elm.tweenmove();
+						}
+					break
+				
 			}
 		}
 		var film=this;
@@ -903,36 +968,14 @@ function play(t)
 	else
 	{
 		clearTimeout(runthis);
+		this.paused=true;
 		if(this.rewind) 
 		{
-			this.t=0;
-			this.active={};
-			for(var i=0;i<this.list.length;i++)
-			{
-				flel=this.elements[this.list[i][0]];
-				this.active[this.list[i][0]]=this.list[i][0];
-				flel.eldiv.style.visibility="hidden";
-				switch(flel.source)
-				{
-					case "scene":
-						flel.elm.drawscene();
-					break
-					case "tween":
-						flel.elm.drawtween();
-					break
-					case "sprite":
-						STOPCHECKING=false;
-						flel.elm.restoreCanvases();
-						flel.elm.finishmove=false;
-			 			flel.elm.zeroPointers();
-			 			flel.elm.saveCanvases();
-			 			flel.elm.track.drawtrack(false);
-						flel.elm.transform();
-						flel.elm.drawsprite();
-						flel.elm.drawalltracks(false);
-					break
-				}
-			}
+			this.paused=false;
+			STOPCHECKING=false;
+			this.stopped=false;
+			this.rewind=false;
+			this.startFilm();
 		}
 	}
 }
@@ -951,14 +994,25 @@ function playonfilm(name)
 
 function rewindfilm(name)
 {
-	FILMS[name].rewind=true;
-	STOPCHECKING=true;
-	FILMS[name].stopped=true;
-	$("pausefm").style.visibility="hidden";
-	$("playonfm").style.visibility="visible";
-	FILMS[name].paused=true;
-	film.t=0;
 	
+	if(FILMS[name].paused)
+	{
+		FILMS[name].paused=false;
+		STOPCHECKING=false;
+		FILMS[name].stopped=false;
+		FILMS[name].rewind=false;
+		$("pausefm").style.visibility="visible";
+		$("playonfm").style.visibility="hidden";
+		FILMS[name].startFilm();
+	}
+	else
+	{
+		STOPCHECKING=true;
+		FILMS[name].stopped=true;
+		$("pausefm").style.visibility="visible";
+		$("playonfm").style.visibility="hidden";
+		FILMS[name].rewind=true;
+	}
 }
 
 function pausefilm(name)
@@ -1057,8 +1111,9 @@ function addToElStage()
 		case "scene":
 			this.elm.addToStage($("div"+this.id+"stage"))
 		break
-		case "scene":
+		case "tween":
 			this.elm.addAllToStage($("div"+this.id+"stage"))
+			this.elm.tweenshape.addTo($("div"+this.id+"stage"));
 		break
 		case "sprite":
 			this.elm.inTheatre($("div"+this.id+"stage"));

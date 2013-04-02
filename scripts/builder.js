@@ -1,7 +1,7 @@
 function scbb()
 {
 	$('scenebuildbox').style.top=(parseInt($("scenebox").style.top)+60)+"px";
-	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+120)+"px";
+	$('scenebuildbox').style.left=(parseInt($("scenebox").style.left)+10)+"px";
 	$('scenebuildbox').style.zIndex=ZBOX++;
 	$('scenebuildbox').style.visibility='visible';
 	$('scenetitle').value="Scenery"+(SCCOUNT++);
@@ -12,7 +12,7 @@ function scbb()
 function trbb()
 {
 	$('trackbuildbox').style.top=(parseInt($("trackbox").style.top)+60)+"px";
-	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+120)+"px";
+	$('trackbuildbox').style.left=(parseInt($("trackbox").style.left)+10)+"px";
 	$('trackbuildbox').style.zIndex=ZBOX++;
 	$('trackbuildbox').style.visibility='visible';
 	$('tracktitle').value="Track"+(TRCOUNT++);
@@ -26,7 +26,7 @@ function trbb()
 function twbb()
 {
 	$('tweenbuildbox').style.top=(parseInt($("tweenbox").style.top)+60)+"px";
-	$('tweenbuildbox').style.left=(parseInt($("tweenbox").style.left)+120)+"px";
+	$('tweenbuildbox').style.left=(parseInt($("tweenbox").style.left)+10)+"px";
 	$('tweenbuildbox').style.zIndex=ZBOX++;
 	$('tweenbuildbox').style.visibility='visible';
 	$('tweentitle').value="Tween"+(TWCOUNT++);
@@ -37,7 +37,7 @@ function twbb()
 function spbb()
 {
 	$('spritebuildbox').style.top=(parseInt($("spritebox").style.top)+60)+"px";
-	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)+120)+"px";
+	$('spritebuildbox').style.left=(parseInt($("spritebox").style.left)-20)+"px";
 	$('spritebuildbox').style.zIndex=ZBOX++;
 	$('spritebuildbox').style.visibility='visible';
 	$('spritetitle').value="Sprite"+(SPCOUNT++);
@@ -377,7 +377,7 @@ function buildSprite()
 		case 'tween':
 			tween=TWEENS[elname];
 			train=tween.copytween("sprite");
-			train.tweenshape=tween.tweenshape;
+			train.tweenshape=makeCopy(train.getShape(),0,$("tweenstage"),{});
 		break
 		case 'sprite':
 			topsprite=SPRITES[eltopname];
@@ -1204,10 +1204,19 @@ function tweenEdit(n)
 	else
 	{
 		var film=FILMS[filmname];
-		var topsprite=film.getFlel(topname);
-		var data=topsprite.getTween();
-		var tween=data.tween;
-		var path=film.title+"/"+data.path;
+		if(topname=="nosprite!!!!")
+		{
+			var tween=film.getFlel(name);
+			var path=film.title;
+		}
+		else
+		{
+			
+			var topsprite=film.getFlel(topname);
+			var data=topsprite.getTween();
+			var tween=data.tween;
+			var path=film.title+"/"+data.path;
+		}
 	}
 	$("shapestage").style.visibility="hidden";
 	removeGradLine();
