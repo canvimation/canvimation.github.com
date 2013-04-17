@@ -41,7 +41,7 @@ function spbb()
 	$('spritebuildbox').style.zIndex=ZBOX++;
 	$('spritebuildbox').style.visibility='visible';
 	$('spritetitle').value="Sprite"+(SPCOUNT++);
-	$('spritetime').value=5;
+	$('spritetime').value=10;
 	$("spritevector").checked=false;
 	$("eldrop").innerHTML="";
 	$("trackdrop").innerHTML="";

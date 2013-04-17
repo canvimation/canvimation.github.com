@@ -8,7 +8,7 @@ function Sprite(name)
 {
 	this.name=name;
 	this.title;
-	this.ptime=5;
+	this.ptime=10;
 	this.track;
 	this.engine;
 	this.train;

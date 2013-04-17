@@ -375,11 +375,18 @@ function FilmToText()
 		switch (flel.source)
 		{
 			case "scene":
-			params+="%";
-			params+=flel.elm.SceneToText();
+				params+="%";
+				params+=flel.elm.SceneToText();
+			break
+			case "tween":
+				params+="|";
+				params+=flel.R+"|";
+				params+=flel.S+"|";
+				params+=flel.maxruntime+"%";
+				params+=flel.elm.TweenToText();
 			break
 			case "sprite":
-			params+="|";
+				params+="|";
 				params+=flel.R+"|";
 				params+=flel.S+"|";
 				params+=flel.maxruntime+"%";

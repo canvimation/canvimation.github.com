@@ -65,7 +65,6 @@ function Node(point,ctrl1,ctrl2)
 	this.setNodePathBox=setNodePathBox;
 	this.pathTweeningPoints=pathTweeningPoints;
 	this.translateTweeningPoints=translateTweeningPoints;
-	this.transformTweeningPoints=transformTweeningPoints;
 	this.setCtrlPaths=setCtrlPaths;
 	this.setCtrl1Path=setCtrl1Path;
 	this.setCtrl2Path=setCtrl2Path;
@@ -242,6 +241,7 @@ function Shape(name,title,open,editable,type,STORE)
 	this.ShapeToText=ShapeToText; 
 	this.drawjustpath=drawjustpath;
 	this.shapeHTML=shapeHTML;
+	this.pathshapeHTML=pathshapeHTML;
 	this.getLengths=getLengths;
 	this.setRndRect=setRndRect;	
 this.drawcrnrs=drawcrnrs;	

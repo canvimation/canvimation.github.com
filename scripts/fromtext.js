@@ -723,6 +723,55 @@ function resetfilm(filmtxt)
 				flel.elm=resetscene(fleltxt);
 				flel.elm.addToStage($("div"+flel.id+"stage"));
 			break
+			case "tween":
+				flel.elm=resettween(fleltxt,"film");
+				flel.elm.addAllToStage($("div"+flel.id+"stage"));
+				flel.R=parseInt(runparams[9]);
+				flel.S=parseFloat(runparams[10]);
+				if(isNaN(flel.S))
+				{
+					flel.S="Never";
+				}
+				flel.maxruntime=parseInt(runparams[11]);
+				flel.elm.tweenshape=makeCopy(flel.elm.getShape(),0,$("tweenstage"),{});
+				if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
+				{
+					var npths=0;
+					for(var name in flel.elm.nodePaths)
+					{
+						npths++
+					}
+					if(npths==0)
+					{
+						flel.elm.startNodePaths();
+					}
+					else
+					{
+						flel.elm.setNodePaths();
+					}
+				}
+				flel.elm.prepareTweens();
+				if(flel.elm.reverse)
+				{
+					flel.elm.reverseAll();
+				}
+				if(isNaN(flel.elm.maxruntime))
+				{
+					flel.maxruntime="c";
+				}
+				else
+				{
+					flel.maxruntime=flel.elm.maxruntime/1000;
+				}
+				flel.run=document.createElement("div");
+				flel.run.style.borderTop="2px solid blue";
+				flel.run.style.borderLeft="2px solid blue";
+				flel.run.style.borderRight="2px solid blue";
+				
+				flel.maxrun=document.createElement("div");
+				flel.maxrun.style.borderTop="2px dotted red";
+				flel.maxrun.style.borderRight="2px dotted red";
+			break
 			case "sprite":
 				flel.elm=resetsprite(fleltxt,"film");
 				flel.elm.inTheatre($("div"+flel.id+"stage"));

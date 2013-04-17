@@ -74,9 +74,6 @@ function writeFilmHTML(film)
 	newwindow.document.writeln(SPACES.substr(0,12)+'width:'+parseInt($("stagearea").style.width)+'px;');
 	newwindow.document.writeln(SPACES.substr(0,12)+'border:black 1px solid;');
 	newwindow.document.writeln (SPACES.substr(0,9)+'}');
-newwindow.document.writeln(SPACES.substr(0,9)+'#msg {');
-newwindow.document.writeln(SPACES.substr(0,12)+'top:'+(50+parseInt($("stagearea").style.height))+'px;');
-newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,6)+'</style>');	
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,6)+'<script type="text/javascript" src = "canvimation_script.js" ></script>');
@@ -87,6 +84,7 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var flel;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var scene;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var shape;');
+	newwindow.document.writeln(SPACES.substr(0,9)+'var tween;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var sprite;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var film;');
 	newwindow.document.writeln(SPACES.substr(0,9)+'var TRAINS={};');
@@ -134,6 +132,14 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 				newwindow.document.writeln (''); 
 				newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Scene---Base is '+flel.title+'-------------------------');
 			break
+			case "tween":
+				newwindow.document.writeln(SPACES.substr(0,12)+'flel.R="'+flel.R+'",');
+				newwindow.document.writeln(SPACES.substr(0,12)+'flel.S="'+flel.S+'",');
+				tween=flel.elm;
+				tween.tweenHTML(flel.id);
+				newwindow.document.writeln(SPACES.substr(0,12)+'flel.elm=tween;');
+				newwindow.document.writeln(SPACES.substr(0,12)+'flel.elm.prepareTweens();');
+			break
 			case 'sprite':
 				newwindow.document.writeln(SPACES.substr(0,12)+'flel.R="'+flel.R+'",');
 				newwindow.document.writeln(SPACES.substr(0,12)+'flel.S="'+flel.S+'",');
@@ -154,7 +160,6 @@ newwindow.document.writeln (SPACES.substr(0,9)+'}');
 	newwindow.document.writeln(SPACES.substr(0,3)+'<body onload="main()">');
 	newwindow.document.writeln(SPACES.substr(0,6)+'<div id="screen"></div>'); 
 	newwindow.document.writeln(SPACES.substr(0,6)+'<div id="frame"></div>'); 
-newwindow.document.writeln(SPACES.substr(0,6)+'<div id="msg"></div>'); 
 	newwindow.document.writeln(SPACES.substr(0,3)+'</body>');
 	newwindow.document.writeln('</html>');
 	newwindow.document.close();	
@@ -224,6 +229,170 @@ function shapeHTML(fleldiv)
 	}
 	newwindow.document.writeln(SPACES.substr(0,12)+'shape.addTo($("'+fleldiv+'"));');
 	newwindow.document.writeln(SPACES.substr(0,6)+'//---------- End Of Shape---Base is '+this.title+'-------------------------');
+}
+
+function pathshapeHTML(type)  //type is string 'node', 'ctrl1' 'ctrl2'
+{
+	var node;
+	var nc1x,nc1y,nc2x,nc2y;
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,6)+'//---------- Type Path Shape--- '+this.name+' '+type+' -------------------------');	
+	newwindow.document.writeln(SPACES.substr(0,12)+'pathshape=new PathShape("'+this.name+'");');
+	node=this.path.next;
+	while(node.point.x!="end")
+	{
+		
+		newwindow.document.writeln(SPACES.substr(0,12)+'p=new Point('+node.point.x+','+node.point.y+');');
+		if(node.ctrl1.x=="non")
+		{
+			nc1x='"non"';
+			nc1y='"non"';
+			nc2x='"non"';
+			nc2y='"non"';
+		}
+		else
+		{
+			nc1x=node.ctrl1.x;
+			nc1y=node.ctrl1.y;
+			nc2x=node.ctrl2.x;
+			nc2y=node.ctrl2.y;
+		}
+		newwindow.document.writeln(SPACES.substr(0,12)+'c1=new Point('+nc1x+','+nc1y+');');
+		newwindow.document.writeln(SPACES.substr(0,12)+'c2=new Point('+nc2x+','+nc2y+');');
+		newwindow.document.writeln(SPACES.substr(0,12)+'pathnode=new Node(p,c1,c2);');
+		newwindow.document.writeln(SPACES.substr(0,12)+'pathnode.corner="'+node.corner+'";');
+		newwindow.document.writeln(SPACES.substr(0,12)+'pathnode.vertex="'+node.vertex+'";');
+		newwindow.document.writeln(SPACES.substr(0,12)+'pathshape.addNode(pathnode);');
+		node=node.next;
+	}
+	newwindow.document.writeln(SPACES.substr(0,12)+'node.'+type+'path=pathshape');
+	if(type=="node")
+	{
+		newwindow.document.writeln(SPACES.substr(0,12)+'node.nodepath.nodeTweening={');
+		newwindow.document.writeln(SPACES.substr(0,42)+'active:'+this.nodeTweening.active+',');
+		newwindow.document.writeln(SPACES.substr(0,42)+'repeat:'+this.nodeTweening.repeat+',');
+		newwindow.document.writeln(SPACES.substr(0,42)+'yoyo:'+this.nodeTweening.yoyo+',');
+		newwindow.document.writeln(SPACES.substr(0,42)+'twtime:'+this.nodeTweening.twtime+',');	
+		newwindow.document.writeln(SPACES.substr(0,12)+'}');	
+		newwindow.document.writeln(SPACES.substr(0,12)+'copynode.nodepath=node.nodepath');
+	}
+	newwindow.document.writeln(SPACES.substr(0,6)+'//---------- End Of Path Shape--- '+this.name+' '+type+' -------------------------');
+}
+
+function tweenHTML(fleldiv)
+{
+	var shape, copy, tweenshape;
+	if(this.nodeTweening.active || this.pointTweening)
+	{
+		var npths=0;
+		for(var name in this.nodePaths)
+		{
+			npths++
+		}
+		if(npths==0)
+		{
+			this.startNodePaths();
+		}
+		else
+		{
+			this.setNodePaths();
+		}
+	}
+	this.prepareTweens();
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//--- Type Tween---Base is '+this.title+'-----------------------------');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween=new Tween("'+this.name+'");');
+	shape=this.getShape();
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Shape---Base is '+shape.title+'-------------------------');
+	shape.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.shape=shape;');
+	copy=this.copy.getShape();
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Copy---Base is '+copy.title+'-------------------------');
+	copy.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.copy=shape;');
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Tweenshape---Base is '+this.tweenshape.title+'-------------------------');
+	this.tweenshape.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.tweenshape=shape;');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.translate = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.translate.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.translate.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.translate.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.translate.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.rotate = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.rotate.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.rotate.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.rotate.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.rotate.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.linestyles = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.linestyles.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.linestyles.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linestyles.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.linestyles.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.linecolour = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.linecolour.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.linecolour.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linecolour.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.linecolour.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.fillcolour = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.fillcolour.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.fillcolour.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.fillcolour.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.fillcolour.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.gradfill = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.gradfill.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.gradfill.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.gradfill.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.gradfill.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.shadow = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.shadow.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.shadow.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.shadow.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.shadow.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.edit = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.edit.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.edit.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.edit.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.edit.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.nodeTweening = {');
+	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.nodeTweening.active+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.nodeTweening.twtime+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.nodeTweening.repeat+',');
+	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.nodeTweening.yoyo+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'};');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.pointTweening='+this.pointTweening+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.reverse='+this.reverse+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'tween.maxruntime='+this.maxruntime+';');
+	if(this.nodeTweening.active || this.pointTweening)
+	{
+		var node=this.getShape().path.next;
+		newwindow.document.writeln(SPACES.substr(0,12)+'node=tween.shape.path.next;');
+		newwindow.document.writeln(SPACES.substr(0,12)+'copynode=tween.copy.path.next;');
+		while(node.point.x!="end")
+		{
+			node.nodepath.pathshapeHTML('node');
+			if(node.vertex=="B") 
+			{
+				node.ctrl1path.pathshapeHTML('ctrl1');
+				node.ctrl2path.pathshapeHTML('ctrl2');
+			}
+			newwindow.document.writeln(SPACES.substr(0,12)+'node=node.next;');
+			newwindow.document.writeln(SPACES.substr(0,12)+'copynode=copynode.next;');
+			node=node.next;
+		}
+	}
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//--- Type Tween---Base is '+this.title+'-----------------------------');
 }
 
 function spriteHTML(fleldiv)

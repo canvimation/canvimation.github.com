@@ -56,10 +56,6 @@ function Tween(name)
 	this.copytween=copytween;
 	this.drawtween=drawtween;
 	this.getShape=getShape;
-	//this.setLengths=setLengths;
-	//this.setTimes=setTimes;
-	//this.saveTween=saveTween;
-	//this.restoreTween=restoreTween;
 	this.TweenToText=TweenToText;
 	this.tweenparams=tweenparams;
 	this.nodepathparams=nodepathparams;
@@ -69,7 +65,6 @@ function Tween(name)
 	this.startNodePaths=startNodePaths; 
 	this.setNodePaths=setNodePaths;
 	this.prepareTweens=prepareTweens;
-	this.setPoints=setPoints;
 	this.setTweenTimeBox=setTweenTimeBox;
 	this.zeroTweenPtrs=zeroTweenPtrs;
 	this.updateTweenPtrs=updateTweenPtrs;
@@ -81,6 +76,7 @@ function Tween(name)
 	this.gradlinetransform=gradlinetransform;
 	this.betweenAngle=betweenAngle;
 	this.reverseAll=reverseAll;
+	this.tweenHTML=tweenHTML;
 }
 
 function copytween(theatre)
@@ -149,9 +145,7 @@ function copytween(theatre)
 			copynode.nodepath=newnode.nodepath
 			if(node.vertex=="B")
 			{
-				newnode.ctrl1path=makeCopy(node.ctrl1path,0,$(theatre),{},{});
 				newnode.ctrl1path={};
-				newnode.ctrl2path=makeCopy(node.ctrl2path,0,$(theatre),{},{});
 				newnode.ctrl2path={};
 			}
 			node=node.next;
