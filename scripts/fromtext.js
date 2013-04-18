@@ -734,7 +734,7 @@ function resetfilm(filmtxt)
 				}
 				flel.maxruntime=parseInt(runparams[11]);
 				flel.elm.tweenshape=makeCopy(flel.elm.getShape(),0,$("tweenstage"),{});
-				if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
+/*				if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
 				{
 					var npths=0;
 					for(var name in flel.elm.nodePaths)
@@ -754,7 +754,7 @@ function resetfilm(filmtxt)
 				if(flel.elm.reverse)
 				{
 					flel.elm.reverseAll();
-				}
+				} */
 				if(isNaN(flel.elm.maxruntime))
 				{
 					flel.maxruntime="c";

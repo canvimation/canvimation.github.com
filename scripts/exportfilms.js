@@ -270,7 +270,14 @@ function pathshapeHTML(type)  //type is string 'node', 'ctrl1' 'ctrl2'
 	{
 		newwindow.document.writeln(SPACES.substr(0,12)+'node.nodepath.nodeTweening={');
 		newwindow.document.writeln(SPACES.substr(0,42)+'active:'+this.nodeTweening.active+',');
-		newwindow.document.writeln(SPACES.substr(0,42)+'repeat:'+this.nodeTweening.repeat+',');
+		if(isNaN(this.nodeTweening.repeat))
+		{
+			newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+		}
+		else
+		{
+			newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.nodeTweening.repeat+',');
+		}
 		newwindow.document.writeln(SPACES.substr(0,42)+'yoyo:'+this.nodeTweening.yoyo+',');
 		newwindow.document.writeln(SPACES.substr(0,42)+'twtime:'+this.nodeTweening.twtime+',');	
 		newwindow.document.writeln(SPACES.substr(0,12)+'}');	
@@ -306,11 +313,19 @@ function tweenHTML(fleldiv)
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Shape---Base is '+shape.title+'-------------------------');
 	shape.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'shape.centreOfRotation={');
+	newwindow.document.writeln(SPACES.substr(0,40)+'x:'+shape.group.centreOfRotation.x+',');
+	newwindow.document.writeln(SPACES.substr(0,40)+'y:'+shape.group.centreOfRotation.y+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'}');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.shape=shape;');
 	copy=this.copy.getShape();
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Copy---Base is '+copy.title+'-------------------------');
 	copy.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'shape.centreOfRotation={');
+	newwindow.document.writeln(SPACES.substr(0,40)+'x:'+copy.group.centreOfRotation.x+',');
+	newwindow.document.writeln(SPACES.substr(0,40)+'y:'+copy.group.centreOfRotation.y+',');
+	newwindow.document.writeln(SPACES.substr(0,12)+'}');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.copy=shape;');
 	newwindow.document.writeln ('');
 	newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Tween Tweenshape---Base is '+this.tweenshape.title+'-------------------------');
@@ -319,60 +334,130 @@ function tweenHTML(fleldiv)
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.translate = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.translate.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.translate.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.translate.repeat+',');
+	if(isNaN(this.translate.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.translate.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.translate.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.rotate = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.rotate.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.rotate.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.rotate.repeat+',');
+	if(isNaN(this.rotate.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.rotate.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.rotate.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.linestyles = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.linestyles.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.linestyles.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linestyles.repeat+',');
+	if(isNaN(this.linestyles.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linestyles.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.linestyles.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.linecolour = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.linecolour.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.linecolour.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linecolour.repeat+',');
+	if(isNaN(this.linecolour.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.linecolour.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.linecolour.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.fillcolour = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.fillcolour.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.fillcolour.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.fillcolour.repeat+',');
+	if(isNaN(this.fillcolour.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.fillcolour.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.fillcolour.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.gradfill = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.gradfill.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.gradfill.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.gradfill.repeat+',');
+	if(isNaN(this.gradfill.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.gradfill.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.gradfill.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.shadow = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.shadow.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.shadow.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.shadow.repeat+',');
+	if(isNaN(this.shadow.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.shadow.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.shadow.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.edit = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.edit.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.edit.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.edit.repeat+',');
+	if(isNaN(this.edit.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.edit.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.edit.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.nodeTweening = {');
 	newwindow.document.writeln(SPACES.substr(0,35)+'active:'+this.nodeTweening.active+',');
 	newwindow.document.writeln(SPACES.substr(0,35)+'twtime:'+this.nodeTweening.twtime+',');
-	newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.nodeTweening.repeat+',');
+	if(isNaN(this.nodeTweening.repeat))
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:"c",');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,35)+'repeat:'+this.nodeTweening.repeat+',');
+	}
 	newwindow.document.writeln(SPACES.substr(0,35)+'yoyo:'+this.nodeTweening.yoyo+',');
 	newwindow.document.writeln(SPACES.substr(0,12)+'};');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.pointTweening='+this.pointTweening+';');
 	newwindow.document.writeln(SPACES.substr(0,12)+'tween.reverse='+this.reverse+';');
-	newwindow.document.writeln(SPACES.substr(0,12)+'tween.maxruntime='+this.maxruntime+';');
+	if(isNaN(this.maxruntime))
+	{
+		newwindow.document.writeln(SPACES.substr(0,12)+'tween.maxruntime="always";');
+	}
+	else
+	{
+		newwindow.document.writeln(SPACES.substr(0,12)+'tween.maxruntime='+this.maxruntime+';');
+	}
 	if(this.nodeTweening.active || this.pointTweening)
 	{
 		var node=this.getShape().path.next;

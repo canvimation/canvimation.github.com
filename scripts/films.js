@@ -117,7 +117,7 @@ function addToFilm(el)
 		break
 		case "sprite":
 			flel.elm=SPRITES[el.name].copysprite("div"+flel.id);
-			if(flel.elm.getMainTrain().engine=="tween")
+/*			if(flel.elm.getMainTrain().engine=="tween")
 			{
 				var tween=flel.elm.getMainTrain().train;
 				if(tween.nodeTweening.active || tween.pointTweening)
@@ -141,14 +141,14 @@ function addToFilm(el)
 				{
 					tween.reverseAll();
 				}
-			}
+			} */
 			flel.maxruntime=flel.elm.maxruntime(0);
 			flel.setRun();
 		break
 		case "tween":
 			flel.elm=TWEENS[el.name].copytween("div"+flel.id);
 			flel.elm.tweenshape=makeCopy(flel.elm.getShape(),0,$("tweenstage"),{});
-			if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
+/*			if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
 			{
 				var npths=0;
 				for(var name in flel.elm.nodePaths)
@@ -168,7 +168,7 @@ function addToFilm(el)
 			if(flel.elm.reverse)
 			{
 				flel.elm.reverseAll();
-			}
+			} */
 			if(isNaN(flel.elm.maxruntime))
 			{
 				flel.maxruntime="c";
@@ -863,6 +863,27 @@ function startFilm()
 				flel.elm.drawscene();
 			break
 			case "tween":
+				if(flel.elm.nodeTweening.active || flel.elm.pointTweening)
+				{
+					var npths=0;
+					for(var name in flel.elm.nodePaths)
+					{
+						npths++
+					}
+					if(npths==0)
+					{
+						flel.elm.startNodePaths();
+					}
+					else
+					{
+						flel.elm.setNodePaths();
+					}
+				}
+				flel.elm.prepareTweens();
+				if(flel.elm.reverse)
+				{
+					flel.elm.reverseAll();
+				}
 				flel.elm.zeroTweenPtrs();
 			break
 			case "sprite":
@@ -870,7 +891,29 @@ function startFilm()
 			 	flel.elm.zeroPointers();
 			 	if(flel.elm.getMainTrain().engine=="tween")
 				{
-					flel.elm.getMainTrain().train.zeroTweenPtrs();
+					var tween=flel.elm.getMainTrain().train;
+					if(tween.nodeTweening.active || tween.pointTweening)
+					{
+						var npths=0;
+						for(var name in tween.nodePaths)
+						{
+							npths++
+						}
+						if(npths==0)
+						{
+							tween.startNodePaths();
+						}
+						else
+						{
+							tween.setNodePaths();
+						}
+					}
+					tween.prepareTweens();
+					if(tween.reverse)
+					{
+						tween.reverseAll();
+					}
+					tween.zeroTweenPtrs();
 				}
 			 	flel.elm.clearTracks();
 			 	flel.elm.saveCanvases();
