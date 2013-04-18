@@ -399,101 +399,73 @@ function spriteHTML(fleldiv)
 {
 	var shape,shapes;
 	var train;
-	if (this.engine=='scene')
+	switch (this.engine)
 	{
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,3)+'//--- Type Sprite---Base is '+this.title+'-----------------------------');
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Train Scene---Base is '+this.train.title+'-------------------------');
-		newwindow.document.writeln(SPACES.substr(0,12)+'scene=new Scene("'+this.train.name+'");');
-		shapes=this.train.shapes;
-		for (var name in shapes)
-		{
-			shape=shapes[name];
-			shape.shapeHTML(fleldiv);
-			newwindow.document.writeln(SPACES.substr(0,12)+'scene.shapes[shape.name]=shape;');
-		}
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,3)+'//---------- End of Train Scene---Base is '+this.train.title+'-------------------------');
-		
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,6)+'//---------- Track ---Base is '+this.track.title+'-------------------------');
-		shape=this.track.getShape();
-		shape.shapeHTML(fleldiv);
-		newwindow.document.writeln(SPACES.substr(0,12)+'track=new Track("'+this.track.name+'");');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape=shape;');
-		if(isNaN(this.track.repeats))
-		{
-			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats="'+this.track.repeats+'";');
-		}
-		else
-		{
-			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
-		}
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.visible='+this.track.visible+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.yoyo='+this.track.yoyo+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape.addTo($("'+fleldiv+'"));');
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,6)+'//---------- End Of Track ---Base is '+this.track.title+'-------------------------');
-		
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite=new Sprite("'+this.name+'");');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.train=scene;');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.engine="'+this.engine+'";');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.track=track;');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.ptime='+this.ptime+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.pointer='+this.pointer+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.usevec='+this.usevec+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.expanded='+this.expanded+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.finishmove='+this.finishmove+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.vector={xs:'+this.vector.xs+',xe:'+this.vector.xe+',ys:'+this.vector.ys+',ye:'+this.vector.ye+',psi:'+this.vector.psi+'};');
-		
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,3)+'//--- End Of Sprite---Base is '+this.title+'-----------------------------');
-		
-		newwindow.document.writeln(SPACES.substr(0,12)+'TRAINS["'+this.name+'"]=sprite;');
-		return 'TRAINS["'+this.name+'"];';
-		
+		case "scene":
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//--- Type Sprite---Base is '+this.title+'-----------------------------');
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Train Scene---Base is '+this.train.title+'-------------------------');
+			newwindow.document.writeln(SPACES.substr(0,12)+'scene=new Scene("'+this.train.name+'");');
+			shapes=this.train.shapes;
+			for (var name in shapes)
+			{
+				shape=shapes[name];
+				shape.shapeHTML(fleldiv);
+				newwindow.document.writeln(SPACES.substr(0,12)+'scene.shapes[shape.name]=shape;');
+			}
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//---------- End of Train Scene---Base is '+this.train.title+'-------------------------');
+		break
+		case "tween":
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//--- Type Sprite---Base is '+this.title+'-----------------------------');
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//---------- Type Train Tween---Base is '+this.train.title+'-------------------------');
+			this.train.tweenHTML(fleldiv);
+			newwindow.document.writeln ('');
+			newwindow.document.writeln(SPACES.substr(0,3)+'//---------- End of Train Tween---Base is '+this.train.title+'-------------------------');
+		break
+		default:
+			this.train.spriteHTML(fleldiv);
+		break
+	}
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,6)+'//---------- Track ---Base is '+this.track.title+'-------------------------');
+	shape=this.track.getShape();
+	shape.shapeHTML(fleldiv);
+	newwindow.document.writeln(SPACES.substr(0,12)+'track=new Track("'+this.track.name+'");');
+	newwindow.document.writeln(SPACES.substr(0,12)+'track.shape=shape;');
+	if(isNaN(this.track.repeats))
+	{
+		newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats="'+this.track.repeats+'";');
 	}
 	else
 	{
-		train=this.train.spriteHTML(fleldiv);
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,6)+'//---------- Track ---Base is '+this.track.title+'-------------------------');
-		shape=this.track.getShape();
-		shape.shapeHTML(fleldiv);
-		newwindow.document.writeln(SPACES.substr(0,12)+'track=new Track("'+this.track.name+'");');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape=shape;');
-		if(isNaN(this.track.repeats))
-		{
-			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats="'+this.track.repeats+'";');
-		}
-		else
-		{
-			newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
-		}
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.visible='+this.track.visible+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.yoyo='+this.track.yoyo+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'track.shape.addTo($("'+fleldiv+'"));');
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,6)+'//---------- End Of Track ---Base is '+this.track.title+'-------------------------');
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite=new Sprite("'+this.name+'");');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.train='+train+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.engine="'+this.engine+'";');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.track=track;');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.ptime='+this.ptime+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.pointer='+this.pointer+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.usevec='+this.usevec+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.expanded='+this.expanded+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.finishmove='+this.finishmove+';');
-		newwindow.document.writeln(SPACES.substr(0,12)+'sprite.vector={xs:'+this.vector.xs+',xe:'+this.vector.xe+',ys:'+this.vector.ys+',ye:'+this.vector.ye+',psi:'+this.vector.psi+'};');
-		
-		newwindow.document.writeln ('');
-		newwindow.document.writeln(SPACES.substr(0,3)+'//--- End Of Sprite---Base is '+this.title+'-----------------------------');
-		
-		newwindow.document.writeln(SPACES.substr(0,12)+'TRAINS["'+this.name+'"]=sprite;');
-		return 'TRAINS["'+this.name+'"];';
+		newwindow.document.writeln(SPACES.substr(0,12)+'track.repeats='+this.track.repeats+';');
 	}
+	newwindow.document.writeln(SPACES.substr(0,12)+'track.visible='+this.track.visible+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'track.yoyo='+this.track.yoyo+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'track.shape.addTo($("'+fleldiv+'"));');
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,6)+'//---------- End Of Track ---Base is '+this.track.title+'-------------------------');
+
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite=new Sprite("'+this.name+'");');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.train='+this.engine+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.engine="'+this.engine+'";');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.track=track;');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.ptime='+this.ptime+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.pointer='+this.pointer+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.usevec='+this.usevec+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.expanded='+this.expanded+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.finishmove='+this.finishmove+';');
+	newwindow.document.writeln(SPACES.substr(0,12)+'sprite.vector={xs:'+this.vector.xs+',xe:'+this.vector.xe+',ys:'+this.vector.ys+',ye:'+this.vector.ye+',psi:'+this.vector.psi+'};');
+
+	newwindow.document.writeln ('');
+	newwindow.document.writeln(SPACES.substr(0,3)+'//--- End Of Sprite---Base is '+this.title+'-----------------------------');
+		
+	newwindow.document.writeln(SPACES.substr(0,12)+'TRAINS["'+this.name+'"]=sprite;');
+	return 'TRAINS["'+this.name+'"];';
 }
 

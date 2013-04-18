@@ -470,7 +470,6 @@ function saveCanvases()
 			shape=this.train.tweenshape;
 			shape.Canvas.ctx.save();
 		break
-		break
 		case "sprite":
 			shape=this.track.getShape();
 			shape.Canvas.ctx.save();

@@ -302,7 +302,7 @@ function Sprite(name)
 	this.transform=transform;
 	this.transformTrack=transformTrack;
 	this.nextPointer=nextPointer;
-	this.getShapes=getShapes;
+	this.s=s;
 	this.getMainTrain=getMainTrain;
 	//this.getSprite=getSprite;
 	//this.getScene=getScene;
@@ -363,7 +363,7 @@ function drawrailway()
 
 function drawalltracks()
 {
-	if (this.engine !='scene')
+	if (this.engine =='sprite')
 	{
 		this.train.track.drawtrack();
 		this.train.drawalltracks();
@@ -373,21 +373,24 @@ function drawalltracks()
 function zeroPointers()
 {
 	this.pointer=0;
-	if (this.engine!='scene')
+	if (this.engine=='sprite')
 	{
 		this.train.zeroPointers();
 	}
 }
 
-function getShapes()
+function s()
 {
 	switch(this.engine)
 	{
 		case "scene":
 			return this.train.shapes;
 		break
+		case "tween":
+			return this;
+		break
 		case "sprite":
-			return this.train.getShapes();
+			return this.train.s();
 		break
 	}
 }
@@ -405,6 +408,12 @@ function saveCanvases()
 				shape=this.train.shapes[name];
 				shape.Canvas.ctx.save();
 			}
+		break
+		case "tween":
+			shape=this.track.shape;
+			shape.Canvas.ctx.save();
+			shape=this.train.tweenshape;
+			shape.Canvas.ctx.save();
 		break
 		case "sprite":
 			shape=this.track.shape;
@@ -427,6 +436,12 @@ function restoreCanvases()
 				shape=this.train.shapes[name];
 				shape.Canvas.ctx.restore();
 			}
+		break
+		case "tween":
+			shape=this.track.shape;
+			shape.Canvas.ctx.restore();
+			shape=this.train.tweenshape;
+			shape.Canvas.ctx.restore();
 		break
 		case "sprite":
 			shape=this.track.shape;
@@ -457,10 +472,20 @@ function transform()
 				shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
 			}
 		break
+		case "tween":
+			shape=this.train.tweenshape;
+			shape.Canvas.ctx.translate(p.x,p.y);
+			if (this.usevec)
+			{
+				var psi=p.phi-this.vector.psi;
+				shape.Canvas.ctx.rotate(psi);
+			}
+			shape.Canvas.ctx.translate(-this.vector.xs, -this.vector.ys);
+		break
 		case "sprite":
 			var v=this.vector;
 			this.transformTrack(p,v);
-			var shapes=this.train.getShapes();
+			var shapes=this.train.s();
 			for(var name in shapes)
 			{	
 				shape=shapes[name];
@@ -479,7 +504,7 @@ function transform()
 
 function transformTrack(p,v)
 {
-	if (this.engine !='scene')
+	if (this.engine ='sprite')
 	{
 		var shape=this.train.track.shape;
 		shape.Canvas.ctx.translate(p.x,p.y);
@@ -569,7 +594,7 @@ function setPoints()
 		  	this.points.push(this.points[i-1]);
 	  	}
   	}
-  	if (this.engine !='scene')
+  	if (this.engine =='sprite')
  	{
 	 	this.train.setPoints();  
   	}
@@ -2261,11 +2286,25 @@ function setUp()
 			 	flel.elm.saveCanvases();
 			 	if(flel.elm.getMainTrain().engine=="tween")
 				{
-					flel.elm.getMainTrain().train.zeroTweenPtrs();
+					var sptween=flel.elm.getMainTrain().train;
+					sptween.prepareTweens();
+					if(sptween.reverse)
+					{
+						sptween.reverseAll();
+					}
+					if(isNaN(sptween.maxruntime))
+					{
+						flel.maxruntime="c";
+					}
+					else
+					{
+						flel.maxruntime=sptween.maxruntime/1000;
+					}
+					sptween.zeroTweenPtrs();
 				}
 			 	flel.elm.track.drawtrack();
 				flel.elm.transform();
-				flel.elm.drawsprite();
+				flel.elm.drawspritewithmove();
 				flel.elm.drawalltracks();
 			break
 		}
