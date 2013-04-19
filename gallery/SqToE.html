@@ -1,0 +1,879 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <style>
+         div {
+            position:absolute;
+         }
+
+         #screen {
+            height:400px;
+            width:400px;
+            clip:rect(0px,400px,400px,0px);
+         }
+         #frame {
+            height:400px;
+            width:400px;
+            border:black 1px solid;
+         }
+      </style>
+
+      <script type="text/javascript" src = "canvimation_script.js" ></script>
+      <!--[IF LT IE 9]><script type="text/javascript" src = "excanvas.js" ></script><![endif]-->
+      <script type="text/javascript">
+         var SCRW=2732;
+         var SCRH=1456;
+         var flel;
+         var scene;
+         var shape;
+         var tween;
+         var sprite;
+         var film;
+         var TRAINS={};
+         var LOCUS=false;
+
+         function main() {
+            film = new Film("Film0");
+
+//---------- Film Element----------------------------
+            film.elements["fl0"]={};
+            flel=film.elements["fl0"];
+            flel.name="SUBTW19",
+            flel.id="fl0",
+            flel.title="Tween0",
+            flel.source="tween",
+            flel.A="0",
+            flel.D="Never",
+            eldiv=document.createElement("div");
+            eldiv.id="fl0";
+            eldiv.style.top="-23px";
+            eldiv.style.left="-159px";
+            eldiv.style.width="1366px";
+            eldiv.style.height="728px";
+            eldiv.style.zIndex=0;
+            eldiv.style.visibility="hidden";
+            $("screen").appendChild(eldiv);
+            flel.R="0",
+            flel.S="10",
+
+   //--- Type Tween---Base is Tween0-----------------------------
+            tween=new Tween("SUBTW19");
+
+   //---------- Type Tween Shape---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("ASUBSH21");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=true;
+            shape.type="freeform";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(300,150);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,150);
+            c1=new Point(330,150);
+            c2=new Point(390,150);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,180);
+            c1=new Point(420,157.5);
+            c2=new Point(420,172.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,180);
+            c1=new Point(397.5,180);
+            c2=new Point(352.5,180);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,240);
+            c1=new Point(330,195);
+            c2=new Point(330,225);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(390,240);
+            c1=new Point(345,240);
+            c2=new Point(375,240);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(390,270);
+            c1=new Point(390,247.5);
+            c2=new Point(390,262.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,270);
+            c1=new Point(375,270);
+            c2=new Point(345,270);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,330);
+            c1=new Point(330,285);
+            c2=new Point(330,315);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,330);
+            c1=new Point(352.5,330);
+            c2=new Point(397.5,330);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,360);
+            c1=new Point(420,337.5);
+            c2=new Point(420,352.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,360);
+            c1=new Point(390,360);
+            c2=new Point(330,360);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,150);
+            c1=new Point(300,307.5);
+            c2=new Point(300,202.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            shape.centreOfRotation={
+                                        x:360,
+                                        y:255,
+            }
+            tween.shape=shape;
+
+   //---------- Type Tween Copy---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("BSUBSH23");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=true;
+            shape.type="freeform";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(300,240);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,240);
+            c1=new Point(330,240);
+            c2=new Point(390,240);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,240);
+            c1=new Point(420,247.5);
+            c2=new Point(420,232.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,240);
+            c1=new Point(397.5,240);
+            c2=new Point(352.5,240);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,240);
+            c1=new Point(330,255);
+            c2=new Point(330,225);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,240);
+            c1=new Point(345,240);
+            c2=new Point(405,240);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,270);
+            c1=new Point(420,247.5);
+            c2=new Point(420,262.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,270);
+            c1=new Point(405,270);
+            c2=new Point(435,270);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,330);
+            c1=new Point(420,285);
+            c2=new Point(420,315);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,330);
+            c1=new Point(442.5,330);
+            c2=new Point(397.5,330);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,360);
+            c1=new Point(420,337.5);
+            c2=new Point(420,352.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,360);
+            c1=new Point(390,360);
+            c2=new Point(330,360);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,240);
+            c1=new Point(300,307.5);
+            c2=new Point(300,292.5);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            shape.centreOfRotation={
+                                        x:360,
+                                        y:255,
+            }
+            tween.copy=shape;
+
+   //---------- Type Tween Tweenshape---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH37");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=true;
+            shape.type="freeform";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(300,216.49344000000002);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,216.49344000000002);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,224.53056000000004);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,224.53056000000004);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(330,240);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(411.96288000000004,240);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(411.96288000000004,270);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(396.4934400000001,270);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(396.4934400000001,330);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,330);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(420,360);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,360);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(300,216.49344000000002);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            tween.tweenshape=shape;
+            tween.translate = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.rotate = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.linestyles = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.linecolour = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.fillcolour = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.gradfill = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.shadow = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.edit = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.nodeTweening = {
+                                   active:true,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.pointTweening=true;
+            tween.reverse=true;
+            tween.maxruntime=10000;
+            node=tween.shape.path.next;
+            copynode=tween.copy.path.next;
+
+      //---------- Type Path Shape--- SUBSH24 node -------------------------
+            pathshape=new PathShape("SUBSH24");
+            p=new Point(300,150);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(300,240);
+            c1=new Point(300,172.5);
+            c2=new Point(300,217.5);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH24 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH25 node -------------------------
+            pathshape=new PathShape("SUBSH25");
+            p=new Point(420,150);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,240);
+            c1=new Point(420,172.5);
+            c2=new Point(420,217.5);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH25 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH26 node -------------------------
+            pathshape=new PathShape("SUBSH26");
+            p=new Point(420,180);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,240);
+            c1=new Point(420,195);
+            c2=new Point(420,225);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH26 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH27 node -------------------------
+            pathshape=new PathShape("SUBSH27");
+            p=new Point(330,180);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(330,240);
+            c1=new Point(330,195);
+            c2=new Point(330,225);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH27 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH28 node -------------------------
+            pathshape=new PathShape("SUBSH28");
+            p=new Point(330,240);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(330,240);
+            c1=new Point(330,240);
+            c2=new Point(330,240);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH28 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH29 node -------------------------
+            pathshape=new PathShape("SUBSH29");
+            p=new Point(390,240);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,240);
+            c1=new Point(397.5,240);
+            c2=new Point(412.5,240);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH29 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH30 node -------------------------
+            pathshape=new PathShape("SUBSH30");
+            p=new Point(390,270);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,270);
+            c1=new Point(397.5,270);
+            c2=new Point(412.5,270);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH30 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH31 node -------------------------
+            pathshape=new PathShape("SUBSH31");
+            p=new Point(330,270);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,270);
+            c1=new Point(352.5,270);
+            c2=new Point(397.5,270);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH31 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH32 node -------------------------
+            pathshape=new PathShape("SUBSH32");
+            p=new Point(330,330);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,330);
+            c1=new Point(352.5,330);
+            c2=new Point(397.5,330);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH32 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH33 node -------------------------
+            pathshape=new PathShape("SUBSH33");
+            p=new Point(420,330);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,330);
+            c1=new Point(420,330);
+            c2=new Point(420,330);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH33 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH34 node -------------------------
+            pathshape=new PathShape("SUBSH34");
+            p=new Point(420,360);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(420,360);
+            c1=new Point(420,360);
+            c2=new Point(420,360);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH34 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH35 node -------------------------
+            pathshape=new PathShape("SUBSH35");
+            p=new Point(300,360);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(300,360);
+            c1=new Point(300,360);
+            c2=new Point(300,360);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH35 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH36 node -------------------------
+            pathshape=new PathShape("SUBSH36");
+            p=new Point(300,150);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(300,240);
+            c1=new Point(300,172.5);
+            c2=new Point(300,217.5);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH36 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+   //--- Type Tween---Base is Tween0-----------------------------
+            flel.elm=tween;
+            flel.elm.prepareTweens();
+
+//---------- End Of Film Element -- Type tween--Base is Tween0--------------------------
+
+            film.setUp();
+         }
+      </script>
+   </head>
+   <body onload="main()">
+      <div id="screen"></div>
+      <div id="frame"></div>
+   </body>
+</html>
