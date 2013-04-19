@@ -91,7 +91,9 @@ function removeMark()
 }
 
 function updatePointNode(cursor)
-{ 
+{
+	cursor.x=Math.round(cursor.x/xgrid)*xgrid;
+	cursor.y=Math.round(cursor.y/ygrid)*ygrid;
 	switch (this.shape.type)
 	{
 		case "line":
