@@ -1,0 +1,606 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <style>
+         div {
+            position:absolute;
+         }
+
+         #screen {
+            height:500px;
+            width:1000px;
+            clip:rect(0px,1000px,500px,0px);
+         }
+         #frame {
+            height:500px;
+            width:1000px;
+            border:black 1px solid;
+         }
+      </style>
+
+      <script type="text/javascript" src = "canvimation_script.js" ></script>
+      <!--[IF LT IE 9]><script type="text/javascript" src = "excanvas.js" ></script><![endif]-->
+      <script type="text/javascript">
+         var SCRW=2732;
+         var SCRH=1456;
+         var flel;
+         var scene;
+         var shape;
+         var tween;
+         var sprite;
+         var film;
+         var TRAINS={};
+         var LOCUS=false;
+
+         function main() {
+            film = new Film("Film0");
+
+//---------- Film Element----------------------------
+            film.elements["fl0"]={};
+            flel=film.elements["fl0"];
+            flel.name="SUBSC16",
+            flel.id="fl0",
+            flel.title="Scenery0",
+            flel.source="scene",
+            flel.A="0",
+            flel.D="Never",
+            eldiv=document.createElement("div");
+            eldiv.id="fl0";
+            eldiv.style.top="-62px";
+            eldiv.style.left="-183px";
+            eldiv.style.width="1366px";
+            eldiv.style.height="728px";
+            eldiv.style.zIndex=0;
+            eldiv.style.visibility="hidden";
+            $("screen").appendChild(eldiv);
+
+   //---------- Type Scene---Base is Scenery0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH18");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="ellipse";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=false;
+            shape.linearfill=false;
+            shape.stopn="1";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[357,281,645,281];
+            shape.radGrad=[449.25364260635496,205.35399400225594,36.25,513.7460071726501,299.6454939913223,189.37189637810965];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,211,248,182,1],
+               [1,49,240,11,1]
+            ];
+            p=new Point(501,136);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(645,281);
+            c1=new Point(580.5290039756343,136);
+            c2=new Point(645,200.91871127453493);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(501,426);
+            c1=new Point(645,361.0812887254651);
+            c2=new Point(580.5290039756343,426);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(357,281);
+            c1=new Point(421.4709960243657,426);
+            c2=new Point(357,361.0812887254651);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            p=new Point(501,136);
+            c1=new Point(357,200.91871127453493);
+            c2=new Point(421.4709960243657,136);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl0"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            shape.draw();
+
+            scene=new Scene("fl0");
+            flel.elm=scene;
+
+   //---------- Type Scene---Base is Scenery0-------------------------
+
+//---------- End Of Film Element -- Type scene--Base is Scenery0--------------------------
+
+//---------- Film Element----------------------------
+            film.elements["fl1"]={};
+            flel=film.elements["fl1"];
+            flel.name="SUBSP19",
+            flel.id="fl1",
+            flel.title="Sprite0",
+            flel.source="sprite",
+            flel.A="0",
+            flel.D="Never",
+            eldiv=document.createElement("div");
+            eldiv.id="fl1";
+            eldiv.style.top="-159px";
+            eldiv.style.left="-213px";
+            eldiv.style.width="1366px";
+            eldiv.style.height="728px";
+            eldiv.style.zIndex=1;
+            eldiv.style.visibility="hidden";
+            $("screen").appendChild(eldiv);
+            flel.R="0",
+            flel.S="10",
+
+   //--- Type Sprite---Base is Sprite0-----------------------------
+
+   //---------- Type Train Tween---Base is Tween0-------------------------
+
+   //--- Type Tween---Base is Tween0-----------------------------
+            tween=new Tween("SUBTW23");
+
+   //---------- Type Tween Shape---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("ASUBSH25");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="triangle";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[133,150,151,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(372,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(354,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            shape.centreOfRotation={
+                                        x:363,
+                                        y:179,
+            }
+            tween.shape=shape;
+
+   //---------- Type Tween Copy---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("BSUBSH27");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="triangle";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[10,98,244,1];
+            shape.lineGrad=[-38,-59,-38,-59];
+            shape.radGrad=[-38,-59,0,-38,-49,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(375,105);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(434,308.22222222222223);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(316,308.22222222222223);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(375,105);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            shape.centreOfRotation={
+                                        x:375,
+                                        y:206,
+            }
+            tween.copy=shape;
+
+   //---------- Type Tween Tweenshape---Base is Shape0-------------------------
+
+      //---------- Type Shape---Base is Shape0-------------------------
+            shape=new Shape("SUBSH32");
+            shape.title="Shape0";
+            shape.open=false;
+            shape.editable=false;
+            shape.type="triangle";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="1";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[133,150,151,1];
+            shape.lineGrad=[0,0,0,0];
+            shape.radGrad=[0,0,0,0,10,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(372,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(354,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape0-------------------------
+            tween.tweenshape=shape;
+            tween.translate = {
+                                   active:true,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.rotate = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.linestyles = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.linecolour = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.fillcolour = {
+                                   active:true,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.gradfill = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.shadow = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.edit = {
+                                   active:false,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.nodeTweening = {
+                                   active:true,
+                                   twtime:10,
+                                   repeat:1,
+                                   yoyo:false,
+            };
+            tween.pointTweening=true;
+            tween.reverse=false;
+            tween.maxruntime=10000;
+            node=tween.shape.path.next;
+            copynode=tween.copy.path.next;
+
+      //---------- Type Path Shape--- SUBSH28 node -------------------------
+            pathshape=new PathShape("SUBSH28");
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(375,105);
+            c1=new Point(366,149.25);
+            c2=new Point(372,119.75);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH28 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH29 node -------------------------
+            pathshape=new PathShape("SUBSH29");
+            p=new Point(372,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(434,308.22222222222223);
+            c1=new Point(387.5,223.30555555555554);
+            c2=new Point(418.5,279.9166666666667);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH29 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH30 node -------------------------
+            pathshape=new PathShape("SUBSH30");
+            p=new Point(354,195);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(316,308.22222222222223);
+            c1=new Point(344.5,223.30555555555554);
+            c2=new Point(325.5,279.9166666666667);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH30 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+      //---------- Type Path Shape--- SUBSH31 node -------------------------
+            pathshape=new PathShape("SUBSH31");
+            p=new Point(363,164);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="L";
+            pathshape.addNode(pathnode);
+            p=new Point(375,105);
+            c1=new Point(366,149.25);
+            c2=new Point(372,119.75);
+            pathnode=new Node(p,c1,c2);
+            pathnode.corner="corner";
+            pathnode.vertex="B";
+            pathshape.addNode(pathnode);
+            node.nodepath=pathshape
+            node.nodepath.nodeTweening={
+                                          active:true,
+                                   repeat:1,
+                                          yoyo:false,
+                                          twtime:10,
+            }
+            copynode.nodepath=node.nodepath
+      //---------- End Of Path Shape--- SUBSH31 node -------------------------
+            node=node.next;
+            copynode=copynode.next;
+
+   //--- Type Tween---Base is Tween0-----------------------------
+
+   //---------- End of Train Tween---Base is Tween0-------------------------
+
+      //---------- Track ---Base is Track0-------------------------
+
+      //---------- Type Shape---Base is Shape5-------------------------
+            shape=new Shape("SUBSH22");
+            shape.title="Shape5";
+            shape.open=true;
+            shape.editable=true;
+            shape.type="curve";
+            shape.lineWidth ="1";
+            shape.lineCap="butt";
+            shape.lineJoin="miter";
+            shape.justfill=true;
+            shape.linearfill=true;
+            shape.stopn="0";
+            shape.shadow=false;
+            shape.shadowOffsetX="15";
+            shape.shadowOffsetY ="15";
+            shape.shadowBlur="0";
+            shape.zIndex="2";
+            shape.crnradius="10";
+            shape.strokeStyle=[0,0,0,1];
+            shape.fillStyle=[255,255,255,1];
+            shape.lineGrad=[-1,17,-1,17];
+            shape.radGrad=[-1,17,0,-1,27,10];
+            shape.shadowColor=[0,0,0,0];
+            shape.colorStops=[
+               [0,0,0,0,0],
+               [1,0,0,0,0]
+            ];
+            p=new Point(129,516);
+            c1=new Point("non","non");
+            c2=new Point("non","non");
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="L";
+            shape.addNode(node);
+            p=new Point(1291,-107);
+            c1=new Point(450,533);
+            c2=new Point(1144,253);
+            node=new Node(p,c1,c2);
+            node.corner="corner";
+            node.vertex="B";
+            shape.addNode(node);
+            shape.addTo($("fl1"));
+      //---------- End Of Shape---Base is Shape5-------------------------
+            track=new Track("SUBTR20");
+            track.shape=shape;
+            track.repeats=1;
+            track.visible=false;
+            track.yoyo=false;
+            track.shape.addTo($("fl1"));
+
+      //---------- End Of Track ---Base is Track0-------------------------
+
+            sprite=new Sprite("SUBSP19");
+            sprite.train=tween;
+            sprite.engine="tween";
+            sprite.track=track;
+            sprite.ptime=10;
+            sprite.pointer=0;
+            sprite.usevec=true;
+            sprite.expanded=true;
+            sprite.finishmove=false;
+            sprite.vector={xs:363,xe:364.51497762962674,ys:196,ye:96.01147644463525,psi:4.7275393362594595};
+
+   //--- End Of Sprite---Base is Sprite0-----------------------------
+            TRAINS["SUBSP19"]=sprite;
+            flel.elm=sprite;
+            sprite.setPoints();
+
+//---------- End Of Film Element -- Type sprite--Base is Sprite0--------------------------
+
+            film.setUp();
+         }
+      </script>
+   </head>
+   <body onload="main()">
+      <div id="screen"></div>
+      <div id="frame"></div>
+   </body>
+</html>

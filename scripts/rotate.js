@@ -34,7 +34,7 @@ function removeRotate()
 }
 
 function updatecenter()
-{
+{console.log("here");
 	var cm=$("rotateCentre");
 	var mm=$("rotateMove");
 	var dx=parseInt(cm.style.left)-cm.left;
