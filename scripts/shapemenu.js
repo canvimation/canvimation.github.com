@@ -97,6 +97,12 @@ function imageShapeMenu()
 	   							SELECTED={};
 	   							BCOUNT=0;
 	   							$("backstage").style.visibility="hidden";
+								$("scenestage").style.visibility="hidden";
+								$("spritestage").style.visibility="hidden";
+								$("trackstage").style.visibility="hidden";
+								$("tweenstage").style.visibility="hidden";
+								$("tweenpathsstage").style.visibility="hidden";
+								$("blockstage").style.visibility="hidden";
 	   							shape.addTo($("shapestage"));
 	   							shape.Canvas.style.cursor="crosshair";
 	   							shape.Canvas.onmousedown=function(e){this.shape.setPath(getPosition(e))};

@@ -244,7 +244,6 @@ function Shape(name,title,open,editable,type,STORE)
 	this.pathshapeHTML=pathshapeHTML;
 	this.getLengths=getLengths;
 	this.setRndRect=setRndRect;	
-this.drawcrnrs=drawcrnrs;	
    	return this;
    	
 }

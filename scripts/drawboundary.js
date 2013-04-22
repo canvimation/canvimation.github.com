@@ -686,12 +686,3 @@ function sqdistance(p,q)
 	return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y)
 }
 
-function drawcrnrs()
-{
-	this.Canvas.ctx.beginPath();
-	this.Canvas.ctx.moveTo(this.tplftcrnr.x,this.tplftcrnr.y);
-	this.Canvas.ctx.lineTo(this.btmrgtcrnr.x,this.btmrgtcrnr.y);
-	this.Canvas.ctx.stroke();
-}
-
-
