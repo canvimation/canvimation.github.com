@@ -17,7 +17,7 @@ function exportShapes()
 	}
 	shapelist.sort(compareZ);
 	
-	newwindow=window.open('','export');
+	newwindow=window.open('','_blank');
 	newwindow.document.writeln('<!DOCTYPE HTML>');
 	newwindow.document.writeln('<html>');
 	newwindow.document.writeln(SPACES.substr(0,3)+'<head>');
@@ -59,6 +59,8 @@ function exportShapes()
 	newwindow.document.writeln('</html>');
 	newwindow.document.close();
 }
+
+
 
 function compareZ(a,b)
 {

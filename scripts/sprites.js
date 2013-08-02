@@ -48,6 +48,7 @@ function Sprite(name)
 	this.getMainTrain=getMainTrain;
 	this.expandspritelist=expandspritelist;
 	this.spriteHTML=spriteHTML;
+	this.spriteCode=spriteCode;
 	this.SpriteToText=SpriteToText;
 	this.recordsprite=recordsprite;
 	this.spriteparams=spriteparams;

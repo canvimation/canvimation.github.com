@@ -86,6 +86,12 @@ img.marker {
 	z-index:5;
 }
 
+#html_zone {
+	margin-left:5%;
+	width:89%;
+	height:90%;
+}
+
 .head {
 	background-color: #000000;
 	cursor:default;
@@ -1269,6 +1275,9 @@ inner img {
 <script type="text/javascript" src = "scripts/canvashtml.js" ></script>
 <script type="text/javascript" src = "scripts/totext.js" ></script>
 <script type="text/javascript" src = "scripts/fromtext.js" ></script>
+<script type="text/javascript" src = "scripts/canvascode.js" ></script>
+<script type="text/javascript" src = "scripts/shapescode.js" ></script>
+<script type="text/javascript" src = "scripts/filmscode.js" ></script>
 
 <!--[IF LT IE 9]><script type="text/javascript" src = "scripts/excanvas.compiled.js" ></script><![endif]-->
 <script type="text/javascript">
@@ -1671,6 +1680,10 @@ function main()
 	//filetextbox
 	$("filetextbox").style.width=300+"px";
 	$("filetextbox").style.height=310+"px";
+	
+	//code textbox
+	$("codetextbox").style.width=600+"px";
+	$("codetextbox").style.height=610+"px";
 	
 	//filmexportbox
 	$("filmexportbox").style.width=350+"px";
@@ -2535,6 +2548,18 @@ function main()
 	</div>
 </div>
 
+<!--dialogue code text box -->
+<div id='codetextbox' class="dialoguebox">
+	<div id='codetextcontent' class='content'>
+		&nbsp;&nbsp;&nbsp;Select and Copy Code<br>
+		<textarea id="html_zone"> </textarea>
+	</div>	
+	<div id='codetexthead' class='head'>&nbsp; HTML Code
+		<img alt="" src='assets/x.png' onclick='closedialogue(this)'/>
+    	<img alt="" src='assets/up.png' onclick='updialogue(this,"filetextcontent")'/>
+	</div>
+</div>
+
 <!--dialogue file text box -->
 <div id='filetextbox' class="dialoguebox">
 	<div id='filetextcontent' class='content'>
@@ -2605,7 +2630,9 @@ function main()
   <input id="checkdone" type="button" value="Stop Check" onclick="STOPCHECKING=true;" />
   <div id='fopts'>
   	<a href='#' onClick="exportShapes();$('fopts').style.visibility='hidden' ;return false">Export Canvas to HTML</a>
+  	<p><a href='#' onClick="exportCode();$('fopts').style.visibility='hidden' ;return false">Canvas to Code</a></p>
   	<p><a href='#' onClick="writeFilm();$('fopts').style.visibility='hidden' ;return false">Export Film to HTML</a></p>
+  	<p><a href='#' onClick="writeFilmCode();$('fopts').style.visibility='hidden' ;return false">Film to Code</a></p>
   	<p><a href='#' onClick="ToText();$('fopts').style.visibility='hidden' ; return false;"><span id='ofas'>Export as TEXT</span></a></p>
   	<p><a href='#' onClick="$('fopts').style.visibility='hidden';fromText(); return false;"><span id='ifas'>Input File as Text</span></a></p>
   </div>			

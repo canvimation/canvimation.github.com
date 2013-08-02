@@ -242,6 +242,8 @@ function Shape(name,title,open,editable,type,STORE)
 	this.drawjustpath=drawjustpath;
 	this.shapeHTML=shapeHTML;
 	this.pathshapeHTML=pathshapeHTML;
+	this.shapeCode=shapeCode;
+	this.pathshapeCode=pathshapeCode;
 	this.getLengths=getLengths;
 	this.setRndRect=setRndRect;	
    	return this;
