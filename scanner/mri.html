@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+    <!-- Babylon.js -->
+    <script src="babylon26.js"></script>
+	
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+if (BABYLON.Engine.isSupported()) {
+    var canvas = document.getElementById("renderCanvas");
+    var engine = new BABYLON.Engine(canvas, true);
+}
+
+var planes = [];
+
+var createScene = function () {
+
+    var scene = new BABYLON.Scene(engine);
+
+    var camera = new BABYLON.ArcRotateCamera("camera1", 0, 0, 0, new BABYLON.Vector3(0, 0, 0), scene);
+    camera.setPosition(new BABYLON.Vector3(-1.96, 0.382, -0.178));
+    camera.attachControl(canvas, true);
+
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+
+    light.intensity = 0.7;
+	
+	var dynamics = [];
+	var mats = [];
+	var images = [];
+	var contexts = [];
+	var imageData = [];
+	var data = [];
+	
+	var canvasHeight = 92;
+    var canvasWidth = 100;
+
+	for (var i = 0; i<128; i++) {
+		
+		images[i]  = new Image();
+		images[i].src = "mri_" + i + ".gif";
+		images[i].Nbr = i
+		images[i].onload = function () {
+			var i = this.Nbr;
+			dynamics[i] = new BABYLON.DynamicTexture("d" + i, 100, scene, true); //create a canvas to load image onto in order to make black transparent
+			contexts[i] = dynamics[i].getContext();			
+			contexts[i].imageSmoothingEnabled = false;
+			contexts[i].drawImage(this, 8, 0, images[i].width - 8, images[i].height - 73, 0, 0, canvasWidth, canvasHeight);
+			dynamics[i].update();
+			imageData[i] = contexts[i].getImageData(0, 0, canvasWidth, canvasHeight);
+			data[i] = imageData[i].data;
+			//for near black pixels set alpha(transparency) to 0
+			for (var j = 0; j < data[i].length; j += 4) {
+				if(data[i][j]  < 10 && data[i][j + 1] <= 10 && data[i][j + 2] <= 10) {
+					data[i][j + 3] = 0;
+				}
+			}
+			
+			contexts[i].putImageData(imageData[i], 0, 0);
+			dynamics[i].update();
+			
+			mats[i] = new BABYLON.StandardMaterial("m" + i, scene);
+			mats[i].emissiveTexture = dynamics[i]; //set texture to appropriate canvas
+			mats[i].opacityTexture = dynamics[i];
+			
+			planes[i] = BABYLON.MeshBuilder.CreatePlane("plane" + i, {width: canvasWidth/100, height:canvasHeight/100, updatable:true, sideOrientation:BABYLON.Mesh.DOUBLESIDE}, scene);
+			planes[i].material = mats[i];
+			
+			planes[i].position.z = i/200;
+			
+		}
+	}
+ 
+    return scene;
+
+};
+
+
+
+var scene = createScene();
+
+var sliceHolder = document.createElement("div");
+sliceHolder.style.position = "absolute";
+sliceHolder.style.left = "10px";
+sliceHolder.style.top = "20px";
+sliceHolder.style.width = "148px";
+sliceHolder.style.height = "20px";
+sliceHolder.style.backgroundColor = "#FFFFFF";
+sliceHolder.style.zIndex = 10;
+document.body.appendChild(sliceHolder);
+
+var slice = document.createElement("input");
+slice.width = 50;
+slice.type = "number";
+sliceHolder.appendChild(slice);
+
+var currentSlice;
+slice.onchange = function() {
+if(planes[currentSlice]) {
+console.log(planes[currentSlice].position.y);
+	planes[currentSlice].position.y = 0;
+}
+currentSlice = slice.value;
+planes[currentSlice].position.y = 0.5;
+
+}
+
+engine.runRenderLoop(function () {
+    scene.render();
+});
+
+window.addEventListener("resize", function () {
+    engine.resize();
+});
+
+    </script>
+</body>
+</html>
